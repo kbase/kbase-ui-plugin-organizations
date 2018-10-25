@@ -1,0 +1,25 @@
+{
+    "name": "kbase-ui-plugin-organizations",
+    "description": "Organizations",
+    "keywords": [
+        "kbase", "widget"
+    ],
+    "author": [
+        "eapearson@lbl.gov"
+    ],
+    "moduleType": "kbase-ui-plugin",
+    "main": "src/plugin/config.yml",
+    "ignore": [
+        ".gitignore"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/kbase/kbase-ui-plugin-organizations"
+    },
+    "dependencies": {
+        "bluebird": "^3.5.0",
+        "bootstrap": "^3.3.0"
+    },
+    "devDependencies": {},
+    "license": "SEE LICENSE IN LICENSE"
+}
