@@ -30,7 +30,7 @@ define([
                 name: MainComponent.quotedName(),
                 params: {
                     runtime: 'runtime',
-                    projectId: 'projectId'
+                    organization: 'organization'
                 }
             }).join('');
         }
@@ -43,7 +43,7 @@ define([
             this.container.style.flex = '1 1 0px';
             this.container.style.display = 'flex';
             this.container.style.flexDirection = 'column';
-            this.container.style.margin = '0 10px';
+            this.container.style.padding = '0 20px';
         }
 
         start({organizationId}) {
@@ -51,12 +51,13 @@ define([
             this.model.getOrganization(organizationId)
                 .then((organization) => {
                     this.runtime.send('ui', 'setTitle', organization.name);
+                    ko.applyBindings({
+                        runtime: this.runtime,
+                        organization: organization
+                    }, this.container);
                 });
 
-            ko.applyBindings({
-                runtime: this.runtime,
-                organizationId: organizationId
-            }, this.container);
+
         }
 
         stop() {

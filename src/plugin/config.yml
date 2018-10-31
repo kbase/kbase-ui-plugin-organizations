@@ -15,17 +15,17 @@ install:
       id: organizations_organizationView
       type: es6
   routes:
-    -
-      path: [organizations]
-      widget: organizations_organizationsView
-      authorization: true
+    # -
+    #   path: [organizations]
+    #   widget: organizations_organizationsView
+    #   authorization: true
     -
       path: [organizations, {type: 'param', name: 'organizationId'}]
-      widget: organizations_organizationView
+      widget: organizations_organizationsView
       authorization: true
   menu:
     -
       name: organizations
       path: [organizations]
-      label: Organizations 
+      label: Orgs 
       icon: users

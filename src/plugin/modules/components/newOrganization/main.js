@@ -3,16 +3,14 @@ define([
     'knockout',
     'kb_knockout/registry',
     'kb_knockout/lib/generators',
-    'kb_knockout/lib/viewModelBase',
     'kb_knockout/components/overlayPanel',
     'kb_lib/html',
-    './organization',
-    './info'
+    '../organization',
+    '../info'
 ], function (
     ko,
     reg,
     gen,
-    ViewModelBase,
     OverlayPanelComponent,
     html,
     OrganizationDescriptionComponent,
@@ -20,13 +18,18 @@ define([
 ) {
     'use strict';
 
-    class ViewModel extends ViewModelBase {
-        constructor(params, {$root: {model}}) {
-            super(params);
-            const {id} = params;
-            this.id = id;
+    class ViewModel {
+        constructor({runtime, organization}) {
+            this.runtime = runtime;
+            this.organization = organization;
 
-            model.getOrganization();
+            this.overlayComponent = ko.observable();
+
+            this.actions = {
+                showOverlay: (component) => {
+                    this.overlayComponent(component);
+                }
+            };
         }
     }
 
@@ -35,6 +38,7 @@ define([
     const t = html.tag,
         span =  t('span'),
         button = t('button'),
+        a = t('a'),
         div = t('div');
 
     const style = html.makeStyles({
@@ -65,7 +69,7 @@ define([
             class: 'btn-toolbar'
         }, [
             div({
-                class: 'btn-group pull-right'
+                class: 'btn-group'
             }, [
                 button({
                     class: 'btn btn-default'
@@ -76,19 +80,19 @@ define([
                     ' Edit this Organization'
                 ])
             ]),
-            // div({
-            //     class: 'btn-group'
-            // }, [
-            //     a({
-            //         class: 'btn btn-default',
-            //         href: '/#organizations'
-            //     }, [
-            //         span({
-            //             class: 'fa fa-reply'
-            //         }),
-            //         ' Return to Organizations List'
-            //     ])
-            // ]),
+            div({
+                class: 'btn-group'
+            }, [
+                a({
+                    class: 'btn btn-default',
+                    href: '/#organizations'
+                }, [
+                    span({
+                        class: 'fa fa-reply'
+                    }),
+                    ' Return to Organizations List'
+                ])
+            ]),
         ]);
     }
 
@@ -149,13 +153,19 @@ define([
                 }
             }
         }, [
-            buildSubLayout()
+            buildSubLayout(),
+            gen.component({
+                name: OverlayPanelComponent.name(),
+                params: {
+                    component: 'overlayComponent'
+                }
+            })
         ]);
     }
 
     function component() {
         return {
-            viewModelWithContext: ViewModel,
+            viewModel: ViewModel,
             template: template(),
             stylesheet: style.sheet
         };

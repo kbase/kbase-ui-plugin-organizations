@@ -1,0 +1,11 @@
+.Header {
+    flex: 0 0 40px;
+    font-weight: bold;
+    font-size: 100%;
+    text-align: left; 
+    padding: 4px;
+    background-color: rgba(200, 200, 200, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

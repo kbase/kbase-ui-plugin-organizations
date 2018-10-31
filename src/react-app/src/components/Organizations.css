@@ -1,0 +1,35 @@
+.Organizations {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.Organizations > .row {
+    flex: 0 0 auto;
+    border: 1px silver dashed;
+    padding: 4px;
+    margin: 4px 0;
+    display: flex;
+    flex-direction: row;
+}
+
+.Organizations > .row > .col1 {
+    flex: 2 1 0px;
+}
+
+.Organizations > .row > .col2 {
+    lex: 1 1 0px;
+}
+
+.Organizations .orgName {
+    font-weight: bold;
+    font-size: 110%;
+    cursor: pointer;
+}
+
+.Organizations .Organizations-table th {
+    text-align: right;
+    font-weight: bold;
+    color: rgba(150, 150, 150, 1)
+}

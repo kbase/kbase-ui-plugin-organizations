@@ -1,30 +1,42 @@
+/*eslint {"strict": ["error", "global"]} */
+'use strict';
 define([
     'knockout',
     'kb_knockout/lib/generators',
-    'kb_lib/html',
-    './components/organizations/main'
+    './components/main',
+    './lib/model'
 ], function (
     ko,
     gen,
-    html,
-    MainComponent
+    MainComponent,
+    {Model}
 ) {
-    'use strict';
+    class RootViewModel {
+        constructor({runtime}) {
+            this.runtime = runtime;
+
+            this.model = new Model({runtime});
+        }
+
+        setTitle(title) {
+            this.runtime.send('ui', 'setTitle', title);
+        }
+    }
 
     class Panel {
-        constructor(params) {
-            this.runtime = params.runtime;
+        constructor({runtime}) {
+            this.runtime = runtime;
+
             this.hostNode = null;
             this.container = null;
+            this.viewModel = new RootViewModel({runtime});
         }
 
         // VIEW
         render() {
-            return gen.component2({
-                name: MainComponent.quotedName(),
-                params: {
-                    runtime: 'runtime'
-                }
+            return gen.component({
+                name: MainComponent.name(),
+                params: ['runtime']
             }).join('');
         }
 
@@ -36,12 +48,13 @@ define([
             this.container.style.flex = '1 1 0px';
             this.container.style.display = 'flex';
             this.container.style.flexDirection = 'column';
+            this.container.style.padding = '0 10px';
         }
 
         start() {
             this.container.innerHTML = this.render();
-            this.runtime.send('ui', 'setTitle', 'Projects');
-            ko.applyBindings({runtime: this.runtime}, this.container);
+            this.runtime.send('ui', 'setTitle', 'Organizations');
+            ko.applyBindings(this.viewModel, this.container);
         }
 
         stop() {
