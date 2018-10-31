@@ -5,7 +5,8 @@ export enum ActionFlag {
     SORT_ORGS = 1,
     SEARCH_ORGS,
     ADD_ORG,
-    UPDATE_ORG
+    UPDATE_ORG,
+    FILTER_ORGS
 }
 
 export interface SortOrgs  extends Action<ActionFlag.SORT_ORGS> {
@@ -33,6 +34,19 @@ export function searchOrgs(searchTerms: Array<string>) : SearchOrgs {
     return {
         type: ActionFlag.SEARCH_ORGS,
         searchTerms: searchTerms
+    }
+}
+
+// Filter orgs
+export interface FilterOrgs extends Action<ActionFlag.FILTER_ORGS> {
+    type: ActionFlag.FILTER_ORGS,
+    filter: string
+}
+
+export function filterOrgs(filter: string) : FilterOrgs {
+    return {
+        type: ActionFlag.FILTER_ORGS,
+        filter: filter
     }
 }
 

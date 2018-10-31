@@ -6,7 +6,7 @@ import {BrowserRouter, Redirect} from 'react-router-dom';
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
 
-import {StoreState, Filter} from './types';
+import {StoreState} from './types';
 import {SortOrgs} from './redux/actions';
 import theReducer from './redux/reducers';
 
@@ -30,8 +30,8 @@ const initialState : StoreState = {
   filteredCount: organizations.length,
   sortBy: 'createdAt',
   sortDescending: true,
-  filter: Filter.All,
-  searchTerms: ["50"],
+  filter: 'all',
+  searchTerms: [],
   selectedOrganizationId: null,
   auth: {
     username: 'eapearson',

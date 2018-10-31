@@ -13,6 +13,7 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
     searchInput: React.RefObject<HTMLInputElement>;
     sortBy: string;
     sortDescending: boolean;
+    filter: string;
 
     constructor(props: types.OrganizationsBrowserProps) {
         super(props)
@@ -21,12 +22,11 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
 
         this.sortBy = 'createdAt';
         this.sortDescending = false;
+        this.filter = 'all'
         
         this.state = {
             sortBy: 'createdAt',
-            sortDescending: false,
-            showAll: true,
-            filterYourOrgs: false
+            sortDescending: false
         }
 
         // this.onSearchOrgs = this.props.onSearchOrgs
@@ -51,8 +51,14 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
 
     onSortDirectionChange(e: React.ChangeEvent<HTMLInputElement>) {
         e.persist()
-        this.sortDescending = e.target.value === 'descending';
+        this.sortDescending = e.target.value === 'descending'
         this.props.onSortOrgs(this.sortBy, this.sortDescending)
+    }
+
+    onFilterChange(e: React.ChangeEvent<HTMLInputElement>) {
+        e.persist()
+        this.filter = e.target.value
+        this.props.onFilterOrgs(this.filter)
     }
 
     renderControlArea() {
@@ -151,7 +157,9 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
                 
                 <div className="row">
                     <div className="col1">
-                        <input type="radio" name="filterAll"></input>
+                        <input type="radio" name="filter" value="all" 
+                               checked={this.props.filter === 'all'}
+                               onChange={this.onFilterChange.bind(this)}></input>
                     </div>
                     <div className="col2">
                         Show All (no filter)
@@ -159,18 +167,22 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
                 </div>
                 <div className="row">
                     <div className="col1">
-                        <input type="radio" name="filterAll"></input>
+                        <input type="radio" name="filter" value="owned" 
+                               checked={this.props.filter === 'owned'}
+                               onChange={this.onFilterChange.bind(this)}></input>
                     </div>
                     <div className="col2">
-                        Filter by:
+                        Owned by you
                     </div>
                 </div>
                 <div className="row">
                     <div className="col1">
-                        <input type="checkbox"></input>
+                        <input type="radio" name="filter" value="notOwned" 
+                               checked={this.props.filter === 'notOwned'}
+                               onChange={this.onFilterChange.bind(this)}></input>
                     </div>
                     <div className="col2">
-                        Your Orgs
+                        Not owned by you
                     </div>
                 </div>
             </div>

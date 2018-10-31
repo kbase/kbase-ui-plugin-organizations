@@ -1,10 +1,11 @@
 import {Action} from 'redux'
-import {SortOrgs, SearchOrgs, AddOrg, UpdateOrg} from '../actions';
+import {SortOrgs, SearchOrgs, AddOrg, UpdateOrg, FilterOrgs} from '../actions';
 import {StoreState} from '../../types';
 import {ActionFlag} from '../actions';
 import {Organizations, Organization} from '../../types';
 
-export function filterOrgs(orgs: Organizations, searchTerms: Array<string>) {
+
+export function applyOrgSearch(orgs: Organizations, searchTerms: Array<string>) {
     const filteredOrgs = orgs.filter((org) => {
         if (searchTerms.length === 0) {
             return true;
@@ -23,8 +24,21 @@ export function filterOrgs(orgs: Organizations, searchTerms: Array<string>) {
 }
 
 export function searchOrgs(state: StoreState, action: SearchOrgs): StoreState {
-    const {organizations, totalCount, filteredCount} = filterOrgs(state.rawOrganizations, action.searchTerms);
-    return {...state, organizations: organizations, totalCount: totalCount, filteredCount: filteredCount}
+
+    const query: Query = {
+        searchTerms: action.searchTerms,
+        filter: state.filter,
+        sortBy: state.sortBy,
+        sortDescending: state.sortDescending,
+        username: state.auth.username
+    }
+    const result = queryOrgs(state.rawOrganizations, query)
+
+    return {...state, 
+            organizations: result.organizations, 
+            totalCount: result.total, 
+            filteredCount: result.organizations.length,
+            searchTerms: action.searchTerms}
 }
 
 export function newOrg(state: StoreState, action: AddOrg): StoreState {
@@ -50,37 +64,112 @@ export function updateOrg(state: StoreState, action: UpdateOrg): StoreState {
     return state;
 }
 
-export function sortOrgs(state: StoreState, action: SortOrgs): StoreState {
-    const {organizations} = state
-    const {sortBy, sortDescending} = action
+function applySort(organizations: Organizations, sortBy:string, sortDescending: boolean) {
     const direction = sortDescending ? -1 : 1
-    let sorted;
     switch (sortBy) {
     case 'createdAt':
-        sorted = organizations.slice().sort((a, b) => {
+        return  organizations.slice().sort((a, b) => {
             return direction * (a.createdAt.getTime() - b.createdAt.getTime())
         })
-        break
     case 'modifiedAt':
-        sorted = organizations.slice().sort((a, b) => {
+        return organizations.slice().sort((a, b) => {
             return direction * (a.modifiedAt.getTime() - b.modifiedAt.getTime())
         })
-        break
     case 'name':
-        sorted = organizations.slice().sort((a, b) => {
+        return organizations.slice().sort((a, b) => {
             return direction * a.name.localeCompare(b.name)
         })
-        break
     case 'owner':
-        sorted = organizations.slice().sort((a, b) => {
+        return organizations.slice().sort((a, b) => {
             return direction * a.owner.localeCompare(b.owner)
         })
-        break;
     default:
-        console.warn('unimplemented sort field: ' + action.sortBy)
-        return state;
+        console.warn('unimplemented sort field: ' + sortBy)
+        return organizations;
     }
-    return {...state, organizations:sorted, sortBy, sortDescending}
+}
+
+
+export function sortOrgs(state: StoreState, action: SortOrgs): StoreState {
+    const query: Query = {
+        searchTerms: state.searchTerms,
+        filter: state.filter,
+        sortBy: action.sortBy,
+        sortDescending: action.sortDescending,
+        username: state.auth.username
+    }
+    const result = queryOrgs(state.rawOrganizations, query)
+
+    return {...state, 
+            organizations: result.organizations, 
+            totalCount: result.total, 
+            filteredCount: result.organizations.length,
+            sortBy: action.sortBy,
+            sortDescending: action.sortDescending}
+}
+
+
+interface Query {
+    searchTerms: Array<string>,
+    username: string,
+    sortBy: string,
+    sortDescending: boolean,
+    filter: string
+}
+
+interface QueryResults {
+    organizations: Organizations,
+    total: number
+}
+
+
+function applyFilter(organizations: Organizations, filter: string, username: string): Organizations {
+    switch (filter) {
+    case 'all':
+        return organizations
+        break
+    case 'owned':
+        return organizations.filter((org) => (org.owner === username))
+    case 'notOwned':
+        return organizations.filter((org) => (org.owner !== username))
+    default:
+        console.warn('unknown filter : ' + filter)
+        return organizations
+    }
+}
+
+function queryOrgs(orgs: Organizations, query: Query) : QueryResults {
+    const filtered = applyFilter(orgs, query.filter, query.username)
+
+    const searched = applyOrgSearch(filtered, query.searchTerms)
+
+    const sorted = applySort(searched.organizations, query.sortBy, query.sortDescending)
+
+    return {
+        organizations: sorted,
+        total: orgs.length
+    }
+}
+
+export function filterOrgs(state: StoreState, 
+                           action: FilterOrgs): StoreState {
+    const {rawOrganizations, auth: {username}} = state
+    const {filter} = action
+
+    const query: Query = {
+        searchTerms: state.searchTerms,
+        filter: filter,
+        sortBy: state.sortBy,
+        sortDescending: state.sortDescending,
+        username: state.auth.username
+    }
+    const result = queryOrgs(rawOrganizations, query)
+
+    return {...state, 
+            organizations: result.organizations, 
+            totalCount: result.total, 
+            filteredCount: result.organizations.length,
+            filter}
 }
 
 export function theReducer(state: StoreState, action: Action): StoreState {
@@ -96,9 +185,11 @@ export function theReducer(state: StoreState, action: Action): StoreState {
         return searchOrgs(state, action as SearchOrgs)
     case ActionFlag.SORT_ORGS:
         return sortOrgs(state, action as SortOrgs)
+    case ActionFlag.FILTER_ORGS:
+        return filterOrgs(state, action as FilterOrgs)
     default:
         return state
     }
 }
 
-export default theReducer;
+export default theReducer

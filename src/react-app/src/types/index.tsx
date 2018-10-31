@@ -38,10 +38,10 @@ export interface AuthState {
     roles: Array<string>
 }
 
-export enum Filter {
-    All = 1,
-    Yours
-}
+// export enum Filter {
+//     All = 1,
+//     Yours
+// }
 
 
 export interface StoreState  {
@@ -51,7 +51,7 @@ export interface StoreState  {
     filteredCount: number,
     sortBy: string,
     sortDescending: boolean,
-    filter: Filter,
+    filter: string,
     searchTerms: Array<string>,
     selectedOrganizationId: string | null,
     auth: AuthState,
@@ -69,18 +69,18 @@ export interface OrganizationsState {
 export interface OrganizationsBrowserProps {
     onSearchOrgs: (searchTerms: Array<string>) => void;
     onSortOrgs: (sortBy: string, sortDescending: boolean) => void;
+    onFilterOrgs: (filter: string) => void;
     totalCount: number;
     filteredCount: number;
     sortBy: string;
     sortDescending: boolean;
+    filter: string;
 }
 
 export interface OrganizationsBrowserState {
     // ok super cheesy, need an enum
     sortBy: string,
-    sortDescending: boolean,
-    showAll: boolean,
-    filterYourOrgs: boolean
+    sortDescending: boolean
 }
 
 // ADD ORG
