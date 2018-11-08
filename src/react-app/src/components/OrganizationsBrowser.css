@@ -4,84 +4,87 @@
     flex-direction: column;
 }
 
-
-
-.OrganizationsBrowser > .searchBarRow {
+.OrganizationsBrowser>.searchBarRow {
     flex: 0 0 auto;
     display: flex;
     flex-direction: row;
     margin-bottom: 10px;
 }
 
-.OrganizationsBrowser > .bodyRow {
+.OrganizationsBrowser>.bodyRow {
     flex: 1 1 0px;
     display: flex;
     flex-direction: row;
 }
 
-.OrganizationsBrowser > * > .col1 {
+.OrganizationsBrowser>*>.col1 {
     flex: 0 0 14em;
-    margin: 0 5px;
+    margin: 0 10px 0 0;
     display: flex;
     flex-direction: column;
 }
 
-.OrganizationsBrowser > * > .col2 {
+.OrganizationsBrowser>*>.col2 {
     flex: 1 1 0px;
-    margin: 0 5px;
+    margin: 0 0 0 10px;
     display: flex;
     flex-direction: column;
-} 
-
-.OrganizationsBrowser-controlArea {
-
 }
 
-.OrganizationsBrowser-controlArea > .controlGroup {
-    border: 1px rgba(200,200,200,0.5) solid;
+.OrganizationsBrowser-controlArea {}
+
+.OrganizationsBrowser-controlArea>.controlGroup {
+    border: 1px rgba(200, 200, 200, 0.5) solid;
     margin-bottom: 14px;
     padding: 4px;
     border-radius: 8px;
 }
 
-.OrganizationsBrowser-controlArea > .controlGroup > .header {
+.OrganizationsBrowser-controlArea>.controlGroup .radio {
+    display: block;
+    height: 1.8em;
+}
+
+.OrganizationsBrowser-controlArea>.controlGroup>.header {
     font-weight: bold;
     color: rgba(150, 150, 150, 1);
     text-align: center;
 }
 
-.OrganizationsBrowser-controlArea > .controlGroup > .row {
+.OrganizationsBrowser-controlArea>.controlGroup>.row {
     padding: 4px;
     cursor: pointer;
     /* height: 2em; */
 }
 
-.OrganizationsBrowser-controlArea > .controlGroup > .row > .col1 {
+.OrganizationsBrowser-controlArea>.controlGroup>.row>.col1 {
     display: inline-block;
     width: 10%;
 }
 
-.OrganizationsBrowser-controlArea > .controlGroup > .row > .col2 {
+.OrganizationsBrowser-controlArea>.controlGroup>.row>.col2 {
     display: inline-block;
     width: 90%
 }
 
 .OrganizationsBrowser-searchBar {
+    flex: 0 0 30px;
     display: flex;
     flex-direction: row;
+    align-items: center;
 }
 
-.OrganizationsBrowser-searchBar > .col1 {
+.OrganizationsBrowser-searchBar>.col1 {
     flex: 2 1 0px;
 }
 
-.OrganizationsBrowser-searchBar > .col2 {
+.OrganizationsBrowser-searchBar>.col2 {
     flex: 1 1 0px;
     text-align: right;
 }
 
 .OrganizationsBrowser-searchBar input {
-    width: 12em;
+    width: 20em;
     height: 100%;
 }
 

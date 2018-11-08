@@ -1,26 +1,39 @@
 .EditOrganization {
     flex: 1 1 0px;
     display: flex;
+    flex-direction: column;
+}
+
+.EditOrganization h3 {
+    padding: 8px;
+    /* background-color: rgba(200, 200, 200, 0.5); */
+    border-bottom: 2px rgba(200, 200, 200, 0.8) solid;
+    text-align: center;
+}
+
+.EditOrganization .mainRow {
+    flex: 1 1 0px;
+    display: flex;
     flex-direction: row;
 }
 
-.EditOrganization > .editorColumn {
+.EditOrganization .mainRow>.editorColumn {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
-    border: 1px red dotted;
     margin-right: 10px;
 }
 
-.EditOrganization > .previewColumn {
+.EditOrganization .mainRow>.previewColumn {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     margin-left: 10px;
+    overflow-y: auto;
 }
 
 .EditOrganization .editor,
-.EditOrganization .preview  {
+.EditOrganization .preview {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
@@ -36,15 +49,17 @@
 }
 
 .EditOrganization .col1 {
-    flex: 0 0 12em;
+    flex: 0 0 8em;
     font-weight: bold;
     text-align: left;
-    color: rgba(100, 100, 100, 1);
+    /* color: rgba(100, 100, 100, 1); */
     /* border: 1px silver solid; */
 }
 
 .EditOrganization .col2 {
     flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
     /* border: 1px silver solid; */
 }
 
@@ -55,17 +70,28 @@
 }
 
 .EditOrganization .editor textarea {
+    flex: 1 1 0px;
     box-sizing: border-box;
     display: inline-block;
     width: 100%;
-    height: 10em;
 }
 
 .EditOrganization .editor .footer {
     flex: 0 0 30px;
     text-align: center;
-} 
+}
 
 .EditOrganization .preview .id {
     font-family: monospace;
+}
+
+.EditOrganization .preview .description {
+    flex: 1 1 0px;
+    box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+    overflow-y: auto;
+    padding: 4px;
+    border: 1px silver solid;
+    border-radius: 4px;
 }

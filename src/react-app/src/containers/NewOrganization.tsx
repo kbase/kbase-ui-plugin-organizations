@@ -1,30 +1,55 @@
-import {Dispatch} from 'redux';
-import {connect} from 'react-redux';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
-import * as types from '../types';
-import * as actions from '../redux/actions';
+import { StoreState } from '../types';
+import {
+    AddOrg, addOrg,
+    addOrgUpdateName, addOrgUpdateId, addOrgUpdateDescription, addOrgEdit
+} from '../redux/actions/addOrg';
 
 import NewOrganization from '../components/NewOrganization';
 
-export interface LinkStateProps {
-    
+interface OwnProps {
 }
 
-export interface LinkDispatchProps {
-    onAddOrg: (newOrg: types.NewOrganization) => void
+export interface StateProps {
 }
 
-export function mapStateToProps({}: types.StoreState): LinkStateProps {
-    return {}
+export interface DispatchProps {
+    onAddOrg: () => void,
+    onAddOrgEdit: () => void,
+    onUpdateName: (name: string) => void,
+    onUpdateId: (id: string) => void,
+    onUpdateDescription: (description: string) => void
 }
 
-export function mapDispatchToProps(dispatch: Dispatch<actions.AddOrg>): LinkDispatchProps {
+export function mapStateToProps({ addOrg: { editState, saveState, validationState, newOrganization } }: StoreState): StateProps {
     return {
-        onAddOrg: (newOrg) => {
-            dispatch(actions.addOrg(newOrg))
+        editState,
+        saveState,
+        validationState,
+        newOrganization
+    }
+}
+
+export function mapDispatchToProps(dispatch: Dispatch<AddOrg>): DispatchProps {
+    return {
+        onAddOrgEdit: () => {
+            dispatch(addOrgEdit() as any)
+        },
+        onAddOrg: () => {
+            dispatch(addOrg() as any)
+        },
+        onUpdateName: (name) => {
+            dispatch(addOrgUpdateName(name) as any)
+        },
+        onUpdateId: (id) => {
+            dispatch(addOrgUpdateId(id) as any)
+        },
+        onUpdateDescription: (description) => {
+            dispatch(addOrgUpdateDescription(description) as any)
         }
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewOrganization)
-
+export default connect<StateProps, DispatchProps, OwnProps, StoreState>(mapStateToProps, mapDispatchToProps)(NewOrganization)

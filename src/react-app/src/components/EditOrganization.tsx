@@ -1,24 +1,13 @@
 import * as React from 'react'
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import marked from 'marked';
 
 import * as types from '../types';
 
 import './EditOrganization.css'
-
-
-
-// export class PendingOrganization {
-//     id: string | null;
-//     name: string | null;
-//     description: string | null;
-
-//     constructor() {
-//         this.id = null;
-//         this.name = null;
-//         this.description = null;
-//     }
-// }
+import { Button, Tooltip } from 'antd';
+import Header from './Header';
+import { FaPencilAlt } from 'react-icons/fa';
 
 export interface EditedOrganization {
     id: string,
@@ -29,7 +18,7 @@ export interface EditedOrganization {
 export interface EditOrganizationState {
     canceling: boolean;
 
-    editedOrganization: EditedOrganization
+    // editedOrganization?: EditedOrganization
 }
 
 class EditOrganization extends React.Component<types.EditOrganizationProps, EditOrganizationState> {
@@ -38,139 +27,188 @@ class EditOrganization extends React.Component<types.EditOrganizationProps, Edit
         super(props)
 
         this.state = {
-            canceling: false,
-            editedOrganization: {
-                id: this.props.organization.id,
-                name: this.props.organization.name,
-                description: this.props.organization.description
-            }
+            canceling: false
         }
+
+        this.props.onEditOrg(this.props.id)
     }
 
     onClickCancel() {
-        this.setState({canceling: true})
+        this.setState({ canceling: true })
     }
 
     onSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        if (!this.state.editedOrganization.name) {
-            // do somthing
-            return;
-        }
-        if (!this.state.editedOrganization.id) {
-            // do somthing
-            return;
-        }
-        if (!this.state.editedOrganization.description) {
-            // do somthing
-            return;
-        }
-        const updatedOrg: types.OrganizationUpdate = {
-            name: this.state.editedOrganization.name,
-            id: this.props.organization.id,
-            description: this.state.editedOrganization.description
-        }
-        this.props.onUpdateOrg(updatedOrg);
+        this.props.onUpdateOrg();
     }
 
     onNameChange(e: React.ChangeEvent<HTMLInputElement>) {
         e.persist();
-        this.setState((state) => {
-            state.editedOrganization.name = e.target.value;
-            return state;
-        })
+        this.props.onUpdateName(e.target.value)
     }
 
     onDescriptionChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
         e.persist()
-        this.setState((state) => {
-            state.editedOrganization.description = e.target.value;
-            return state;
-        })
+        this.props.onUpdateDescription(e.target.value)
     }
 
     onIdChange(e: React.ChangeEvent<HTMLInputElement>) {
         e.persist();
-        this.setState((state) => {
-            state.editedOrganization.id = e.target.value;
-            return state;
-        })
+        // this.props.onUpdateId(e.target.value)
     }
 
     renderForm() {
+        if (!this.props.editedOrganization) {
+            return
+        }
         return (
-            <form className="editor" onSubmit={this.onSubmit.bind(this)}>
+            <form id="editOrganizationForm" className="editor" onSubmit={this.onSubmit.bind(this)}>
                 <div className="row">
-                    <div className="col1">name</div>
-                    <div className="col12">
-                        <input value={this.state.editedOrganization.name} 
-                               onChange={this.onNameChange.bind(this)} />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col1">id</div>
-                    <div className="col2"><input value={this.state.editedOrganization.id}
-                                                 onChange={this.onIdChange.bind(this)} /></div>
-                </div>
-                <div className="row">
-                    <div className="col1">description</div>
+                    <div className="col1 field-label">name</div>
                     <div className="col2">
-                        <textarea value={this.state.editedOrganization.description} 
-                                  onChange={this.onDescriptionChange.bind(this)} />
+                        <input value={this.props.editedOrganization.name.value}
+                            onChange={this.onNameChange.bind(this)} />
+                        {this.props.editedOrganization.name.error ? (<span style={{ color: 'red' }}>{this.props.editedOrganization.name.error.message}</span>) : ''}
                     </div>
                 </div>
-                <div className="footer">
-                    <button type="submit">Save</button>
-                    <button type="button" onClick={this.onClickCancel.bind(this)}>Cancel</button>
+                <div className="row">
+                    <div className="col1 field-label">id</div>
+                    <div className="col2">
+                        <Tooltip title="The id may not be changed">
+                            <input value={this.props.editedOrganization.id.value}
+                                readOnly />
+                        </Tooltip>
+                    </div>
                 </div>
+                <div className="row" style={{ flex: '1 1 0px', minHeight: '30em', maxHeight: '60em' }}>
+                    <div className="col1 field-label">description</div>
+                    <div className="col2">
+                        <textarea value={this.props.editedOrganization.description.value}
+                            onChange={this.onDescriptionChange.bind(this)} />
+                        {this.props.editedOrganization.description.error ? (<span style={{ color: 'red' }}>{this.props.editedOrganization.description.error.message}</span>) : ''}
+                    </div>
+                </div>
+                {/* <div className="row">
+                    <div className="col1"></div>
+                    <div className="col2">
+                        <div className="footer">
+                            <Button icon="save"
+                                form="editOrganizationForm"
+                                key="submit"
+                                htmlType="submit">Save</Button>
+                            <Button type="danger" icon="undo"
+                                onClick={this.onClickCancel.bind(this)}>Cancel &amp; Return to Orgs</Button>
+                        </div>
+                    </div>
+                </div> */}
+
             </form>
         )
     }
 
     renderPreview() {
+        if (!this.props.editedOrganization) {
+            return
+        }
         return <form className="preview">
             <div className="row">
-                <div className="col12">
+                <div className="col2">
                     <div className="name">
-                        {this.state.editedOrganization.name || ''}
+                        {this.props.editedOrganization.name.value || ''}
                     </div>
                 </div>
             </div>
             <div className="row">
                 <div className="col2">
                     <div className="id">
-                        <span style={{color: 'silver'}}>https://narrative.kbase.us/organizations/</span>{this.state.editedOrganization.id || ''}
+                        <span style={{ color: 'silver' }}>https://narrative.kbase.us/organizations/</span>{this.props.editedOrganization.id.value || ''}
                     </div>
                 </div>
             </div>
-            <div className="row">
+            <div className="row" style={{ flex: '1 1 0px', minHeight: '30em', maxHeight: '60em' }}>
                 <div className="col2">
-                    <div className="description" 
-                        dangerouslySetInnerHTML={({__html: marked(this.state.editedOrganization.description || '')})}
+                    <div className="description"
+                        dangerouslySetInnerHTML={({ __html: marked(this.props.editedOrganization.description.value || '') })}
                     />
                 </div>
             </div>
         </form>
     }
 
+    renderHeader() {
+        return (
+            <Header title="Organizations">
+                <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <div style={{ flex: '0 0 auto' }}>
+                        <span>
+                            <FaPencilAlt style={{ verticalAlign: 'middle' }} />
+                            {' '}
+                            Editing Org "
+                            {this.props.editedOrganization!.name.value}
+                            "
+                        </span>
+                    </div>
+                    <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                        <Button
+                            icon="save"
+                            form="editOrganizationForm"
+                            key="submit"
+                            htmlType="submit">
+                            Save
+                        </Button>
+                        <Button
+                            type="danger"
+                            icon="undo"
+                            onClick={this.onClickCancel.bind(this)}>
+                            Cancel &amp; Return to Org
+                        </Button>
+                    </div>
+                </div>
+            </Header>
+        )
+    }
+
+    renderLoadingHeader() {
+        return (
+            <Header title="Organizations">
+                <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <div style={{ flex: '0 0 auto' }}>
+                        <span>
+                            Loading Org...
+                        </span>
+                    </div>
+                </div>
+            </Header>
+        )
+    }
+
     render() {
         if (this.state.canceling) {
-            return <Redirect push to="/organizations" />
+            return <Redirect push to={"/viewOrganization/" + this.props.id} />
+        }
+        if (!this.props.editedOrganization) {
+            return (
+                <div className="EditOrganization">
+                    {this.renderLoadingHeader()}
+                </div>
+            )
         }
 
         return (
             <div className="EditOrganization">
-                <div className="editorColumn">
-                    <h3>Editor</h3>
-                    {this.renderForm()}
-                </div>
-                <div className="previewColumn">
-                    <h3>Preview</h3>
-                    {this.renderPreview()}
+                {this.renderHeader()}
+                <div className="mainRow">
+                    <div className="editorColumn">
+                        <h3>Editor</h3>
+                        {this.renderForm()}
+                    </div>
+                    <div className="previewColumn">
+                        <h3>Preview</h3>
+                        {this.renderPreview()}
+                    </div>
                 </div>
             </div>
         )
-
     }
 }
 

@@ -1,190 +1,134 @@
 import * as React from 'react';
-import {NavLink} from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import Organizations from '../containers/Organizations';
 import * as types from '../types';
 
 import './OrganizationsBrowser.css';
-import {FaSearch} from 'react-icons/fa'
+import { FaSearch, FaSpinner } from 'react-icons/fa'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button, Icon, Radio, Tooltip } from 'antd'
+import Header from './Header';
+import RadioGroup from 'antd/lib/radio/group';
+import { RadioChangeEvent } from 'antd/lib/radio';
 
 
 class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserProps, types.OrganizationsBrowserState> {
 
     searchInput: React.RefObject<HTMLInputElement>;
-    sortBy: string;
-    sortDescending: boolean;
-    filter: string;
+    searchButton: React.RefObject<Button>;
 
     constructor(props: types.OrganizationsBrowserProps) {
         super(props)
 
-        this.searchInput = React.createRef(); 
+        this.searchInput = React.createRef()
+        this.searchButton = React.createRef()
 
-        this.sortBy = 'createdAt';
-        this.sortDescending = false;
-        this.filter = 'all'
-        
         this.state = {
-            sortBy: 'createdAt',
-            sortDescending: false
+            searchInput: ''
         }
 
-        // this.onSearchOrgs = this.props.onSearchOrgs
+        this.props.onSearchOrgs([])
     }
 
-    onSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault()
+    doSearch() {
         if (this.searchInput.current === null) {
-            return 
+            return
         }
         const searchTerms = this.searchInput.current.value.split(/[\s+]/)
         // dispatch the search event
         this.props.onSearchOrgs(searchTerms);
     }
 
-    onSortByChange(e: React.ChangeEvent<HTMLInputElement>) {
-        e.persist()
-        this.sortBy = e.target.value
-        this.props.onSortOrgs(this.sortBy, this.sortDescending)
-        // this.setState({sortBy: e.target.value})
+    haveSearchInput() {
+        if (this.state.searchInput && this.state.searchInput.length > 0) {
+            return true
+        }
+        return false
     }
 
-    onSortDirectionChange(e: React.ChangeEvent<HTMLInputElement>) {
-        e.persist()
-        this.sortDescending = e.target.value === 'descending'
-        this.props.onSortOrgs(this.sortBy, this.sortDescending)
+
+    onSearchInputChange() {
+        let currentSearchInputValue;
+        if (this.searchInput.current) {
+            currentSearchInputValue = this.searchInput.current.value
+        } else {
+            currentSearchInputValue = ''
+        }
+        this.setState({ searchInput: currentSearchInputValue })
     }
 
-    onFilterChange(e: React.ChangeEvent<HTMLInputElement>) {
-        e.persist()
-        this.filter = e.target.value
-        this.props.onFilterOrgs(this.filter)
+    onSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+        this.doSearch()
+    }
+
+    onSortByChange(e: RadioChangeEvent) {
+        this.props.onSortOrgs(e.target.value, this.props.sortDirection)
+    }
+
+    onSortDirectionChange(e: RadioChangeEvent) {
+        this.props.onSortOrgs(this.props.sortBy, e.target.value)
+    }
+
+    onFilterChange(e: RadioChangeEvent) {
+        this.props.onFilterOrgs(e.target.value)
+    }
+
+    onClearSearch() {
+        if (this.searchInput.current === null) {
+            return
+        }
+        this.searchInput.current.value = ''
+        this.onSearchInputChange()
+        // this.searchButton.current!.handleClick(new MouseEvent<HTMLButtonElement>('click'))
+        // const event = new Event('change', { bubbles: true })
+        // this.searchInput.current.dispatchEvent(event)
+        this.doSearch()
     }
 
     renderControlArea() {
         return (
             <div className="OrganizationsBrowser-controlArea">
-                {this.renderSortArea()}
-                {this.renderFilterArea()}
+                {/* {this.renderSortArea()} */}
+                {this.renderSortArea2()}
+                {this.renderFilterArea2()}
             </div>
         )
     }
 
-    renderSortArea() {
+    renderSortArea2() {
         return (
             <div className="controlGroup">
                 <div className="header">
                     sort
                 </div>
-                
-                <div className="row">
-                    <div className="col1">
-                        {/* TODO: either use radio, but just use native checked behavior with initial
-                               checked set by props, or use an icon based radio with display class set
-                               by state. */}
-                        <input type="radio" name="sortBy" value="name"
-                               checked={this.props.sortBy === 'name'}
-                               onChange={this.onSortByChange.bind(this)}></input>
-                    </div>
-                    <div className="col2">
-                        Org name
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col1">
-                        <input type="radio" name="sortBy" value="createdAt"
-                               checked={this.props.sortBy === 'createdAt'}
-                               onChange={this.onSortByChange.bind(this)}></input>
-                    </div>
-                    <div className="col2">
-                        Created
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col1">
-                        <input type="radio" name="sortBy" value="modifiedAt"
-                               checked={this.props.sortBy === 'modifiedAt'}
-                               onChange={this.onSortByChange.bind(this)}></input>
-                    </div>
-                    <div className="col2">
-                        Last updated
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col1">
-                        <input type="radio" name="sortBy" value="owner"
-                               checked={this.props.sortBy === 'owner'}
-                               onChange={this.onSortByChange.bind(this)}></input>
-                    </div>
-                    <div className="col2">
-                        Owner
-                    </div>
-                </div>
+                <RadioGroup onChange={this.onSortByChange.bind(this)} value={this.props.sortBy}>
+                    <Radio className="radio" value="name">Org name</Radio>
+                    <Radio className="radio" value="owner">Owner</Radio>
+                </RadioGroup>
 
-                <br />
-
-                <div className="row">
-                    <div className="col1">
-                        <input type="radio" name="sortDirection" value="ascending"
-                               checked={!this.props.sortDescending}
-                               onChange={this.onSortDirectionChange.bind(this)}></input>
-                    </div>
-                    <div className="col2">
-                        Ascending
-                    </div>
+                <div style={{ marginTop: '10px' }}>
+                    <RadioGroup onChange={this.onSortDirectionChange.bind(this)} value={this.props.sortDirection}>
+                        <Radio className="radio" value={types.SortDirection.ASCENDING}><Icon type="sort-ascending" /> Ascending</Radio>
+                        <Radio className="radio" value={types.SortDirection.DESCENDING}><Icon type="sort-descending" /> Descending</Radio>
+                    </RadioGroup>
                 </div>
-                <div className="row">
-                    <div className="col1">
-                        <input type="radio" name="sortDirection" value="descending"
-                               checked={this.props.sortDescending}
-                               onChange={this.onSortDirectionChange.bind(this)}></input>
-                    </div>
-                    <div className="col2">
-                        Descending
-                    </div>
-                </div>
-                
             </div>
         )
     }
 
-    renderFilterArea() {
+    renderFilterArea2() {
         return (
             <div className="controlGroup">
                 <div className="header">
                     filter
                 </div>
-                
-                <div className="row">
-                    <div className="col1">
-                        <input type="radio" name="filter" value="all" 
-                               checked={this.props.filter === 'all'}
-                               onChange={this.onFilterChange.bind(this)}></input>
-                    </div>
-                    <div className="col2">
-                        Show All (no filter)
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col1">
-                        <input type="radio" name="filter" value="owned" 
-                               checked={this.props.filter === 'owned'}
-                               onChange={this.onFilterChange.bind(this)}></input>
-                    </div>
-                    <div className="col2">
-                        Owned by you
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col1">
-                        <input type="radio" name="filter" value="notOwned" 
-                               checked={this.props.filter === 'notOwned'}
-                               onChange={this.onFilterChange.bind(this)}></input>
-                    </div>
-                    <div className="col2">
-                        Not owned by you
-                    </div>
-                </div>
+                <RadioGroup onChange={this.onFilterChange.bind(this)} value={this.props.filter}>
+                    <Radio className="radio" value="all">All</Radio>
+                    <Radio className="radio" value="owned">Owned by you</Radio>
+                    <Radio className="radio" value="notOwned">Owned by others</Radio>
+                </RadioGroup>
             </div>
         )
     }
@@ -200,9 +144,11 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
         if (this.props.filteredCount === 0) {
             return (
                 <span>
-                    No organizations found out of 
+                    No organizations found out of
                     {' '}
                     {this.props.totalCount}
+                    {' '}
+                    available.
                 </span>
             )
 
@@ -210,11 +156,11 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
         if (this.props.totalCount === this.props.filteredCount) {
             return (
                 <span>
-                Found
+                    Showing all
                 {' '}
-                {this.props.totalCount}
-                {' '}
-                organizations
+                    {this.props.totalCount}
+                    {' '}
+                    organizations
                 </span>
             )
         }
@@ -225,7 +171,7 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
                 {' '}
                 {this.props.filteredCount}
                 {' '}
-                out of 
+                out of
                 {' '}
                 {this.props.totalCount}
                 {' '}
@@ -234,30 +180,70 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
         )
     }
 
+    renderSearchIcon() {
+        if (this.props.searching) {
+            return (<Icon type="loading" />)
+        }
+        return (<Icon type="search" />)
+    }
+
     renderSearchBar() {
         return (
-            <form className="OrganizationsBrowser-searchBar" onSubmit={this.onSubmit.bind(this)}>
-                <div className="col1">
-                    <input placeholder="Search Organizations" ref={this.searchInput}></input>
-                    <button type="submit">
-                        <FaSearch />
-                        {' '}
-                        Search
-                    </button>
-                    <div className="message">
+            <form id="searchForm" className="OrganizationsBrowser-searchBar" onSubmit={this.onSubmit.bind(this)}>
+
+                <input
+                    placeholder="Search Organizations"
+                    onChange={this.onSearchInputChange.bind(this)}
+                    autoFocus
+                    ref={this.searchInput}></input>
+                <Tooltip
+                    title="Enter one or more words to search organizations by name or owner">
+                    <Icon type="info-circle" theme="twoTone" style={{ alignSelf: 'end' }} />
+                    {/* <Icon type="info" style={{ alignSelf: 'end' }} /> */}
+                </Tooltip>
+                <Button
+                    disabled={!this.haveSearchInput()}
+                    ref={this.searchButton}
+                    form="searchForm"
+                    key="submit"
+                    htmlType="submit">
+                    {this.renderSearchIcon()}
+                    Search
+                </Button>
+                <Button
+                    onClick={this.onClearSearch.bind(this)}
+                    disabled={!this.haveSearchInput()}
+                >
+                    Show all
+                </Button>
+                <div className="message">
                     {this.renderSearchFeedback()}
-                    </div>
-                </div>
-                <div className="col2">
-                    <NavLink to="/newOrganization">Create Organization</NavLink>
                 </div>
             </form>
+        )
+    }
+
+    renderHeader() {
+        return (
+            <Header title="Organizations">
+                <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <div style={{ flex: '0 0 auto' }}>
+                        <span>
+                            Browse and Search Organizations
+                            </span>
+                    </div>
+                    <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                        <NavLink to="/newOrganization"><Button icon="plus-circle">Create Organization</Button></NavLink>
+                    </div>
+                </div>
+            </Header>
         )
     }
 
     render() {
         return (
             <div className="OrganizationsBrowser">
+                {this.renderHeader()}
                 <div className="searchBarRow">
                     <div className="col1">
                     </div>
@@ -270,9 +256,8 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
                         {this.renderControlArea()}
                     </div>
                     <div className="col2">
-                    <Organizations />
+                        <Organizations />
                     </div>
-                    
                 </div>
             </div>
         )

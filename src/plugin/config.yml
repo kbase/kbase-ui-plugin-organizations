@@ -1,31 +1,27 @@
-## Config for plugin
+## Organizations
 ---
-package:
-  author: Erik Pearson
-  name: organizations
-source:
-install:
-  widgets: 
-    -
-      module: organizationsView
-      id: organizations_organizationsView
-      type: es6
-    -
-      module: organizationView
-      id: organizations_organizationView
-      type: es6
-  routes:
-    # -
-    #   path: [organizations]
-    #   widget: organizations_organizationsView
-    #   authorization: true
-    -
-      path: [organizations, {type: 'param', name: 'organizationId'}]
-      widget: organizations_organizationsView
-      authorization: true
-  menu:
-    -
-      name: organizations
-      path: [organizations]
-      label: Orgs 
-      icon: users
+    package:
+        name: organizations
+        author: Erik Pearson
+        description: Organizations
+    source:
+        styles:
+    install:
+        widgets:
+            -
+                id: organizations_panel
+                module: panel 
+                type: es6
+                css: true
+        routes:
+            -
+                path: [orgs]
+                queryParams:
+                widget: organizations_panel
+                authorization: true
+        menu:
+            -
+                name: organizations
+                path: [orgs]
+                label: Orgs
+                icon: users 

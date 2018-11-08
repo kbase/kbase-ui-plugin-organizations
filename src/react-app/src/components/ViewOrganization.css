@@ -1,30 +1,36 @@
 .ViewOrganization {
     flex: 1 1 0px;
     display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization .mainRow {
+    flex: 1 1 0px;
+    display: flex;
     flex-direction: row;
 }
 
-.ViewOrganization > .mainColumn {
-    flex: 1 1 0px;
+.ViewOrganization .mainRow>.mainColumn {
+    flex: 3 1 0px;
     display: flex;
     flex-direction: column;
     margin-right: 10px;
 }
 
-.ViewOrganization > .infoColumn {
+.ViewOrganization .mainRow>.infoColumn {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     margin-left: 10px;
 }
 
-.ViewOrganization > .table {
+.ViewOrganization form.table {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
 }
 
-.ViewOrganization .row {
+.ViewOrganization .table>.row {
     flex: 0 0 auto;
     min-height: 30px;
     display: flex;
@@ -33,7 +39,25 @@
     margin-bottom: 8px;
 }
 
-.ViewOrganization .col1 {
+.ViewOrganization .table.infoTable>.row {
+    flex: 0 0 auto;
+    min-height: 20px;
+    display: flex;
+    flex-direction: row;
+    /* height: 30px; */
+    margin-bottom: 8px;
+}
+
+.ViewOrganization .table.infoTable>.row>.col1 {
+    flex: 0 0 8em;
+    font-weight: bold;
+    text-align: left;
+    color: rgba(100, 100, 100, 1);
+}
+
+.ViewOrganization .table.infoTable>.row>.col2 {}
+
+.ViewOrganization .table>.row>.col1 {
     flex: 0 0 12em;
     font-weight: bold;
     text-align: left;
@@ -41,10 +65,13 @@
     /* border: 1px silver solid; */
 }
 
-.ViewOrganization .col2 {
+.ViewOrganization .table>.row>.col2 {
     flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
     /* border: 1px silver solid; */
 }
+
 /* .ViewOrganization .preview .id {
     font-family: monospace;
 } */
@@ -58,4 +85,19 @@
     padding: 4px;
     border: 1px rgba(200, 200, 200, 1) solid;
     border-radius: 8px;
+    flex: 1 1 0px;
+    overflow-y: auto;
+}
+
+.ViewOrganization .infoBox {
+    padding: 4px;
+    border: 1px rgba(200, 200, 200, 1) solid;
+    border-radius: 8px;
+}
+
+.ViewOrganization .label {
+    /* background-color: rgba(200, 200, 200, 0.5); */
+    padding: 3px;
+    font-weight: bold;
+    color: rgba(150, 150, 150, 1);
 }

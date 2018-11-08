@@ -1,37 +1,49 @@
 import {Dispatch} from 'redux'
 import {connect} from 'react-redux'
 
-import * as types from '../types'
-import * as actions from '../redux/actions'
+import { EditOrgState, Organization, EditedOrganization, AppError, StoreState } from '../types'
+import {EditOrg, editOrg, editOrgUpdateName, editOrgUpdateDescription} from '../redux/actions/editOrg'
 
 import EditOrganization from '../components/EditOrganization'
-
-interface LinkStateProps {
-    organization: types.Organization
-}
+import { editOrgSave } from '../redux/actions/editOrg';
 
 interface OwnProps {
     id: string
 }
-
-interface LinkDispatchProps {
-    onUpdateOrg: (modifiedOrg: types.OrganizationUpdate) => void
+interface StateProps {
+    state: EditOrgState
+    organization?: Organization
+    editedOrganization?: EditedOrganization
+    error?: AppError
 }
 
-function mapStateToProps({organizations}: types.StoreState, {id}: OwnProps): LinkStateProps {
-    // TODO: of course this really needs to be an async fetch of the org info!
-    const org = organizations.filter((org) => org.id === id)[0]
+interface DispatchProps {
+    onEditOrg: (id: string) => void,
+    onUpdateOrg: () => void,
+    onUpdateName: (name: string) => void,
+    onUpdateDescription: (description: string) => void
+}
+
+function mapStateToProps({editOrg: {state, error, editedOrganization}}: StoreState, 
+                         {id}: OwnProps): StateProps {
+    return {state, error, editedOrganization}
+}
+
+export function mapDispatchToProps(dispatch: Dispatch<EditOrg>): DispatchProps {
     return {
-        organization: org
-    }
-}
-
-export function mapDispatchToProps(dispatch: Dispatch<actions.UpdateOrg>): LinkDispatchProps {
-    return {    
-        onUpdateOrg: (modifiedOrg) => {
-            dispatch(actions.updateOrg(modifiedOrg))
+        onEditOrg: (id) => {
+            dispatch(editOrg(id) as any)
+        },
+        onUpdateOrg: () => {
+            dispatch(editOrgSave() as any)
+        },
+        onUpdateName: (name) => {
+            dispatch(editOrgUpdateName(name) as any)
+        },
+        onUpdateDescription: (description) => {
+            dispatch(editOrgUpdateDescription(description) as any)
         }
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditOrganization)
+export default connect<StateProps, DispatchProps, OwnProps, StoreState>(mapStateToProps, mapDispatchToProps)(EditOrganization)

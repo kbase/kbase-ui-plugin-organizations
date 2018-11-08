@@ -1,18 +1,42 @@
 .NewOrganization {
     flex: 1 1 0px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
-.NewOrganization > .editorColumn {
+.NewOrganization h3 {
+    padding: 8px;
+    /* background-color: rgba(200, 200, 200, 0.5); */
+    border-bottom: 2px rgba(200, 200, 200, 0.8) solid;
+    text-align: center;
+}
+
+.NewOrganization .mainRow {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    overflow-y: auto;
+}
+
+.NewOrganization .footerRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    border-top: 1px silver solid;
+}
+
+.NewOrganization .footerRow .col2 {
+    align-items: center;
+}
+
+.NewOrganization .editorColumn {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
-    border: 1px red dotted;
     margin-right: 10px;
 }
 
-.NewOrganization > .previewColumn {
+.NewOrganization .previewColumn {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
@@ -20,7 +44,7 @@
 }
 
 .NewOrganization .editor,
-.NewOrganization .preview  {
+.NewOrganization .preview {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
@@ -32,19 +56,21 @@
     display: flex;
     flex-direction: row;
     /* height: 30px; */
-    margin-bottom: 8px;
+    margin: 4px 0;
 }
 
 .NewOrganization .col1 {
-    flex: 0 0 12em;
+    flex: 0 0 9em;
     font-weight: bold;
     text-align: left;
-    color: rgba(100, 100, 100, 1);
+    /* color: rgba(100, 100, 100, 1); */
     /* border: 1px silver solid; */
 }
 
 .NewOrganization .col2 {
     flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
     /* border: 1px silver solid; */
 }
 
@@ -55,16 +81,17 @@
 }
 
 .NewOrganization .editor textarea {
+    flex: 1 1 0px;
     box-sizing: border-box;
     display: inline-block;
     width: 100%;
-    height: 10em;
 }
 
 .NewOrganization .editor .footer {
     flex: 0 0 30px;
     text-align: center;
-} 
+    padding: 6px;
+}
 
 .NewOrganization .preview .id {
     font-family: monospace;
