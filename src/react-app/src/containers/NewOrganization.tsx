@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { StoreState } from '../types';
 import {
     AddOrg, addOrg,
-    addOrgUpdateName, addOrgUpdateId, addOrgUpdateDescription, addOrgEdit
+    addOrgUpdateName, addOrgUpdateId, addOrgUpdateDescription, addOrgEdit, addOrgUpdateGravatarHash
 } from '../redux/actions/addOrg';
 
 import NewOrganization from '../components/NewOrganization';
@@ -19,6 +19,7 @@ export interface DispatchProps {
     onAddOrg: () => void,
     onAddOrgEdit: () => void,
     onUpdateName: (name: string) => void,
+    onUpdateGravatarHash: (gravatarHash: string) => void,
     onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
 }
@@ -42,6 +43,9 @@ export function mapDispatchToProps(dispatch: Dispatch<AddOrg>): DispatchProps {
         },
         onUpdateName: (name) => {
             dispatch(addOrgUpdateName(name) as any)
+        },
+        onUpdateGravatarHash: (gravatarHash: string) => {
+            dispatch(addOrgUpdateGravatarHash(gravatarHash) as any)
         },
         onUpdateId: (id) => {
             dispatch(addOrgUpdateId(id) as any)

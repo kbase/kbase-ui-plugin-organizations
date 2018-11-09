@@ -10,6 +10,9 @@ export interface GroupsServiceInfo {
 export interface BriefGroup {
     id: string;
     name: string;
+    custom: {
+        gravatarhash?: string
+    }
     owner: string;
     type: string;
     // createdAt: number;
@@ -39,11 +42,15 @@ export interface Group {
     createdate: number
     moddate: number
     workspaces: Array<WorkspaceInfo>
+    custom: {
+        gravatarhash?: string
+    }
 }
 
 export interface NewGroup {
     id: string
     name: string
+    gravatarhash: string
     type: string
     description: string
 }
@@ -164,6 +171,9 @@ export class GroupsClient {
             method: 'PUT',
             body: JSON.stringify({
                 name: newGroup.name,
+                custom: {
+                    gravatarhash: newGroup.gravatarhash
+                },
                 type: newGroup.type,
                 description: newGroup.description
             })

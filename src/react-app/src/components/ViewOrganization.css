@@ -131,3 +131,25 @@
     font-weight: bold;
     color: rgba(150, 150, 150, 1);
 }
+
+.ViewOrganization .org {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization .org .nameAndLogo {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.ViewOrganization .org .nameAndLogo .avatar {
+    flex: 0 0 64px;
+    height: 64px;
+}
+
+.ViewOrganization .org .nameAndLogo .nameAndLink {
+    flex: 1 1 0px;
+    margin-left: 10px;
+}

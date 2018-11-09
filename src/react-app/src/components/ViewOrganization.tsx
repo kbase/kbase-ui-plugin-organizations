@@ -53,35 +53,47 @@ class ViewOrganization extends React.Component<types.ViewOrganizationProps, View
             return
         }
         return (
-            <form className="table">
-                <div className="row">
-                    <div className="col2">
+            <div className="org">
+                <div className="nameAndLogo">
+                    <div className="avatar">
+                        {this.renderOrgAvatar(this.props.organization)}
+                    </div>
+                    <div className="nameAndLink">
                         <div className="name">
                             {this.props.organization.name}
                         </div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col2">
                         <div className="id">
                             <span className="label">permalink</span>{' '}
                             <span className="permalinkBase">https://narrative.kbase.us#org/</span>{this.props.organization.id}
                         </div>
                     </div>
                 </div>
-                <div className="row" style={{ flex: '1 1 0px' }}>
-                    <div className="col2">
-                        <div className="description"
-                            dangerouslySetInnerHTML={({ __html: marked(this.props.organization.description || '') })}
-                        />
-                    </div>
-                </div>
-                {/* <div className="row">
-                    <div className="col2">
-                        {this.buildFooter()}
-                    </div>
-                </div> */}
-            </form>
+                <div className="description"
+                    dangerouslySetInnerHTML={({ __html: marked(this.props.organization.description || '') })}
+                />
+
+            </div>
+        )
+    }
+
+    getOrgAvatarUrl(org: types.BriefOrganization) {
+        const defaultImages = [
+            'orgs-64.png',
+            'unicorn-64.png'
+        ]
+        if (!org.gravatarHash) {
+            return defaultImages[Math.floor(Math.random() * 2)]
+        }
+        const gravatarDefault = 'identicon';
+
+        return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
+    }
+
+    renderOrgAvatar(org: types.BriefOrganization) {
+        // console.log('grav?', org.gravatarHash)
+        return (
+            <img style={{ width: 64, height: 64 }}
+                src={this.getOrgAvatarUrl(org)} />
         )
     }
 
@@ -136,7 +148,7 @@ class ViewOrganization extends React.Component<types.ViewOrganizationProps, View
                                 <div className="owner">
                                     <a href="#people/{org.owner.username}" target="_blank">{this.props.organization.owner.realname}</a>
                                     {' '}
-                                    ❨<i>aka</i> {this.props.organization.owner.username}❩
+                                    ❨{this.props.organization.owner.username}❩
                                 </div>
                                 <div className="profileOrganization">
                                     {this.props.organization.owner.organization}

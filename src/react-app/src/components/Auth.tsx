@@ -96,7 +96,7 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
         }
     }
 
-    buildAuthProd2() {
+    buildAuthProd() {
         switch (this.props.authStatus) {
             case types.AuthState.NONE:
             case types.AuthState.CHECKING:
@@ -129,26 +129,10 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
 
     }
 
-    // buildAuthProd() {
-    //     if (this.props.token) {
-    //         return (
-    //             <div className="Auth Auth-authorized">
-    //                 {this.props.children}
-    //             </div>
-    //         )
-    //     } else {
-    //         return (
-    //             <div className="Auth Auth-unauthorized">
-    //                 <p>Not authorized!</p>
-    //             </div>
-    //         )
-    //     }
-    // }
-
     render() {
         return (
             <div className="Auth">
-                {this.props.env === 'dev' ? this.buildAuthDev() : this.buildAuthProd2()}
+                {this.props.hosted ? this.buildAuthProd() : this.buildAuthDev()}
             </div>
         )
 

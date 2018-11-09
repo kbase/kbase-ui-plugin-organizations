@@ -6,7 +6,7 @@ import {
     AddOrgUpdateNameSuccess, AddOrgUpdateNameError,
     AddOrgUpdateIdSuccess, AddOrgUpdateIdError,
     AddOrgUpdateDescriptionSuccess, AddOrgUpdateDescriptionError,
-    AddOrgError, AddOrgStart, AddOrgSuccess, AddOrgEvaluateOK, AddOrgEvaluateErrors
+    AddOrgError, AddOrgStart, AddOrgSuccess, AddOrgEvaluateOK, AddOrgEvaluateErrors, AddOrgUpdateGravatarHashError, AddOrgUpdateGravatarHashSuccess
 } from '../actions/addOrg'
 
 // ADD ORG
@@ -85,6 +85,13 @@ export function addOrgEditStart(state: StoreState, action: AddOrgEditStart) {
                         type: UIErrorType.NONE
                     }
                 },
+                gravatarHash: {
+                    value: '',
+                    status: FieldState.NONE,
+                    error: {
+                        type: UIErrorType.NONE
+                    }
+                },
                 description: {
                     value: '',
                     status: FieldState.NONE,
@@ -136,6 +143,44 @@ export function addOrgUpdateNameError(state: StoreState, action: AddOrgUpdateNam
                 ...state.addOrg.newOrganization!,
                 name: {
                     value: action.name,
+                    status: FieldState.EDITED_ERROR,
+                    error: action.error
+                }
+            }
+        }
+    }
+}
+
+// Gravatar hash
+export function addOrgUpdateGravatarHashSuccess(state: StoreState, action: AddOrgUpdateGravatarHashSuccess) {
+    console.log('hmm', action)
+    return {
+        ...state, addOrg: {
+            ...state.addOrg,
+            editState: EditState.EDITED,
+            newOrganization: {
+                ...state.addOrg.newOrganization!,
+                gravatarHash: {
+                    value: action.gravatarHash,
+                    status: FieldState.EDITED_OK,
+                    error: {
+                        type: UIErrorType.NONE
+                    }
+                }
+            }
+        }
+    }
+}
+
+export function addOrgUpdateGravatarHashError(state: StoreState, action: AddOrgUpdateGravatarHashError) {
+    return {
+        ...state, addOrg: {
+            ...state.addOrg,
+            editState: EditState.EDITED,
+            newOrganization: {
+                ...state.addOrg.newOrganization!,
+                gravatarHash: {
+                    value: action.gravatarHash,
                     status: FieldState.EDITED_ERROR,
                     error: action.error
                 }
@@ -237,6 +282,12 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
             return addOrgUpdateNameSuccess(state, action as AddOrgUpdateNameSuccess)
         case ActionFlag.ADD_ORG_UPDATE_NAME_ERROR:
             return addOrgUpdateNameError(state, action as AddOrgUpdateNameError)
+
+        case ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_SUCCESS:
+            return addOrgUpdateGravatarHashSuccess(state, action as AddOrgUpdateGravatarHashSuccess)
+        case ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_ERROR:
+            return addOrgUpdateGravatarHashError(state, action as AddOrgUpdateGravatarHashError)
+
         case ActionFlag.ADD_ORG_UPDATE_ID_SUCCESS:
             return addOrgUpdateIdSuccess(state, action as AddOrgUpdateIdSuccess)
         case ActionFlag.ADD_ORG_UPDATE_ID_ERROR:

@@ -71,6 +71,24 @@ export interface AddOrgUpdateNameError extends Action {
     error: UIError
 }
 
+// Updating gravatar hash field
+
+export interface AddOrgUpdateGravatarHash extends Action {
+    type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH,
+    name: string
+}
+
+export interface AddOrgUpdateGravatarHashSuccess {
+    type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
+    gravatarHash: string
+}
+
+export interface AddOrgUpdateGravatarHashError extends Action {
+    type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_ERROR,
+    gravatarHash: string,
+    error: UIError
+}
+
 // Updating id Field
 
 export interface AddOrgUpdateId extends Action {
@@ -180,6 +198,26 @@ export function addOrgUpdateIdSuccess(id: string): AddOrgUpdateIdSuccess {
     }
 }
 
+// Update Gravatar Hash
+
+export function addOrgUpdateGravatarHashSuccess(gravatarHash: string): AddOrgUpdateGravatarHashSuccess {
+    return {
+        type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
+        gravatarHash: gravatarHash
+    }
+}
+
+export function addOrgUpdateGravatarHashError(gravatarHash: string, error: UIError): AddOrgUpdateGravatarHashError {
+    return {
+        type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_ERROR,
+        gravatarHash: gravatarHash,
+        error: error
+    }
+}
+
+
+// Update Id
+
 export function addOrgUpdateIdError(id: string, error: UIError): AddOrgUpdateIdError {
     return {
         type: ActionFlag.ADD_ORG_UPDATE_ID_ERROR,
@@ -270,6 +308,11 @@ export function addOrgEvaluate() {
             return
         }
 
+        if (newOrganization.gravatarHash.status !== FieldState.EDITED_OK) {
+            dispatch(AddOrgEvaluateErrors())
+            return
+        }
+
         if (newOrganization.description.status !== FieldState.EDITED_OK) {
             dispatch(AddOrgEvaluateErrors())
             return
@@ -298,6 +341,19 @@ export function addOrgUpdateName(name: string) {
             dispatch(addOrgUpdateNameError(validatedName, error))
         } else {
             dispatch(addOrgUpdateNameSuccess(validatedName))
+        }
+        dispatch(addOrgEvaluate())
+    }
+}
+
+export function addOrgUpdateGravatarHash(name: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+        const [validateGravatarHash, error] = Validation.validateOrgGravatarHash(name)
+
+        if (error.type === UIErrorType.ERROR) {
+            dispatch(addOrgUpdateGravatarHashError(validateGravatarHash, error))
+        } else {
+            dispatch(addOrgUpdateGravatarHashSuccess(validateGravatarHash))
         }
         dispatch(addOrgEvaluate())
     }

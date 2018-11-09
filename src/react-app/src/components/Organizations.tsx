@@ -37,21 +37,43 @@ class Organizations extends React.Component<types.OrganizationsProps, types.Orga
     //                     </tbody>
     //                 </table>
 
+    getAvatarUrl(org: types.BriefOrganization) {
+        const defaultImages = [
+            'orgs-64.png',
+            'unicorn-64.png'
+        ]
+        if (!org.gravatarHash) {
+            return defaultImages[Math.floor(Math.random() * 2)]
+        }
+        const gravatarDefault = 'identicon';
+
+        return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
+    }
+
+    renderAvatar(org: types.BriefOrganization) {
+        // console.log('grav?', org.gravatarHash)
+        return (
+            <img style={{ width: 64, height: 64 }}
+                src={this.getAvatarUrl(org)} />
+        )
+    }
+
     renderOrg(org: types.BriefOrganization, index: Number) {
         return (
             <div className="row" key={String(index)}>
+                <div className="col2">
+                    {this.renderAvatar(org)}
+                </div>
                 <div className="col1">
                     <div className="orgName">
                         <NavLink to={`/viewOrganization/${org.id}`}>{org.name}</NavLink>
                     </div>
                     <div className="orgOwner">
                         <span className="field-label">owner</span>
-                        <a href="#people/{org.owner.username}" target="_blank">{org.owner.realname} ❨{org.owner.username}❩</a>
+                        <a href={"/#people/" + org.owner.username} target="_blank">{org.owner.realname} ❨{org.owner.username}❩</a>
                     </div>
                 </div>
-                <div className="col2">
 
-                </div>
             </div>
         )
     }

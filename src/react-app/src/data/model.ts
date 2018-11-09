@@ -126,6 +126,7 @@ export class Model {
         return {
             id: id,
             name: name,
+            gravatarHash: group.custom.gravatarhash || null,
             description: description,
             owner: {
                 username: owner,
@@ -144,8 +145,8 @@ export class Model {
     }
 
     briefGroupToBriefOrg(group: BriefGroup, profile: UserProfile): BriefOrganization {
-        const { id, name, owner } = group
-        return { id, name, owner: { username: owner, realname: profile.user.realname }, createdAt: new Date(), modifiedAt: new Date() }
+        const { id, name, owner, custom: { gravatarhash } } = group
+        return { id, name, gravatarHash: gravatarhash || null, owner: { username: owner, realname: profile.user.realname }, createdAt: new Date(), modifiedAt: new Date() }
     }
 
     groupsToOrgs(groups: GroupList, profiles: Map<string, UserProfile>): Array<BriefOrganization> {
@@ -210,10 +211,10 @@ export class Model {
             .then((group) => {
                 return userProfileClient.getUserProfile(group.owner)
                     .then((userProfile) => {
-                        console.log('user profile', userProfile)
                         return {
                             id: group.id,
                             name: group.name,
+                            gravatarHash: group.custom.gravatarhash || null,
                             description: group.description,
                             createdAt: new Date(group.createdate),
                             modifiedAt: new Date(group.moddate),
@@ -262,6 +263,7 @@ export class Model {
         // do record-level validation
         if ((newOrg.id.error && newOrg.id.error.type === UIErrorType.ERROR) ||
             (newOrg.name.error && newOrg.name.error.type === UIErrorType.ERROR) ||
+            (newOrg.gravatarHash.error && newOrg.gravatarHash.error.type === UIErrorType.ERROR) ||
             (newOrg.description.error && newOrg.description.error.type === UIErrorType.ERROR)) {
             return Promise.reject(new Error('One or more fields are invalid'))
         }
@@ -269,6 +271,7 @@ export class Model {
         return groups.createGroup({
             id: newOrg.id.value,
             name: newOrg.name.value,
+            gravatarhash: newOrg.gravatarHash.value,
             description: newOrg.description.value,
             type: 'Organization'
         })
@@ -364,6 +367,27 @@ export class Validation {
         }
         return [
             name, {
+                type: UIErrorType.NONE
+            }]
+    }
+
+    static validateOrgGravatarHash(gravatarHash: string): [string, UIError] {
+        if (gravatarHash.length === 0) {
+            return [
+                gravatarHash, {
+                    type: UIErrorType.ERROR,
+                    message: 'Organization gravatar hash may not be empty'
+                }]
+        }
+        if (gravatarHash.length > 32) {
+            return [
+                gravatarHash, {
+                    type: UIErrorType.ERROR,
+                    message: 'Organization gravatar hash may not be longer than 32 characters'
+                }]
+        }
+        return [
+            gravatarHash, {
                 type: UIErrorType.NONE
             }]
     }

@@ -35,6 +35,11 @@ export interface NewOrganization {
         status: FieldState,
         error: UIError
     }
+    gravatarHash: {
+        value: string
+        status: FieldState
+        error: UIError
+    }
     description: {
         value: string,
         status: FieldState,
@@ -57,6 +62,7 @@ export interface Owner {
 export interface BriefOrganization {
     id: string
     name: string
+    gravatarHash: string | null
     owner: {
         username: string
         realname: string
@@ -68,6 +74,7 @@ export interface BriefOrganization {
 export interface Organization {
     id: string
     name: string
+    gravatarHash: string | null
     description: string
     owner: Owner
     createdAt: Date
@@ -274,6 +281,7 @@ export interface NewOrganizationProps {
     onAddOrgEdit: () => void,
     onAddOrg: () => void,
     onUpdateName: (name: string) => void,
+    onUpdateGravatarHash: (gravatarHash: string) => void;
     onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
 }
@@ -325,7 +333,7 @@ export interface AuthProps {
     token: string | null,
     username: string | null,
     realname: string | null,
-    env: string,
+    hosted: boolean,
     checkAuth: () => void,
     onRemoveAuthorization: () => void,
     onAddAuthorization: (token: string) => void

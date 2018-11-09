@@ -16,11 +16,12 @@
 }
 
 .Organizations>.row>.col1 {
-    flex: 2 1 0px;
+    flex: 1 1 0px;
+    margin-left: 10px;
 }
 
 .Organizations>.row>.col2 {
-    flex: 1 1 0px;
+    flex: 0 0 64px;
 }
 
 .Organizations .orgName {

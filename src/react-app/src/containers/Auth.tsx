@@ -6,7 +6,7 @@ import Auth from '../components/Auth'
 import * as actions from '../redux/actions/auth'
 
 export interface OwnProps {
-    env: string
+    hosted: boolean
 }
 
 interface StateProps {

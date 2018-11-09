@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import marked from 'marked';
 
 import { NewOrganizationProps, SaveState, ValidationState, EditState } from '../types';
+import * as types from '../types'
 
 import './NewOrganization.css'
 import { Button, Icon } from 'antd';
@@ -45,6 +46,11 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         this.props.onUpdateName(e.target.value);
     }
 
+    onGravatarHashChange(e: React.ChangeEvent<HTMLInputElement>) {
+        e.persist();
+        this.props.onUpdateGravatarHash(e.target.value);
+    }
+
     onDescriptionChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
         e.persist()
         this.props.onUpdateDescription(e.target.value);
@@ -74,6 +80,14 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                         <input value={this.props.newOrganization.name.value || ''}
                             onChange={this.onNameChange.bind(this)} />
                         {this.props.newOrganization.name.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.name.error.message}</span>) : ''}
+                    </div>
+                </div>
+                <div className="row gravatarHash">
+                    <div className="col1 field-label">gravatar hash</div>
+                    <div className="col2">
+                        <input value={this.props.newOrganization.gravatarHash.value || ''}
+                            onChange={this.onGravatarHashChange.bind(this)} />
+                        {this.props.newOrganization.gravatarHash.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.gravatarHash.error.message}</span>) : ''}
                     </div>
                 </div>
                 <div className="row">
@@ -108,12 +122,40 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
+    getOrgAvatarUrl(org: types.NewOrganization) {
+        const defaultImages = [
+            'orgs-64.png',
+            'unicorn-64.png'
+        ]
+        if (!org.gravatarHash.value) {
+            return defaultImages[Math.floor(Math.random() * 2)]
+        }
+        const gravatarDefault = 'identicon';
+
+        return 'https://www.gravatar.com/avatar/' + org.gravatarHash.value + '?s=64&amp;r=pg&d=' + gravatarDefault;
+    }
+
+    renderOrgAvatar(org: types.NewOrganization) {
+        // console.log('grav?', org.gravatarHash)
+        return (
+            <img style={{ width: 64, height: 64 }}
+                src={this.getOrgAvatarUrl(org)} />
+        )
+    }
+
     renderPreview() {
         return <form className="preview">
             <div className="row">
                 <div className="col2">
                     <div className="name">
                         {this.props.newOrganization.name.value || ''}
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col2">
+                    <div className="gravatarHash">
+                        {this.renderOrgAvatar(this.props.newOrganization)}
                     </div>
                 </div>
             </div>

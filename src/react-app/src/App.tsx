@@ -35,8 +35,7 @@ import KBaseIntegration from './containers/KBaseIntegration'
 
 // TODO: determine the environment
 
-const inIframe = false
-const deployEnvironment = 'prod'
+const hosted = window.frameElement ? true : false;
 
 
 function makeEmptyNewOrganization(): types.NewOrganization {
@@ -49,6 +48,13 @@ function makeEmptyNewOrganization(): types.NewOrganization {
       }
     },
     name: {
+      value: '',
+      status: types.FieldState.NONE,
+      error: {
+        type: types.UIErrorType.NONE
+      }
+    },
+    gravatarHash: {
       value: '',
       status: types.FieldState.NONE,
       error: {
@@ -134,22 +140,10 @@ class App extends Component {
 
   }
 
-  buildInner() {
-
-  }
-
-  buildDev() {
-
-  }
-
-  buildProd() {
-
-  }
-
   render() {
     return (
       <Provider store={store}>
-        <Auth env={deployEnvironment}>
+        <Auth hosted={hosted}>
           <KBaseIntegration>
             <HashRouter basename="/orgs/">
               <div className="App">
