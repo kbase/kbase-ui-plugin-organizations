@@ -125,7 +125,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     </div>
                 </div>
             </div>
-            <div className="row">
+            <div className="row" style={{ flex: '1 1 0px' }}>
                 <div className="col2">
                     <div className="description"
                         dangerouslySetInnerHTML={({ __html: marked(this.props.newOrganization.description.value || '') })}
@@ -153,7 +153,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                             {/* <FaPlusCircle style={{ verticalAlign: 'middle' }} /> */}
                             <Icon type="plus-circle" />
                             {' '}
-                            Editing New Org "
+                            Adding a New Org "
                             {orgName}
                             "
                         </span>
@@ -223,6 +223,11 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
     render() {
         if (this.state.canceling) {
             return <Redirect push to="/organizations" />
+        }
+
+        // TODO: this is just a prop for today.
+        if (this.props.saveState === SaveState.SAVED) {
+            return <Redirect push to={"/editOrganization/" + this.props.newOrganization.id.value} />
         }
 
         if (!this.props.newOrganization) {

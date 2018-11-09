@@ -36,7 +36,7 @@ import KBaseIntegration from './containers/KBaseIntegration'
 // TODO: determine the environment
 
 const inIframe = false
-const deployEnvironment = 'prod'
+const deployEnvironment = 'dev'
 
 
 function makeEmptyNewOrganization(): types.NewOrganization {

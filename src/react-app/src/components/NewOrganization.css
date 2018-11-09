@@ -60,7 +60,7 @@
 }
 
 .NewOrganization .col1 {
-    flex: 0 0 9em;
+    flex: 0 0 7em;
     font-weight: bold;
     text-align: left;
     /* color: rgba(100, 100, 100, 1); */
@@ -95,4 +95,13 @@
 
 .NewOrganization .preview .id {
     font-family: monospace;
+}
+
+.NewOrganization .preview .description {
+    padding: 8px;
+    border: 1px rgba(200, 200, 200, 0.5) solid;
+    /* border-radius: 8px; */
+    flex: 1 1 0px;
+    overflow-y: auto;
+    box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5);
 }
