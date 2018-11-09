@@ -7,7 +7,19 @@ export interface User {
 
 export interface UserProfile {
     user: User,
-    profile: any
+    profile: {
+        synced: {
+            gravatarHash: string
+        },
+        userdata: {
+            organization: string
+            city: string
+            state: string
+            country: string
+            avatarOption: string
+            gravatarDefault: string
+        }
+    }
 }
 
 export interface JSONPayload {

@@ -42,11 +42,23 @@ export interface NewOrganization {
     }
 }
 
+export interface Owner {
+    username: string
+    realname: string
+    organization: string
+    city: string
+    state: string
+    country: string
+    avatarOption: string
+    gravatarHash: string
+    gravatarDefault: string
+}
+
 export interface BriefOrganization {
     id: string
     name: string
     owner: {
-        username: string,
+        username: string
         realname: string
     }
     createdAt: Date
@@ -57,10 +69,7 @@ export interface Organization {
     id: string
     name: string
     description: string
-    owner: {
-        username: string,
-        realname: string
-    }
+    owner: Owner
     createdAt: Date
     modifiedAt: Date
 }

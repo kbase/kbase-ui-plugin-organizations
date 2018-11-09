@@ -41,7 +41,7 @@ button {
 
 .field-label {
     /* background-color: rgba(200, 200, 200, 0.5); */
-    padding: 3px;
+    padding: 3px 3px 3px 0;
     font-weight: bold;
     color: rgba(150, 150, 150, 1);
 }

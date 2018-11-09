@@ -65,7 +65,7 @@ class ViewOrganization extends React.Component<types.ViewOrganizationProps, View
                     <div className="col2">
                         <div className="id">
                             <span className="label">permalink</span>{' '}
-                            <span className="permalinkBase">https://narrative.kbase.us/organizations/</span>{this.props.organization.id}
+                            <span className="permalinkBase">https://narrative.kbase.us#org/</span>{this.props.organization.id}
                         </div>
                     </div>
                 </div>
@@ -85,6 +85,36 @@ class ViewOrganization extends React.Component<types.ViewOrganizationProps, View
         )
     }
 
+    getAvatarUrl() {
+        if (!this.props.organization) {
+            return
+        }
+        switch (this.props.organization.owner.avatarOption || 'gravatar') {
+            case 'gravatar':
+                const gravatarDefault = this.props.organization.owner.gravatarDefault || 'identicon';
+                const gravatarHash = this.props.organization.owner.gravatarHash;
+                if (gravatarHash) {
+                    return 'https://www.gravatar.com/avatar/' + gravatarHash + '?s=60&amp;r=pg&d=' + gravatarDefault;
+                } else {
+                    return './nouserpic.png';
+                }
+            case 'silhouette':
+            case 'mysteryman':
+            default:
+                return './nouserpic.png';
+        }
+    }
+
+    renderAvatar() {
+        const avatarUrl = this.getAvatarUrl()
+        return (
+            <img
+                src={avatarUrl}
+                style={{ width: 60 }}
+            />
+        )
+    }
+
     renderInfo() {
         // apparently TS is not smart enough to know this from the conditional branch in render()!
         if (!this.props.organization) {
@@ -93,12 +123,28 @@ class ViewOrganization extends React.Component<types.ViewOrganizationProps, View
         return (
             <form className="table infoTable">
                 <div className="row">
-                    <div className="col1">
-                        <span className="label">owner</span>
-                    </div>
-                    <div className="col2">
-                        <div className="owner">
-                            <a href="#people/{org.owner.username}" target="_blank">{this.props.organization.owner.realname} ❨{this.props.organization.owner.username}❩</a>
+                    <div className="col0">
+                        <div>
+                            <div className="label">proprietor</div>
+                        </div>
+                        <div className="ownerTable">
+                            <div className="avatarCol">
+                                {this.renderAvatar()}
+                            </div>
+                            <div className="proprietorCol">
+
+                                <div className="owner">
+                                    <a href="#people/{org.owner.username}" target="_blank">{this.props.organization.owner.realname}</a>
+                                    {' '}
+                                    ❨<i>aka</i> {this.props.organization.owner.username}❩
+                                </div>
+                                <div className="profileOrganization">
+                                    {this.props.organization.owner.organization}
+                                </div>
+                                <div className="profileOrganization">
+                                    {this.props.organization.owner.city} {this.props.organization.owner.state}, {this.props.organization.owner.country}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,7 +154,11 @@ class ViewOrganization extends React.Component<types.ViewOrganizationProps, View
                     </div>
                     <div className="col2">
                         <div className="createdAt">
-                            {Intl.DateTimeFormat('en-US').format(this.props.organization.createdAt)}
+                            {Intl.DateTimeFormat('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(this.props.organization.createdAt)}
                         </div>
                     </div>
                 </div>
@@ -119,7 +169,11 @@ class ViewOrganization extends React.Component<types.ViewOrganizationProps, View
                     </div>
                     <div className="col2">
                         <div className="modifiedAt">
-                            {Intl.DateTimeFormat('en-US').format(this.props.organization.modifiedAt)}
+                            {Intl.DateTimeFormat('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(this.props.organization.modifiedAt)}
                         </div>
                     </div>
                 </div>

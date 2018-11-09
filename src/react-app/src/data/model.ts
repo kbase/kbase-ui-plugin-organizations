@@ -8,7 +8,6 @@ import {
 import { UserProfileClient, UserProfile } from './userProfile'
 import { GroupsClient, Group, GroupList, BriefGroup } from './groups'
 import { WorkspaceClient } from './workspace';
-import { string } from 'prop-types';
 
 export function applyOrgSearch(orgs: Array<BriefOrganization>, searchTerms: Array<string>): Array<BriefOrganization> {
     const searchTermsRe = searchTerms.map((term) => {
@@ -131,6 +130,13 @@ export class Model {
             owner: {
                 username: owner,
                 realname: profile.user.realname,
+                city: profile.profile.userdata.city,
+                state: profile.profile.userdata.state,
+                country: profile.profile.userdata.country,
+                organization: profile.profile.userdata.organization,
+                avatarOption: profile.profile.userdata.avatarOption,
+                gravatarHash: profile.profile.synced.gravatarHash,
+                gravatarDefault: profile.profile.userdata.gravatarDefault
             },
             createdAt: new Date(createdate),
             modifiedAt: new Date(moddate)
@@ -204,6 +210,7 @@ export class Model {
             .then((group) => {
                 return userProfileClient.getUserProfile(group.owner)
                     .then((userProfile) => {
+                        console.log('user profile', userProfile)
                         return {
                             id: group.id,
                             name: group.name,
@@ -212,7 +219,14 @@ export class Model {
                             modifiedAt: new Date(group.moddate),
                             owner: {
                                 username: group.owner,
-                                realname: userProfile.user.realname
+                                realname: userProfile.user.realname,
+                                city: userProfile.profile.userdata.city,
+                                state: userProfile.profile.userdata.state,
+                                country: userProfile.profile.userdata.country,
+                                organization: userProfile.profile.userdata.organization,
+                                avatarOption: userProfile.profile.userdata.avatarOption,
+                                gravatarHash: userProfile.profile.synced.gravatarHash,
+                                gravatarDefault: userProfile.profile.userdata.gravatarDefault
                             }
                         }
                     })

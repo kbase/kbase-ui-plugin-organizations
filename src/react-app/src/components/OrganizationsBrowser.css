@@ -9,6 +9,8 @@
     display: flex;
     flex-direction: row;
     margin-bottom: 10px;
+    padding: 6px 0;
+    border-bottom: 1px rgba(200, 200, 200, 0.5) solid;
 }
 
 .OrganizationsBrowser>.bodyRow {
@@ -19,14 +21,29 @@
 
 .OrganizationsBrowser>*>.col1 {
     flex: 0 0 14em;
-    margin: 0 10px 0 0;
+    margin: 0 0 0 10px;
     display: flex;
     flex-direction: column;
 }
 
 .OrganizationsBrowser>*>.col2 {
     flex: 1 1 0px;
+    margin: 0 0 0 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.OrganizationsBrowser>*>.sortCol {
+    flex: 1.5 1 0px;
     margin: 0 0 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.OrganizationsBrowser>*>.searchBarCol {
+    flex: 1 1 0px;
+    margin: 0 10px 0 0;
     display: flex;
     flex-direction: column;
 }
@@ -63,8 +80,8 @@
 }
 
 .OrganizationsBrowser-controlArea>.controlGroup>.row>.col2 {
-    display: inline-block;
-    width: 90%
+    /* display: inline-block; */
+    /* width: 90% */
 }
 
 .OrganizationsBrowser-searchBar {

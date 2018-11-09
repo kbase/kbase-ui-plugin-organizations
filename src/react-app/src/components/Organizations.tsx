@@ -2,6 +2,7 @@ import * as React from 'react';
 import './Organizations.css';
 import * as types from '../types';
 import { NavLink } from 'react-router-dom';
+import { Alert } from 'antd';
 
 // TODO: need more ergonomic way to resolve the common issue of data types interfering with 
 // component types.
@@ -66,7 +67,9 @@ class Organizations extends React.Component<types.OrganizationsProps, types.Orga
             )
         } else {
             return (
-                <div>Sorry, no orgs</div>
+                <Alert type="warning"
+                    style={{ maxWidth: '20em', margin: '20px auto 0 auto' }}
+                    message="Sorry, no organizations were found." />
             )
         }
     }

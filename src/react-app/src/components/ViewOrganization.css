@@ -8,10 +8,11 @@
     flex: 1 1 0px;
     display: flex;
     flex-direction: row;
+    margin-top: 10px;
 }
 
 .ViewOrganization .mainRow>.mainColumn {
-    flex: 3 1 0px;
+    flex: 2 1 0px;
     display: flex;
     flex-direction: column;
     margin-right: 10px;
@@ -48,6 +49,33 @@
     margin-bottom: 8px;
 }
 
+.ViewOrganization .table.infoTable>.row>.col0 {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization .table.infoTable>.row>.col0>.ownerTable {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.ViewOrganization .table.infoTable>.row>.col0>.ownerTable>.avatarCol {
+    flex: 0 0 60px;
+}
+
+.ViewOrganization .table.infoTable>.row>.col0>.ownerTable>.proprietorCol {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    padding-left: 4px;
+}
+
+.ViewOrganization .ownerTable .owner {
+    font-weight: bold;
+}
+
 .ViewOrganization .table.infoTable>.row>.col1 {
     flex: 0 0 8em;
     font-weight: bold;
@@ -78,26 +106,28 @@
 
 .ViewOrganization .name {
     font-weight: bold;
-    font-size: 110%;
+    font-size: 150%;
 }
 
 .ViewOrganization .description {
-    padding: 4px;
-    border: 1px rgba(200, 200, 200, 1) solid;
-    border-radius: 8px;
+    padding: 8px;
+    border: 1px rgba(200, 200, 200, 0.5) solid;
+    /* border-radius: 8px; */
     flex: 1 1 0px;
     overflow-y: auto;
+    box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5);
 }
 
 .ViewOrganization .infoBox {
-    padding: 4px;
-    border: 1px rgba(200, 200, 200, 1) solid;
-    border-radius: 8px;
+    padding: 8px;
+    /* border: 1px rgba(200, 200, 200, 1) solid; */
+    /* border-radius: 8px; */
+    border: 1px rgba(200, 200, 200, 0.5) solid;
 }
 
 .ViewOrganization .label {
     /* background-color: rgba(200, 200, 200, 0.5); */
-    padding: 3px;
+    padding: 3px 3px 3px 0;
     font-weight: bold;
     color: rgba(150, 150, 150, 1);
 }
