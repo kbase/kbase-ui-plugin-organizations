@@ -50,8 +50,14 @@ export interface Group {
 export interface NewGroup {
     id: string
     name: string
-    gravatarhash: string
+    gravatarhash: string | null
     type: string
+    description: string
+}
+
+export interface GroupUpdate {
+    name: string
+    gravatarhash: string | null
     description: string
 }
 
@@ -100,6 +106,9 @@ export interface ErrorResult {
 // 50030	No such workspace
 // 60000	Unsupported operation
 
+export interface GroupExists {
+    exists: boolean
+}
 export class GroupsClient {
     token: string;
     url: string;
@@ -123,6 +132,16 @@ export class GroupsClient {
             .then((result) => {
                 return result as GroupsServiceInfo;
             });
+    }
+
+    groupExists(id: string): Promise<GroupExists> {
+        return fetch(this.url + '/group/' + id + '/exists')
+            .then((response) => {
+                return response.json()
+            })
+            .then((exists) => {
+                return exists as GroupExists
+            })
     }
 
     getGroups(): Promise<GroupList> {
@@ -183,6 +202,35 @@ export class GroupsClient {
             })
             .then((result) => {
                 return result as Group
+            })
+    }
+
+    updateGroup(id: string, groupUpdate: GroupUpdate): Promise<void> {
+        return fetch(this.url + '/group/' + id + '/update', {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            method: 'PUT',
+
+            // TODO: build more intelligently
+            body: JSON.stringify({
+                name: groupUpdate.name,
+                custom: {
+                    gravatarhash: groupUpdate.gravatarhash
+                },
+                type: 'Organization',
+                description: groupUpdate.description
+            })
+        })
+            .then((response) => {
+                // response is an empty body.
+                if (response.status === 204) {
+                    return
+                }
+                throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
             })
     }
 }

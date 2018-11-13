@@ -106,6 +106,13 @@ export function checkAuth() {
                 const roles = account.roles.map(({ id, desc }) => id)
                 dispatch(authAuthorized(token, account.user, account.display, roles))
             })
+            .catch((err) => {
+                console.error('auth check error', err)
+                dispatch(authCheckError({
+                    code: 'error',
+                    message: err.message
+                }))
+            })
     }
 }
 
@@ -133,6 +140,13 @@ export function authAddAuthorization(token: string) {
             .then(([tokenInfo, account]) => {
                 const roles = account.roles.map(({ id, desc }) => id)
                 dispatch(authAuthorized(token, account.user, account.display, roles))
+            })
+            .catch((err) => {
+                console.error('auth check error', err)
+                dispatch(authCheckError({
+                    code: 'error',
+                    message: err.message
+                }))
             })
 
     }

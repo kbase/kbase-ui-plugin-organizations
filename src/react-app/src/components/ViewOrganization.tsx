@@ -4,15 +4,24 @@ import { NavLink } from 'react-router-dom'
 
 import './ViewOrganization.css'
 
-import * as types from '../types'
+import { ViewOrgState, Organization, AppError, BriefOrganization } from '../types'
 import { Button } from 'antd';
 import Header from './Header';
 
 export interface ViewOrganizationState {
 }
 
-class ViewOrganization extends React.Component<types.ViewOrganizationProps, ViewOrganizationState> {
-    constructor(props: types.ViewOrganizationProps) {
+export interface ViewOrganizationProps {
+    state: ViewOrgState
+    id: string,
+    organization?: Organization
+    error?: AppError
+    username: string,
+    onViewOrg: (id: string) => void
+}
+
+class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrganizationState> {
+    constructor(props: ViewOrganizationProps) {
         super(props)
 
         this.props.onViewOrg(this.props.id)
@@ -76,20 +85,23 @@ class ViewOrganization extends React.Component<types.ViewOrganizationProps, View
         )
     }
 
-    getOrgAvatarUrl(org: types.BriefOrganization) {
-        const defaultImages = [
-            'orgs-64.png',
-            'unicorn-64.png'
-        ]
+    getOrgAvatarUrl(org: BriefOrganization) {
+        // const defaultImages = [
+        //     'orgs-64.png',
+        //     'unicorn-64.png'
+        // ]
+        // if (!org.gravatarHash) {
+        //     return defaultImages[Math.floor(Math.random() * 2)]
+        // }
         if (!org.gravatarHash) {
-            return defaultImages[Math.floor(Math.random() * 2)]
+            return 'unicorn-64.png'
         }
         const gravatarDefault = 'identicon';
 
         return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
     }
 
-    renderOrgAvatar(org: types.BriefOrganization) {
+    renderOrgAvatar(org: BriefOrganization) {
         // console.log('grav?', org.gravatarHash)
         return (
             <img style={{ width: 64, height: 64 }}
@@ -195,7 +207,7 @@ class ViewOrganization extends React.Component<types.ViewOrganizationProps, View
 
     renderHeader() {
         return (
-            <Header title="Organizations">
+            <Header>
                 <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <div style={{ flex: '0 0 auto' }}>
                         <span>
@@ -215,7 +227,7 @@ class ViewOrganization extends React.Component<types.ViewOrganizationProps, View
 
     renderLoadingHeader() {
         return (
-            <Header title="Organizations">
+            <Header>
                 <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <div style={{ flex: '0 0 auto' }}>
                         <span>

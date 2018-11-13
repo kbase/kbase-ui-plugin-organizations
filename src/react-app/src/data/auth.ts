@@ -127,6 +127,9 @@ export class AuthClient {
             mode: 'cors'
         })
             .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error(response.statusText)
+                }
                 return response.json()
             })
             .then((result) => {
@@ -143,6 +146,9 @@ export class AuthClient {
             mode: 'cors'
         })
             .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error(response.statusText)
+                }
                 return response.json()
             })
             .then((result) => {

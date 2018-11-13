@@ -368,10 +368,10 @@ export function addOrgUpdateId(id: string) {
             return
         }
         const model = newModelFromState(getState())
-        model.getGroup(validatedId)
-            .then((org) => {
-                if (org) {
-                    console.log('org??', org)
+        model.groupExists(validatedId)
+            .then((exists) => {
+                if (exists) {
+                    console.log('org??', exists)
                     dispatch(addOrgUpdateIdError(validatedId, {
                         type: UIErrorType.ERROR,
                         message: 'This org id is already in use'

@@ -1,33 +1,29 @@
-import React, { Component } from 'react';
-import { Route } from 'react-router';
-import { BrowserRouter, Redirect, HashRouter } from 'react-router-dom';
+import React, { Component } from 'react'
+import { Route } from 'react-router'
+import { BrowserRouter, Redirect, HashRouter } from 'react-router-dom'
 
 // redux
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 
-import * as types from './types';
-import { SortOrgs } from './redux/actions/viewOrg';
-import theReducer from './redux/reducers';
+import theReducer from './redux/reducers'
 
 // the app and subcomponents
 import './App.css';
 
 // fontawesome setup
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner, faSearch } from '@fortawesome/free-solid-svg-icons'
 library.add(faSpinner, faSearch)
 
-import Header from './components/Header';
-import OrganizationsBrowser from './containers/OrganizationsBrowser';
-import NewOrganization from './containers/NewOrganization';
-import ViewOrganization from './containers/ViewOrganization';
+import OrganizationsBrowser from './containers/OrganizationsBrowser'
+import NewOrganization from './containers/NewOrganization'
+import ViewOrganization from './containers/ViewOrganization'
 import EditOrganization from './containers/EditOrganization'
 import Auth from './containers/Auth'
 import KBaseIntegration from './containers/KBaseIntegration'
-// import { types } from 'util';
+import { StateInstances } from './redux/state';
 
 // Put the redux store together
 // Just for prototyping --- This is super naive and will change!
@@ -35,98 +31,12 @@ import KBaseIntegration from './containers/KBaseIntegration'
 
 // TODO: determine the environment
 
-const hosted = window.frameElement ? true : false;
-
-
-function makeEmptyNewOrganization(): types.NewOrganization {
-  return {
-    id: {
-      value: '',
-      status: types.FieldState.NONE,
-      error: {
-        type: types.UIErrorType.NONE
-      }
-    },
-    name: {
-      value: '',
-      status: types.FieldState.NONE,
-      error: {
-        type: types.UIErrorType.NONE
-      }
-    },
-    gravatarHash: {
-      value: '',
-      status: types.FieldState.NONE,
-      error: {
-        type: types.UIErrorType.NONE
-      }
-    },
-    description: {
-      value: '',
-      status: types.FieldState.NONE,
-      error: {
-        type: types.UIErrorType.NONE
-      }
-    }
-  }
-}
+const hosted = window.frameElement ? true : false
 
 // Set up initial state 
 // TODO: move to own file
-const initialState: types.StoreState = {
-  rawOrganizations: [],
-  organizations: [],
-  totalCount: 0,
-  filteredCount: 0,
-  sortBy: 'name',
-  sortDirection: types.SortDirection.ASCENDING,
-  filter: 'all',
-  searchTerms: [],
-  selectedOrganizationId: null,
-  auth: {
-    status: types.AuthState.NONE,
-    authorization: {
-      token: '',
-      username: '',
-      realname: '',
-      roles: []
-    }
-  },
-  error: null,
-  searching: false,
-  app: {
-    status: types.AppState.NONE,
-    config: {
-      baseUrl: '',
-      services: {
-        Groups: {
-          url: ''
-        },
-        UserProfile: {
-          url: ''
-        },
-        Workspace: {
-          url: ''
-        }
-      }
-    }
-  },
-  addOrg: {
-    editState: types.EditState.NONE,
-    saveState: types.SaveState.NONE,
-    validationState: types.ValidationState.NONE,
-    newOrganization: makeEmptyNewOrganization()
-  },
-  updateOrg: {
-    pending: false
-  },
-  viewOrg: {
-    state: types.ViewOrgState.NONE
-  },
-  editOrg: {
-    state: types.EditOrgState.NONE
-  }
-}
+const initialState = StateInstances.makeInitialState()
+
 
 // TODO: remove the cast of reducer to any...
 // const middleware = [thunk]
@@ -134,10 +44,8 @@ const initialState: types.StoreState = {
 const store = createStore(theReducer as any, initialState as any, compose(applyMiddleware(thunk)))
 
 class App extends Component {
-
   constructor(props: any) {
     super(props)
-
   }
 
   render() {
@@ -160,9 +68,8 @@ class App extends Component {
           </KBaseIntegration>
         </Auth>
       </Provider>
-
     )
   }
 }
 
-export default App;
+export default App

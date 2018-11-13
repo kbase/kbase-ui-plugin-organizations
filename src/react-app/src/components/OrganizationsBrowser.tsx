@@ -2,7 +2,7 @@ import * as React from 'react';
 import { NavLink } from 'react-router-dom'
 
 import Organizations from '../containers/Organizations';
-import * as types from '../types';
+import { SortDirection } from '../types';
 
 import './OrganizationsBrowser.css';
 import { FaSearch, FaSpinner } from 'react-icons/fa'
@@ -12,13 +12,27 @@ import Header from './Header';
 import RadioGroup from 'antd/lib/radio/group';
 import { RadioChangeEvent } from 'antd/lib/radio';
 
+export interface OrganizationsBrowserProps {
+    totalCount: number;
+    filteredCount: number;
+    sortBy: string;
+    sortDirection: SortDirection;
+    filter: string;
+    searching: boolean;
+    onSearchOrgs: (searchTerms: Array<string>) => void;
+    onSortOrgs: (sortBy: string, sortDirection: SortDirection) => void;
+    onFilterOrgs: (filter: string) => void;
+}
 
-class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserProps, types.OrganizationsBrowserState> {
+export interface OrganizationsBrowserState {
+    searchInput: string
+}
+class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, OrganizationsBrowserState> {
 
     searchInput: React.RefObject<HTMLInputElement>;
     searchButton: React.RefObject<Button>;
 
-    constructor(props: types.OrganizationsBrowserProps) {
+    constructor(props: OrganizationsBrowserProps) {
         super(props)
 
         this.searchInput = React.createRef()
@@ -77,7 +91,7 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
     }
 
     onSortDirectionChange2(value: string) {
-        this.props.onSortOrgs(this.props.sortBy, value as types.SortDirection)
+        this.props.onSortOrgs(this.props.sortBy, value as SortDirection)
     }
 
     onFilterChange(e: RadioChangeEvent) {
@@ -123,8 +137,8 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
 
                 <div style={{ marginTop: '10px' }}>
                     <RadioGroup onChange={this.onSortDirectionChange.bind(this)} value={this.props.sortDirection}>
-                        <Radio className="radio" value={types.SortDirection.ASCENDING}><Icon type="sort-ascending" /> Ascending</Radio>
-                        <Radio className="radio" value={types.SortDirection.DESCENDING}><Icon type="sort-descending" /> Descending</Radio>
+                        <Radio className="radio" value={SortDirection.ASCENDING}><Icon type="sort-ascending" /> Ascending</Radio>
+                        <Radio className="radio" value={SortDirection.DESCENDING}><Icon type="sort-descending" /> Descending</Radio>
                     </RadioGroup>
                 </div>
             </div>
@@ -238,7 +252,7 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
 
     renderHeader() {
         return (
-            <Header title="Organizations">
+            <Header>
                 <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <div style={{ flex: '0 0 auto' }}>
                         <span>
@@ -273,8 +287,8 @@ class OrganizationsBrowser extends React.Component<types.OrganizationsBrowserPro
                     style={{ width: '10em' }}
                     dropdownMatchSelectWidth={true}
                     defaultValue={this.props.sortDirection}>
-                    <Select.Option value={types.SortDirection.ASCENDING} key="name"><Icon type="sort-ascending" />Ascending</Select.Option>
-                    <Select.Option value={types.SortDirection.DESCENDING} key="owner"><Icon type="sort-descending" />Descending</Select.Option>
+                    <Select.Option value={SortDirection.ASCENDING} key="name"><Icon type="sort-ascending" />Ascending</Select.Option>
+                    <Select.Option value={SortDirection.DESCENDING} key="owner"><Icon type="sort-descending" />Descending</Select.Option>
                 </Select>
                 <span className="field-label" style={{ marginLeft: '10px' }}>filter</span>
                 <Select onChange={this.onFilterChange2.bind(this)}

@@ -1,9 +1,9 @@
-import Organizations from '../components/Organizations';
-import {StoreState, OrganizationsProps} from '../types';
-import {connect} from 'react-redux';
+import { Organizations, OrganizationsProps } from '../components/Organizations';
+import { StoreState } from '../types';
+import { connect } from 'react-redux';
 
 export function mapStateToProps(state: StoreState): OrganizationsProps {
-    const {organizations} = state;
+    const { browseOrgs: { organizations } } = state;
     return {
         organizations
     }

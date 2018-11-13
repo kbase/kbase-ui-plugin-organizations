@@ -1,13 +1,27 @@
 import * as React from 'react'
 import { Redirect } from 'react-router-dom';
 import marked from 'marked';
+import { Button, Icon } from 'antd';
 
-import { NewOrganizationProps, SaveState, ValidationState, EditState } from '../types';
-import * as types from '../types'
+import { EditableOrganization, SaveState, ValidationState, EditState } from '../types';
 
 import './NewOrganization.css'
-import { Button, Icon } from 'antd';
+
 import Header from './Header';
+
+export interface NewOrganizationProps {
+    editState: EditState,
+    saveState: SaveState,
+    validationState: ValidationState,
+    newOrganization: EditableOrganization,
+    onAddOrgEdit: () => void,
+    onAddOrg: () => void,
+    onUpdateName: (name: string) => void,
+    onUpdateGravatarHash: (gravatarHash: string) => void;
+    onUpdateId: (id: string) => void,
+    onUpdateDescription: (description: string) => void
+}
+
 
 export interface NewOrganizationState {
     canceling: boolean;
@@ -122,20 +136,23 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
-    getOrgAvatarUrl(org: types.NewOrganization) {
-        const defaultImages = [
-            'orgs-64.png',
-            'unicorn-64.png'
-        ]
+    getOrgAvatarUrl(org: EditableOrganization) {
+        // const defaultImages = [
+        //     'orgs-64.png',
+        //     'unicorn-64.png'
+        // ]
+        // if (!org.gravatarHash.value) {
+        //     return defaultImages[Math.floor(Math.random() * 2)]
+        // }
         if (!org.gravatarHash.value) {
-            return defaultImages[Math.floor(Math.random() * 2)]
+            return 'unicorn-64.png'
         }
         const gravatarDefault = 'identicon';
 
         return 'https://www.gravatar.com/avatar/' + org.gravatarHash.value + '?s=64&amp;r=pg&d=' + gravatarDefault;
     }
 
-    renderOrgAvatar(org: types.NewOrganization) {
+    renderOrgAvatar(org: EditableOrganization) {
         // console.log('grav?', org.gravatarHash)
         return (
             <img style={{ width: 64, height: 64 }}
@@ -188,7 +205,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
     renderHeader() {
         const orgName = this.props.newOrganization!.name.value || (<span style={{ fontStyle: 'italic', color: 'gray' }}>org name will appear here when you edit the name field</span>)
         return (
-            <Header title="Organizations">
+            <Header>
                 <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <div style={{ flex: '0 0 auto' }}>
                         <span>
@@ -250,7 +267,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
     renderLoadingHeader() {
         return (
-            <Header title="Organizations">
+            <Header>
                 <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <div style={{ flex: '0 0 auto' }}>
                         <span>

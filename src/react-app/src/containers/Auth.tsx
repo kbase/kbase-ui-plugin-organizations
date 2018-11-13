@@ -1,7 +1,7 @@
 import { Dispatch, Action } from 'redux'
 import { connect } from 'react-redux'
 
-import { StoreState, AuthState } from '../types'
+import { StoreState, AuthState, Authorization } from '../types'
 import Auth from '../components/Auth'
 import * as actions from '../redux/actions/auth'
 
@@ -10,10 +10,11 @@ export interface OwnProps {
 }
 
 interface StateProps {
-    authStatus: AuthState,
-    token: string | null,
-    username: string | null,
-    realname: string | null,
+    authorization: Authorization
+    // authStatus: AuthState,
+    // token: string | null,
+    // username: string | null,
+    // realname: string | null,
 }
 
 interface DispatchProps {
@@ -23,12 +24,13 @@ interface DispatchProps {
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
-    const { auth: { status, authorization } } = state
+    const { auth } = state
     return {
-        authStatus: status,
-        token: authorization.token || null,
-        username: authorization.username || null,
-        realname: authorization.realname || null
+        authorization: auth
+        // authStatus: status,
+        // token: authorization.token || null,
+        // username: authorization.username || null,
+        // realname: authorization.realname || null
     }
 }
 

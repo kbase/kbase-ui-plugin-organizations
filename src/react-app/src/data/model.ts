@@ -1,13 +1,16 @@
 import {
-    Organization, BriefOrganization, NewOrganization, OrganizationUpdate,
+    Organization, BriefOrganization, OrganizationUpdate,
     UIError,
     UIErrorType,
-    SortDirection
+    SortDirection,
+    FieldState,
+    EditableOrganization
 } from '../types';
 // import { organizations } from './data';
 import { UserProfileClient, UserProfile } from './userProfile'
 import { GroupsClient, Group, GroupList, BriefGroup } from './groups'
 import { WorkspaceClient } from './workspace';
+import { types } from 'util';
 
 export function applyOrgSearch(orgs: Array<BriefOrganization>, searchTerms: Array<string>): Array<BriefOrganization> {
     const searchTermsRe = searchTerms.map((term) => {
@@ -126,7 +129,7 @@ export class Model {
         return {
             id: id,
             name: name,
-            gravatarHash: group.custom.gravatarhash || null,
+            gravatarHash: group.custom ? (group.custom.gravatarhash || null) : null,
             description: description,
             owner: {
                 username: owner,
@@ -214,7 +217,7 @@ export class Model {
                         return {
                             id: group.id,
                             name: group.name,
-                            gravatarHash: group.custom.gravatarhash || null,
+                            gravatarHash: group.custom ? (group.custom.gravatarhash || null) : null,
                             description: group.description,
                             createdAt: new Date(group.createdate),
                             modifiedAt: new Date(group.moddate),
@@ -249,7 +252,18 @@ export class Model {
             })
     }
 
-    addOrg(newOrg: NewOrganization, username: string): Promise<Organization> {
+    groupExists(id: string): Promise<boolean> {
+        const groups = new GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+        return groups.groupExists(id)
+            .then(({ exists }) => {
+                return exists
+            })
+    }
+
+    addOrg(newOrg: EditableOrganization, username: string): Promise<Organization> {
         const groups = new GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
@@ -284,13 +298,24 @@ export class Model {
     }
 
     // TODO this is fake until update is implemented on the back end
-    updateOrg(id: string, orgUpdate: OrganizationUpdate): Promise<Organization> {
-        return new Promise<Organization>((resolve) => {
-            return wait(200)
-                .then(() => {
-                    return this.getOrg(id)
-                })
+    updateOrg(id: string, orgUpdate: OrganizationUpdate): Promise<void> {
+
+        const groups = new GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
         })
+
+        // do record-level validation
+
+
+        return groups.updateGroup(id, {
+            name: orgUpdate.name,
+            gravatarhash: orgUpdate.gravatarHash,
+            description: orgUpdate.description
+        })
+            .then(() => {
+                console.log('successfully saved...')
+            })
     }
 
     validateOrgId(id: string): [string, UIError] {
@@ -375,8 +400,7 @@ export class Validation {
         if (gravatarHash.length === 0) {
             return [
                 gravatarHash, {
-                    type: UIErrorType.ERROR,
-                    message: 'Organization gravatar hash may not be empty'
+                    type: UIErrorType.NONE
                 }]
         }
         if (gravatarHash.length > 32) {
@@ -413,4 +437,40 @@ export class Validation {
                 type: UIErrorType.NONE
             }]
     }
+}
+
+export class StaticData {
+    static makeEmptyEditableOrganization(): EditableOrganization {
+        return {
+            id: {
+                value: '',
+                status: FieldState.NONE,
+                error: {
+                    type: UIErrorType.NONE
+                }
+            },
+            name: {
+                value: '',
+                status: FieldState.NONE,
+                error: {
+                    type: UIErrorType.NONE
+                }
+            },
+            gravatarHash: {
+                value: '',
+                status: FieldState.NONE,
+                error: {
+                    type: UIErrorType.NONE
+                }
+            },
+            description: {
+                value: '',
+                status: FieldState.NONE,
+                error: {
+                    type: UIErrorType.NONE
+                }
+            }
+        }
+    }
+
 }

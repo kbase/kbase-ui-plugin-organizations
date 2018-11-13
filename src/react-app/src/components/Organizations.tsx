@@ -3,16 +3,22 @@ import './Organizations.css';
 import * as types from '../types';
 import { NavLink } from 'react-router-dom';
 import { Alert } from 'antd';
+import { BriefOrganization } from '../types';
 
 // TODO: need more ergonomic way to resolve the common issue of data types interfering with 
 // component types.
-// import * as types from '../types';
 
+export interface OrganizationsProps {
+    organizations: Array<BriefOrganization>
+}
 
+export interface OrganizationsState {
+    searchTerms: Array<string>
+}
 
-class Organizations extends React.Component<types.OrganizationsProps, types.OrganizationsState> {
+export class Organizations extends React.Component<OrganizationsProps, OrganizationsState> {
 
-    constructor(props: types.OrganizationsProps) {
+    constructor(props: OrganizationsProps) {
         super(props)
 
         this.state = {
@@ -20,45 +26,30 @@ class Organizations extends React.Component<types.OrganizationsProps, types.Orga
         }
     }
 
-    // <table className="Organizations-info-table">
-    //                     <tbody>
-    //                         {/* <tr>
-    //                             <th>established</th>
-    //                             <td>{Intl.DateTimeFormat('en-US').format(org.createdAt)}</td>
-    //                         </tr> */}
-    //                         <tr>
-    //                             <th>owner</th>
-    //                             <td><a href="#people/{org.owner.username}" target="_blank">{org.owner.realname} ❨{org.owner.username}❩</a></td>
-    //                         </tr>
-    //                         {/* <tr>
-    //                             <th>last updated</th>
-    //                             <td>{Intl.DateTimeFormat('en-US').format(org.modifiedAt)}</td>
-    //                         </tr> */}
-    //                     </tbody>
-    //                 </table>
-
-    getAvatarUrl(org: types.BriefOrganization) {
-        const defaultImages = [
-            'orgs-64.png',
-            'unicorn-64.png'
-        ]
+    getAvatarUrl(org: BriefOrganization) {
+        // const defaultImages = [
+        //     'orgs-64.png',
+        //     'unicorn-64.png'
+        // ]
+        // if (!org.gravatarHash) {
+        //     return defaultImages[Math.floor(Math.random() * 2)]
+        // }
         if (!org.gravatarHash) {
-            return defaultImages[Math.floor(Math.random() * 2)]
+            return 'unicorn-64.png'
         }
         const gravatarDefault = 'identicon';
 
         return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
     }
 
-    renderAvatar(org: types.BriefOrganization) {
-        // console.log('grav?', org.gravatarHash)
+    renderAvatar(org: BriefOrganization) {
         return (
             <img style={{ width: 64, height: 64 }}
                 src={this.getAvatarUrl(org)} />
         )
     }
 
-    renderOrg(org: types.BriefOrganization, index: Number) {
+    renderOrg(org: BriefOrganization, index: Number) {
         return (
             <div className="row" key={String(index)}>
                 <div className="col2">
@@ -73,7 +64,6 @@ class Organizations extends React.Component<types.OrganizationsProps, types.Orga
                         <a href={"/#people/" + org.owner.username} target="_blank">{org.owner.realname} ❨{org.owner.username}❩</a>
                     </div>
                 </div>
-
             </div>
         )
     }
@@ -81,7 +71,7 @@ class Organizations extends React.Component<types.OrganizationsProps, types.Orga
     renderOrgs() {
         if (this.props.organizations.length > 0) {
             return (
-                this.props.organizations.map((org: types.BriefOrganization, index) => {
+                this.props.organizations.map((org: BriefOrganization, index) => {
                     return (
                         this.renderOrg(org, index)
                     )

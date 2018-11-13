@@ -4,7 +4,6 @@ import './Header.css';
 import { FaUsers, FaChevronRight } from 'react-icons/fa'
 
 export interface HeaderProps {
-    title: string;
 }
 
 class Header extends React.Component<HeaderProps, object> {
@@ -18,15 +17,13 @@ class Header extends React.Component<HeaderProps, object> {
     }
 
     render() {
-        const { title } = this.props;
-
         return (
             <div className="Header">
                 <div style={{ flex: '0 0 auto' }}>
                     <NavLink to="/organizations">
                         <FaUsers style={{ verticalAlign: 'middle' }} />
                         {' '}
-                        Orgs
+                        <span data-test="orgs-label">Orgs</span>
                     </NavLink>
                 </div>
                 <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>

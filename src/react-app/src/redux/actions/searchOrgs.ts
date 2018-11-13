@@ -91,7 +91,8 @@ export function searchOrgs(searchTerms: Array<string>) {
         dispatch(searchOrgsStart(searchTerms))
         dispatch(viewOrgStop())
 
-        const { sortBy, sortDirection, filter,
+        const {
+            browseOrgs: { sortBy, sortDirection, filter },
             auth: { authorization: { token, username } },
             app: { config } } = getState()
         const model = new Model({
@@ -122,7 +123,8 @@ export function sortOrgs(sortBy: string, sortDirection: SortDirection) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(sortOrgsStart(sortBy, sortDirection))
 
-        const { searchTerms, filter,
+        const {
+            browseOrgs: { searchTerms, filter },
             auth: { authorization: { token, username } },
             app: { config } } = getState()
         const model = new Model({
@@ -153,7 +155,8 @@ export function filterOrgs(filter: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(filterOrgsStart(filter))
 
-        const { searchTerms, sortBy, sortDirection,
+        const {
+            browseOrgs: { searchTerms, sortBy, sortDirection },
             auth: { authorization: { token, username } },
             app: { config } } = getState()
         const model = new Model({

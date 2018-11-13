@@ -1,9 +1,13 @@
 import * as React from 'react'
 import './KBaseIntegration.css'
 
-import { KBaseIntegrationProps, AppState } from '../types'
+import { AppState } from '../types'
 import { } from '../lib/IFrameSimulator'
 
+export interface KBaseIntegrationProps {
+    status: AppState,
+    onAppStart: () => void
+}
 class KBaseIntegration extends React.Component<KBaseIntegrationProps, object> {
     constructor(props: KBaseIntegrationProps) {
         super(props)

@@ -9,6 +9,7 @@ export function authCheckStart(state: StoreState, action: AuthCheckStart): Store
         ...state,
         auth: {
             status: AuthState.CHECKING,
+            message: '',
             authorization: {
                 token: '',
                 username: '',
@@ -24,6 +25,7 @@ export function authCheckError(state: StoreState, action: AuthCheckError): Store
         ...state,
         auth: {
             status: AuthState.ERROR,
+            message: action.error.message,
             authorization: {
                 token: '',
                 username: '',
@@ -39,6 +41,7 @@ export function authAuthorized(state: StoreState, action: AuthAuthorized): Store
         ...state,
         auth: {
             status: AuthState.AUTHORIZED,
+            message: '',
             authorization: {
                 token: action.token,
                 username: action.username,
@@ -54,6 +57,7 @@ export function authUnauthorized(state: StoreState, action: AuthUnauthorized): S
         ...state,
         auth: {
             status: AuthState.UNAUTHORIZED,
+            message: '',
             authorization: {
                 token: '',
                 username: '',

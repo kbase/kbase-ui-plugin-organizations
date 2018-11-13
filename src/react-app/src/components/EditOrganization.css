@@ -15,21 +15,32 @@
     flex: 1 1 0px;
     display: flex;
     flex-direction: row;
+    overflow-y: auto;
 }
 
-.EditOrganization .mainRow>.editorColumn {
+.EditOrganization .footerRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    border-top: 1px silver solid;
+}
+
+.EditOrganization .footerRow .col2 {
+    align-items: center;
+}
+
+.EditOrganization .editorColumn {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     margin-right: 10px;
 }
 
-.EditOrganization .mainRow>.previewColumn {
+.EditOrganization .previewColumn {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     margin-left: 10px;
-    overflow-y: auto;
 }
 
 .EditOrganization .editor,
@@ -45,7 +56,7 @@
     display: flex;
     flex-direction: row;
     /* height: 30px; */
-    margin-bottom: 8px;
+    margin: 4px 0;
 }
 
 .EditOrganization .col1 {
@@ -79,6 +90,11 @@
 .EditOrganization .editor .footer {
     flex: 0 0 30px;
     text-align: center;
+    padding: 6px;
+}
+
+.EditOrganization .editor .gravatarHash {
+    height: 64px;
 }
 
 .EditOrganization .preview .id {
@@ -92,4 +108,8 @@
     flex: 1 1 0px;
     overflow-y: auto;
     box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5);
+}
+
+.EditOrganization .preview .gravatarHash {
+    height: 64px;
 }

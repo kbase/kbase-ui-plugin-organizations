@@ -2,62 +2,73 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
-import {
-    StoreState, Organization, EditedOrganization,
-    AppError, UIError
-} from '../../types'
-import { Model } from '../../data/model'
+import { StoreState, Organization, AppError, UIError, UIErrorType, FieldState, EditableOrganization } from '../../types'
+import { Model, Validation } from '../../data/model'
 
 // ACTIONS
 
-// Top level action which triggers an edit org session (load org)
-export interface EditOrg extends Action {
-    type: ActionFlag.EDIT_ORG,
+// Loading the editor
+export interface EditOrgEdit extends Action {
+    type: ActionFlag.EDIT_ORG_EDIT,
     id: string
 }
 
-export interface EditOrgStart extends Action {
-    type: ActionFlag.EDIT_ORG_START
+export interface EditOrgEditStart extends Action {
+    type: ActionFlag.EDIT_ORG_EDIT_START,
+    id: string
 }
 
-export interface EditOrgSuccess extends Action {
-    type: ActionFlag.EDIT_ORG_SUCCESS,
-    organization: EditedOrganization
+export interface EditOrgEditSuccess extends Action {
+    type: ActionFlag.EDIT_ORG_EDIT_SUCCESS,
+    editedOrganization: EditableOrganization
 }
 
-export interface EditOrgError extends Action {
-    type: ActionFlag.EDIT_ORG_ERROR,
+export interface EditOrgEditError extends Action<ActionFlag.EDIT_ORG_EDIT_ERROR> {
+    type: ActionFlag.EDIT_ORG_EDIT_ERROR,
     error: AppError
 }
 
-// Saving an edited org
-export interface EditOrgSave extends Action {
+// Evaluating state of form 
+
+export interface EditOrgEvaluate extends Action<ActionFlag.EDIT_ORG_EVALUATE> {
+    type: ActionFlag.EDIT_ORG_EVALUATE
+}
+
+export interface EditOrgEvaluateOK extends Action<ActionFlag.EDIT_ORG_EVALUATE_OK> {
+    type: ActionFlag.EDIT_ORG_EVALUATE_OK
+}
+
+export interface EditOrgEvaluateErrors extends Action<ActionFlag.EDIT_ORG_EVALUATE_ERRORS> {
+    type: ActionFlag.EDIT_ORG_EVALUATE_ERRORS
+}
+
+// Saving
+
+export interface EditOrgSave extends Action<ActionFlag.EDIT_ORG_SAVE> {
     type: ActionFlag.EDIT_ORG_SAVE
 }
 
-export interface EditOrgSaveStart extends Action {
+export interface EditOrgSaveStart extends Action<ActionFlag.EDIT_ORG_SAVE_START> {
     type: ActionFlag.EDIT_ORG_SAVE_START
 }
 
-export interface EditOrgSaveSuccess extends Action {
-    type: ActionFlag.EDIT_ORG_SAVE_SUCCESS,
-    organization: Organization
+export interface EditOrgSaveSuccess extends Action<ActionFlag.EDIT_ORG_SAVE_SUCCESS> {
+    type: ActionFlag.EDIT_ORG_SAVE_SUCCESS
 }
 
-export interface EditOrgSaveError extends Action {
+export interface EditOrgSaveError extends Action<ActionFlag.EDIT_ORG_SAVE_ERROR> {
     type: ActionFlag.EDIT_ORG_SAVE_ERROR,
     error: AppError
 }
 
-// Editing fields
+// Updating name field
 
-// Edit name
 export interface EditOrgUpdateName extends Action {
     type: ActionFlag.EDIT_ORG_UPDATE_NAME,
     name: string
 }
 
-export interface EditOrgUpdateNameSuccess extends Action {
+export interface EditOrgUpdateNameSuccess {
     type: ActionFlag.EDIT_ORG_UPDATE_NAME_SUCCESS,
     name: string
 }
@@ -68,13 +79,50 @@ export interface EditOrgUpdateNameError extends Action {
     error: UIError
 }
 
-// Edit description
-export interface EditOrgUpdateDescription extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION,
+// Updating gravatar hash field
+
+export interface EditOrgUpdateGravatarHash extends Action {
+    type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH,
     name: string
 }
 
-export interface EditOrgUpdateDescriptionSuccess extends Action {
+export interface EditOrgUpdateGravatarHashSuccess {
+    type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
+    gravatarHash: string
+}
+
+export interface EditOrgUpdateGravatarHashError extends Action {
+    type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_ERROR,
+    gravatarHash: string,
+    error: UIError
+}
+
+// Updating id Field
+
+// export interface EditOrgUpdateId extends Action {
+//     type: ActionFlag.EDIT_ORG_UPDATE_ID,
+//     id: string
+// }
+
+// export interface EditOrgUpdateIdSuccess {
+//     type: ActionFlag.EDIT_ORG_UPDATE_ID_SUCCESS,
+//     id: string
+// }
+
+// export interface EditOrgUpdateIdError extends Action {
+//     type: ActionFlag.EDIT_ORG_UPDATE_ID_ERROR,
+//     id: string,
+//     error: UIError
+// }
+
+// Updating description field
+
+export interface EditOrgUpdateDescription extends Action {
+    type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION,
+    description: string
+}
+
+export interface EditOrgUpdateDescriptionSuccess {
     type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_SUCCESS,
     description: string
 }
@@ -85,33 +133,57 @@ export interface EditOrgUpdateDescriptionError extends Action {
     error: UIError
 }
 
-// Edit description
 
 // ACTION CREATORS
 
-// Setting up editor
-
-export function editOrgStart(): EditOrgStart {
+export function editOrgStart(id: string): EditOrgEditStart {
     return {
-        type: ActionFlag.EDIT_ORG_START
+        type: ActionFlag.EDIT_ORG_EDIT_START,
+        id: id
     }
 }
 
-export function editOrgSuccess(org: EditedOrganization): EditOrgSuccess {
+export function editOrgEditStart() {
     return {
-        type: ActionFlag.EDIT_ORG_SUCCESS,
-        organization: org
+        type: ActionFlag.EDIT_ORG_EDIT_START
     }
 }
 
-export function editOrgError(error: AppError) {
+export function editOrgEditSuccess(editedOrganization: EditableOrganization) {
     return {
-        type: ActionFlag.EDIT_ORG_ERROR,
+        type: ActionFlag.EDIT_ORG_EDIT_SUCCESS,
+        editedOrganization: editedOrganization
+    }
+}
+
+export function editOrgEditError(error: AppError): EditOrgEditError {
+    return {
+        type: ActionFlag.EDIT_ORG_EDIT_ERROR,
         error: error
     }
 }
 
-// Saving modified org
+// Evaluate
+
+export function editOrgEvaluateOk(): EditOrgEvaluateOK {
+    return {
+        type: ActionFlag.EDIT_ORG_EVALUATE_OK
+    }
+}
+
+export function EditOrgEvaluateErrors(): EditOrgEvaluateErrors {
+    return {
+        type: ActionFlag.EDIT_ORG_EVALUATE_ERRORS
+    }
+}
+
+// Save
+
+// export function editOrgSave(): EditOrgSave {
+//     return {
+//         type: ActionFlag.EDIT_ORG_SAVE
+//     }
+// }
 
 export function editOrgSaveStart(): EditOrgSaveStart {
     return {
@@ -119,10 +191,9 @@ export function editOrgSaveStart(): EditOrgSaveStart {
     }
 }
 
-export function editOrgSaveSuccess(organization: Organization): EditOrgSaveSuccess {
+export function editOrgSaveSuccess(): EditOrgSaveSuccess {
     return {
-        type: ActionFlag.EDIT_ORG_SAVE_SUCCESS,
-        organization: organization
+        type: ActionFlag.EDIT_ORG_SAVE_SUCCESS
     }
 }
 
@@ -133,10 +204,7 @@ export function editOrgSaveError(error: AppError): EditOrgSaveError {
     }
 }
 
-
-// Editing fields
-
-// Edit name
+// Update Name
 
 export function editOrgUpdateNameSuccess(name: string): EditOrgUpdateNameSuccess {
     return {
@@ -153,7 +221,40 @@ export function editOrgUpdateNameError(name: string, error: UIError): EditOrgUpd
     }
 }
 
-// Edit name
+// export function editOrgUpdateIdSuccess(id: string): EditOrgUpdateIdSuccess {
+//     return {
+//         type: ActionFlag.EDIT_ORG_UPDATE_ID_SUCCESS,
+//         id: id
+//     }
+// }
+
+// Update Gravatar Hash
+
+export function editOrgUpdateGravatarHashSuccess(gravatarHash: string): EditOrgUpdateGravatarHashSuccess {
+    return {
+        type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
+        gravatarHash: gravatarHash
+    }
+}
+
+export function editOrgUpdateGravatarHashError(gravatarHash: string, error: UIError): EditOrgUpdateGravatarHashError {
+    return {
+        type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_ERROR,
+        gravatarHash: gravatarHash,
+        error: error
+    }
+}
+
+
+// Update Id
+
+// export function editOrgUpdateIdError(id: string, error: UIError): EditOrgUpdateIdError {
+//     return {
+//         type: ActionFlag.EDIT_ORG_UPDATE_ID_ERROR,
+//         id: id,
+//         error: error
+//     }
+// }
 
 export function editOrgUpdateDescriptionSuccess(description: string): EditOrgUpdateDescriptionSuccess {
     return {
@@ -172,12 +273,15 @@ export function editOrgUpdateDescriptionError(description: string, error: UIErro
 
 // ACTION THUNKS
 
-export function editOrg(id: string) {
+export function editOrgEdit(organizationId: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(editOrgStart())
+        dispatch(editOrgStart(organizationId))
 
-        const { auth: { authorization: { token } },
-            app: { config } } = getState()
+        const {
+            auth: { authorization: { token } },
+            app: { config }
+        } = getState()
+
         const model = new Model({
             token,
             groupsServiceURL: config.services.Groups.url,
@@ -185,23 +289,47 @@ export function editOrg(id: string) {
             workspaceServiceURL: config.services.Workspace.url
         })
 
-        return model.getOrg(id)
+        return model.getOrg(organizationId)
             .then((org) => {
-                const editableOrg: EditedOrganization = {
+                const editableOrg: EditableOrganization = {
                     id: {
-                        value: org.id
+                        value: org.id,
+                        status: FieldState.UNEDITED_OK,
+                        error: {
+                            type: UIErrorType.NONE,
+                            message: ''
+                        }
                     },
                     name: {
-                        value: org.name
+                        value: org.name,
+                        status: FieldState.UNEDITED_OK,
+                        error: {
+                            type: UIErrorType.NONE,
+                            message: ''
+                        }
+                    },
+                    gravatarHash: {
+                        value: org.gravatarHash,
+                        status: FieldState.UNEDITED_OK,
+                        error: {
+                            type: UIErrorType.NONE,
+                            message: ''
+                        }
                     },
                     description: {
-                        value: org.description
+                        value: org.description,
+                        status: FieldState.UNEDITED_OK,
+                        error: {
+                            type: UIErrorType.NONE,
+                            message: ''
+                        }
                     }
                 }
-                dispatch(editOrgSuccess(editableOrg))
+                dispatch(editOrgEditSuccess(editableOrg))
             })
             .catch((err) => {
-                dispatch(editOrgError({
+                console.error('load org error', err)
+                dispatch(editOrgEditError({
                     code: err.name,
                     message: err.message
                 }))
@@ -209,56 +337,13 @@ export function editOrg(id: string) {
     }
 }
 
-export function editOrgUpdateName(name: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        const { auth: { authorization: { token } },
-            app: { config } } = getState()
-        const model = new Model({
-            token,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
-        })
-
-        const [orgName, error] = model.validateOrgName(name)
-        // TODO: a better of satisfying TS
-        if (orgName !== null) {
-            dispatch(editOrgUpdateNameSuccess(orgName))
-        }
-        if (error !== null) {
-            dispatch(editOrgUpdateNameError(orgName, error))
-        }
-    }
-}
-
-export function editOrgUpdateDescription(description: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        const { auth: { authorization: { token } },
-            app: { config } } = getState()
-        const model = new Model({
-            token,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
-        })
-
-        const [orgDescription, error] = model.validateOrgDescription(description)
-        // TODO: a better of satisfying TS
-        if (orgDescription !== null) {
-            dispatch(editOrgUpdateDescriptionSuccess(orgDescription))
-        }
-        if (error !== null) {
-            dispatch(editOrgUpdateDescriptionError(orgDescription, error))
-        }
-    }
-}
 
 export function editOrgSave() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(editOrgSaveStart())
 
-        const { editOrg: { editedOrganization },
-            auth: { authorization: { token } },
+        const { auth: { authorization: { token, username } },
+            editOrg: { organizationId, editedOrganization },
             app: { config } } = getState()
         const model = new Model({
             token,
@@ -270,33 +355,145 @@ export function editOrgSave() {
         if (!editedOrganization) {
             dispatch(editOrgSaveError({
                 code: 'app',
-                message: 'Missing edited organization!'
+                message: 'The new organization data does not yet exist'
             }))
-            return
+            return;
         }
 
-        if (editedOrganization.name.error || editedOrganization.description.error) {
-            dispatch(editOrgSaveError({
-                code: 'invalid',
-                message: 'One or more of the edited fields have an error'
-            }))
-            return
-        }
-
-        const organizationUpdate = {
+        const update = {
             name: editedOrganization.name.value,
+            gravatarHash: editedOrganization.gravatarHash.value,
             description: editedOrganization.description.value
         }
 
-        model.updateOrg(editedOrganization.id.value, organizationUpdate)
-            .then((organization) => {
-                dispatch(editOrgSaveSuccess(organization))
+        // console.log('updating org with ', organizationId)
+        // dispatch(editOrgSaveSuccess())
+        // return
+
+        model.updateOrg(organizationId, update)
+            .then(() => {
+                console.log('successfully updated')
+                dispatch(editOrgSaveSuccess())
             })
-            .catch((err) => {
+            .catch((error) => {
+                console.error('error adding', editedOrganization, error)
                 dispatch(editOrgSaveError({
-                    code: 'error-saving',
-                    message: err.message
+                    code: 'invalid',
+                    message: error.message
                 }))
             })
+    }
+}
+
+export function editOrgEvaluate() {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        const { editOrg: { editedOrganization } } = getState()
+
+        const { editOrg: editState } = getState()
+
+        if (!editedOrganization) {
+            dispatch(EditOrgEvaluateErrors())
+            return
+        }
+
+        if (!(editedOrganization.name.status === FieldState.EDITED_OK ||
+            editedOrganization.name.status === FieldState.UNEDITED_OK)) {
+            console.log('valid name?', editedOrganization.name)
+            dispatch(EditOrgEvaluateErrors())
+            return
+        }
+
+        // if (editedOrganization.id.status !== FieldState.EDITED_OK) {
+        //     dispatch(EditOrgEvaluateErrors())
+        //     return
+        // }
+
+        if (!(editedOrganization.gravatarHash.status === FieldState.EDITED_OK ||
+            editedOrganization.gravatarHash.status === FieldState.UNEDITED_OK)) {
+            dispatch(EditOrgEvaluateErrors())
+            return
+        }
+
+        if (!(editedOrganization.description.status === FieldState.EDITED_OK ||
+            editedOrganization.description.status === FieldState.UNEDITED_OK)) {
+            dispatch(EditOrgEvaluateErrors())
+            return
+        }
+
+        dispatch(editOrgEvaluateOk())
+    }
+}
+
+export function editOrgUpdateName(name: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+        const [validatedName, error] = Validation.validateOrgName(name)
+
+        if (error.type === UIErrorType.ERROR) {
+            dispatch(editOrgUpdateNameError(validatedName, error))
+        } else {
+            dispatch(editOrgUpdateNameSuccess(validatedName))
+        }
+        dispatch(editOrgEvaluate())
+    }
+}
+
+export function editOrgUpdateGravatarHash(name: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+        const [validateGravatarHash, error] = Validation.validateOrgGravatarHash(name)
+
+        if (error.type === UIErrorType.ERROR) {
+            dispatch(editOrgUpdateGravatarHashError(validateGravatarHash, error))
+        } else {
+            dispatch(editOrgUpdateGravatarHashSuccess(validateGravatarHash))
+        }
+        dispatch(editOrgEvaluate())
+    }
+}
+
+// export function editOrgUpdateId(id: string) {
+//     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+//         const [validatedId, error] = Validation.validateOrgId(id)
+//         if (error.type === UIErrorType.ERROR) {
+//             dispatch(editOrgUpdateIdError(validatedId, error))
+//             dispatch(editOrgEvaluate())
+//             return
+//         }
+//         const model = newModelFromState(getState())
+//         model.groupExists(validatedId)
+//             .then((exists) => {
+//                 if (exists) {
+//                     console.log('org??', exists)
+//                     dispatch(editOrgUpdateIdError(validatedId, {
+//                         type: UIErrorType.ERROR,
+//                         message: 'This org id is already in use'
+//                     }))
+//                 } else {
+//                     dispatch(editOrgUpdateIdSuccess(validatedId))
+//                 }
+
+//                 dispatch(editOrgEvaluate())
+//             })
+//     }
+// }
+
+export function editOrgUpdateDescription(description: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>,
+        getState: () => StoreState) => {
+        const { auth: { authorization: { token } },
+            app: { config } } = getState()
+        const model = new Model({
+            token,
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url,
+            workspaceServiceURL: config.services.Workspace.url
+        })
+        const [validatedDescription, error] = model.validateOrgDescription(description)
+
+        if (error.type === UIErrorType.ERROR) {
+            dispatch(editOrgUpdateDescriptionError(validatedDescription, error))
+        } else {
+            dispatch(editOrgUpdateDescriptionSuccess(validatedDescription))
+        }
+        dispatch(editOrgEvaluate())
     }
 }

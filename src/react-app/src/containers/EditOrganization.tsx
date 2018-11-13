@@ -1,45 +1,62 @@
-import {Dispatch} from 'redux'
-import {connect} from 'react-redux'
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
-import { EditOrgState, Organization, EditedOrganization, AppError, StoreState } from '../types'
-import {EditOrg, editOrg, editOrgUpdateName, editOrgUpdateDescription} from '../redux/actions/editOrg'
+import { StoreState, EditableOrganization, EditState, SaveState, ValidationState } from '../types';
+import {
+    EditOrgEdit, editOrgSave,
+    editOrgUpdateName,
+    // editOrgUpdateId, 
+    editOrgUpdateDescription, editOrgEdit, editOrgUpdateGravatarHash
+} from '../redux/actions/editOrg';
 
-import EditOrganization from '../components/EditOrganization'
-import { editOrgSave } from '../redux/actions/editOrg';
+import EditOrganization from '../components/EditOrganization';
 
 interface OwnProps {
     id: string
 }
-interface StateProps {
-    state: EditOrgState
-    organization?: Organization
-    editedOrganization?: EditedOrganization
-    error?: AppError
+
+export interface StateProps {
+    editState: EditState,
+    saveState: SaveState,
+    validationState: ValidationState,
+    editedOrganization: EditableOrganization
 }
 
-interface DispatchProps {
-    onEditOrg: (id: string) => void,
-    onUpdateOrg: () => void,
+export interface DispatchProps {
+    onEditOrgEdit: (id: string) => void,
+    onEditOrgSave: () => void,
     onUpdateName: (name: string) => void,
+    onUpdateGravatarHash: (gravatarHash: string) => void,
+    // onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
 }
 
-function mapStateToProps({editOrg: {state, error, editedOrganization}}: StoreState, 
-                         {id}: OwnProps): StateProps {
-    return {state, error, editedOrganization}
+export function mapStateToProps({ editOrg: { editState, saveState, validationState, editedOrganization } }: StoreState): StateProps {
+    return {
+        editState,
+        saveState,
+        validationState,
+        editedOrganization
+    }
 }
 
-export function mapDispatchToProps(dispatch: Dispatch<EditOrg>): DispatchProps {
+export function mapDispatchToProps(dispatch: Dispatch<EditOrgEdit>): DispatchProps {
     return {
-        onEditOrg: (id) => {
-            dispatch(editOrg(id) as any)
+        onEditOrgEdit: (id: string) => {
+            dispatch(editOrgEdit(id) as any)
         },
-        onUpdateOrg: () => {
+        onEditOrgSave: () => {
             dispatch(editOrgSave() as any)
         },
-        onUpdateName: (name) => {
+        onUpdateName: (name: string) => {
             dispatch(editOrgUpdateName(name) as any)
         },
+        onUpdateGravatarHash: (gravatarHash: string) => {
+            dispatch(editOrgUpdateGravatarHash(gravatarHash) as any)
+        },
+        // onUpdateId: (id) => {
+        //     dispatch(editOrgUpdateId(id) as any)
+        // },
         onUpdateDescription: (description) => {
             dispatch(editOrgUpdateDescription(description) as any)
         }

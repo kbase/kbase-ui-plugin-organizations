@@ -33,7 +33,7 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
         if (token.length === 0) {
             return
         }
-        console.log('authorizagin with', token)
+        console.log('authorizing with', token)
         this.props.onAddAuthorization(token)
     }
 
@@ -54,7 +54,7 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
     buildAuthToolbar() {
         return (
             <div className="Auth-toolbar">
-                Logged in as <b><span>{this.props.realname}</span> (<span>{this.props.username}</span></b>)
+                Logged in as <b><span>{this.props.authorization.authorization.realname}</span> (<span>{this.props.authorization.authorization.username}</span></b>)
                 {' '}
                 <Button icon="logout" onClick={this.onLogoutClick.bind(this)}>Sign out</Button>
             </div>
@@ -62,7 +62,7 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
     }
 
     buildAuthDev() {
-        switch (this.props.authStatus) {
+        switch (this.props.authorization.status) {
             case types.AuthState.NONE:
             case types.AuthState.CHECKING:
                 return (
@@ -86,7 +86,7 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
                 return (
                     <div className="Auth Auth-unauthorized">
                         <p>Error</p>
-
+                        {this.props.authorization.message}
                     </div>
                 )
             default:
@@ -97,7 +97,7 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
     }
 
     buildAuthProd() {
-        switch (this.props.authStatus) {
+        switch (this.props.authorization.status) {
             case types.AuthState.NONE:
             case types.AuthState.CHECKING:
                 return (

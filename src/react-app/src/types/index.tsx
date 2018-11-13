@@ -9,6 +9,7 @@ import { types } from "util";
 
 export interface OrganizationUpdate {
     name: string
+    gravatarHash: string | null
     description: string
 }
 
@@ -24,7 +25,7 @@ export interface UIError {
     message?: string
 }
 
-export interface NewOrganization {
+export interface EditableOrganization {
     id: {
         value: string,
         status: FieldState,
@@ -36,7 +37,7 @@ export interface NewOrganization {
         error: UIError
     }
     gravatarHash: {
-        value: string
+        value: string | null
         status: FieldState
         error: UIError
     }
@@ -120,8 +121,10 @@ export interface UserAuthorization {
     roles: Array<string>
 }
 
+
 export interface Authorization {
-    status: AuthState
+    status: AuthState,
+    message: string,
     authorization: UserAuthorization
 }
 
@@ -153,6 +156,13 @@ export enum EditOrgState {
 //     SAVED,
 //     ERROR
 // }
+
+export enum SyncState {
+    NONE = 'NONE',
+    NEW = 'NEW',
+    DIRTY = 'DIRTY',
+    CLEAN = 'CLEAN'
+}
 
 export enum EditState {
     NONE = 'NONE',
@@ -207,18 +217,22 @@ export enum SortDirection {
 
 
 export interface StoreState {
-    rawOrganizations: Array<BriefOrganization>
-    organizations: Array<BriefOrganization>
-    totalCount: number
-    filteredCount: number
-    sortBy: string
-    sortDirection: SortDirection
-    filter: string
-    searchTerms: Array<string>
-    selectedOrganizationId: string | null
+    browseOrgs: {
+        rawOrganizations: Array<BriefOrganization>
+        organizations: Array<BriefOrganization>
+        totalCount: number
+        filteredCount: number
+        sortBy: string
+        sortDirection: SortDirection
+        filter: string
+        searchTerms: Array<string>
+        selectedOrganizationId: string | null
+        searching: boolean
+    }
+
     auth: Authorization
     error: AppError | null
-    searching: boolean
+
     app: {
         status: AppState,
         config: AppConfig,
@@ -228,7 +242,7 @@ export interface StoreState {
         editState: EditState,
         saveState: SaveState,
         validationState: ValidationState,
-        newOrganization: NewOrganization
+        newOrganization: EditableOrganization
         error?: AppError
     }
     updateOrg: {
@@ -240,72 +254,36 @@ export interface StoreState {
         error?: AppError
     }
     editOrg: {
-        state: EditOrgState
+        organizationId: string,
+        editState: EditState,
+        saveState: SaveState,
+        validationState: ValidationState,
+        editedOrganization: EditableOrganization
         error?: AppError
-        editedOrganization?: EditedOrganization
     }
 }
 
 /* COMPONENT PROPS */
-export interface OrganizationsProps {
-    organizations: Array<BriefOrganization>
-}
 
-export interface OrganizationsState {
-    searchTerms: Array<string>
-}
 
-export interface OrganizationsBrowserProps {
-    onSearchOrgs: (searchTerms: Array<string>) => void;
-    onSortOrgs: (sortBy: string, sortDirection: SortDirection) => void;
-    onFilterOrgs: (filter: string) => void;
-    totalCount: number;
-    filteredCount: number;
-    sortBy: string;
-    sortDirection: SortDirection;
-    filter: string;
-    searching: boolean;
-}
 
-export interface OrganizationsBrowserState {
-    searchInput: string
-}
 
 // ADD ORG
 
-export interface NewOrganizationProps {
-    editState: EditState,
-    saveState: SaveState,
-    validationState: ValidationState,
-    newOrganization: NewOrganization,
-    onAddOrgEdit: () => void,
-    onAddOrg: () => void,
-    onUpdateName: (name: string) => void,
-    onUpdateGravatarHash: (gravatarHash: string) => void;
-    onUpdateId: (id: string) => void,
-    onUpdateDescription: (description: string) => void
-}
 
-export interface ViewOrganizationProps {
-    state: ViewOrgState
-    id: string,
-    organization?: Organization
-    error?: AppError
-    username: string,
-    onViewOrg: (id: string) => void
-}
 
-export interface EditOrganizationProps {
-    id: string,
-    state: EditOrgState
-    organization?: Organization
-    editedOrganization?: EditedOrganization
-    error?: AppError
-    onEditOrg: (id: string) => void
-    onUpdateOrg: () => void
-    onUpdateName: (name: string) => void,
-    onUpdateDescription: (description: string) => void
-}
+
+// export interface EditOrganizationProps {
+//     id: string,
+//     state: EditOrgState
+//     organization?: Organization
+//     editedOrganization?: EditedOrganization
+//     error?: AppError
+//     onEditOrg: (id: string) => void
+//     onUpdateOrg: () => void
+//     onUpdateName: (name: string) => void,
+//     onUpdateDescription: (description: string) => void
+// }
 
 
 export interface AppError {
@@ -329,17 +307,14 @@ export interface AppConfig {
 }
 
 export interface AuthProps {
-    authStatus: AuthState,
-    token: string | null,
-    username: string | null,
-    realname: string | null,
+    authorization: Authorization,
+    // authStatus: AuthState,
+    // token: string | null,
+    // username: string | null,
+    // realname: string | null,
     hosted: boolean,
     checkAuth: () => void,
     onRemoveAuthorization: () => void,
     onAddAuthorization: (token: string) => void
 }
 
-export interface KBaseIntegrationProps {
-    status: AppState,
-    onAppStart: () => void
-}

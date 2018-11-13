@@ -32,11 +32,12 @@ export function applyOrgSearch(orgs: Organizations, searchTerms: Array<string>) 
 // do it here...
 export function searchOrgsStart(state: types.StoreState, action: actions.SearchOrgsStart): types.StoreState {
 
+    const { browseOrgs: { filter, sortBy, sortDirection } } = state
     const query: Query = {
         searchTerms: action.searchTerms,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortDirection: state.sortDirection,
+        filter: filter,
+        sortBy: sortBy,
+        sortDirection: sortDirection,
         username: state.auth.authorization.username
     }
     // const result = queryOrgs(state.rawOrganizations, query)
@@ -46,18 +47,25 @@ export function searchOrgsStart(state: types.StoreState, action: actions.SearchO
         // organizations: result.organizations, 
         // totalCount: result.total, 
         // filteredCount: result.organizations.length,
-        searching: true,
-        searchTerms: action.searchTerms
+        browseOrgs: {
+            ...state.browseOrgs,
+            searching: true,
+            searchTerms: action.searchTerms
+        }
     }
 }
 
 export function searchOrgsSuccess(state: types.StoreState, action: actions.SearchOrgsSuccess): types.StoreState {
     return {
         ...state,
-        searching: false,
-        organizations: action.organizations,
-        totalCount: action.totalCount,
-        filteredCount: action.organizations.length
+        browseOrgs: {
+            ...state.browseOrgs,
+            searching: false,
+            organizations: action.organizations,
+            totalCount: action.totalCount,
+            filteredCount: action.organizations.length
+        }
+
     }
 }
 
@@ -67,23 +75,27 @@ export function searchOrgsError(state: types.StoreState, action: actions.SearchO
 
 
 export function sortOrgsStart(state: types.StoreState, action: actions.SortOrgsStart): types.StoreState {
+    const {
+        browseOrgs: { searchTerms, filter },
+        auth: { authorization: { username } }
+    } = state
     const query: Query = {
-        searchTerms: state.searchTerms,
-        filter: state.filter,
+        searchTerms: searchTerms,
+        filter: filter,
         sortBy: action.sortBy,
         sortDirection: action.sortDirection,
-        username: state.auth.authorization.username
+        username: username
     }
     // const result = queryOrgs(state.rawOrganizations, query)
 
     return {
         ...state,
-        // organizations: result.organizations, 
-        // totalCount: result.total, 
-        // filteredCount: result.organizations.length,
-        searching: true,
-        sortBy: action.sortBy,
-        sortDirection: action.sortDirection
+        browseOrgs: {
+            ...state.browseOrgs,
+            searching: true,
+            sortBy: action.sortBy,
+            sortDirection: action.sortDirection
+        }
     }
 }
 
@@ -107,8 +119,11 @@ export function filterOrgsStart(state: types.StoreState,
 
     return {
         ...state,
-        searching: true,
-        filter
+        browseOrgs: {
+            ...state.browseOrgs,
+            searching: true,
+            filter
+        }
     }
 }
 

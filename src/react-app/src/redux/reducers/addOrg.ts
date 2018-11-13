@@ -115,7 +115,6 @@ export function addOrgEditFinish(state: StoreState, action: AddOrgEditFinish) {
 
 // Name
 export function addOrgUpdateNameSuccess(state: StoreState, action: AddOrgUpdateNameSuccess) {
-    // console.log('hmm', EditState.EDITED)
     return {
         ...state, addOrg: {
             ...state.addOrg,
@@ -153,7 +152,6 @@ export function addOrgUpdateNameError(state: StoreState, action: AddOrgUpdateNam
 
 // Gravatar hash
 export function addOrgUpdateGravatarHashSuccess(state: StoreState, action: AddOrgUpdateGravatarHashSuccess) {
-    console.log('hmm', action)
     return {
         ...state, addOrg: {
             ...state.addOrg,

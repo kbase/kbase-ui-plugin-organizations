@@ -25,7 +25,8 @@ export interface LinkDispatchProps {
 
 
 // note second arg is the component props, but we don't have any component props to merge in.
-export function mapStateToProps({ totalCount, filteredCount, sortBy, sortDirection, filter, searching }: StoreState): LinkStateProps {
+export function mapStateToProps(state: StoreState): LinkStateProps {
+    const { browseOrgs: { totalCount, filteredCount, sortBy, sortDirection, filter, searching } } = state
     return {
         totalCount,
         filteredCount,

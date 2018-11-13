@@ -1,9 +1,5 @@
 import { Action } from 'redux'
-import * as actions from '../actions'
-import * as types from '../../types'
-import { ActionFlag } from '../actions'
-import { Organizations, Organization } from '../../types'
-import { Model } from '../../data/model'
+import { StoreState } from '../../types'
 import addOrgReducer from './addOrg'
 import editOrgReducer from './editOrg'
 import viewOrgReducer from './viewOrg'
@@ -12,7 +8,7 @@ import authReducer from './auth'
 import appReducer from './app'
 
 
-export function reducer(state: types.StoreState, action: Action): types.StoreState {
+export function reducer(state: StoreState, action: Action): StoreState {
     return addOrgReducer(state, action) ||
         editOrgReducer(state, action) ||
         searchOrgsReducer(state, action) ||
