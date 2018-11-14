@@ -53,11 +53,15 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
         return (
             <div className="row" key={String(index)}>
                 <div className="col2">
-                    {this.renderAvatar(org)}
+                    <NavLink to={`/viewOrganization/${org.id}`}>
+                        {this.renderAvatar(org)}
+                    </NavLink>
                 </div>
                 <div className="col1">
                     <div className="orgName">
-                        <NavLink to={`/viewOrganization/${org.id}`}>{org.name}</NavLink>
+                        <NavLink to={`/viewOrganization/${org.id}`}>
+                            {org.name}
+                        </NavLink>
                     </div>
                     <div className="orgOwner">
                         <span className="field-label">owner</span>
