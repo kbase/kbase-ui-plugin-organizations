@@ -70,7 +70,32 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
     }
 
     onClickCancelToBrowser() {
-        this.setState({ cancelToBrowser: true })
+        if (!this.isModified()) {
+            this.setState({ cancelToBrowser: true })
+            return
+        }
+
+        const confirm = () => {
+            this.setState({ cancelToBrowser: true })
+        }
+        const cancel = () => {
+        }
+        Modal.confirm({
+            title: 'Leave the editor?',
+            content: (
+                <div>
+                    <p>You have entered information for this new organization.</p>
+
+                    <p>If you leave the editor without first saving, the new organization <i>will not be created</i>.</p>
+
+                    <p><b>Continue to leave the editor?</b></p>
+                </div>
+            ),
+            onOk: confirm,
+            onCancel: cancel,
+            okText: 'Yes',
+            cancelText: 'No'
+        })
     }
 
     onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -109,6 +134,13 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
+    isModified() {
+        return (
+            this.props.editState === EditState.EDITED &&
+            this.props.saveState === SaveState.NEW
+        )
+    }
+
     renderForm() {
         return (
             <form id="newOrganizationForm" className="editor" onSubmit={this.onSubmit.bind(this)}>
@@ -129,7 +161,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                             </div>
                             <div style={{ flex: '0 0 auto' }}>
                                 <Button
-                                    icon="sync"
+                                    icon="arrow-down"
                                     style={{ height: '100%' }}
                                     onClick={this.onGravatarEmailSync.bind(this)} />
                             </div>

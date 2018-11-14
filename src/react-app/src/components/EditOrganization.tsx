@@ -75,11 +75,61 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     }
 
     onClickCancelToBrowser() {
-        this.setState({ cancelToBrowser: true })
+        if (!this.isModified()) {
+            this.setState({ cancelToBrowser: true })
+            return
+        }
+
+        const confirm = () => {
+            this.setState({ cancelToBrowser: true })
+        }
+        const cancel = () => {
+        }
+        Modal.confirm({
+            title: 'Leave the editor?',
+            content: (
+                <div>
+                    <p>You have made changes on this edit form.</p>
+
+                    <p>If you leave the editor without saving, any <i>changes they will be lost</i>.</p>
+
+                    <p><b>Continue to leave the editor?</b></p>
+                </div>
+            ),
+            onOk: confirm,
+            onCancel: cancel,
+            okText: 'Yes',
+            cancelText: 'No'
+        })
     }
 
     onClickCancelToViewer() {
-        this.setState({ cancelToViewer: true })
+        if (!this.isModified()) {
+            this.setState({ cancelToViewer: true })
+            return
+        }
+
+        const confirm = () => {
+            this.setState({ cancelToViewer: true })
+        }
+        const cancel = () => {
+        }
+        Modal.confirm({
+            title: 'Leave the editor?',
+            content: (
+                <div>
+                    <p>You have made changes on this edit form.</p>
+
+                    <p>If you leave the editor without saving, any <i>changes they will be lost</i>.</p>
+
+                    <p><b>Continue to leave the editor?</b></p>
+                </div>
+            ),
+            onOk: confirm,
+            onCancel: cancel,
+            okText: 'Yes',
+            cancelText: 'No'
+        })
     }
 
     onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -110,13 +160,20 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     }
 
     canSave() {
-        // console.log('can save?', this.props.editState, this.props.validationState, this.props.saveState)
         return (
             this.props.editState === EditState.EDITED &&
             this.props.validationState === ValidationState.VALID &&
             (this.props.saveState === SaveState.NEW ||
                 this.props.saveState === SaveState.READY ||
                 this.props.saveState === SaveState.SAVED)
+        )
+    }
+
+    isModified() {
+        return (
+            this.props.editState === EditState.EDITED &&
+            (this.props.saveState === SaveState.NEW ||
+                this.props.saveState === SaveState.READY)
         )
     }
 
@@ -140,7 +197,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                             </div>
                             <div style={{ flex: '0 0 auto' }}>
                                 <Button
-                                    icon="sync"
+                                    icon="arrow-down"
                                     style={{ height: '100%' }}
                                     onClick={this.onGravatarEmailSync.bind(this)} />
                             </div>
