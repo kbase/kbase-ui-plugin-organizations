@@ -14,8 +14,6 @@ class KBaseIntegration extends React.Component<KBaseIntegrationProps, object> {
 
         // const params = this.getParamsFromIFrame()
 
-        // console.log('params', params)
-
         this.props.onAppStart()
     }
 

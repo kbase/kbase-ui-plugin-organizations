@@ -60,6 +60,14 @@ export interface Owner {
     gravatarDefault: string
 }
 
+export enum UserRelationToOrganization {
+    NONE = 0,
+    VIEW,
+    MEMBER,
+    ADMIN,
+    OWNER
+}
+
 export interface BriefOrganization {
     id: string
     name: string
@@ -67,7 +75,8 @@ export interface BriefOrganization {
     owner: {
         username: string
         realname: string
-    }
+    },
+    relation: UserRelationToOrganization,
     createdAt: Date
     modifiedAt: Date
 }
@@ -78,6 +87,7 @@ export interface Organization {
     gravatarHash: string | null
     description: string
     owner: Owner
+    relation: UserRelationToOrganization
     createdAt: Date
     modifiedAt: Date
 }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import './Organizations.css';
 import * as types from '../types';
 import { NavLink } from 'react-router-dom';
-import { Alert } from 'antd';
+import { Alert, Icon, Tooltip } from 'antd';
 import { BriefOrganization } from '../types';
 
 // TODO: need more ergonomic way to resolve the common issue of data types interfering with 
@@ -49,6 +49,39 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
         )
     }
 
+    renderRelation(org: BriefOrganization) {
+        switch (org.relation) {
+            case (types.UserRelationToOrganization.NONE):
+                return (
+                    <span><Icon type="stop" />None</span>
+                )
+            case (types.UserRelationToOrganization.VIEW):
+                return (
+                    <Tooltip
+                        placement="bottomRight"
+                        mouseEnterDelay={0.5}
+                        title="You are not a member of this org, but you may access it; you may request membership"
+                    >
+                        <span><Icon type="eye" />View</span>
+                    </Tooltip>
+                )
+            case (types.UserRelationToOrganization.MEMBER):
+                return (<span><Icon type="user" />Member</span>)
+            case (types.UserRelationToOrganization.ADMIN):
+                return (<span><Icon type="unlock" />Admin</span>)
+            case (types.UserRelationToOrganization.OWNER):
+                return (
+                    <Tooltip
+                        placement="bottomRight"
+                        mouseEnterDelay={0.5}
+                        title="You own this org"
+                    >
+                        <span><Icon type="lock" theme="filled" />Owner</span>
+                    </Tooltip>
+                )
+        }
+    }
+
     renderOrg(org: BriefOrganization, index: Number) {
         return (
             <div className="row" key={String(index)}>
@@ -66,6 +99,9 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
                     <div className="orgOwner">
                         <span className="field-label">owner</span>
                         <a href={"/#people/" + org.owner.username} target="_blank">{org.owner.realname} ❨{org.owner.username}❩</a>
+                    </div>
+                    <div className="relation">
+                        {this.renderRelation(org)}
                     </div>
                 </div>
             </div>

@@ -4,9 +4,10 @@ import { NavLink } from 'react-router-dom'
 
 import './ViewOrganization.css'
 
-import { ViewOrgState, Organization, AppError, BriefOrganization } from '../types'
-import { Button, Modal } from 'antd';
+import { ViewOrgState, Organization, AppError, UserRelationToOrganization } from '../types'
+import { Button, Modal, Icon, Tooltip } from 'antd';
 import Header from './Header';
+import { types } from 'util';
 
 export interface ViewOrganizationState {
     showInfo: boolean
@@ -103,7 +104,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
-    getOrgAvatarUrl(org: BriefOrganization) {
+    getOrgAvatarUrl(org: Organization) {
         // const defaultImages = [
         //     'orgs-64.png',
         //     'unicorn-64.png'
@@ -119,8 +120,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
     }
 
-    renderOrgAvatar(org: BriefOrganization) {
-        // console.log('grav?', org.gravatarHash)
+    renderOrgAvatar(org: Organization) {
         return (
             <img style={{ width: 64, height: 64 }}
                 src={this.getOrgAvatarUrl(org)} />
@@ -155,6 +155,39 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 style={{ width: 60 }}
             />
         )
+    }
+
+    renderRelation(org: Organization) {
+        switch (org.relation) {
+            case (UserRelationToOrganization.NONE):
+                return (
+                    <span><Icon type="stop" />None</span>
+                )
+            case (UserRelationToOrganization.VIEW):
+                return (
+                    <Tooltip
+                        placement="bottomRight"
+                        mouseEnterDelay={0.5}
+                        title="You are not a member of this org, but you may access it; you may request membership"
+                    >
+                        <span><Icon type="eye" style={{ marginRight: '4px' }} />Viewer</span>
+                    </Tooltip>
+                )
+            case (UserRelationToOrganization.MEMBER):
+                return (<span><Icon type="user" />Member</span>)
+            case (UserRelationToOrganization.ADMIN):
+                return (<span><Icon type="unlock" />Admin</span>)
+            case (UserRelationToOrganization.OWNER):
+                return (
+                    <Tooltip
+                        placement="bottomRight"
+                        mouseEnterDelay={0.5}
+                        title="You own this org"
+                    >
+                        <span><Icon type="lock" theme="filled" style={{ marginRight: '4px' }} />Owner</span>
+                    </Tooltip>
+                )
+        }
     }
 
     renderInfo() {
@@ -219,6 +252,28 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         </div>
                     </div>
                 </div>
+
+            </form>
+        )
+    }
+
+    renderUserRelationship() {
+        // apparently TS is not smart enough to know this from the conditional branch in render()!
+        if (!this.props.organization) {
+            return
+        }
+        return (
+            <form className="table infoTable">
+                <div className="row">
+                    <div className="col1">
+                        <span className="label">your relation</span>
+                    </div>
+                    <div className="col2">
+                        <div className="relation">
+                            {this.renderRelation(this.props.organization)}
+                        </div>
+                    </div>
+                </div>
             </form>
         )
     }
@@ -268,6 +323,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                             {this.renderOrg()}
                         </div>
                         <div className="infoColumn">
+                            <div className="infoBox">
+                                {this.renderUserRelationship()}
+                            </div>
                             <div className="infoBox">
                                 {this.renderInfo()}
                             </div>

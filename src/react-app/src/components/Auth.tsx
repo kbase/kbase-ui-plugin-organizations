@@ -33,7 +33,6 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
         if (token.length === 0) {
             return
         }
-        console.log('authorizing with', token)
         this.props.onAddAuthorization(token)
     }
 

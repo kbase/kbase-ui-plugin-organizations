@@ -278,12 +278,12 @@ export function editOrgEdit(organizationId: string) {
         dispatch(editOrgStart(organizationId))
 
         const {
-            auth: { authorization: { token } },
+            auth: { authorization: { token, username } },
             app: { config }
         } = getState()
 
         const model = new Model({
-            token,
+            token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
             workspaceServiceURL: config.services.Workspace.url
@@ -346,7 +346,7 @@ export function editOrgSave() {
             editOrg: { organizationId, editedOrganization },
             app: { config } } = getState()
         const model = new Model({
-            token,
+            token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
             workspaceServiceURL: config.services.Workspace.url
@@ -366,13 +366,8 @@ export function editOrgSave() {
             description: editedOrganization.description.value
         }
 
-        // console.log('updating org with ', organizationId)
-        // dispatch(editOrgSaveSuccess())
-        // return
-
         model.updateOrg(organizationId, update)
             .then(() => {
-                console.log('successfully updated')
                 dispatch(editOrgSaveSuccess())
             })
             .catch((error) => {
@@ -398,7 +393,6 @@ export function editOrgEvaluate() {
 
         if (!(editedOrganization.name.status === FieldState.EDITED_OK ||
             editedOrganization.name.status === FieldState.UNEDITED_OK)) {
-            console.log('valid name?', editedOrganization.name)
             dispatch(EditOrgEvaluateErrors())
             return
         }
@@ -450,39 +444,13 @@ export function editOrgUpdateGravatarHash(name: string) {
     }
 }
 
-// export function editOrgUpdateId(id: string) {
-//     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-//         const [validatedId, error] = Validation.validateOrgId(id)
-//         if (error.type === UIErrorType.ERROR) {
-//             dispatch(editOrgUpdateIdError(validatedId, error))
-//             dispatch(editOrgEvaluate())
-//             return
-//         }
-//         const model = newModelFromState(getState())
-//         model.groupExists(validatedId)
-//             .then((exists) => {
-//                 if (exists) {
-//                     console.log('org??', exists)
-//                     dispatch(editOrgUpdateIdError(validatedId, {
-//                         type: UIErrorType.ERROR,
-//                         message: 'This org id is already in use'
-//                     }))
-//                 } else {
-//                     dispatch(editOrgUpdateIdSuccess(validatedId))
-//                 }
-
-//                 dispatch(editOrgEvaluate())
-//             })
-//     }
-// }
-
 export function editOrgUpdateDescription(description: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>,
         getState: () => StoreState) => {
-        const { auth: { authorization: { token } },
+        const { auth: { authorization: { token, username } },
             app: { config } } = getState()
         const model = new Model({
-            token,
+            token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
             workspaceServiceURL: config.services.Workspace.url

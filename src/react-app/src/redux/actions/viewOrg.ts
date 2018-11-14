@@ -63,10 +63,10 @@ export function viewOrgFetch(id: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(viewOrgStart())
 
-        const { auth: { authorization: { token } },
+        const { auth: { authorization: { token, username } },
             app: { config } } = getState()
         const model = new Model({
-            token,
+            token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
             workspaceServiceURL: config.services.Workspace.url

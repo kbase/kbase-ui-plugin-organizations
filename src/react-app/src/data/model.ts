@@ -4,10 +4,11 @@ import {
     UIErrorType,
     SortDirection,
     FieldState,
-    EditableOrganization
+    EditableOrganization,
+    UserRelationToOrganization
 } from '../types';
 // import { organizations } from './data';
-import { UserProfileClient, UserProfile } from './userProfile'
+import { UserProfileClient, UserProfile, User } from './userProfile'
 import { GroupsClient, Group, GroupList, BriefGroup } from './groups'
 import { WorkspaceClient } from './workspace';
 import { types } from 'util';
@@ -105,6 +106,7 @@ function wait(timeout: number) {
 
 interface ModelParams {
     token: string,
+    username: string,
     groupsServiceURL: string,
     userProfileServiceURL: string,
     workspaceServiceURL: string
@@ -124,8 +126,16 @@ export class Model {
         this.params = params;
     }
 
-    groupToOrg(group: Group, profile: UserProfile): Organization {
+    groupToOrg(group: Group, username: string, profile: UserProfile): Organization {
         const { id, name, owner, description, createdate, moddate } = group
+        let relation: UserRelationToOrganization
+        // TODO: when we have access to members, admins, and group publication status, we can 
+        // flesh out all user relations.
+        if (username === group.owner) {
+            relation = UserRelationToOrganization.OWNER
+        } else {
+            relation = UserRelationToOrganization.VIEW
+        }
         return {
             id: id,
             name: name,
@@ -142,19 +152,35 @@ export class Model {
                 gravatarHash: profile.profile.synced.gravatarHash,
                 gravatarDefault: profile.profile.userdata.gravatarDefault
             },
+            relation: relation,
             createdAt: new Date(createdate),
             modifiedAt: new Date(moddate)
         }
     }
 
-    briefGroupToBriefOrg(group: BriefGroup, profile: UserProfile): BriefOrganization {
+    briefGroupToBriefOrg(group: BriefGroup, username: string, profile: UserProfile): BriefOrganization {
         const { id, name, owner, custom: { gravatarhash } } = group
-        return { id, name, gravatarHash: gravatarhash || null, owner: { username: owner, realname: profile.user.realname }, createdAt: new Date(), modifiedAt: new Date() }
+        let relation: UserRelationToOrganization
+        // TODO: when we have access to members, admins, and group publication status, we can 
+        // flesh out all user relations.
+        if (username === group.owner) {
+            relation = UserRelationToOrganization.OWNER
+        } else {
+            relation = UserRelationToOrganization.VIEW
+        }
+        return {
+            id, name,
+            gravatarHash: gravatarhash || null,
+            owner: { username: owner, realname: profile.user.realname },
+            createdAt: new Date(),
+            modifiedAt: new Date(),
+            relation: relation
+        }
     }
 
-    groupsToOrgs(groups: GroupList, profiles: Map<string, UserProfile>): Array<BriefOrganization> {
+    groupsToOrgs(groups: GroupList, username: string, profiles: Map<string, UserProfile>): Array<BriefOrganization> {
         return groups.map((group) => {
-            return this.briefGroupToBriefOrg(group, profiles.get(group.owner)!)
+            return this.briefGroupToBriefOrg(group, username, profiles.get(group.owner)!)
         })
     }
 
@@ -186,7 +212,7 @@ export class Model {
                             profileMap.set(profile.user.username, profile)
                             return profileMap
                         }, new Map<string, UserProfile>())
-                        return this.groupsToOrgs(groups, profileMap)
+                        return this.groupsToOrgs(groups, query.username, profileMap)
                     })
             })
             .then((orgs) => {
@@ -214,6 +240,14 @@ export class Model {
             .then((group) => {
                 return userProfileClient.getUserProfile(group.owner)
                     .then((userProfile) => {
+                        let relation: UserRelationToOrganization
+                        // TODO: when we have access to members, admins, and group publication status, we can 
+                        // flesh out all user relations.
+                        if (this.params.username === group.owner) {
+                            relation = UserRelationToOrganization.OWNER
+                        } else {
+                            relation = UserRelationToOrganization.VIEW
+                        }
                         return {
                             id: group.id,
                             name: group.name,
@@ -231,7 +265,8 @@ export class Model {
                                 avatarOption: userProfile.profile.userdata.avatarOption,
                                 gravatarHash: userProfile.profile.synced.gravatarHash,
                                 gravatarDefault: userProfile.profile.userdata.gravatarDefault
-                            }
+                            },
+                            relation: relation
                         }
                     })
 
@@ -292,7 +327,7 @@ export class Model {
             .then((group) => {
                 return userProfileClient.getUserProfile(group.owner)
                     .then((userProfile) => {
-                        return this.groupToOrg(group, userProfile)
+                        return this.groupToOrg(group, username, userProfile)
                     })
             })
     }
@@ -313,9 +348,6 @@ export class Model {
             gravatarhash: orgUpdate.gravatarHash,
             description: orgUpdate.description
         })
-            .then(() => {
-                console.log('successfully saved...')
-            })
     }
 
     validateOrgId(id: string): [string, UIError] {

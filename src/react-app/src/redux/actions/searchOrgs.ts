@@ -96,7 +96,7 @@ export function searchOrgs(searchTerms: Array<string>) {
             auth: { authorization: { token, username } },
             app: { config } } = getState()
         const model = new Model({
-            token,
+            token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
             workspaceServiceURL: config.services.Workspace.url
@@ -128,7 +128,7 @@ export function sortOrgs(sortBy: string, sortDirection: SortDirection) {
             auth: { authorization: { token, username } },
             app: { config } } = getState()
         const model = new Model({
-            token,
+            token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
             workspaceServiceURL: config.services.Workspace.url
@@ -160,7 +160,7 @@ export function filterOrgs(filter: string) {
             auth: { authorization: { token, username } },
             app: { config } } = getState()
         const model = new Model({
-            token,
+            token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
             workspaceServiceURL: config.services.Workspace.url

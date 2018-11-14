@@ -258,7 +258,7 @@ export function addOrg() {
             addOrg: { newOrganization },
             app: { config } } = getState()
         const model = new Model({
-            token,
+            token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
             workspaceServiceURL: config.services.Workspace.url
@@ -274,7 +274,6 @@ export function addOrg() {
 
         model.addOrg(newOrganization, username)
             .then((org: Organization) => {
-                console.log('added', org)
                 dispatch(addOrgSuccess(org))
             })
             .catch((error) => {
@@ -323,10 +322,10 @@ export function addOrgEvaluate() {
 }
 
 function newModelFromState(state: StoreState) {
-    const { auth: { authorization: { token } },
+    const { auth: { authorization: { token, username } },
         app: { config } } = state
     return new Model({
-        token,
+        token, username,
         groupsServiceURL: config.services.Groups.url,
         userProfileServiceURL: config.services.UserProfile.url,
         workspaceServiceURL: config.services.Workspace.url
@@ -371,7 +370,6 @@ export function addOrgUpdateId(id: string) {
         model.groupExists(validatedId)
             .then((exists) => {
                 if (exists) {
-                    console.log('org??', exists)
                     dispatch(addOrgUpdateIdError(validatedId, {
                         type: UIErrorType.ERROR,
                         message: 'This org id is already in use'
@@ -388,10 +386,10 @@ export function addOrgUpdateId(id: string) {
 export function addOrgUpdateDescription(description: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>,
         getState: () => StoreState) => {
-        const { auth: { authorization: { token } },
+        const { auth: { authorization: { token, username } },
             app: { config } } = getState()
         const model = new Model({
-            token,
+            token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
             workspaceServiceURL: config.services.Workspace.url

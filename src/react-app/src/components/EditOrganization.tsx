@@ -135,7 +135,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
 
     onSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log('submitted')
         this.props.onEditOrgSave();
     }
 
@@ -258,7 +257,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     }
 
     renderOrgAvatar(org: EditableOrganization) {
-        // console.log('grav?', org.gravatarHash)
         return (
             <img style={{ width: 64, height: 64 }}
                 src={this.getOrgAvatarUrl(org)} />

@@ -64,27 +64,4 @@ export class WorkspaceClient {
             })
     }
 
-    // getUserProfile(username: string): Promise<UserProfile> {
-    //     return fetch(this.url, {
-    //         method: 'POST',
-    //         mode: 'cors',
-    //         cache: 'no-store',
-    //         headers: {
-    //             Authorization: this.token,
-    //             'Content-Type': 'application/json',
-    //             Accept: 'application/json'
-    //         },
-    //         body: JSON.stringify(this.makePayload('get_user_profile', [username]))
-    //     })
-    //         .then((response) => {
-    //             if (response.status !== 200) {
-    //                 throw new Error('User profile request error: ' + response.status + ', ' + response.statusText)
-    //             }
-    //             console.log('response...', response)
-    //             return response.json()
-    //         })
-    //         .then(([profile]) => {
-    //             return profile as UserProfile
-    //         })
-    // }
 }

@@ -74,9 +74,6 @@ export class UserProfileClient {
                 }
                 return response.json()
             })
-            .then((info) => {
-                console.log('info', info)
-            })
     }
 
     getUserProfile(username: string): Promise<UserProfile> {

@@ -113,7 +113,6 @@ export class AuthClient {
                 return response.json()
             })
             .then((result) => {
-                console.log('root info', result)
                 return result as RootInfo
             })
     }

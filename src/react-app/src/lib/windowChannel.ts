@@ -138,14 +138,6 @@ export class Channel {
 
     receiveMessage(messageEvent: MessageEvent) {
         const message = messageEvent.data as Message;
-        // console.log('* received', message);
-        // ignore messages not to/from the registered ids.
-        // if (!message.envelope.to === this.hostId) {
-        //     return;
-        // }
-        // if (!message.envelope.from === this.clientId) {
-        //     return;
-        // }
         if (!message) {
             this.unwelcomeReceivedCount++;
             if (this.unwelcomeReceiptWarning) {
@@ -285,7 +277,6 @@ export class Channel {
                 const newListeners = listeners.filter((listener) => {
                     if (listener instanceof WaitingListener) {
                         const elapsed = now - listener.started.getTime();
-                        // console.log('elapsed?', listener instanceof WaitingListener, elapsed, listener.timeout);
                         if (elapsed > listener.timeout) {
                             try {
                                 if (listener.onError) {

@@ -61,7 +61,6 @@ export function editOrgEditStart(state: StoreState, action: EditOrgEditStart) {
 }
 
 export function editOrgEditSuccess(state: StoreState, action: EditOrgEditSuccess) {
-    console.log('edit org success?', action)
     return {
         ...state, editOrg: {
             ...state.editOrg,
@@ -168,7 +167,6 @@ export function editOrgUpdateNameError(state: StoreState, action: EditOrgUpdateN
 
 // Gravatar hash
 export function editOrgUpdateGravatarHashSuccess(state: StoreState, action: EditOrgUpdateGravatarHashSuccess) {
-    console.log('hmm', action)
     return {
         ...state, editOrg: {
             ...state.editOrg,
