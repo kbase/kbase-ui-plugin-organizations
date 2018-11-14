@@ -50,6 +50,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
     onShowInfo() {
         Modal.info({
             title: 'New Organization Editor Help',
+            width: '50em',
             content: (
                 <div>
                     <p>This is the new organizations editor...</p>

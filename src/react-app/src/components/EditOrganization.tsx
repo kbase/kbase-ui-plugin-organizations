@@ -54,6 +54,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     onShowInfo() {
         Modal.info({
             title: 'Organization Editor Help',
+            width: '50em',
             content: (
                 <div>
                     <p>This is the organizations editor...</p>

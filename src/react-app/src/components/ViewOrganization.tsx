@@ -36,6 +36,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         // this.setState({ showInfo: true })
         Modal.info({
             title: 'View Organization Help',
+            width: '50em',
             content: (
                 <div>
                     <p>This is the organizations viewer...</p>

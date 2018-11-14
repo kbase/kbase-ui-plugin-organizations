@@ -49,6 +49,8 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         // this.setState({ showInfo: true })
         Modal.info({
             title: 'Organizations Browser Help',
+            width: '50em',
+            // style: { maxWidth: '80vw' },
             content: (
                 <div>
                     <p>This is the organizations browser...</p>
