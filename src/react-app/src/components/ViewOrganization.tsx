@@ -184,7 +184,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         mouseEnterDelay={0.5}
                         title="You own this org"
                     >
-                        <span><Icon type="lock" theme="filled" style={{ marginRight: '4px' }} />Owner</span>
+                        <span><Icon type="unlock" theme="filled" style={{ marginRight: '4px' }} />Owner</span>
                     </Tooltip>
                 )
         }
