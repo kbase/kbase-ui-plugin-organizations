@@ -5,9 +5,7 @@ import Organizations from '../containers/Organizations';
 import { SortDirection } from '../types';
 
 import './OrganizationsBrowser.css';
-import { FaSearch, FaSpinner } from 'react-icons/fa'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Icon, Radio, Tooltip, Select } from 'antd'
+import { Button, Icon, Radio, Select, Modal } from 'antd'
 import Header from './Header';
 import RadioGroup from 'antd/lib/radio/group';
 import { RadioChangeEvent } from 'antd/lib/radio';
@@ -26,6 +24,7 @@ export interface OrganizationsBrowserProps {
 
 export interface OrganizationsBrowserState {
     searchInput: string
+    showInfo: boolean
 }
 class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, OrganizationsBrowserState> {
 
@@ -39,10 +38,23 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         this.searchButton = React.createRef()
 
         this.state = {
-            searchInput: ''
+            searchInput: '',
+            showInfo: false
         }
 
         this.props.onSearchOrgs([])
+    }
+
+    onShowInfo() {
+        // this.setState({ showInfo: true })
+        Modal.info({
+            title: 'Organizations Browser Help',
+            content: (
+                <div>
+                    <p>This is the organizations browser...</p>
+                </div>
+            )
+        })
     }
 
     doSearch() {
@@ -265,6 +277,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     </div>
                     <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
                         <NavLink to="/newOrganization"><Button icon="plus-circle">Create Organization</Button></NavLink>
+                        <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
                     </div>
 
                 </div>
@@ -304,6 +317,16 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
     }
 
     render() {
+        // if (this.state.showInfo) {
+        //     Modal.info({
+        //         title: 'Organizations Browser Help',
+        //         content: (
+        //             <div>
+        //                 <p>This is the organizations browser...</p>
+        //             </div>
+        //         )
+        //     })
+        // }
         return (
             <div className="OrganizationsBrowser">
                 {this.renderHeader()}

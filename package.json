@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/eapearson/kbase-ui-plugin-organizations#readme",
   "devDependencies": {
-    "http-proxy": "^1.17.0"
+    "@types/md5": "^2.1.33",
+    "http-proxy": "^1.17.0",
+    "md5": "^2.2.1"
   }
 }

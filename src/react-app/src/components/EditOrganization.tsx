@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { Redirect } from 'react-router-dom';
 import marked from 'marked';
-import { Button, Icon } from 'antd';
+import { Button, Icon, Modal } from 'antd';
+import md5 from 'md5'
 
 import { EditableOrganization, SaveState, ValidationState, EditState } from '../types';
 
@@ -25,29 +26,60 @@ export interface EditOrganizationProps {
 
 
 export interface EditOrganizationState {
-    canceling: boolean;
-
-    // pendingOrganization: PendingOrganization
+    cancelToBrowser: boolean;
+    cancelToViewer: boolean;
 }
 
 class EditOrganization extends React.Component<EditOrganizationProps, EditOrganizationState> {
 
     origin: string;
 
+    gravatarEmail: React.RefObject<HTMLInputElement>
+
     constructor(props: EditOrganizationProps) {
         super(props)
 
         this.state = {
-            canceling: false
+            cancelToBrowser: false,
+            cancelToViewer: false
         }
+
+        this.gravatarEmail = React.createRef()
 
         this.origin = document.location!.origin
 
         this.props.onEditOrgEdit(this.props.id)
     }
 
-    onClickCancel() {
-        this.setState({ canceling: true })
+    onShowInfo() {
+        Modal.info({
+            title: 'Organization Editor Help',
+            content: (
+                <div>
+                    <p>This is the organizations editor...</p>
+                </div>
+            )
+        })
+    }
+
+
+    onGravatarEmailSync() {
+        let email;
+        if (this.gravatarEmail.current) {
+            email = this.gravatarEmail.current.value
+        } else {
+            email = 'n/a'
+        }
+        const hashed = md5(email)
+        this.props.onUpdateGravatarHash(hashed);
+    }
+
+    onClickCancelToBrowser() {
+        this.setState({ cancelToBrowser: true })
+    }
+
+    onClickCancelToViewer() {
+        this.setState({ cancelToViewer: true })
     }
 
     onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -102,6 +134,18 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                 <div className="row gravatarHash">
                     <div className="col1 field-label">gravatar hash</div>
                     <div className="col2">
+                        <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '4px' }}>
+                            <div style={{ flex: '1 1 0px' }}>
+                                <input ref={this.gravatarEmail} placeholder="Provide your gravatar-linked email address, if any" />
+                            </div>
+                            <div style={{ flex: '0 0 auto' }}>
+                                <Button
+                                    icon="sync"
+                                    style={{ height: '100%' }}
+                                    onClick={this.onGravatarEmailSync.bind(this)} />
+                            </div>
+                        </div>
+
                         <input value={this.props.editedOrganization.gravatarHash.value || ''}
                             onChange={this.onGravatarHashChange.bind(this)} />
                         {this.props.editedOrganization.gravatarHash.error ? (<span style={{ color: 'red' }}>{this.props.editedOrganization.gravatarHash.error.message}</span>) : ''}
@@ -233,40 +277,47 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                         </Button>
                         <Button icon="undo"
                             type="danger"
-                            onClick={this.onClickCancel.bind(this)}>
+                            onClick={this.onClickCancelToViewer.bind(this)}>
                             {/* <FaUndo style={{ verticalAlign: 'center' }} />  */}
-                            Return to Orgs
+                            Return to this Org
                         </Button>
+                        <Button icon="undo"
+                            type="danger"
+                            onClick={this.onClickCancelToBrowser.bind(this)}>
+                            {/* <FaUndo style={{ verticalAlign: 'center' }} />  */}
+                            Return to Orgs Browser
+                        </Button>
+                        <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
                     </div>
                 </div>
             </Header>
         )
     }
 
-    renderFooter() {
-        return (
-            <div className="footerRow">
-                <div className="editorColumn">
-                    <div className="row">
-                        <div className="col1">
-                        </div>
-                        <div className="col2">
-                            <div className="footer">
-                                <Button form="editOrganizationForm"
-                                    key="submit"
-                                    htmlType="submit">Save</Button>
-                                <Button type="danger"
-                                    onClick={this.onClickCancel.bind(this)}>Cancel</Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="previewColumn">
+    // renderFooter() {
+    //     return (
+    //         <div className="footerRow">
+    //             <div className="editorColumn">
+    //                 <div className="row">
+    //                     <div className="col1">
+    //                     </div>
+    //                     <div className="col2">
+    //                         <div className="footer">
+    //                             <Button form="editOrganizationForm"
+    //                                 key="submit"
+    //                                 htmlType="submit">Save</Button>
+    //                             <Button type="danger"
+    //                                 onClick={this.onClickCancel.bind(this)}>Cancel</Button>
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //             <div className="previewColumn">
 
-                </div>
-            </div>
-        )
-    }
+    //             </div>
+    //         </div>
+    //     )
+    // }
 
     renderLoadingHeader() {
         return (
@@ -283,8 +334,12 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     }
 
     render() {
-        if (this.state.canceling) {
+        if (this.state.cancelToBrowser) {
             return <Redirect push to="/organizations" />
+        }
+
+        if (this.state.cancelToViewer) {
+            return <Redirect push to={"/viewOrganization/" + this.props.id} />
         }
 
         // // TODO: this is just a prop for today.

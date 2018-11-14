@@ -5,10 +5,11 @@ import { NavLink } from 'react-router-dom'
 import './ViewOrganization.css'
 
 import { ViewOrgState, Organization, AppError, BriefOrganization } from '../types'
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import Header from './Header';
 
 export interface ViewOrganizationState {
+    showInfo: boolean
 }
 
 export interface ViewOrganizationProps {
@@ -24,7 +25,23 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     constructor(props: ViewOrganizationProps) {
         super(props)
 
+        this.state = {
+            showInfo: false
+        }
+
         this.props.onViewOrg(this.props.id)
+    }
+
+    onShowInfo() {
+        // this.setState({ showInfo: true })
+        Modal.info({
+            title: 'View Organization Help',
+            content: (
+                <div>
+                    <p>This is the organizations viewer...</p>
+                </div>
+            )
+        })
     }
 
     buildFooter() {
@@ -73,7 +90,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         </div>
                         <div className="id">
                             <span className="label">permalink</span>{' '}
-                            <span className="permalinkBase">https://narrative.kbase.us#org/</span>{this.props.organization.id}
+                            <span className="permalinkBase">https://narrative.kbase.us#orgs/</span>{this.props.organization.id}
                         </div>
                     </div>
                 </div>
@@ -219,6 +236,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
                         {this.renderEditButton()}
                         <NavLink to={`/organizations`}><Button type="danger" icon="undo">Return to Orgs</Button></NavLink>
+                        <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
                     </div>
                 </div>
             </Header>
