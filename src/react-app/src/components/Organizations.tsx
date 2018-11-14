@@ -76,7 +76,7 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
                         mouseEnterDelay={0.5}
                         title="You own this org"
                     >
-                        <span><Icon type="lock" theme="filled" />Owner</span>
+                        <span><Icon type="unlock" theme="filled" />Owner</span>
                     </Tooltip>
                 )
         }
