@@ -41,8 +41,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     onCancelJoinRequest() {
-        console.log('canceling join...')
-        console.log(this.props.organization!.relation)
         if (!this.props.organization) {
             return
         }
@@ -350,7 +348,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         if (!this.props.organization) {
             return
         }
-        console.log('relation?', this.props.organization.relation)
         if (this.props.organization.relation.type !== UserRelationToOrganization.VIEW) {
             return
         }

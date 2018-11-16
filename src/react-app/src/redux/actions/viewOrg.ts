@@ -162,7 +162,6 @@ export function viewOrgFetch(id: string) {
 
         model.getOrg(id)
             .then((org) => {
-                console.log('got org!', org)
                 dispatch(viewOrgSuccess(org))
             })
             .catch((err) => {

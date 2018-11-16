@@ -30,7 +30,6 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
             cancelToViewer: false
         }
 
-        console.log('props', props)
         this.props.onStart(this.props.organizationId)
     }
 

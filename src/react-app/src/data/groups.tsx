@@ -203,13 +203,10 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result: GroupList) => {
-                console.log('perf: just groups', new Date().getTime() - start)
-                start = new Date().getTime()
                 const orgs = result.filter(({ type }) => type === 'Organization')
                 return Promise.all(orgs.map((group) => (this.getGroupById(group.id))))
             })
             .then((result) => {
-                console.log('perf: full groups', new Date().getTime() - start)
                 return result;
             })
     }

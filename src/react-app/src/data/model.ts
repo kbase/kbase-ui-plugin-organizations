@@ -428,7 +428,6 @@ export class Model {
             group.admins.forEach((admin) => allUsers.set(admin, true))
             return allUsers;
         }, new Map<string, boolean>()).keys()
-        let start = new Date().getTime()
 
         const adminGroupIds = groups
             .filter(({ owner, admins }) => (owner === username || admins.indexOf(username) >= 0))
@@ -440,7 +439,6 @@ export class Model {
             this.getPendingAdminRequests(adminGroupIds)
         ])
             .then(([profiles, { requests, invitations }, pendingAdminRequests]) => {
-                console.log('perf: profiles', new Date().getTime() - start)
                 const profileMap = profiles.reduce((profileMap, profile) => {
                     profileMap.set(profile.user.username, profile)
                     return profileMap
@@ -448,7 +446,6 @@ export class Model {
 
                 // now make a per-group map out of this...
                 const pendingRequests = new Map<string, groups.GroupRequest>()
-                // console.log('pending reqeusts', pendingRequests)
                 requests.forEach((req) => {
                     if (req.requester === username) {
                         pendingRequests.set(req.groupid, req)
@@ -456,7 +453,6 @@ export class Model {
                 })
 
                 const pendingInvites = new Map<string, groups.GroupRequest>()
-                // console.log('pending invites', pendingInvites)
                 invitations.forEach((req) => {
                     if (req.targetuser === username) {
                         pendingInvites.set(req.groupid, req)
@@ -648,7 +644,6 @@ export class Model {
                 return this.groupRequestToGroupRequest(request)
             })
             .catch((err) => {
-                console.log('err???', err)
                 throw err;
             })
     }

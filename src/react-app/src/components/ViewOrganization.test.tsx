@@ -1,5 +1,5 @@
 import React from 'react'
-import { Authorization, AuthState, Organization, ViewOrgState } from '../types'
+import { Authorization, AuthState, Organization, ViewOrgState, UserRelationToOrganization } from '../types'
 import { configure, shallow } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 
@@ -31,12 +31,18 @@ it('renders without crashing', () => {
             state: '',
             country: ''
         },
+        relation: {
+            type: UserRelationToOrganization.NONE
+        },
         id: '',
         name: '',
         gravatarHash: '',
         description: '',
         createdAt: new Date(),
-        modifiedAt: new Date()
+        modifiedAt: new Date(),
+        members: [],
+        admins: [],
+        adminRequests: []
     }
     const error = {
         code: '',
@@ -44,6 +50,8 @@ it('renders without crashing', () => {
     }
     const username = ''
     const onViewOrg = (id: string) => { }
+    const onJoinOrg = () => { }
+    const onCancelJoinRequest = (id: string) => { }
 
     const wrapper = shallow(<ViewOrganization
         state={state}
@@ -52,5 +60,7 @@ it('renders without crashing', () => {
         error={error}
         username={username}
         onViewOrg={onViewOrg}
+        onJoinOrg={onJoinOrg}
+        onCancelJoinRequest={onCancelJoinRequest}
     />)
 });

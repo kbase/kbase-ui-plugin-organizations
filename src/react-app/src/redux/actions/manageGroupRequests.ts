@@ -162,7 +162,6 @@ export function manageGroupRequests(groupId: string) {
             model.getPendingGroupRequests(groupId)
         ])
             .then(([organization, requests]) => {
-                console.log('got requests?', requests)
                 dispatch(manageGroupRequestsSuccess(organization, requests))
             })
             .catch((err) => {
