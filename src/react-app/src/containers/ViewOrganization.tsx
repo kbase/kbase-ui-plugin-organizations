@@ -24,7 +24,9 @@ interface StateProps {
 
 // the interface for mapDispatchToProps
 interface DispatchProps {
-    onViewOrg: (id: string) => void
+    onViewOrg: (id: string) => void,
+    onJoinOrg: () => void,
+    onCancelJoinRequest: (requestId: string) => void
 }
 
 // hmm this bit would be for the interface for the wrapped component.
@@ -46,6 +48,12 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.ViewOrgFetch>): Di
     return {
         onViewOrg: (id: string) => {
             dispatch(actions.viewOrgFetch(id) as any)
+        },
+        onJoinOrg: () => {
+            dispatch(actions.viewOrgJoinRequest() as any)
+        },
+        onCancelJoinRequest: (requestId: string) => {
+            dispatch(actions.viewOrgCancelJoinRequest(requestId) as any)
         }
     }
 }

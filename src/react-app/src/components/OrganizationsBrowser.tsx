@@ -73,7 +73,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         return false
     }
 
-
     onSearchInputChange() {
         let currentSearchInputValue;
         if (this.searchInput.current) {
@@ -124,52 +123,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         // const event = new Event('change', { bubbles: true })
         // this.searchInput.current.dispatchEvent(event)
         this.doSearch()
-    }
-
-    renderControlArea() {
-        return (
-            <div className="OrganizationsBrowser-controlArea">
-                {/* {this.renderSortArea()} */}
-                {this.renderSortArea()}
-                {this.renderFilterArea()}
-            </div>
-        )
-    }
-
-    renderSortArea() {
-        return (
-            <div className="controlGroup">
-                <div className="header">
-                    sort
-                </div>
-                <RadioGroup onChange={this.onSortByChange.bind(this)} value={this.props.sortBy}>
-                    <Radio className="radio" value="name">Org name</Radio>
-                    <Radio className="radio" value="owner">Owner</Radio>
-                </RadioGroup>
-
-                <div style={{ marginTop: '10px' }}>
-                    <RadioGroup onChange={this.onSortDirectionChange.bind(this)} value={this.props.sortDirection}>
-                        <Radio className="radio" value={SortDirection.ASCENDING}><Icon type="sort-ascending" /> Ascending</Radio>
-                        <Radio className="radio" value={SortDirection.DESCENDING}><Icon type="sort-descending" /> Descending</Radio>
-                    </RadioGroup>
-                </div>
-            </div>
-        )
-    }
-
-    renderFilterArea() {
-        return (
-            <div className="controlGroup">
-                <div className="header">
-                    filter
-                </div>
-                <RadioGroup onChange={this.onFilterChange.bind(this)} value={this.props.filter}>
-                    <Radio className="radio" value="all">All</Radio>
-                    <Radio className="radio" value="owned">Owned by you</Radio>
-                    <Radio className="radio" value="notOwned">Owned by others</Radio>
-                </RadioGroup>
-            </div>
-        )
     }
 
     renderSearchFeedback() {
@@ -295,6 +248,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     dropdownMatchSelectWidth={true}>
                     <Select.Option value="name" key="name">Org name</Select.Option>
                     <Select.Option value="owner" key="owner">Owner</Select.Option>
+                    <Select.Option value="created" key="created">Date created</Select.Option>
                 </Select>
                 <Select onChange={this.onSortDirectionChange2.bind(this)}
                     style={{ width: '10em' }}
@@ -306,11 +260,13 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                 <span className="field-label" style={{ marginLeft: '10px' }}>filter</span>
                 <Select onChange={this.onFilterChange2.bind(this)}
                     defaultValue={this.props.filter}
-                    style={{ width: '12em' }}
+                    style={{ width: '16em' }}
                     dropdownMatchSelectWidth={true}>
                     <Select.Option value="all" key="all">All</Select.Option>
                     <Select.Option value="owned" key="owned">Owned by you</Select.Option>
-                    <Select.Option value="notOwned" key="nowtOwned">Not owned by you</Select.Option>
+                    <Select.Option value="notOwned" key="notOwned">Not owned by you</Select.Option>
+                    <Select.Option value="pending" key="pending">Pending request or invitation</Select.Option>
+                    <Select.Option value="groupPending" key="groupPending">Pending group requests</Select.Option>
                 </Select>
             </div>
         )

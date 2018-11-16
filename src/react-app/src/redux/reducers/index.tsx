@@ -6,6 +6,7 @@ import viewOrgReducer from './viewOrg'
 import searchOrgsReducer from './searchOrgs'
 import authReducer from './auth'
 import appReducer from './app'
+import manageGroupRequests from './manageGroupRequests';
 
 
 export function reducer(state: StoreState, action: Action): StoreState {
@@ -15,6 +16,7 @@ export function reducer(state: StoreState, action: Action): StoreState {
         viewOrgReducer(state, action) ||
         authReducer(state, action) ||
         appReducer(state, action) ||
+        manageGroupRequests(state, action) ||
         state;
 }
 

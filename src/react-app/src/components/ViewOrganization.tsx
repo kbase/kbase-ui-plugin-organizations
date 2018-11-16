@@ -4,10 +4,11 @@ import { NavLink } from 'react-router-dom'
 
 import './ViewOrganization.css'
 
-import { ViewOrgState, Organization, AppError, UserRelationToOrganization } from '../types'
-import { Button, Modal, Icon, Tooltip } from 'antd';
-import Header from './Header';
-import { types } from 'util';
+import { ViewOrgState, Organization, AppError, UserRelationToOrganization, MembershipRequestPendingRelation } from '../types'
+import { Button, Modal, Icon, Tooltip } from 'antd'
+import Header from './Header'
+import Avatar from './Avatar'
+import User from './User';
 
 export interface ViewOrganizationState {
     showInfo: boolean
@@ -19,7 +20,9 @@ export interface ViewOrganizationProps {
     organization?: Organization
     error?: AppError
     username: string,
-    onViewOrg: (id: string) => void
+    onViewOrg: (id: string) => void,
+    onJoinOrg: () => void,
+    onCancelJoinRequest: (requestId: string) => void
 }
 
 class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrganizationState> {
@@ -31,6 +34,20 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         }
 
         this.props.onViewOrg(this.props.id)
+    }
+
+    onJoinClick() {
+        this.props.onJoinOrg()
+    }
+
+    onCancelJoinRequest() {
+        console.log('canceling join...')
+        console.log(this.props.organization!.relation)
+        if (!this.props.organization) {
+            return
+        }
+        const relation = this.props.organization.relation as MembershipRequestPendingRelation
+        this.props.onCancelJoinRequest(relation.requestId)
     }
 
     onShowInfo() {
@@ -127,38 +144,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
-    getAvatarUrl() {
-        if (!this.props.organization) {
-            return
-        }
-        switch (this.props.organization.owner.avatarOption || 'gravatar') {
-            case 'gravatar':
-                const gravatarDefault = this.props.organization.owner.gravatarDefault || 'identicon';
-                const gravatarHash = this.props.organization.owner.gravatarHash;
-                if (gravatarHash) {
-                    return 'https://www.gravatar.com/avatar/' + gravatarHash + '?s=60&amp;r=pg&d=' + gravatarDefault;
-                } else {
-                    return './nouserpic.png';
-                }
-            case 'silhouette':
-            case 'mysteryman':
-            default:
-                return './nouserpic.png';
-        }
-    }
-
-    renderAvatar() {
-        const avatarUrl = this.getAvatarUrl()
-        return (
-            <img
-                src={avatarUrl}
-                style={{ width: 60 }}
-            />
-        )
-    }
 
     renderRelation(org: Organization) {
-        switch (org.relation) {
+        switch (org.relation.type) {
             case (UserRelationToOrganization.NONE):
                 return (
                     <span><Icon type="stop" />None</span>
@@ -173,6 +161,15 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         <span><Icon type="eye" style={{ marginRight: '4px' }} />Viewer</span>
                     </Tooltip>
                 )
+            case (UserRelationToOrganization.MEMBER_REQUEST_PENDING):
+                return (
+                    <div>
+                        <div><Icon type="user" style={{ color: 'orange' }} spin={true} />Your membership <b>request</b> is pending</div>
+                        <div><Button icon="delete" type="danger" onClick={this.onCancelJoinRequest.bind(this)}>Cancel Request</Button></div>
+                    </div>
+                )
+            case (UserRelationToOrganization.MEMBER_INVITATION_PENDING):
+                return (<span><Icon type="user" style={{ color: 'blue' }} />You have been <b>invited</b> to join</span>)
             case (UserRelationToOrganization.MEMBER):
                 return (<span><Icon type="user" />Member</span>)
             case (UserRelationToOrganization.ADMIN):
@@ -190,13 +187,45 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         }
     }
 
+    renderMembers() {
+        if (!this.props.organization) {
+            return
+        }
+        let members;
+        if (this.props.organization.members.length === 0) {
+            members = (
+                <p style={{ fontStyle: 'italic', textAlign: 'center' }}>
+                    This organization has no members
+                </p>
+            )
+        } else {
+            members = this.props.organization.members.map((member) => {
+                return (
+                    <User user={member} />
+                )
+            })
+        }
+        return (
+            <div className="table infoTable">
+                <div className="row">
+                    <div className="col0">
+                        <div>
+                            <div className="label">members</div>
+                            {members}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     renderInfo() {
         // apparently TS is not smart enough to know this from the conditional branch in render()!
         if (!this.props.organization) {
             return
         }
         return (
-            <form className="table infoTable">
+            <div className="table infoTable">
                 <div className="row">
                     <div className="col0">
                         <div>
@@ -204,12 +233,12 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         </div>
                         <div className="ownerTable">
                             <div className="avatarCol">
-                                {this.renderAvatar()}
+                                <Avatar user={this.props.organization.owner} size={60} />
                             </div>
                             <div className="proprietorCol">
 
                                 <div className="owner">
-                                    <a href="#people/{org.owner.username}" target="_blank">{this.props.organization.owner.realname}</a>
+                                    <a href={"#people/" + this.props.organization.owner.username} target="_blank">{this.props.organization.owner.realname}</a>
                                     {' '}
                                     ❨{this.props.organization.owner.username}❩
                                 </div>
@@ -217,7 +246,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                                     {this.props.organization.owner.organization}
                                 </div>
                                 <div className="profileOrganization">
-                                    {this.props.organization.owner.city} {this.props.organization.owner.state}, {this.props.organization.owner.country}
+                                    {this.props.organization.owner.city}, {this.props.organization.owner.state}, {this.props.organization.owner.country}
                                 </div>
                             </div>
                         </div>
@@ -252,8 +281,46 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         </div>
                     </div>
                 </div>
+            </div>
+        )
+    }
 
-            </form>
+    renderAdminRequestsRow(org: Organization) {
+        if (!org) {
+            return
+        }
+        if (!org.relation) {
+            return
+        }
+        if (!(org.relation.type === UserRelationToOrganization.ADMIN ||
+            org.relation.type === UserRelationToOrganization.OWNER)) {
+            return
+        }
+        return (
+            <div className="row">
+                <div className="col1">
+                    <span className="label">admin</span>
+                </div>
+                <div className="col2">
+                    <div className="relation">
+                        <div>
+                            <div>
+                                <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" /> group has
+                    {' '}
+                                <span style={{ fontWeight: 'bold' }}>{org.adminRequests.length}</span>
+                                {' '}
+                                pending request{org.adminRequests.length > 1 ? 's' : ''}
+                            </div>
+                            <div>
+                                <NavLink to={"/manageGroupRequests/" + this.props.organization!.id}>
+                                    <Button>Manage Requests</Button>
+                                </NavLink>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         )
     }
 
@@ -274,7 +341,25 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         </div>
                     </div>
                 </div>
+                {this.renderAdminRequestsRow(this.props.organization)}
             </form>
+        )
+    }
+
+    renderJoinButton() {
+        if (!this.props.organization) {
+            return
+        }
+        console.log('relation?', this.props.organization.relation)
+        if (this.props.organization.relation.type !== UserRelationToOrganization.VIEW) {
+            return
+        }
+        return (
+            <Button
+                onClick={this.onJoinClick.bind(this)}
+            >
+                Join this Organization
+                </Button>
         )
     }
 
@@ -292,6 +377,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
                         {this.renderEditButton()}
                         <NavLink to={`/organizations`}><Button type="danger" icon="undo">Return to Orgs</Button></NavLink>
+                        {this.renderJoinButton()}
                         <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
                     </div>
                 </div>
@@ -328,6 +414,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                             </div>
                             <div className="infoBox">
                                 {this.renderInfo()}
+                            </div>
+                            <div className="infoBox">
+                                {this.renderMembers()}
                             </div>
                         </div>
                     </div>

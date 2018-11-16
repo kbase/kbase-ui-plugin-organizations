@@ -15,6 +15,10 @@
     flex-direction: row;
 }
 
+.Organizations>.row:hover {
+    background-color: rgba(200, 200, 200, 0.5)
+}
+
 .Organizations>.row>.col1 {
     flex: 1 1 0px;
     margin-left: 10px;
@@ -26,7 +30,7 @@
 
 .Organizations .orgName {
     font-weight: bold;
-    font-size: 110%;
+    font-size: 120%;
     cursor: pointer;
 }
 

@@ -2,9 +2,6 @@ import { Action } from 'redux'
 import * as actions from '../actions/viewOrg'
 import * as types from '../../types'
 import { ActionFlag } from '../actions'
-import { Organizations, Organization } from '../../types'
-import { Model } from '../../data/model'
-
 
 export function viewOrgStart(state: types.StoreState,
     action: actions.ViewOrgStart): types.StoreState {

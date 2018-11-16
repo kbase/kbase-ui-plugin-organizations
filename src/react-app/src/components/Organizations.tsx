@@ -3,13 +3,13 @@ import './Organizations.css';
 import * as types from '../types';
 import { NavLink } from 'react-router-dom';
 import { Alert, Icon, Tooltip } from 'antd';
-import { BriefOrganization } from '../types';
+import { Organization } from '../types';
 
 // TODO: need more ergonomic way to resolve the common issue of data types interfering with 
 // component types.
 
 export interface OrganizationsProps {
-    organizations: Array<BriefOrganization>
+    organizations: Array<Organization>
 }
 
 export interface OrganizationsState {
@@ -26,7 +26,7 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
         }
     }
 
-    getAvatarUrl(org: BriefOrganization) {
+    getAvatarUrl(org: Organization) {
         // const defaultImages = [
         //     'orgs-64.png',
         //     'unicorn-64.png'
@@ -42,15 +42,15 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
         return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
     }
 
-    renderAvatar(org: BriefOrganization) {
+    renderAvatar(org: Organization) {
         return (
             <img style={{ width: 64, height: 64 }}
                 src={this.getAvatarUrl(org)} />
         )
     }
 
-    renderRelation(org: BriefOrganization) {
-        switch (org.relation) {
+    renderRelation(org: Organization) {
+        switch (org.relation.type) {
             case (types.UserRelationToOrganization.NONE):
                 return (
                     <span><Icon type="stop" />None</span>
@@ -65,6 +65,10 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
                         <span><Icon type="eye" />View</span>
                     </Tooltip>
                 )
+            case (types.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
+                return (<span><Icon type="user" style={{ color: 'orange' }} />Your membership request is pending</span>)
+            case (types.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
+                return (<span><Icon type="user" style={{ color: 'blue' }} />You have been invited to join</span>)
             case (types.UserRelationToOrganization.MEMBER):
                 return (<span><Icon type="user" />Member</span>)
             case (types.UserRelationToOrganization.ADMIN):
@@ -82,9 +86,37 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
         }
     }
 
-    renderOrg(org: BriefOrganization, index: Number) {
+    renderAdminInfo(org: Organization) {
+        if (!(org.relation.type === types.UserRelationToOrganization.OWNER ||
+            org.relation.type === types.UserRelationToOrganization.ADMIN)) {
+            return
+        }
+        let requestsPending
+        if (org.adminRequests.length > 0) {
+            requestsPending = (
+                <div>
+                    <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" />  group has <b>{org.adminRequests.length} pending request{org.adminRequests.length > 1 ? 's' : ''}</b>
+                </div>
+            )
+        }
+
         return (
-            <div className="row" key={String(index)}>
+            <div className="admin">
+                {requestsPending}
+            </div>
+        )
+    }
+
+    pluralize(count: number, singular: string, plural: string) {
+        if (count === 0 || count > 1) {
+            return plural
+        }
+        return singular
+    }
+
+    renderOrg(org: Organization, index: Number) {
+        return (
+            <div className="row organization" key={String(index)}>
                 <div className="col2">
                     <NavLink to={`/viewOrganization/${org.id}`}>
                         {this.renderAvatar(org)}
@@ -98,11 +130,25 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
                     </div>
                     <div className="orgOwner">
                         <span className="field-label">owner</span>
-                        <a href={"/#people/" + org.owner.username} target="_blank">{org.owner.realname} ❨{org.owner.username}❩</a>
+                        <span className="field-value"><a href={"/#people/" + org.owner.username} target="_blank">{org.owner.realname} ❨{org.owner.username}❩</a></span>
+
+                    </div>
+                    <div className="orgCreated">
+                        <span className="field-label">established</span>
+                        <span className="field-value">{Intl.DateTimeFormat('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                        }).format(org.createdAt)}</span>
+                    </div>
+                    <div className="memberCount">
+                        {org.members.length > 0 ? org.members.length : 'no'} {this.pluralize(org.members.length, 'member', 'members')}
                     </div>
                     <div className="relation">
+                        <span className="field-label">you</span>
                         {this.renderRelation(org)}
                     </div>
+                    {this.renderAdminInfo(org)}
                 </div>
             </div>
         )
@@ -111,7 +157,7 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
     renderOrgs() {
         if (this.props.organizations.length > 0) {
             return (
-                this.props.organizations.map((org: BriefOrganization, index) => {
+                this.props.organizations.map((org: Organization, index) => {
                     return (
                         this.renderOrg(org, index)
                     )

@@ -1,4 +1,4 @@
-import { string } from "prop-types";
+import { string, number } from "prop-types";
 
 export interface GroupsServiceInfo {
     servname: string;
@@ -109,6 +109,35 @@ export interface ErrorResult {
 export interface GroupExists {
     exists: boolean
 }
+
+export interface GroupRequest {
+    id: string,
+    groupid: string,
+    requester: Username,
+    type: string,
+    status: string,
+    targetuser?: Username,
+    targetws?: number,
+    createdate: number,
+    expiredate: number,
+    moddate: number
+}
+
+export enum SortDirection {
+    ASCENDING = 0,
+    DESCENDING
+}
+
+export interface GetRequestsParams {
+    includeClosed?: boolean,
+    sortDirection?: SortDirection,
+    startAt?: Date
+}
+
+export interface RequestMemebershipParams {
+    groupId: string
+}
+
 export class GroupsClient {
     token: string;
     url: string;
@@ -144,7 +173,25 @@ export class GroupsClient {
             })
     }
 
-    getGroups(): Promise<GroupList> {
+    // getGroups(): Promise<GroupList> {
+    //     return fetch(this.url + '/group', {
+    //         headers: {
+    //             Authorization: this.token,
+    //             Accept: 'application/json'
+    //         },
+    //         mode: 'cors'
+    //     })
+    //         .then((response) => {
+    //             return response.json()
+    //         })
+    //         .then((result: GroupList) => {
+    //             return result.filter(({ type }) => type === 'Organization')
+    //         })
+    // }
+
+
+    getGroups(): Promise<Array<Group>> {
+        let start = new Date().getTime()
         return fetch(this.url + '/group', {
             headers: {
                 Authorization: this.token,
@@ -156,7 +203,14 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result: GroupList) => {
-                return result.filter(({ type }) => type === 'Organization')
+                console.log('perf: just groups', new Date().getTime() - start)
+                start = new Date().getTime()
+                const orgs = result.filter(({ type }) => type === 'Organization')
+                return Promise.all(orgs.map((group) => (this.getGroupById(group.id))))
+            })
+            .then((result) => {
+                console.log('perf: full groups', new Date().getTime() - start)
+                return result;
             })
     }
 
@@ -231,6 +285,185 @@ export class GroupsClient {
                     return
                 }
                 throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+            })
+    }
+
+    getGroupRequests(groupId: string, params: GetRequestsParams): Promise<Array<GroupRequest>> {
+        const query = new URLSearchParams()
+        if (params.includeClosed) {
+            query.append('closed', 'closed')
+        }
+        if (params.sortDirection) {
+            if (params.sortDirection === SortDirection.DESCENDING) {
+                query.append('order', 'desc')
+            } else {
+                query.append('order', 'asc')
+            }
+        }
+        if (params.startAt) {
+            query.append('excludeupto', String(params.startAt.getTime()))
+        }
+        return fetch(this.url + '/group/' + groupId + '/requests?' + params.toString(), {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            method: 'GET'
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+                }
+                return response.json()
+            })
+    }
+
+    getTargetedRequests(params: GetRequestsParams): Promise<Array<GroupRequest>> {
+        const query = new URLSearchParams()
+        if (params.includeClosed) {
+            query.append('closed', 'closed')
+        }
+        if (params.sortDirection) {
+            if (params.sortDirection === SortDirection.DESCENDING) {
+                query.append('order', 'desc')
+            } else {
+                query.append('order', 'asc')
+            }
+        }
+        if (params.startAt) {
+            query.append('excludeupto', String(params.startAt.getTime()))
+        }
+        return fetch(this.url + '/request/targeted?' + params.toString(), {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            method: 'GET'
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+                }
+                return response.json()
+            })
+    }
+    getCreatedRequests(params: GetRequestsParams): Promise<Array<GroupRequest>> {
+        const query = new URLSearchParams()
+        if (params.includeClosed) {
+            query.append('closed', 'closed')
+        }
+        if (params.sortDirection) {
+            if (params.sortDirection === SortDirection.DESCENDING) {
+                query.append('order', 'desc')
+            } else {
+                query.append('order', 'asc')
+            }
+        }
+        if (params.startAt) {
+            query.append('excludeupto', String(params.startAt.getTime()))
+        }
+        return fetch(this.url + '/request/created?' + params.toString(), {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'appcliation/json'
+            },
+            mode: 'cors',
+            method: 'GET'
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+                }
+                return response.json()
+            })
+    }
+
+    requestMembership(params: RequestMemebershipParams): Promise<GroupRequest> {
+        return fetch(this.url + '/group/' + params.groupId + '/requestmembership', {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            mode: 'cors',
+            method: 'POST'
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then((result) => {
+                return result as GroupRequest
+            })
+    }
+
+    cancelRequest({ requestId }: { requestId: string }): Promise<GroupRequest> {
+        return fetch(this.url + '/request/id/' + requestId + '/cancel', {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            method: 'PUT'
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('Unexpected response: ' + response.status)
+                }
+                return response.json()
+            })
+            .then((result) => {
+                return result as GroupRequest
+            })
+    }
+
+    acceptRequest({ requestId }: { requestId: string }): Promise<GroupRequest> {
+        return fetch(this.url + '/request/id/' + requestId + '/accept', {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            method: 'PUT'
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('Unexpected response: ' + response.status)
+                }
+                return response.json()
+            })
+            .then((result) => {
+                return result as GroupRequest
+            })
+    }
+
+    denyRequest({ requestId }: { requestId: string }): Promise<GroupRequest> {
+        return fetch(this.url + '/request/id/' + requestId + '/deny', {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            method: 'PUT'
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('Unexpected response: ' + response.status)
+                }
+                return response.json()
+            })
+            .then((result) => {
+                return result as GroupRequest
             })
     }
 }

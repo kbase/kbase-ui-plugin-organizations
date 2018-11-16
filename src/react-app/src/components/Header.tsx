@@ -1,6 +1,6 @@
-import * as React from 'react';
+import * as React from 'react'
 import { NavLink } from 'react-router-dom'
-import './Header.css';
+import './Header.css'
 import { FaUsers, FaChevronRight } from 'react-icons/fa'
 
 export interface HeaderProps {

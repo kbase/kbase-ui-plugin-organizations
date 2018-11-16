@@ -46,9 +46,19 @@ button {
     color: rgba(150, 150, 150, 1);
 }
 
+.field-value {
+    padding: 3px 3px 3px 0;
+    font-weight: bold;
+    /* color: rgba(150, 150, 150, 1); */
+}
+
 /* antd overrides */
 
 .ant-btn>.anticon+span,
 .ant-btn>span+.anticon {
     margin-left: 2px
+}
+
+a:hover {
+    text-decoration: underline;
 }

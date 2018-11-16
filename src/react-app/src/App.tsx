@@ -23,6 +23,7 @@ import ViewOrganization from './containers/ViewOrganization'
 import EditOrganization from './containers/EditOrganization'
 import Auth from './containers/Auth'
 import KBaseIntegration from './containers/KBaseIntegration'
+import ManageGroupRequests from './containers/ManageGroupRequests'
 import { StateInstances } from './redux/state';
 
 // Put the redux store together
@@ -61,6 +62,7 @@ class App extends Component {
                   {/* The destructuring below is ugly, but effective */}
                   <Route path="/viewOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewOrganization id={id} />} />
                   <Route path="/editOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <EditOrganization id={id} />} />
+                  <Route path="/manageGroupRequests/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ManageGroupRequests organizationId={id} />} />
                   <Redirect from="/" to="/organizations" exact={true} />
                 </div>
               </div>

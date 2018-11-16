@@ -3,8 +3,8 @@ import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
 import {
-    StoreState, Organization, EditedOrganization,
-    AppError, UIError, BriefOrganization, SortDirection
+    StoreState, Organization,
+    AppError, SortDirection
 } from '../../types'
 import { Model } from '../../data/model'
 import { viewOrgStop } from './viewOrg'
@@ -53,11 +53,11 @@ export function searchOrgsStart(searchTerms: Array<string>): SearchOrgsStart {
 // Sets the organizations found
 export interface SearchOrgsSuccess extends Action<ActionFlag.SEARCH_ORGS_SUCCESS> {
     type: ActionFlag.SEARCH_ORGS_SUCCESS,
-    organizations: Array<BriefOrganization>,
+    organizations: Array<Organization>,
     totalCount: number
 }
 
-export function searchOrgsSuccess(organizations: Array<BriefOrganization>, totalCount: number): SearchOrgsSuccess {
+export function searchOrgsSuccess(organizations: Array<Organization>, totalCount: number): SearchOrgsSuccess {
     return {
         type: ActionFlag.SEARCH_ORGS_SUCCESS,
         organizations: organizations,

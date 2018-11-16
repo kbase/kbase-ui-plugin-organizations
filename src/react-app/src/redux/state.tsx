@@ -65,6 +65,7 @@ export class StateInstances {
                 validationState: ValidationState.NONE,
                 editedOrganization: StaticData.makeEmptyEditableOrganization()
             },
+            manageGroupRequestsView: null
         }
     }
 }

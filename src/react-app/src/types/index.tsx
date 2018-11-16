@@ -1,5 +1,6 @@
 import { ViewOrganizationState } from "../components/ViewOrganization";
 import { types } from "util";
+import Organizations from "../containers/Organizations";
 
 /* Types from the organization service (approximately) */
 
@@ -48,7 +49,7 @@ export interface EditableOrganization {
     }
 }
 
-export interface Owner {
+export interface UserBase {
     username: string
     realname: string
     organization: string
@@ -60,12 +61,64 @@ export interface Owner {
     gravatarDefault: string
 }
 
+export interface User extends UserBase {
+
+}
+
+export interface Owner extends UserBase {
+
+}
+
+export interface Member extends UserBase {
+
+}
+
+export interface Admin extends UserBase {
+
+}
+
 export enum UserRelationToOrganization {
     NONE = 0,
     VIEW,
+    MEMBER_REQUEST_PENDING,
+    MEMBER_INVITATION_PENDING,
     MEMBER,
     ADMIN,
     OWNER
+}
+
+export interface UserOrgRelation {
+    type: UserRelationToOrganization
+}
+
+export interface NoRelation extends UserOrgRelation {
+    type: UserRelationToOrganization.NONE
+}
+
+export interface ViewRelation extends UserOrgRelation {
+    type: UserRelationToOrganization.VIEW
+}
+
+export interface MembershipRequestPendingRelation extends UserOrgRelation {
+    type: UserRelationToOrganization.MEMBER_REQUEST_PENDING,
+    requestId: string
+}
+
+export interface MembershipInvitationPendingRelation extends UserOrgRelation {
+    type: UserRelationToOrganization.MEMBER_INVITATION_PENDING,
+    requestId: string
+}
+
+export interface MemberRelation extends UserOrgRelation {
+    type: UserRelationToOrganization.MEMBER
+}
+
+export interface AdminRelation extends UserOrgRelation {
+    type: UserRelationToOrganization.ADMIN
+}
+
+export interface OwnerRelation extends UserOrgRelation {
+    type: UserRelationToOrganization.OWNER
 }
 
 export interface BriefOrganization {
@@ -81,15 +134,48 @@ export interface BriefOrganization {
     modifiedAt: Date
 }
 
+export enum RequestType {
+    JOIN_GROUP_REQUEST = 0,
+    JOIN_GROUP_INVITE,
+    ADD_WORKSPACE_INVITE,
+    ADD_WORKSPACE_REQUEST
+}
+
+export enum RequestStatus {
+    OPEN = 0,
+    CANCELED,
+    EXPIRED,
+    ACCEPTED,
+    DENIED
+}
+
+export type Username = string
+
+export interface GroupRequest {
+    id: string,
+    groupId: string,
+    requester: User,
+    type: RequestType,
+    status: RequestStatus,
+    subjectUser: User | null,
+    subjectWorkspaceId: number | null,
+    createdAt: Date,
+    expireAt: Date,
+    modifiedAt: Date
+}
+
 export interface Organization {
     id: string
     name: string
     gravatarHash: string | null
     description: string
     owner: Owner
-    relation: UserRelationToOrganization
+    relation: UserOrgRelation
     createdAt: Date
-    modifiedAt: Date
+    modifiedAt: Date,
+    members: Array<Member>,
+    admins: Array<Admin>,
+    adminRequests: Array<GroupRequest>
 }
 
 export interface EditedOrganization {
@@ -225,11 +311,17 @@ export enum SortDirection {
     DESCENDING = 'desc'
 }
 
-
+export interface ManageGroupRequestsView {
+    view: {
+        organization: Organization
+        requests: Array<GroupRequest>
+    } | null,
+    error: AppError | null
+}
 export interface StoreState {
     browseOrgs: {
-        rawOrganizations: Array<BriefOrganization>
-        organizations: Array<BriefOrganization>
+        rawOrganizations: Array<Organization>
+        organizations: Array<Organization>
         totalCount: number
         filteredCount: number
         sortBy: string
@@ -244,14 +336,14 @@ export interface StoreState {
     error: AppError | null
 
     app: {
-        status: AppState,
-        config: AppConfig,
+        status: AppState
+        config: AppConfig
         error?: AppError
-    },
+    }
     addOrg: {
-        editState: EditState,
-        saveState: SaveState,
-        validationState: ValidationState,
+        editState: EditState
+        saveState: SaveState
+        validationState: ValidationState
         newOrganization: EditableOrganization
         error?: AppError
     }
@@ -264,13 +356,14 @@ export interface StoreState {
         error?: AppError
     }
     editOrg: {
-        organizationId: string,
-        editState: EditState,
-        saveState: SaveState,
-        validationState: ValidationState,
+        organizationId: string
+        editState: EditState
+        saveState: SaveState
+        validationState: ValidationState
         editedOrganization: EditableOrganization
         error?: AppError
     }
+    manageGroupRequestsView: ManageGroupRequestsView | null
 }
 
 /* COMPONENT PROPS */

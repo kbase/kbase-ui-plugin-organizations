@@ -154,3 +154,26 @@
     flex: 1 1 0px;
     margin-left: 10px;
 }
+
+.ViewOrganization .member {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.ViewOrganization .member .avatarCol {
+    flex: '0 0 auto';
+    margin-right: 4px;
+}
+
+.ViewOrganization .member .infoCol {
+    flex: '1 1 0px'
+}
+
+.ViewOrganization .member .infoCol .name {
+    font-size: 100%
+}
+
+.ViewOrganization .member .infoCol .location {}
+
+.ViewOrganization .member .infoCol .org {}
