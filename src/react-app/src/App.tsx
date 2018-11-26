@@ -17,13 +17,16 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSpinner, faSearch } from '@fortawesome/free-solid-svg-icons'
 library.add(faSpinner, faSearch)
 
-import OrganizationsBrowser from './containers/OrganizationsBrowser'
-import NewOrganization from './containers/NewOrganization'
-import ViewOrganization from './containers/ViewOrganization'
+import OrganizationsBrowser from './components/browseOrgs/OrganizationsBrowserContainer'
+import NewOrganization from './components/newOrganization/container'
+import ViewOrganization from './components/viewOrganization/ViewOrganizationContainer'
 import EditOrganization from './containers/EditOrganization'
 import Auth from './containers/Auth'
 import KBaseIntegration from './containers/KBaseIntegration'
-import ManageGroupRequests from './containers/ManageGroupRequests'
+import ManageOrganizationRequests from './components/manageOrganizationRequests/loader'
+import ViewMembers from './components/viewMembers/loader'
+import InviteUser from './components/inviteUser/InviteUserLoader'
+import ManageMembership from './components/manageMembership/loader'
 import { StateInstances } from './redux/state';
 
 // Put the redux store together
@@ -62,7 +65,11 @@ class App extends Component {
                   {/* The destructuring below is ugly, but effective */}
                   <Route path="/viewOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewOrganization id={id} />} />
                   <Route path="/editOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <EditOrganization id={id} />} />
-                  <Route path="/manageGroupRequests/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ManageGroupRequests organizationId={id} />} />
+                  <Route path="/manageOrganizationRequests/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ManageOrganizationRequests organizationId={id} />} />
+                  <Route path="/viewMembers/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewMembers organizationId={id} />} />
+                  <Route path="/inviteUser/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<InviteUser organizationId={id} />)} />
+                  <Route path="/membership/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<ManageMembership organizationId={id} />)} />
+
                   <Redirect from="/" to="/organizations" exact={true} />
                 </div>
               </div>

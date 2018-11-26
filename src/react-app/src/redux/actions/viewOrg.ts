@@ -73,6 +73,44 @@ export interface ViewOrgCancelJoinRequestError extends Action {
     error: UIError
 }
 
+// Join Invitation Acceptance
+
+export interface AcceptJoinInvitation extends Action {
+    type: ActionFlag.VIEW_ORG_ACCEPT_JOIN_INVITATION
+}
+
+export interface AcceptJoinInvitationStart extends Action {
+    type: ActionFlag.VIEW_ORG_ACCEPT_JOIN_INVITATION_START
+}
+
+export interface AcceptJoinInvitationSuccess extends Action {
+    type: ActionFlag.VIEW_ORG_ACCEPT_JOIN_INVITATION_SUCCESS
+}
+
+export interface AcceptJoinInvitationError extends Action {
+    type: ActionFlag.VIEW_ORG_ACCEPT_JOIN_INVITATION_ERROR,
+    error: AppError
+}
+
+// Join Invitation Denial
+
+export interface RejectJoinInvitation extends Action {
+    type: ActionFlag.VIEW_ORG_REJECT_JOIN_INVITATION
+}
+
+export interface RejectJoinInvitationStart extends Action {
+    type: ActionFlag.VIEW_ORG_REJECT_JOIN_INVITATION_START
+}
+
+export interface RejectJoinInvitationSuccess extends Action {
+    type: ActionFlag.VIEW_ORG_REJECT_JOIN_INVITATION_SUCCESS
+}
+
+export interface RejectJoinInvitationError extends Action {
+    type: ActionFlag.VIEW_ORG_REJECT_JOIN_INVITATION_ERROR,
+    error: AppError
+}
+
 
 // Generators
 
@@ -144,6 +182,53 @@ export function viewOrgCancelJoinRequestError(error: UIError): ViewOrgCancelJoin
         error: error
     }
 }
+
+// Invitation Acceptance
+
+export function acceptJoinInvitationStart(): AcceptJoinInvitationStart {
+    return {
+        type: ActionFlag.VIEW_ORG_ACCEPT_JOIN_INVITATION_START
+    }
+}
+
+export function acceptJoinInvitationSuccess(): AcceptJoinInvitationSuccess {
+    return {
+        type: ActionFlag.VIEW_ORG_ACCEPT_JOIN_INVITATION_SUCCESS
+    }
+}
+
+export function acceptJoinInvitationError(error: AppError): AcceptJoinInvitationError {
+    return {
+        type: ActionFlag.VIEW_ORG_ACCEPT_JOIN_INVITATION_ERROR,
+        error: error
+    }
+}
+
+// Invitation Rejection 
+
+export function rejectJoinInvitationStart(): RejectJoinInvitationStart {
+    return {
+        type: ActionFlag.VIEW_ORG_REJECT_JOIN_INVITATION_START
+    }
+}
+
+export function rejectJoinInvitationSuccess(): RejectJoinInvitationSuccess {
+    return {
+        type: ActionFlag.VIEW_ORG_REJECT_JOIN_INVITATION_SUCCESS
+    }
+}
+
+export function rejectJoinInvitationError(error: AppError): RejectJoinInvitationError {
+    return {
+        type: ActionFlag.VIEW_ORG_REJECT_JOIN_INVITATION_ERROR,
+        error: error
+    }
+}
+
+
+// Join invitation acceptance
+
+// TODO
 
 // Thunks
 
@@ -242,6 +327,77 @@ export function viewOrgCancelJoinRequest(requestId: string) {
                     type: UIErrorType.ERROR,
                     message: err.message
                 }))
+            })
+
+    }
+}
+
+export function acceptJoinInvitation(requestId: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(acceptJoinInvitationStart())
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config },
+            viewOrg: { organization } } = getState()
+        const model = new Model({
+            token, username,
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url,
+            workspaceServiceURL: config.services.Workspace.url
+        })
+        if (typeof organization === 'undefined') {
+            dispatch(acceptJoinInvitationError({
+                code: 'undefined',
+                message: 'Org not currently defined'
+            }))
+            return
+        }
+
+        model.acceptJoinInvitation(requestId)
+            .then((newRequest) => {
+                dispatch(acceptJoinInvitationSuccess())
+                // quick 'n easy
+                dispatch(viewOrgFetch(newRequest.groupId))
+            })
+            .catch((err) => {
+                dispatch(acceptJoinInvitationError(err))
+            })
+
+    }
+}
+
+
+export function rejectJoinInvitation(requestId: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(acceptJoinInvitationStart())
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config },
+            viewOrg: { organization } } = getState()
+        const model = new Model({
+            token, username,
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url,
+            workspaceServiceURL: config.services.Workspace.url
+        })
+        if (typeof organization === 'undefined') {
+            dispatch(acceptJoinInvitationError({
+                code: 'undefined',
+                message: 'Org not currently defined'
+            }))
+            return
+        }
+
+        model.rejectJoinInvitation(requestId)
+            .then((newRequest) => {
+                dispatch(rejectJoinInvitationSuccess())
+                // quick 'n easy
+                dispatch(viewOrgFetch(newRequest.groupId))
+            })
+            .catch((err) => {
+                dispatch(rejectJoinInvitationError(err))
             })
 
     }

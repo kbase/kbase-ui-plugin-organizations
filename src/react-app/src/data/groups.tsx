@@ -67,10 +67,10 @@ export interface Request {
     requester: Username
     type: string
     status: string
-    targetuser: Username
-    targetws: number
-    createddate: number
-    expireddate: number
+    resource: string
+    resourcetype: string
+    createdate: number
+    expiredate: number
     moddate: number
 }
 
@@ -110,18 +110,18 @@ export interface GroupExists {
     exists: boolean
 }
 
-export interface GroupRequest {
-    id: string,
-    groupid: string,
-    requester: Username,
-    type: string,
-    status: string,
-    targetuser?: Username,
-    targetws?: number,
-    createdate: number,
-    expiredate: number,
-    moddate: number
-}
+// export interface GroupRequest {
+//     id: string,
+//     groupid: string,
+//     requester: Username,
+//     type: string,
+//     status: string,
+//     resource: string
+//     resourcetype: string
+//     createdate: number,
+//     expiredate: number,
+//     moddate: number
+// }
 
 export enum SortDirection {
     ASCENDING = 0,
@@ -200,6 +200,10 @@ export class GroupsClient {
             mode: 'cors'
         })
             .then((response) => {
+                if (response.status !== 200) {
+                    console.error('error fetching groups', response)
+                    throw new Error('Error fetching groups')
+                }
                 return response.json()
             })
             .then((result: GroupList) => {
@@ -226,6 +230,7 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result) => {
+                console.log('got group', result)
                 return result as Group
             })
     }
@@ -285,7 +290,7 @@ export class GroupsClient {
             })
     }
 
-    getGroupRequests(groupId: string, params: GetRequestsParams): Promise<Array<GroupRequest>> {
+    getGroupRequests(groupId: string, params: GetRequestsParams): Promise<Array<Request>> {
         const query = new URLSearchParams()
         if (params.includeClosed) {
             query.append('closed', 'closed')
@@ -317,7 +322,7 @@ export class GroupsClient {
             })
     }
 
-    getTargetedRequests(params: GetRequestsParams): Promise<Array<GroupRequest>> {
+    getTargetedRequests(params: GetRequestsParams): Promise<Array<Request>> {
         const query = new URLSearchParams()
         if (params.includeClosed) {
             query.append('closed', 'closed')
@@ -348,7 +353,7 @@ export class GroupsClient {
                 return response.json()
             })
     }
-    getCreatedRequests(params: GetRequestsParams): Promise<Array<GroupRequest>> {
+    getCreatedRequests(params: GetRequestsParams): Promise<Array<Request>> {
         const query = new URLSearchParams()
         if (params.includeClosed) {
             query.append('closed', 'closed')
@@ -380,7 +385,7 @@ export class GroupsClient {
             })
     }
 
-    requestMembership(params: RequestMemebershipParams): Promise<GroupRequest> {
+    requestMembership(params: RequestMemebershipParams): Promise<Request> {
         return fetch(this.url + '/group/' + params.groupId + '/requestmembership', {
             headers: {
                 Authorization: this.token,
@@ -397,11 +402,11 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result) => {
-                return result as GroupRequest
+                return result as Request
             })
     }
 
-    cancelRequest({ requestId }: { requestId: string }): Promise<GroupRequest> {
+    cancelRequest({ requestId }: { requestId: string }): Promise<Request> {
         return fetch(this.url + '/request/id/' + requestId + '/cancel', {
             headers: {
                 Authorization: this.token,
@@ -418,11 +423,11 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result) => {
-                return result as GroupRequest
+                return result as Request
             })
     }
 
-    acceptRequest({ requestId }: { requestId: string }): Promise<GroupRequest> {
+    acceptRequest({ requestId }: { requestId: string }): Promise<Request> {
         return fetch(this.url + '/request/id/' + requestId + '/accept', {
             headers: {
                 Authorization: this.token,
@@ -439,11 +444,11 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result) => {
-                return result as GroupRequest
+                return result as Request
             })
     }
 
-    denyRequest({ requestId }: { requestId: string }): Promise<GroupRequest> {
+    denyRequest({ requestId }: { requestId: string }): Promise<Request> {
         return fetch(this.url + '/request/id/' + requestId + '/deny', {
             headers: {
                 Authorization: this.token,
@@ -460,7 +465,90 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result) => {
-                return result as GroupRequest
+                return result as Request
+            })
+    }
+
+    memberToAdmin({ groupId, member }: { groupId: string, member: string }): Promise<void> {
+        const url = [
+            this.url, 'group', groupId, 'user', member, 'admin'
+        ].join('/')
+        return fetch(url, {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json'
+            },
+            mode: 'cors',
+            method: 'PUT'
+        })
+            .then((response) => {
+                if (response.status !== 204) {
+                    throw new Error('Unexpected response: ' + response.status + ':' + response.statusText)
+                }
+
+            })
+    }
+
+    adminToMember({ groupId, member }: { groupId: string, member: string }): Promise<void> {
+        const url = [
+            this.url, 'group', groupId, 'user', member, 'admin'
+        ].join('/')
+        return fetch(url, {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json'
+            },
+            mode: 'cors',
+            method: 'DELETE'
+        })
+            .then((response) => {
+                if (response.status !== 204) {
+                    throw new Error('Unexpected response: ' + response.status + ':' + response.statusText)
+                }
+
+            })
+    }
+
+    removeMember({ groupId, member }: { groupId: string, member: string }): Promise<void> {
+        const url = [
+            this.url, 'group', groupId, 'user', member
+        ].join('/')
+        return fetch(url, {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json'
+            },
+            mode: 'cors',
+            method: 'DELETE'
+        })
+            .then((response) => {
+                if (response.status !== 204) {
+                    throw new Error('Unexpected response: ' + response.status + ':' + response.statusText)
+                }
+
+            })
+    }
+
+    requestJoinGroup({ groupId, username }: { groupId: string, username: string }): Promise<Request> {
+        const url = [
+            this.url, 'group', groupId, 'user', username
+        ].join('/')
+        return fetch(url, {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json'
+            },
+            mode: 'cors',
+            method: 'POST'
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('Unexpected response: ' + response.status + ':' + response.statusText)
+                }
+                return response.json()
+            })
+            .then((result) => {
+                return result as Request
             })
     }
 }

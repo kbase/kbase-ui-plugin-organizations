@@ -1,4 +1,3 @@
-
 export interface User {
     username: string,
     realname: string,
@@ -12,6 +11,8 @@ export interface UserProfile {
             gravatarHash: string
         },
         userdata: {
+            jobTitle: string,
+            jobTitleOther: string,
             organization: string
             city: string
             state: string
@@ -118,7 +119,59 @@ export class UserProfileClient {
                 return response.json()
             })
             .then((result) => {
+                console.log('profiles', result.result[0])
                 return result.result[0] as Array<UserProfile>
+            })
+    }
+
+    getAllUsers(): Promise<Array<User>> {
+        return fetch(this.url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-store',
+            headers: {
+                Authorization: this.token,
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            },
+            body: JSON.stringify(this.makePayload('filter_users', { filter: '' }))
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('User profile request error: ' + response.status + ', ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then((result) => {
+                console.log('profiles', result.result[0])
+                return result.result[0] as Array<User>
+            })
+    }
+
+    searchUsers(query: string): Promise<Array<User>> {
+        let start = new Date()
+        return fetch(this.url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-store',
+            headers: {
+                Authorization: this.token,
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            },
+            body: JSON.stringify(this.makePayload('filter_users', { filter: query }))
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('User profile request error: ' + response.status + ', ' + response.statusText)
+                }
+                console.log('user profile 1', new Date().getTime() - start.getTime())
+                start = new Date()
+                return response.json()
+            })
+            .then((result) => {
+                console.log('user profile 2', new Date().getTime() - start.getTime())
+                return result.result[0] as Array<User>
             })
     }
 }

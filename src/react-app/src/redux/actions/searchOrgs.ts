@@ -92,9 +92,19 @@ export function searchOrgs(searchTerms: Array<string>) {
         dispatch(viewOrgStop())
 
         const {
-            browseOrgs: { sortBy, sortDirection, filter },
+            browseOrgs: browseOrgs,
             auth: { authorization: { token, username } },
             app: { config } } = getState()
+
+        if (browseOrgs.view === null) {
+            dispatch(searchOrgsError({
+                code: 'invalid-state',
+                message: 'Search orgs may not be called without a defined view'
+            }))
+            return
+        }
+
+        const { view: { sortBy, sortDirection, filter } } = browseOrgs
         const model = new Model({
             token, username,
             groupsServiceURL: config.services.Groups.url,
@@ -111,6 +121,7 @@ export function searchOrgs(searchTerms: Array<string>) {
                 dispatch(searchOrgsSuccess(organizations, total))
             })
             .catch((error) => {
+                console.error('Error querying orgs', error.name, error.message)
                 dispatch(searchOrgsError({
                     code: error.name,
                     message: error.message
@@ -124,7 +135,7 @@ export function sortOrgs(sortBy: string, sortDirection: SortDirection) {
         dispatch(sortOrgsStart(sortBy, sortDirection))
 
         const {
-            browseOrgs: { searchTerms, filter },
+            browseOrgs: browseOrgs,
             auth: { authorization: { token, username } },
             app: { config } } = getState()
         const model = new Model({
@@ -133,6 +144,16 @@ export function sortOrgs(sortBy: string, sortDirection: SortDirection) {
             userProfileServiceURL: config.services.UserProfile.url,
             workspaceServiceURL: config.services.Workspace.url
         })
+
+        if (browseOrgs.view === null) {
+            dispatch(searchOrgsError({
+                code: 'invalid-state',
+                message: 'Search orgs may not be called without a defined view'
+            }))
+            return
+        }
+
+        const { view: { searchTerms, filter } } = browseOrgs
 
         return model.queryOrgs({
             searchTerms,
@@ -156,7 +177,7 @@ export function filterOrgs(filter: string) {
         dispatch(filterOrgsStart(filter))
 
         const {
-            browseOrgs: { searchTerms, sortBy, sortDirection },
+            browseOrgs: browseOrgs,
             auth: { authorization: { token, username } },
             app: { config } } = getState()
         const model = new Model({
@@ -165,6 +186,16 @@ export function filterOrgs(filter: string) {
             userProfileServiceURL: config.services.UserProfile.url,
             workspaceServiceURL: config.services.Workspace.url
         })
+
+        if (browseOrgs.view === null) {
+            dispatch(searchOrgsError({
+                code: 'invalid-state',
+                message: 'Search orgs may not be called without a defined view'
+            }))
+            return
+        }
+
+        const { view: { searchTerms, sortBy, sortDirection } } = browseOrgs
 
         return model.queryOrgs({
             searchTerms,

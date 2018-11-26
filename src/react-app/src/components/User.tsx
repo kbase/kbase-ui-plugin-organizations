@@ -2,10 +2,10 @@ import * as React from 'react'
 import './User.css'
 
 import Avatar from './Avatar'
-import { UserBase } from '../types';
+import * as types from '../types';
 
 export interface UserProps {
-    user: UserBase
+    user: types.User
     avatarSize?: number
 }
 

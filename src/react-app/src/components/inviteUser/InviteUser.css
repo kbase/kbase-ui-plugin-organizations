@@ -1,0 +1,50 @@
+.InviteUser {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.InviteUser h3 {
+    border-bottom: 2px silver solid;
+}
+
+.InviteUser .row {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+.InviteUser .row .col1 {
+    flex: 1 1 0px;
+}
+
+.InviteUser .row .col2 {
+    flex: 2 1 0px;
+}
+
+.InviteUser .selectedUser .noSelection {
+    text-align: center;
+    font-style: italic;
+    padding: 20px;
+}
+
+.InviteUser .firstCol {
+    margin-right: 10px;
+}
+
+.InviteUser .lastCol {
+    margin-left: 10px;
+}
+
+.InviteUser .invitationForm table {
+    width: 50em;
+}
+
+.InviteUser .invitationForm table td:nth-child(1) {
+    width: 8em;
+}
+
+.InviteUser .invitationForm textarea {
+    width: 100%;
+}

@@ -6,10 +6,8 @@ import {
     FieldState,
     EditableOrganization,
     UserRelationToOrganization,
-    UserBase,
+    User,
     Member,
-    Admin,
-    Owner,
     GroupRequest,
     RequestType,
     RequestStatus,
@@ -19,13 +17,49 @@ import {
     MemberRelation,
     MembershipRequestPendingRelation,
     MembershipInvitationPendingRelation,
-    ViewRelation
+    ViewRelation,
+    MemberType,
+    BriefUser,
+    UserRequest,
+    RequestResourceType,
+    WorkspaceRequest,
+    AppRequest,
+    UserInvitation,
+    WorkspaceInvitation,
+    AppInvitation
 } from '../types';
 // import { organizations } from './data';
-import { UserProfileClient, UserProfile, User } from './userProfile'
-import { GroupsClient, Group, GroupList, BriefGroup } from './groups'
+import * as userProfile from './userProfile'
+import { GroupsClient, Group } from './groups'
 import * as groups from './groups'
-import { string } from 'prop-types';
+
+function stringToRequestType(type: string): RequestType {
+    switch (type) {
+        case 'Invite':
+            return RequestType.INVITATION
+        case 'Request':
+            return RequestType.REQUEST
+        default:
+            throw new Error('unknown request type: ' + type)
+    }
+}
+
+function stringToResourceType(type: string) {
+    switch (type) {
+        case 'user':
+            return RequestResourceType.USER
+        case 'workspace':
+            return RequestResourceType.WORKSPACE
+        case 'catalogmethod':
+            return RequestResourceType.APP
+        default:
+            throw new Error('unknown resource type: ' + type)
+    }
+}
+
+function stringToRequestStatus(status: string): RequestStatus {
+    return RequestStatus.OPEN
+}
 
 export function applyOrgSearch(orgs: Array<Organization>, searchTerms: Array<string>): Array<Organization> {
     const searchTermsRe = searchTerms.map((term) => {
@@ -37,8 +71,8 @@ export function applyOrgSearch(orgs: Array<Organization>, searchTerms: Array<str
         }
         return searchTermsRe.every((termRe) => {
             return termRe.test(org.name) ||
-                termRe.test(org.owner.username) ||
-                termRe.test(org.owner.realname)
+                termRe.test(org.owner.user.username) ||
+                termRe.test(org.owner.user.realname)
         })
     })
 
@@ -62,7 +96,7 @@ function applySort(organizations: Array<Organization>, sortBy: string, sortDirec
             })
         case 'owner':
             return organizations.slice().sort((a, b) => {
-                return direction * a.owner.username.localeCompare(b.owner.username)
+                return direction * a.owner.user.username.localeCompare(b.owner.user.username)
             })
         default:
             console.warn('unimplemented sort field: ' + sortBy)
@@ -74,10 +108,14 @@ function applyFilter(organizations: Array<Organization>, filter: string, usernam
     switch (filter) {
         case 'all':
             return organizations
+        case 'memberOf':
+            return organizations.filter((org) => (
+                (org.members.findIndex((member) => (member.user.username === username)) >= 0)
+            ))
         case 'owned':
-            return organizations.filter((org) => (org.owner.username === username))
+            return organizations.filter((org) => (org.owner.user.username === username))
         case 'notOwned':
-            return organizations.filter((org) => (org.owner.username !== username))
+            return organizations.filter((org) => (org.owner.user.username !== username))
         case 'pending':
             return organizations.filter((org) => (
                 org.relation.type === UserRelationToOrganization.MEMBER_INVITATION_PENDING ||
@@ -162,7 +200,7 @@ export class Model {
         this.cachedOrgs = null
     }
 
-    getPendingRequests(): Promise<{ requests: Array<groups.GroupRequest>, invitations: Array<groups.GroupRequest> }> {
+    getPendingRequests(): Promise<{ requests: Array<groups.Request>, invitations: Array<groups.Request> }> {
         const groupsClient = new GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
@@ -196,45 +234,125 @@ export class Model {
             })
     }
 
-    groupRequestToGroupRequest(request: groups.GroupRequest): Promise<GroupRequest> {
-        function stringToRequestType(type: string): RequestType {
-            return RequestType.JOIN_GROUP_REQUEST
-        }
-
-        function stringToRequestStatus(status: string): RequestStatus {
-            return RequestStatus.OPEN
-        }
-
-        const userProfileClient = new UserProfileClient({
+    groupRequestToOrgRequest(request: groups.Request): Promise<UserRequest | UserInvitation | WorkspaceRequest | WorkspaceInvitation | AppRequest | AppInvitation> {
+        const userProfileClient = new userProfile.UserProfileClient({
             url: this.params.userProfileServiceURL,
             token: this.params.token
         })
 
         const usernames = [request.requester]
-        if (request.targetuser) {
-            usernames.push(request.targetuser)
+        if (request.resourcetype === 'user') {
+            usernames.push(request.resource)
+        }
+
+        // TODO: make different types of requests based on the resource type...
+        switch (request.resourcetype) {
+            case 'user':
         }
 
         return userProfileClient.getUserProfiles(usernames)
             .then((profiles) => {
-                return {
-                    id: request.id,
-                    groupId: request.groupid,
-                    requester: this.profileToUser(profiles[0]),
-                    type: stringToRequestType(request.type),
-                    status: stringToRequestStatus(request.status),
-                    subjectUser: profiles[1] ? this.profileToUser(profiles[1]) : null,
-                    subjectWorkspaceId: request.targetws || null,
-                    createdAt: new Date(request.createdate),
-                    expireAt: new Date(request.expiredate),
-                    modifiedAt: new Date(request.moddate)
+
+                const requestType = stringToRequestType(request.type);
+                const resourceType = stringToResourceType(request.resourcetype)
+                const requestStatus = stringToRequestStatus(request.status)
+
+                switch (resourceType) {
+                    case RequestResourceType.USER:
+                        if (requestType === RequestType.REQUEST) {
+                            return {
+                                id: request.id,
+                                groupId: request.groupid,
+                                resourceType: resourceType,
+                                requester: this.profileToUser(profiles[0]),
+                                type: requestType,
+                                status: requestStatus,
+                                user: this.profileToUser(profiles[1]),
+                                createdAt: new Date(request.createdate),
+                                expireAt: new Date(request.expiredate),
+                                modifiedAt: new Date(request.moddate)
+                            } as UserRequest
+                        } else {
+                            return {
+                                id: request.id,
+                                groupId: request.groupid,
+                                resourceType: resourceType,
+                                requester: this.profileToUser(profiles[0]),
+                                type: requestType,
+                                status: requestStatus,
+                                user: this.profileToUser(profiles[1]),
+                                createdAt: new Date(request.createdate),
+                                expireAt: new Date(request.expiredate),
+                                modifiedAt: new Date(request.moddate)
+                            } as UserInvitation
+                        }
+
+                    case RequestResourceType.WORKSPACE:
+                        if (requestType === RequestType.REQUEST) {
+                            return {
+                                id: request.id,
+                                groupId: request.groupid,
+                                resourceType: resourceType,
+                                requester: this.profileToUser(profiles[0]),
+                                type: requestType,
+                                status: requestStatus,
+                                workspace: request.resource,
+                                createdAt: new Date(request.createdate),
+                                expireAt: new Date(request.expiredate),
+                                modifiedAt: new Date(request.moddate)
+                            } as WorkspaceRequest
+                        } else {
+                            return {
+                                id: request.id,
+                                groupId: request.groupid,
+                                resourceType: resourceType,
+                                requester: this.profileToUser(profiles[0]),
+                                type: requestType,
+                                status: requestStatus,
+                                workspace: request.resource,
+                                createdAt: new Date(request.createdate),
+                                expireAt: new Date(request.expiredate),
+                                modifiedAt: new Date(request.moddate)
+                            } as WorkspaceInvitation
+                        }
+                    case RequestResourceType.APP:
+                        if (requestType === RequestType.REQUEST) {
+                            return {
+                                id: request.id,
+                                groupId: request.groupid,
+                                resourceType: resourceType,
+                                requester: this.profileToUser(profiles[0]),
+                                type: requestType,
+                                status: requestStatus,
+                                app: request.resource,
+                                createdAt: new Date(request.createdate),
+                                expireAt: new Date(request.expiredate),
+                                modifiedAt: new Date(request.moddate)
+                            } as AppRequest
+                        } else {
+                            return {
+                                id: request.id,
+                                groupId: request.groupid,
+                                resourceType: resourceType,
+                                requester: this.profileToUser(profiles[0]),
+                                type: requestType,
+                                status: requestStatus,
+                                app: request.resource,
+                                createdAt: new Date(request.createdate),
+                                expireAt: new Date(request.expiredate),
+                                modifiedAt: new Date(request.moddate)
+                            } as AppInvitation
+                        }
+                    default:
+                        throw new Error('resource type not handled yet: ' + request.resourcetype)
                 }
+
 
             })
     }
 
 
-    getPendingGroupRequests(groupId: string): Promise<Array<GroupRequest>> {
+    getPendingOrganizationRequests(groupId: string): Promise<Array<GroupRequest>> {
         const groupsClient = new GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
@@ -247,9 +365,69 @@ export class Model {
         })
             .then((requests) => {
                 return Promise.all(requests.map((request) => {
-                    return this.groupRequestToGroupRequest(request)
+                    return this.groupRequestToOrgRequest(request)
                 }))
             })
+    }
+
+    membersAndAdminsToMembers(memberUsernames: Array<string>, adminUsernames: Array<string>, userProfileMap: Map<string, userProfile.UserProfile>): Array<Member> {
+        return memberUsernames.map((member) => {
+            const p = userProfileMap.get(member)
+            if (typeof p === 'undefined') {
+                throw new Error('Member without profile!')
+            }
+            return {
+                type: MemberType.MEMBER,
+                user: this.profileToUser(p)
+            }
+        }).concat(adminUsernames.map((admin) => {
+            const p = userProfileMap.get(admin)
+            if (typeof p === 'undefined') {
+                throw new Error('Admin without profile')
+            }
+            return {
+                type: MemberType.ADMIN,
+                user: this.profileToUser(p)
+            }
+        }))
+            .sort((a, b) => {
+                return a.user.realname.localeCompare(b.user.realname);
+            })
+
+        // return members
+    }
+
+    getGroupMembers(group: Group, userProfileMap: Map<string, userProfile.UserProfile>): Array<Member> {
+        return group.members.map((member) => {
+            const p = userProfileMap.get(member)
+            if (typeof p === 'undefined') {
+                throw new Error('Member without profile!')
+            }
+            return {
+                type: MemberType.MEMBER,
+                user: this.profileToUser(p)
+            }
+        }).concat(group.admins.map((admin) => {
+            const p = userProfileMap.get(admin)
+            if (typeof p === 'undefined') {
+                throw new Error('Admin without profile')
+            }
+            return {
+                type: MemberType.ADMIN,
+                user: this.profileToUser(p)
+            }
+        }))
+            // .concat([
+            //     {
+            //         type: MemberType.OWNER,
+            //         user: this.profileToUser(userProfileMap.get(group.owner)!)
+            //     }
+            // ])
+            .sort((a, b) => {
+                return a.user.realname.localeCompare(b.user.realname);
+            })
+
+        // return members
     }
 
     groupToOrg(group: Group, username: string): Promise<Organization> {
@@ -262,7 +440,7 @@ export class Model {
         } else {
             relation = UserRelationToOrganization.VIEW
         }
-        const userProfileClient = new UserProfileClient({
+        const userProfileClient = new userProfile.UserProfileClient({
             url: this.params.userProfileServiceURL,
             token: this.params.token
         })
@@ -278,17 +456,17 @@ export class Model {
         return this.getPendingRequests()
             .then(({ requests, invitations }) => {
                 // pending join requests
-                const pendingRequests = new Map<string, groups.GroupRequest>()
+                const pendingRequests = new Map<string, groups.Request>()
                 requests.forEach((req) => {
-                    if (req.type === 'Request group membership' && req.requester === username) {
+                    if (req.type === 'Request' && req.resourcetype === 'user' && req.requester === username) {
                         pendingRequests.set(req.groupid, req)
                     }
                 })
 
                 // pending invitations to join
-                const pendingInvites = new Map<string, groups.GroupRequest>()
+                const pendingInvites = new Map<string, groups.Request>()
                 invitations.forEach((req) => {
-                    if (req.type === 'Invite to group' && req.targetuser === username) {
+                    if (req.type === 'Invite' && req.resourcetype === 'user' && req.resource === username) {
                         pendingInvites.set(req.groupid, req)
                     }
                 })
@@ -298,31 +476,23 @@ export class Model {
                         const userProfileMap = userProfiles.reduce((map, profile) => {
                             map.set(profile.user.username, profile)
                             return map
-                        }, new Map<string, UserProfile>())
+                        }, new Map<string, userProfile.UserProfile>())
 
                         const ownerProfile = userProfileMap.get(group.owner)
                         if (!ownerProfile) {
                             throw new Error('No profile for owner!')
                         }
                         // TODO: if members really is always an array, we can skip this defaulting behavior
-                        const memberUsernames = group.members || []
-                        const members: Array<Member> = memberUsernames.map((member) => {
-                            const p = userProfileMap.get(member)
-                            if (typeof p === 'undefined') {
-                                throw new Error('Member without profile!')
-                            }
-                            return this.profileToUser(p)
-                        }).sort((a, b) => {
-                            return a.realname.localeCompare(b.realname);
-                        })
+                        // const memberUsernames = group.members || []
+                        // const adminUsernames = group.admins || []
 
-                        const adminUsernames = group.admins || []
-                        const admins: Array<Admin> = adminUsernames.map((admin) => {
-                            const p = userProfileMap.get(admin)
-                            if (typeof p === 'undefined') {
-                                throw new Error('Admin without profile')
-                            }
-                            return this.profileToUser(p)
+                        // TODO: the user profile map needs to be cached, etc.
+                        // const members = this.membersAndAdminsToMembers(memberUsernames, adminUsernames, userProfileMap).sort((a, b) => {
+                        //     return a.user.realname.localeCompare(b.user.realname);
+                        // })
+
+                        const members = this.getGroupMembers(group, userProfileMap).sort((a, b) => {
+                            return a.user.realname.localeCompare(b.user.realname);
                         })
 
                         let relation: UserOrgRelation
@@ -360,7 +530,7 @@ export class Model {
                         return promiseTry<Organization>((): Promise<Organization> => {
                             if (relation.type === UserRelationToOrganization.ADMIN ||
                                 relation.type === UserRelationToOrganization.OWNER) {
-                                return this.getPendingGroupRequests(group.id)
+                                return this.getPendingOrganizationRequests(group.id)
                                     .then((requests) => {
                                         return {
                                             id: group.id,
@@ -369,10 +539,13 @@ export class Model {
                                             description: group.description,
                                             createdAt: new Date(group.createdate),
                                             modifiedAt: new Date(group.moddate),
-                                            owner: this.profileToUser(ownerProfile),
+                                            owner: {
+                                                type: MemberType.OWNER,
+                                                user: this.profileToUser(ownerProfile)
+                                            },
                                             relation: relation,
                                             members: members,
-                                            admins: admins,
+                                            // admins: admins,
                                             adminRequests: requests
                                         }
                                     })
@@ -384,10 +557,13 @@ export class Model {
                                     description: group.description,
                                     createdAt: new Date(group.createdate),
                                     modifiedAt: new Date(group.moddate),
-                                    owner: this.profileToUser(ownerProfile),
+                                    owner: {
+                                        type: MemberType.OWNER,
+                                        user: this.profileToUser(ownerProfile)
+                                    },
                                     relation: relation,
                                     members: members,
-                                    admins: admins,
+                                    // admins: admins,
                                     adminRequests: []
                                 })
                             }
@@ -399,7 +575,7 @@ export class Model {
 
     getPendingAdminRequests(groupIds: Array<string>): Promise<Map<string, Array<GroupRequest>>> {
         return Promise.all(groupIds.map((id) => {
-            return this.getPendingGroupRequests(id)
+            return this.getPendingOrganizationRequests(id)
                 .then((requests) => {
                     return {
                         groupId: id,
@@ -417,7 +593,7 @@ export class Model {
     }
 
     groupsToOrgs(groups: Array<Group>, username: string): Promise<Array<Organization>> {
-        const userProfileClient = new UserProfileClient({
+        const userProfileClient = new userProfile.UserProfileClient({
             url: this.params.userProfileServiceURL,
             token: this.params.token
         })
@@ -442,19 +618,19 @@ export class Model {
                 const profileMap = profiles.reduce((profileMap, profile) => {
                     profileMap.set(profile.user.username, profile)
                     return profileMap
-                }, new Map<string, UserProfile>())
+                }, new Map<string, userProfile.UserProfile>())
 
                 // now make a per-group map out of this...
-                const pendingRequests = new Map<string, groups.GroupRequest>()
+                const pendingRequests = new Map<string, groups.Request>()
                 requests.forEach((req) => {
-                    if (req.requester === username) {
+                    if (req.type === 'Request' && req.resourcetype === 'user' && req.requester === username) {
                         pendingRequests.set(req.groupid, req)
                     }
                 })
 
-                const pendingInvites = new Map<string, groups.GroupRequest>()
+                const pendingInvites = new Map<string, groups.Request>()
                 invitations.forEach((req) => {
-                    if (req.targetuser === username) {
+                    if (req.type === 'Invite' && req.resourcetype === 'user' && req.resource === username) {
                         pendingInvites.set(req.groupid, req)
                     }
                 })
@@ -464,6 +640,8 @@ export class Model {
                     let relation: UserOrgRelation
                     // TODO: when we have access to members, admins, and group publication status, we can 
                     // flesh out all user relations.
+                    const orgMembers: Array<Member> = this.membersAndAdminsToMembers(members, admins, profileMap)
+
                     if (this.params.username === group.owner) {
                         relation = {
                             type: UserRelationToOrganization.OWNER
@@ -495,12 +673,15 @@ export class Model {
                     return {
                         id, name, description,
                         gravatarHash: gravatarhash || null,
-                        owner: this.profileToUser(profileMap.get(group.owner)!),
+                        owner: {
+                            type: MemberType.OWNER,
+                            user: this.profileToUser(profileMap.get(group.owner)!)
+                        },
                         createdAt: new Date(createdate),
                         modifiedAt: new Date(moddate),
                         relation: relation,
-                        members: members.map((username) => this.profileToUser(profileMap.get(username)!)),
-                        admins: admins.map((username) => this.profileToUser(profileMap.get(username)!)),
+                        members: orgMembers,
+                        // admins: admins.map((username) => this.profileToUser(profileMap.get(username)!)),
                         adminRequests: (pendingAdminRequests.has(id) ? pendingAdminRequests.get(id)! : [])
                     }
                 }))
@@ -537,13 +718,20 @@ export class Model {
             })
     }
 
-    profileToUser(profile: UserProfile): UserBase {
+    profileToUser(profile: userProfile.UserProfile): User {
+        let jobTitle
+        if (profile.profile.userdata.jobTitle === 'Other') {
+            jobTitle = profile.profile.userdata.jobTitleOther
+        } else {
+            jobTitle = profile.profile.userdata.jobTitle
+        }
         return {
             username: profile.user.username,
             realname: profile.user.realname,
             city: profile.profile.userdata.city,
             state: profile.profile.userdata.state,
             country: profile.profile.userdata.country,
+            title: jobTitle,
             organization: profile.profile.userdata.organization,
             avatarOption: profile.profile.userdata.avatarOption,
             gravatarHash: profile.profile.synced.gravatarHash,
@@ -640,8 +828,8 @@ export class Model {
         return groupsClient.requestMembership({
             groupId: id
         })
-            .then((request: groups.GroupRequest) => {
-                return this.groupRequestToGroupRequest(request)
+            .then((request: groups.Request) => {
+                return this.groupRequestToOrgRequest(request)
             })
             .catch((err) => {
                 throw err;
@@ -657,8 +845,8 @@ export class Model {
         return groupsClient.cancelRequest({
             requestId
         })
-            .then((request: groups.GroupRequest) => {
-                return this.groupRequestToGroupRequest(request)
+            .then((request: groups.Request) => {
+                return this.groupRequestToOrgRequest(request)
             })
     }
 
@@ -671,8 +859,8 @@ export class Model {
         return groupsClient.acceptRequest({
             requestId
         })
-            .then((request: groups.GroupRequest) => {
-                return this.groupRequestToGroupRequest(request)
+            .then((request: groups.Request) => {
+                return this.groupRequestToOrgRequest(request)
             })
     }
 
@@ -685,10 +873,90 @@ export class Model {
         return groupsClient.denyRequest({
             requestId
         })
-            .then((request: groups.GroupRequest) => {
-                return this.groupRequestToGroupRequest(request)
+            .then((request: groups.Request) => {
+                return this.groupRequestToOrgRequest(request)
             })
     }
+
+    acceptJoinInvitation(requestId: string): Promise<GroupRequest> {
+        const groupsClient = new GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        return groupsClient.acceptRequest({
+            requestId
+        })
+            .then((request: groups.Request) => {
+                return this.groupRequestToOrgRequest(request)
+            })
+    }
+
+    rejectJoinInvitation(requestId: string): Promise<GroupRequest> {
+        const groupsClient = new GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        return groupsClient.denyRequest({
+            requestId
+        })
+            .then((request: groups.Request) => {
+                return this.groupRequestToOrgRequest(request)
+            })
+    }
+
+    memberToAdmin(groupId: string, member: string): Promise<void> {
+        const groupsClient = new GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        return groupsClient.memberToAdmin({
+            groupId,
+            member
+        })
+    }
+
+    adminToMember(groupId: string, member: string): Promise<void> {
+        const groupsClient = new GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        return groupsClient.adminToMember({
+            groupId,
+            member
+        })
+    }
+    removeMember(groupId: string, member: string): Promise<void> {
+        const groupsClient = new GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        return groupsClient.removeMember({
+            groupId,
+            member
+        })
+    }
+
+    requestJoinGroup(groupId: string, username: string): Promise<GroupRequest> {
+        const groupsClient = new GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        return groupsClient.requestJoinGroup({
+            groupId,
+            username
+        })
+            .then((request) => {
+                return this.groupRequestToOrgRequest(request)
+            })
+    }
+
+    // Validation 
 
     validateOrgId(id: string): [string, UIError] {
         return Validation.validateOrgId(id);
@@ -700,6 +968,37 @@ export class Model {
 
     validateOrgDescription(description: string): [string, UIError] {
         return Validation.validateOrgDescription(description);
+    }
+
+    // Users
+
+    searchUsers(query: string): Promise<Array<BriefUser>> {
+        const userProfileClient = new userProfile.UserProfileClient({
+            url: this.params.userProfileServiceURL,
+            token: this.params.token
+        })
+
+        return userProfileClient.searchUsers(query)
+            .then((users) => {
+                return users.map(({ username, realname }) => {
+                    return {
+                        username, realname
+                    }
+                })
+            })
+
+    }
+
+    getUser(username: string): Promise<User> {
+        const userProfileClient = new userProfile.UserProfileClient({
+            url: this.params.userProfileServiceURL,
+            token: this.params.token
+        })
+
+        return userProfileClient.getUserProfile(username)
+            .then((userProfile) => {
+                return this.profileToUser(userProfile)
+            })
     }
 }
 

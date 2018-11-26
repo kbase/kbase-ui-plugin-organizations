@@ -1,20 +1,24 @@
-import { StoreState, SortDirection, AuthState, AppState, EditState, SaveState, ValidationState, ViewOrgState, EditOrgState } from "../types";
+import { StoreState, SortDirection, AuthState, AppState, EditState, SaveState, ValidationState, ViewOrgState, EditOrgState, ViewMembersViewState, BrowseOrgsState, InviteUserState, ComponentLoadingState } from "../types";
 import { StaticData } from "../data/model";
 
 export class StateInstances {
     static makeInitialState(): StoreState {
         return {
             browseOrgs: {
-                rawOrganizations: [],
-                organizations: [],
-                totalCount: 0,
-                filteredCount: 0,
-                sortBy: 'name',
-                sortDirection: SortDirection.ASCENDING,
-                filter: 'all',
-                searchTerms: [],
-                selectedOrganizationId: null,
-                searching: false,
+                state: BrowseOrgsState.NONE,
+                error: null,
+                view: {
+                    rawOrganizations: [],
+                    organizations: [],
+                    totalCount: 0,
+                    filteredCount: 0,
+                    sortBy: 'name',
+                    sortDirection: SortDirection.ASCENDING,
+                    filter: 'all',
+                    searchTerms: [],
+                    selectedOrganizationId: null,
+                    searching: false
+                }
             },
 
             auth: {
@@ -65,7 +69,25 @@ export class StateInstances {
                 validationState: ValidationState.NONE,
                 editedOrganization: StaticData.makeEmptyEditableOrganization()
             },
-            manageGroupRequestsView: null
+            manageOrganizationRequestsView: {
+                state: ComponentLoadingState.NONE,
+                error: null,
+                viewState: null
+            },
+            viewMembersView: {
+                state: ViewMembersViewState.NONE,
+                error: null,
+                view: null
+            },
+            inviteUserView: {
+                state: InviteUserState.NONE,
+                viewState: null
+            },
+            manageMembershipView: {
+                loading: false,
+                error: null,
+                value: null
+            }
         }
     }
 }

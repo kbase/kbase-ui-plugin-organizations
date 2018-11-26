@@ -7,7 +7,7 @@ import thunk from 'redux-thunk';
 
 import { StateInstances } from '../redux/state';
 import theReducer from '../redux/reducers';
-import Organizations from './Organizations'
+import Organizations from '../components/browseOrgs/OrganizationsContainer'
 import Auth from './Auth';
 import KBaseIntegration from './KBaseIntegration';
 import { StoreState } from '../types';

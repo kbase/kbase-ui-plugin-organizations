@@ -1,0 +1,78 @@
+.OrganizationHeader {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px silver solid;
+}
+
+.OrganizationHeader .avatar {
+    flex: 0 0 60px;
+    margin-right: 6px;
+}
+
+.OrganizationHeader .orgInfo {
+    flex: 2 1 0px;
+}
+
+.OrganizationHeader .yourRelation {
+    flex: 1 1 0px;
+    /* border: 1px blue dashed; */
+}
+
+.OrganizationHeader .ownerInfo {
+    flex: 1 1 0px;
+}
+
+.OrganizationHeader .orgInfo .name {
+    font-weight: bold;
+    font-size: 150%;
+}
+
+.OrganizationHeader .yourRelation {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: center;
+}
+
+.OrganizationHeader .relationRequest {
+    /* border: 2px rgba(200, 200, 200, 0.5) solid; */
+    border-left: 2px rgba(200, 200, 200, 0.5) solid;
+}
+
+.OrganizationHeader .relationRequest.relationNonMember {
+    /* border: 2px orange solid; */
+    background-color: rgba(182, 252, 252, 0.5);
+}
+
+.OrganizationHeader .relationRequest.relationRequestPending {
+    /* border: 2px orange solid; */
+    background-color: rgba(253, 245, 130, 0.5);
+}
+
+.OrganizationHeader .relationRequest.relationInvitationPending {
+    background-color: rgba(253, 245, 130, 0.5);
+}
+
+.OrganizationHeader .relationRow {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.OrganizationHeader .relationRow .relationLabel {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.OrganizationHeader .relationRow .relationMenu {
+    flex: 0 0 auto;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}

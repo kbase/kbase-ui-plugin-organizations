@@ -1,7 +1,6 @@
 .User {
     display: flex;
     flex-direction: row;
-    margin-bottom: 10px;
 }
 
 .User .avatarCol {
@@ -15,7 +14,8 @@
 }
 
 .User .infoCol .name {
-    font-size: 100%
+    font-size: 100%;
+    font-weight: bold;
 }
 
 .User .infoCol .location {}

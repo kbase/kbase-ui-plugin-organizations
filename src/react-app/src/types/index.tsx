@@ -1,6 +1,6 @@
-import { ViewOrganizationState } from "../components/ViewOrganization";
-import { types } from "util";
-import Organizations from "../containers/Organizations";
+import { ViewOrganizationState } from "../components/viewOrganization/ViewOrganization";
+import { types, error } from "util";
+import Organizations from "../components/browseOrgs/OrganizationsContainer";
 
 /* Types from the organization service (approximately) */
 
@@ -49,9 +49,10 @@ export interface EditableOrganization {
     }
 }
 
-export interface UserBase {
+export interface User {
     username: string
     realname: string
+    title: string,
     organization: string
     city: string
     state: string
@@ -61,21 +62,33 @@ export interface UserBase {
     gravatarDefault: string
 }
 
-export interface User extends UserBase {
-
+export enum MemberType {
+    MEMBER = 0,
+    ADMIN,
+    OWNER
+}
+export interface Member {
+    user: User,
+    type: MemberType
 }
 
-export interface Owner extends UserBase {
 
-}
 
-export interface Member extends UserBase {
+// export interface User extends UserBase {
 
-}
+// }
 
-export interface Admin extends UserBase {
+// export interface Owner extends UserBase {
 
-}
+// }
+
+// export interface Member extends UserBase {
+
+// }
+
+// export interface Admin extends UserBase {
+
+// }
 
 export enum UserRelationToOrganization {
     NONE = 0,
@@ -135,10 +148,14 @@ export interface BriefOrganization {
 }
 
 export enum RequestType {
-    JOIN_GROUP_REQUEST = 0,
-    JOIN_GROUP_INVITE,
-    ADD_WORKSPACE_INVITE,
-    ADD_WORKSPACE_REQUEST
+    REQUEST = 0,
+    INVITATION
+}
+
+export enum RequestResourceType {
+    USER = 0,
+    WORKSPACE,
+    APP
 }
 
 export enum RequestStatus {
@@ -152,16 +169,54 @@ export enum RequestStatus {
 export type Username = string
 
 export interface GroupRequest {
-    id: string,
-    groupId: string,
-    requester: User,
-    type: RequestType,
-    status: RequestStatus,
-    subjectUser: User | null,
-    subjectWorkspaceId: number | null,
-    createdAt: Date,
-    expireAt: Date,
+    id: string
+    groupId: string
+    requester: User
+    type: RequestType
+    status: RequestStatus
+    resourceType: RequestResourceType
+    // subjectUser: User | null,
+    // subjectWorkspaceId: number | null,
+    createdAt: Date
+    expireAt: Date
     modifiedAt: Date
+}
+
+export interface UserRequest extends GroupRequest {
+    resourceType: RequestResourceType.USER
+    type: RequestType.REQUEST
+    user: User
+}
+
+export interface UserInvitation extends GroupRequest {
+    resourceType: RequestResourceType.USER
+    type: RequestType.INVITATION
+    user: User
+}
+
+
+export interface WorkspaceRequest extends GroupRequest {
+    resourceType: RequestResourceType.WORKSPACE
+    type: RequestType.REQUEST
+    workspace: string
+}
+
+export interface WorkspaceInvitation extends GroupRequest {
+    resourceType: RequestResourceType.WORKSPACE
+    type: RequestType.INVITATION
+    workspace: string
+}
+
+export interface AppRequest extends GroupRequest {
+    resourceType: RequestResourceType.APP
+    type: RequestType.REQUEST
+    app: string
+}
+
+export interface AppInvitation extends GroupRequest {
+    resourceType: RequestResourceType.APP
+    type: RequestType.INVITATION
+    app: string
 }
 
 export interface Organization {
@@ -169,12 +224,12 @@ export interface Organization {
     name: string
     gravatarHash: string | null
     description: string
-    owner: Owner
+    owner: Member
     relation: UserOrgRelation
     createdAt: Date
     modifiedAt: Date,
     members: Array<Member>,
-    admins: Array<Admin>,
+    // admins: Array<Admin>,
     adminRequests: Array<GroupRequest>
 }
 
@@ -311,15 +366,48 @@ export enum SortDirection {
     DESCENDING = 'desc'
 }
 
-export interface ManageGroupRequestsView {
-    view: {
-        organization: Organization
-        requests: Array<GroupRequest>
-    } | null,
+export enum ComponentLoadingState {
+    NONE = 0,
+    LOADING,
+    SUCCESS,
+    ERROR
+}
+
+export interface ManageOrganizationRequestsValue {
+    organization: Organization
+    requests: Array<GroupRequest>
+}
+export interface ManageOrganizationRequestsView {
+    state: ComponentLoadingState
+    viewState: ManageOrganizationRequestsValue | null
     error: AppError | null
 }
-export interface StoreState {
-    browseOrgs: {
+export enum ViewMembersViewState {
+    NONE = 0,
+    LOADING,
+    SUCCESS,
+    ERROR
+}
+
+export interface ViewMembersView {
+    state: ViewMembersViewState,
+    error: AppError | null,
+    view: {
+        organization: Organization
+    } | null
+}
+
+export enum BrowseOrgsState {
+    NONE = 0,
+    SEARCHING,
+    SUCCESS,
+    ERROR
+}
+
+export interface BrowseOrgsView {
+    state: BrowseOrgsState,
+    error: AppError | null,
+    view: {
         rawOrganizations: Array<Organization>
         organizations: Array<Organization>
         totalCount: number
@@ -328,9 +416,48 @@ export interface StoreState {
         sortDirection: SortDirection
         filter: string
         searchTerms: Array<string>
-        selectedOrganizationId: string | null
+        selectedOrganizationId: string | null,
         searching: boolean
-    }
+    } | null
+}
+
+export enum InviteUserState {
+    NONE = 0,
+    LOADING,
+    READY,
+    ERROR
+}
+
+export interface BriefUser {
+    username: string
+    realname: string
+}
+
+export interface InviteUserValue {
+    organization: Organization,
+    users: Array<BriefUser>
+    selectedUser: User | null
+}
+
+export interface InviteUserView {
+    state: InviteUserState,
+    viewState: AppError | InviteUserValue | null
+}
+
+export interface ManageMembershipValue {
+    organization: Organization
+}
+
+export interface ManageMembershipView {
+    // state: ComponentLoadingState,
+    loading: boolean
+    error: AppError | null
+    value: ManageMembershipValue | null
+    // viewState: AppError | ManageMembershipValue | null
+}
+
+export interface StoreState {
+    browseOrgs: BrowseOrgsView,
 
     auth: Authorization
     error: AppError | null
@@ -363,7 +490,10 @@ export interface StoreState {
         editedOrganization: EditableOrganization
         error?: AppError
     }
-    manageGroupRequestsView: ManageGroupRequestsView | null
+    manageOrganizationRequestsView: ManageOrganizationRequestsView
+    viewMembersView: ViewMembersView,
+    inviteUserView: InviteUserView,
+    manageMembershipView: ManageMembershipView
 }
 
 /* COMPONENT PROPS */

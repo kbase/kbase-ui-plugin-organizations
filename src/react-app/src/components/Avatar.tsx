@@ -1,10 +1,10 @@
 import * as React from 'react'
 import './Avatar.css'
 
-import { UserBase } from '../types'
+import { User } from '../types'
 
 export interface AvatarProps {
-    user: UserBase,
+    user: User,
     size: number
 }
 
@@ -12,12 +12,12 @@ interface AvatarState {
 
 }
 
-class Avatar extends React.Component<AvatarProps, AvatarState> {
+export class Avatar extends React.Component<AvatarProps, AvatarState> {
     constructor(props: AvatarProps) {
         super(props)
     }
 
-    getAvatarUrl(user: UserBase) {
+    getAvatarUrl(user: User) {
         switch (user.avatarOption || 'gravatar') {
             case 'gravatar':
                 const gravatarDefault = user.gravatarDefault || 'identicon';

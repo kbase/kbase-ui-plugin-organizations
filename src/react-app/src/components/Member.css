@@ -1,0 +1,24 @@
+.Member {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+.Member .avatarCol {
+    flex: 0 0 auto;
+    margin-right: 4px;
+    padding-top: 4px;
+}
+
+.Member .infoCol {
+    flex: 1 1 0px;
+}
+
+.Member .infoCol .name {
+    font-size: 100%;
+    font-weight: bold;
+}
+
+.Member .infoCol .location {}
+
+.Member .infoCol .organization {}

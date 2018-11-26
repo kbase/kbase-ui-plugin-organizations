@@ -31,8 +31,11 @@ export function applyOrgSearch(orgs: Organizations, searchTerms: Array<string>) 
 // FOR NOW:
 // do it here...
 export function searchOrgsStart(state: types.StoreState, action: actions.SearchOrgsStart): types.StoreState {
-
-    const { browseOrgs: { filter, sortBy, sortDirection } } = state
+    if (state.browseOrgs.view === null) {
+        console.warn('Cannot start browseOrgs view')
+        return state
+    }
+    const { browseOrgs: { view: { filter, sortBy, sortDirection } } } = state
     const query: Query = {
         searchTerms: action.searchTerms,
         filter: filter,
@@ -41,7 +44,15 @@ export function searchOrgsStart(state: types.StoreState, action: actions.SearchO
         username: state.auth.authorization.username
     }
     // const result = queryOrgs(state.rawOrganizations, query)
-
+    // rawOrganizations: Array<Organization>
+    // organizations: Array<Organization>
+    // totalCount: number
+    // filteredCount: number
+    // sortBy: string
+    // sortDirection: SortDirection
+    // filter: string
+    // searchTerms: Array<string>
+    // selectedOrganizationId: string | null
     return {
         ...state,
         // organizations: result.organizations, 
@@ -49,34 +60,74 @@ export function searchOrgsStart(state: types.StoreState, action: actions.SearchO
         // filteredCount: result.organizations.length,
         browseOrgs: {
             ...state.browseOrgs,
-            searching: true,
-            searchTerms: action.searchTerms
+            state: types.BrowseOrgsState.SEARCHING,
+            error: null,
+            view: {
+                ...state.browseOrgs.view,
+                selectedOrganizationId: null,
+                searchTerms: action.searchTerms
+            }
         }
     }
 }
 
 export function searchOrgsSuccess(state: types.StoreState, action: actions.SearchOrgsSuccess): types.StoreState {
+    if (state.browseOrgs.view === null) {
+        console.warn('Cannot start browseOrgs view')
+        return state
+    }
     return {
         ...state,
         browseOrgs: {
             ...state.browseOrgs,
-            searching: false,
-            organizations: action.organizations,
-            totalCount: action.totalCount,
-            filteredCount: action.organizations.length
+            state: types.BrowseOrgsState.SUCCESS,
+            error: null,
+            view: {
+                ...state.browseOrgs.view,
+                organizations: action.organizations,
+                totalCount: action.totalCount,
+                filteredCount: action.organizations.length
+            }
         }
-
     }
 }
 
+// TODO: hmm, uses the global error -- this was early in the development of this (a whole two weeks ago!)
+// and this should now go in the "browseOrgs" (or better named "searchOrgs") branch.
 export function searchOrgsError(state: types.StoreState, action: actions.SearchOrgsError): types.StoreState {
-    return { ...state, error: action.error }
+    console.log('error action', action)
+    if (state.browseOrgs.view) {
+        return {
+            ...state,
+            browseOrgs: {
+                ...state.browseOrgs,
+                error: action.error,
+                state: types.BrowseOrgsState.ERROR,
+                view: {
+                    ...state.browseOrgs.view,
+                    searching: false
+                }
+            }
+        }
+    } else {
+        return {
+            ...state,
+            browseOrgs: {
+                ...state.browseOrgs,
+                error: action.error
+            }
+        }
+    }
 }
 
 
 export function sortOrgsStart(state: types.StoreState, action: actions.SortOrgsStart): types.StoreState {
+    if (state.browseOrgs.view === null) {
+        console.warn('Cannot start browseOrgs view')
+        return state
+    }
     const {
-        browseOrgs: { searchTerms, filter },
+        browseOrgs: { view: { searchTerms, filter } },
         auth: { authorization: { username } }
     } = state
     const query: Query = {
@@ -86,15 +137,18 @@ export function sortOrgsStart(state: types.StoreState, action: actions.SortOrgsS
         sortDirection: action.sortDirection,
         username: username
     }
-    // const result = queryOrgs(state.rawOrganizations, query)
 
     return {
         ...state,
         browseOrgs: {
             ...state.browseOrgs,
-            searching: true,
-            sortBy: action.sortBy,
-            sortDirection: action.sortDirection
+            state: types.BrowseOrgsState.SEARCHING,
+            error: null,
+            view: {
+                ...state.browseOrgs.view,
+                sortBy: action.sortBy,
+                sortDirection: action.sortDirection
+            }
         }
     }
 }
@@ -115,14 +169,22 @@ interface QueryResults {
 
 export function filterOrgsStart(state: types.StoreState,
     action: actions.FilterOrgsStart): types.StoreState {
+    if (state.browseOrgs.view === null) {
+        console.warn('Cannot start browseOrgs view')
+        return state
+    }
     const { filter } = action
 
     return {
         ...state,
         browseOrgs: {
             ...state.browseOrgs,
-            searching: true,
-            filter
+            state: types.BrowseOrgsState.SEARCHING,
+            error: null,
+            view: {
+                ...state.browseOrgs.view,
+                filter
+            }
         }
     }
 }
