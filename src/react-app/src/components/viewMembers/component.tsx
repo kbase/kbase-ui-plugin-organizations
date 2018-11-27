@@ -45,7 +45,6 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
     }
 
     onPromoteMemberToAdmin(memberUsername: string) {
-        console.log('here', memberUsername)
         this.props.onPromoteMemberToAdmin(memberUsername)
     }
 
@@ -254,7 +253,6 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
     }
 
     componentWillUnmount() {
-        console.log('unmounting...')
         this.props.onViewMembersUnload()
     }
 

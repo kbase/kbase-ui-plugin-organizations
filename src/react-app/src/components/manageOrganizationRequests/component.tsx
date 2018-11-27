@@ -13,7 +13,8 @@ export interface ManageGroupRequestsProps {
     viewState: types.ManageOrganizationRequestsValue
     // onStart: (organizationId: string) => void,
     onAcceptJoinRequest: (requestId: string) => void,
-    onDenyJoinRequest: (requestId: string) => void
+    onDenyJoinRequest: (requestId: string) => void,
+    onCancelJoinInvitation: (requestId: string) => void
 }
 
 export interface ManageGroupRequestsState {
@@ -42,16 +43,13 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
         this.setState({ cancelToViewer: true })
     }
     onAcceptJoinRequest(requestId: string) {
-        // if (!(this.props.manageOrganizationRequestsView && this.props.manageOrganizationRequestsView.viewState)) {
-        //     return
-        // }
         this.props.onAcceptJoinRequest(requestId)
     }
     onDenyJoinRequest(requestId: string) {
-        // if (!(this.props.manageOrganizationRequestsView && this.props.manageOrganizationRequestsView.viewState)) {
-        //     return
-        // }
         this.props.onDenyJoinRequest(requestId)
+    }
+    onCancelJoinInvitation(requestId: string) {
+        this.props.onCancelJoinInvitation(requestId)
     }
     onViewProfile(username: string) {
         window.open('#people/' + username, '_blank')
@@ -230,28 +228,89 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                 headStyle={{ backgroundColor: 'rgba(200, 200, 200,0.3' }}
                 style={{ marginBottom: '10px' }}>
                 <table className="pendingRequestsTable">
-                    <tr>
-                        <th>from</th>
-                        <td className="requester">
-                            <User user={request.requester} avatarSize={50} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>sent</th>
-                        <td className="createdAt">{Intl.DateTimeFormat('en-US', {
-                            month: 'long',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(request.createdAt)}</td>
-                    </tr>
-                    <tr>
-                        <th>expires</th>
-                        <td className="expiresAt">{Intl.DateTimeFormat('en-US', {
-                            month: 'long',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(request.expireAt)} ({this.niceElapsed(request.expireAt)})</td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <th>from</th>
+                            <td className="requester">
+                                <User user={request.requester} avatarSize={50} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>sent</th>
+                            <td className="createdAt">{Intl.DateTimeFormat('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(request.createdAt)}</td>
+                        </tr>
+                        <tr>
+                            <th>expires</th>
+                            <td className="expiresAt">{Intl.DateTimeFormat('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(request.expireAt)} ({this.niceElapsed(request.expireAt)})</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </Card>
+        )
+    }
+
+    renderRequestJoinInvitation(request: types.UserInvitation) {
+        const title = (
+            <span>
+                <Icon type="team" />
+                <Icon type="mail" />
+                <Icon type="arrow-right" />
+                <Icon type="user" />
+
+
+                {' '}
+                Invitation to Join Group
+            </span>
+        )
+        const actions = [
+            <Button
+                type="danger"
+                style={{ margin: '0 5px' }}
+                onClick={() => this.onCancelJoinInvitation.call(this, request.id)}>
+                Cancel
+            </Button>
+        ]
+
+        return (
+            <Card key={request.id}
+                title={title}
+                hoverable={true}
+                actions={actions}
+                headStyle={{ backgroundColor: 'rgba(200, 200, 200,0.3' }}
+                style={{ marginBottom: '10px' }}>
+                <table className="pendingRequestsTable">
+                    <tbody>
+                        <tr>
+                            <th>invitation to</th>
+                            <td className="requester">
+                                <User user={request.user} avatarSize={50} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>sent</th>
+                            <td className="createdAt">{Intl.DateTimeFormat('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(request.createdAt)}</td>
+                        </tr>
+                        <tr>
+                            <th>expires</th>
+                            <td className="expiresAt">{Intl.DateTimeFormat('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(request.expireAt)} ({this.niceElapsed(request.expireAt)})</td>
+                        </tr>
+                    </tbody>
                 </table>
             </Card>
         )
@@ -290,34 +349,36 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                 headStyle={{ backgroundColor: 'rgba(200, 200, 200,0.3' }}
                 style={{ marginBottom: '10px' }}>
                 <table className="pendingRequestsTable">
-                    <tr>
-                        <th>from</th>
-                        <td className="requester">
-                            <User user={request.requester} avatarSize={50} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>narrative</th>
-                        <td className="narrative">
-                            {request.workspace}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>sent</th>
-                        <td className="createdAt">{Intl.DateTimeFormat('en-US', {
-                            month: 'long',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(request.createdAt)}</td>
-                    </tr>
-                    <tr>
-                        <th>expires</th>
-                        <td className="expiresAt">{Intl.DateTimeFormat('en-US', {
-                            month: 'long',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(request.expireAt)} ({this.niceElapsed(request.expireAt)})</td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <th>from</th>
+                            <td className="requester">
+                                <User user={request.requester} avatarSize={50} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>narrative</th>
+                            <td className="narrative">
+                                {request.workspace}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>sent</th>
+                            <td className="createdAt">{Intl.DateTimeFormat('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(request.createdAt)}</td>
+                        </tr>
+                        <tr>
+                            <th>expires</th>
+                            <td className="expiresAt">{Intl.DateTimeFormat('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(request.expireAt)} ({this.niceElapsed(request.expireAt)})</td>
+                        </tr>
+                    </tbody>
                 </table>
             </Card>
         )
@@ -356,34 +417,36 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                 headStyle={{ backgroundColor: 'rgba(200, 200, 200,0.3' }}
                 style={{ marginBottom: '10px' }}>
                 <table className="pendingRequestsTable">
-                    <tr>
-                        <th>from</th>
-                        <td className="requester">
-                            <User user={request.requester} avatarSize={50} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>app</th>
-                        <td className="requester">
-                            {request.app}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>sent</th>
-                        <td className="createdAt">{Intl.DateTimeFormat('en-US', {
-                            month: 'long',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(request.createdAt)}</td>
-                    </tr>
-                    <tr>
-                        <th>expires</th>
-                        <td className="expiresAt">{Intl.DateTimeFormat('en-US', {
-                            month: 'long',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(request.expireAt)} ({this.niceElapsed(request.expireAt)})</td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <th>from</th>
+                            <td className="requester">
+                                <User user={request.requester} avatarSize={50} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>app</th>
+                            <td className="requester">
+                                {request.app}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>sent</th>
+                            <td className="createdAt">{Intl.DateTimeFormat('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(request.createdAt)}</td>
+                        </tr>
+                        <tr>
+                            <th>expires</th>
+                            <td className="expiresAt">{Intl.DateTimeFormat('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(request.expireAt)} ({this.niceElapsed(request.expireAt)})</td>
+                        </tr>
+                    </tbody>
                 </table>
             </Card>
         )
@@ -404,51 +467,22 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                         throw new Error('Unsupported resource type: ' + request.resourceType)
                 }
             case types.RequestType.INVITATION:
-                throw new Error('Should never see an invitation here')
+                switch (request.resourceType) {
+                    case types.RequestResourceType.USER:
+                        return this.renderRequestJoinInvitation(request as types.UserInvitation)
+                    case types.RequestResourceType.WORKSPACE:
+                        throw new Error('Workspace invitations are not supported')
+                    // return this.renderRequestNarrativeInvitation(request as types.WorkspaceRequest)
+                    case types.RequestResourceType.APP:
+                        throw new Error('App invitations are not supported')
+                    // return this.renderRequestAppInvitation(request as types.AppRequest)
+                    default:
+                        throw new Error('Unsupported resource type: ' + request.resourceType)
+                }
         }
     }
 
-    // renderRequestxx(request: types.GroupRequest) {
-    //     const title = (
-    //         <span>
-    //             <Icon type="user" />
-    //             <Icon type="arrow-right" />
-    //             <Icon type="team" />
-    //             {' '}
-    //             Request to Join Group
-    //         </span>
-    //     )
-    //     return (
-    //         <Card key={request.id}
-    //             title={title}
-    //             hoverable={true}
-    //             style={{ marginBottom: '10px' }}>
-    //             {this.renderRequestSpecificType(request)}
-    //         </Card>
-    //     )
-    // }
-
-    // renderRequestx(request: types.GroupRequest) {
-    //     return (
-    //         <div key={request.id} className="groupRequest">
-    //             <div className="requestType">{this.renderRequestType(request.type)}</div>
-    //             {/* <div className="field">
-    //                 <span className="field-label">type</span>
-    //                 <span className="requestType">{this.renderRequestType(request.type)}</span>
-    //             </div> */}
-    //             {/* <div className="field">
-    //                 <span className="field-label">id</span>
-    //                 <span>{request.id}</span>
-    //             </div> */}
-    //             {this.renderRequestSpecificType(request)}
-    //         </div>
-    //     )
-    // }
-
     renderRequests() {
-        // if (!(this.props.manageOrganizationRequestsView && this.props.manageOrganizationRequestsView.viewState)) {
-        //     return
-        // }
         if (this.props.viewState.requests.length === 0) {
             return (
                 <p style={{ textAlign: 'center', padding: '10px' }}>
@@ -477,17 +511,25 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                 <OrganizationHeader organization={this.props.viewState.organization} />
                 <div className="row">
                     <div className="pendingCol">
-                        <h2>Current Pending Requests ({this.props.viewState.organization.adminRequests.length})</h2>
+                        <h2>Requests ({this.props.viewState.organization.adminRequests.length})</h2>
                         <div className="pendingRequests">
                             {this.renderRequests()}
                         </div>
                     </div>
                     <div className="historyCol">
-                        <h2>Request History</h2>
+                        <h2>Invitations</h2>
                         <p>[to be done]</p>
-                        <p>This will show a browesable, searchable, filterable list
-                            of "closed" (canceled, accepted, denied) requests. Default shows
-                            all in descending date (modified) order
+                        <p>
+                            This will show invitations sent on behalf of the organization.
+                        </p>
+
+                        <p>
+                            In addition, both the requests and invitations lists will be at least filterable by status: pending, canceled, rejected, accepted
+                        </p>
+
+                        <p>
+                            At the moment the requests column contains both requests (from users to org, from narrative owner to org, from app author to org)
+                            and invitations (from org admin to user)
                         </p>
                     </div>
                 </div>

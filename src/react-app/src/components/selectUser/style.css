@@ -1,0 +1,19 @@
+.SelectUser {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.SelectUser .userSelector {
+    flex: 1 1 0px
+}
+
+.SelectUser .selectedUser {
+    flex: 1 1 0px
+}
+
+.SelectUser .userSelection {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}

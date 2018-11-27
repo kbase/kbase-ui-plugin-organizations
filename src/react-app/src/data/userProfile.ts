@@ -34,6 +34,8 @@ export class UserProfileClient {
     url: string;
     token: string
 
+    static profileCache: Map<string, UserProfile> = new Map()
+
     constructor({ url, token }: { url: string, token: string }) {
         this.url = url
         this.token = token
@@ -78,6 +80,11 @@ export class UserProfileClient {
     }
 
     getUserProfile(username: string): Promise<UserProfile> {
+
+        if (UserProfileClient.profileCache.has(username)) {
+            return Promise.resolve(UserProfileClient.profileCache.get(username)!)
+        }
+
         return fetch(this.url, {
             method: 'POST',
             mode: 'cors',
@@ -101,6 +108,22 @@ export class UserProfileClient {
     }
 
     getUserProfiles(usernames: Array<string>): Promise<Array<UserProfile>> {
+
+        const cached: Array<UserProfile> = []
+        const profilesToFetch: Array<string> = []
+
+        usernames.forEach((username) => {
+            if (UserProfileClient.profileCache.has(username)) {
+                cached.push(UserProfileClient.profileCache.get(username)!)
+            } else {
+                profilesToFetch.push(username)
+            }
+        })
+
+        if (profilesToFetch.length === 0) {
+            return Promise.resolve(cached)
+        }
+
         return fetch(this.url, {
             method: 'POST',
             mode: 'cors',
@@ -110,7 +133,7 @@ export class UserProfileClient {
                 'Content-Type': 'application/json',
                 Accept: 'application/json'
             },
-            body: JSON.stringify(this.makePayload('get_user_profile', usernames))
+            body: JSON.stringify(this.makePayload('get_user_profile', profilesToFetch))
         })
             .then((response) => {
                 if (response.status !== 200) {
@@ -119,8 +142,13 @@ export class UserProfileClient {
                 return response.json()
             })
             .then((result) => {
-                console.log('profiles', result.result[0])
                 return result.result[0] as Array<UserProfile>
+            })
+            .then((profiles) => {
+                profiles.forEach((profile) => {
+                    UserProfileClient.profileCache.set(profile.user.username, profile)
+                })
+                return profiles.concat(cached)
             })
     }
 
@@ -143,13 +171,11 @@ export class UserProfileClient {
                 return response.json()
             })
             .then((result) => {
-                console.log('profiles', result.result[0])
                 return result.result[0] as Array<User>
             })
     }
 
     searchUsers(query: string): Promise<Array<User>> {
-        let start = new Date()
         return fetch(this.url, {
             method: 'POST',
             mode: 'cors',
@@ -165,12 +191,9 @@ export class UserProfileClient {
                 if (response.status !== 200) {
                     throw new Error('User profile request error: ' + response.status + ', ' + response.statusText)
                 }
-                console.log('user profile 1', new Date().getTime() - start.getTime())
-                start = new Date()
                 return response.json()
             })
             .then((result) => {
-                console.log('user profile 2', new Date().getTime() - start.getTime())
                 return result.result[0] as Array<User>
             })
     }

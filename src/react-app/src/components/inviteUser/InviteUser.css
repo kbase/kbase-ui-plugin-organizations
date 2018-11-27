@@ -39,6 +39,7 @@
 
 .InviteUser .invitationForm table {
     width: 50em;
+    margin: 20px auto 20px auto;
 }
 
 .InviteUser .invitationForm table td:nth-child(1) {
@@ -47,4 +48,10 @@
 
 .InviteUser .invitationForm textarea {
     width: 100%;
+}
+
+.InviteUser .selectedUser {
+    padding: 8px;
+    border: 1px rgba(200, 200, 200, 0.5) solid;
+    box-shadow: 4px 4px 4px rgba(200, 200, 200, 1);
 }

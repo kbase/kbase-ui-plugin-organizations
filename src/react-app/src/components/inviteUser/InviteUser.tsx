@@ -1,16 +1,21 @@
 import * as React from 'react'
 
 import './InviteUser.css'
-import { BriefUser, Organization, User } from '../../types';
+import { BriefUser, Organization, User, InviteUserViewState, MemberType } from '../../types';
 import { Button, AutoComplete, Input, Icon, Modal } from 'antd';
 import Header from '../Header';
 import { Redirect } from 'react-router-dom';
+import OrganizationHeader from '../organizationHeader/container';
+import { UserQuery } from '../../data/model';
+
+import SelectUserComponent from '../selectUser/component'
 
 export interface InviteUserProps {
     organization: Organization,
     users: Array<BriefUser>
     selectedUser: User | null,
-    onSearchUsers: (query: string) => void,
+    state: InviteUserViewState,
+    onSearchUsers: (query: UserQuery) => void,
     onSelectUser: (username: string) => void,
     onSendInvitation: () => void
 }
@@ -57,16 +62,29 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         this.props.onSendInvitation()
     }
 
-    onSearchUsers(value: string) {
-        if (value.length < 3) {
-            this.setState({ autocompleteMessage: 'Search begins after 3 or more characters' })
-            return
+    canSave() {
+        if (this.props.selectedUser) {
+            return true
         }
-        this.setState({ autocompleteMessage: '' })
+        return false
+    }
+
+    onSearchUsers(value: string) {
+        // if (value.length < 3) {
+        //     this.setState({ autocompleteMessage: 'Search begins after 3 or more characters' })
+        //     return
+        // }
+        // this.setState({ autocompleteMessage: '' })
+        // build up list of users already owning, members of, or with membership pending.
+        const excludedUsers: Array<string> = []
+
         if (this.lastSearchAt === null ||
             (new Date().getTime() - this.lastSearchAt.getTime() > InviteUser.searchDebounce)) {
             this.lastSearchAt = new Date()
-            this.props.onSearchUsers(value)
+            this.props.onSearchUsers({
+                query: value,
+                excludedUsers: excludedUsers
+            })
         }
     }
 
@@ -87,14 +105,12 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
     }
 
     foundUsers() {
-        console.log('now getting users...')
         const users = this.props.users.map(({ username, realname }) => {
             return {
                 value: username,
                 text: realname + ' (' + username + ')'
             }
         })
-        console.log('got them')
         return users
     }
 
@@ -154,58 +170,6 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         })
     }
 
-    renderUserSelection() {
-        const dataSource = this.foundUsers()
-        return (
-            <div>
-                <div className="userSelection">
-                    <AutoComplete
-                        onSearch={this.onSearchUsers.bind(this)}
-                        onSelect={this.onSelectUser.bind(this)}
-                        dataSource={dataSource}
-                        className="userAutocomplete" >
-                        <Input suffix={<Icon type="search" />} />
-                    </AutoComplete>
-                    <div className="autocompleteMessage">
-                        {this.state.autocompleteMessage}
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-    renderSelectedUser() {
-        if (this.props.selectedUser === null) {
-            return (
-                <div className="selectedUser">
-                    <p className="noSelection">
-                        No user yet selected
-                </p>
-                </div>
-            )
-        } else {
-            return (
-                <div className="selectedUser">
-                    <div className="username">
-                        <span className="field-label">
-                            username
-                        </span>
-                        <span>
-                            {this.props.selectedUser.username}
-                        </span>
-                    </div>
-                    <div className="realname">
-                        <span className="field-label">
-                            realname
-                        </span>
-                        <span>
-                            {this.props.selectedUser.realname}
-                        </span>
-                    </div>
-                </div>
-            )
-        }
-    }
 
     renderOrgInfo() {
         return (
@@ -227,7 +191,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
             <div className="invitationForm">
                 <table>
                     <tbody>
-                        <tr>
+                        {/* <tr>
                             <td>
                                 <span className="field-label">
                                     message
@@ -236,10 +200,12 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                             <td>
                                 <textarea></textarea>
                             </td>
-                        </tr>
+                        </tr> */}
                         <tr>
                             <td colSpan={2} style={{ textAlign: 'center' }}>
-                                <Button onClick={this.onSendInvitation.bind(this)}>Send Invitation</Button>
+                                <Button
+                                    disabled={!this.canSave()}
+                                    onClick={this.onSendInvitation.bind(this)}>Send Invitation</Button>
                             </td>
                         </tr>
                     </tbody>
@@ -250,10 +216,46 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
     }
 
     renderInvitationStatus() {
+        switch (this.props.state) {
+            case InviteUserViewState.NONE:
+                return (
+                    <div>NONE</div>
+                )
+            case InviteUserViewState.EDITING:
+                return (
+                    <div>EDITING</div>
+                )
+            case InviteUserViewState.SENDABLE:
+                return (
+                    <div>SENDABLE</div>
+                )
+            case InviteUserViewState.SENDING:
+                return (
+                    <div>SENDING</div>
+                )
+            case InviteUserViewState.SUCCESS:
+                return (
+                    <div>SENT SUCCESSFULLY</div>
+                )
+            case InviteUserViewState.ERROR:
+                return (
+                    <div>ERROR SENDING</div>
+                )
+            default:
+                return (
+                    <div>Bad State</div>
+                )
+        }
+
+    }
+
+    renderOrgHeader() {
+        // apparently TS is not smart enough to know this from the conditional branch in render()!
+        if (!this.props.organization) {
+            return
+        }
         return (
-            <div>
-                nothing to show yet
-            </div>
+            <OrganizationHeader organization={this.props.organization} />
         )
     }
 
@@ -274,23 +276,21 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         return (
             <div className="InviteUser">
                 {this.renderHeader()}
+                {this.renderOrgHeader()}
                 <div className="row">
                     <div className="col1">
-                        <h3>Organization</h3>
-                        {this.renderOrgInfo()}
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col1 firstCol">
                         <h3>Select User to Invite</h3>
-                        {this.renderUserSelection()}
-                    </div>
-                    <div className="col1 lastCol">
-                        <h3>Selected User</h3>
-                        {this.renderSelectedUser()}
+                        <SelectUserComponent
+                            users={this.props.users}
+                            selectedUser={this.props.selectedUser}
+                            onSearchUsers={this.onSearchUsers.bind(this)}
+                            onSelectUser={this.onSelectUser.bind(this)}
+                        />
+                        {this.renderInvitationForm()}
+                        {this.renderInvitationStatus()}
                     </div>
                 </div>
-                <div className="row">
+                {/* <div className="row">
                     <div className="col1">
                         <h3>Send Invitation</h3>
                         {this.renderInvitationForm()}
@@ -301,7 +301,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                         <h3>Status</h3>
                         {this.renderInvitationStatus()}
                     </div>
-                </div>
+                </div> */}
                 {/* {this.renderUsers()} */}
             </div>
         )

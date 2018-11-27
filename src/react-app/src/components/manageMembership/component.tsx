@@ -4,6 +4,7 @@ import { Icon, Button, Modal } from 'antd';
 import { Redirect } from 'react-router-dom';
 import './style.css'
 import { Organization } from '../../types';
+import OrganizationHeader from '../organizationHeader/container';
 
 export interface ManageMembershipProps {
     // temp.
@@ -18,7 +19,6 @@ interface MangeMembershipState {
 class ManageMembership extends React.Component<ManageMembershipProps, MangeMembershipState> {
     constructor(props: ManageMembershipProps) {
         super(props)
-        console.log('here...')
 
         this.state = {
             cancelToBrowser: false,
@@ -83,6 +83,16 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         )
     }
 
+    renderOrgHeader() {
+        // apparently TS is not smart enough to know this from the conditional branch in render()!
+        if (!this.props.organization) {
+            return
+        }
+        return (
+            <OrganizationHeader organization={this.props.organization} />
+        )
+    }
+
     render() {
 
         if (this.state.cancelToBrowser) {
@@ -96,6 +106,7 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         return (
             <div className="ManageMembership">
                 {this.renderHeader()}
+                {this.renderOrgHeader()}
                 <div className="body">
                     <div className="col1">
                         <div>

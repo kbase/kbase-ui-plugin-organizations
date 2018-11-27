@@ -147,7 +147,6 @@ export function viewMembersPromoteToAdmin(memberUsername: string) {
 
         model.memberToAdmin(view.organization.id, memberUsername)
             .then((org) => {
-                console.log('dispatching...', memberUsername)
                 dispatch(viewMembersPromoteToAdminSuccess(memberUsername))
 
                 // Brute force, update the in-store organization

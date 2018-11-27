@@ -61,7 +61,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         }
         const relation = this.props.organization.relation as MembershipRequestPendingRelation
         this.props.onAcceptInvitation(relation.requestId)
-        // console.log('accepting invitation request', relation.requestId)
     }
 
     onRejectInvitation() {
@@ -569,6 +568,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         const extras = [
             (
                 <NavLink
+                    key="viewMembers"
                     to={`/viewMembers/${this.props.organization!.id}`}>
                     <Button
                         onClick={this.onViewMembers.bind(this)}

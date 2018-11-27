@@ -4,7 +4,6 @@ import * as types from '../../types'
 import { ActionFlag } from '../actions'
 
 export function manageMembershipLoadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
-    console.log('start')
     return {
         ...state,
         manageMembershipView: {
@@ -16,7 +15,6 @@ export function manageMembershipLoadStart(state: types.StoreState, action: actio
 }
 
 export function manageMembershipLoadSuccess(state: types.StoreState, action: actions.LoadSuccess): types.StoreState {
-    console.log('success')
     return {
         ...state,
         manageMembershipView: {
@@ -30,7 +28,6 @@ export function manageMembershipLoadSuccess(state: types.StoreState, action: act
 }
 
 export function manageMembershipLoadError(state: types.StoreState, action: actions.LoadError): types.StoreState {
-    console.log('error')
     return {
         ...state,
         manageMembershipView: {

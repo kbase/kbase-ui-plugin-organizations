@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import * as types from '../../types'
 import * as actions from '../../redux/actions/inviteUser'
 import InviteUser from './InviteUser'
+import { UserQuery } from '../../data/model';
 
 export interface OwnProps {
 
@@ -12,12 +13,13 @@ export interface OwnProps {
 interface StateProps {
     organization: types.Organization,
     users: Array<types.BriefUser>,
-    selectedUser: types.User | null
+    selectedUser: types.User | null,
+    state: types.InviteUserViewState
 }
 
 interface DispatchProps {
-    onSearchUsers: (query: string) => void,
-    onSelectUser: (username: string) => void,
+    onSearchUsers: (query: UserQuery) => void
+    onSelectUser: (username: string) => void
     onSendInvitation: () => void
 }
 
@@ -30,16 +32,17 @@ function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
     // }
 
     return {
-        organization: (state.inviteUserView.viewState as types.InviteUserValue).organization,
-        users: (state.inviteUserView.viewState as types.InviteUserValue).users,
-        selectedUser: (state.inviteUserView.viewState as types.InviteUserValue).selectedUser
+        organization: (state.inviteUserView.value as types.InviteUserValue).organization,
+        users: (state.inviteUserView.value as types.InviteUserValue).users,
+        selectedUser: (state.inviteUserView.value as types.InviteUserValue).selectedUser,
+        state: (state.inviteUserView.value as types.InviteUserValue).editState
     }
 }
 
 export function mapDispatchToProps(dispatch: Dispatch<actions.InviteUserLoad>): DispatchProps {
     return {
-        onSearchUsers: (query: string) => {
-            dispatch(actions.inviteUserSearchUsers(query) as any)
+        onSearchUsers: ({ query, excludedUsers }) => {
+            dispatch(actions.inviteUserSearchUsers({ query, excludedUsers }) as any)
         },
         onSelectUser: (username: string) => {
             dispatch(actions.selectUser(username) as any)

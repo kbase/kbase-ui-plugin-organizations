@@ -72,22 +72,7 @@ export function viewMembersPromoteToAdminSuccess(state: types.StoreState, action
 
     const newState = { ...state }
     newState.viewMembersView.view!.organization.members = members
-    console.log('new state', newState)
     return newState
-
-    // return {
-    //     ...state,
-    //     viewMembersView: {
-    //         ...state.viewMembersView,
-    //         view: {
-    //             ...state.viewMembersView.view,
-    //             organization: {
-    //                 ...state.viewMembersView.view.organization,
-    //                 members: members
-    //             }
-    //         }
-    //     }
-    // }
 }
 
 export function viewMembersDemoteToMemberSuccess(state: types.StoreState, action: actions.ViewMembersDemoteToMemberSuccess): types.StoreState {
@@ -109,7 +94,6 @@ export function viewMembersDemoteToMemberSuccess(state: types.StoreState, action
 
     const newState = { ...state }
     newState.viewMembersView.view!.organization.members = members
-    console.log('new state', newState)
     return newState
 }
 

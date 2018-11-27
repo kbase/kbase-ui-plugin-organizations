@@ -32,6 +32,7 @@ import {
 import * as userProfile from './userProfile'
 import { GroupsClient, Group } from './groups'
 import * as groups from './groups'
+import { string } from 'prop-types';
 
 function stringToRequestType(type: string): RequestType {
     switch (type) {
@@ -144,6 +145,11 @@ export interface Query {
 export interface QueryResults {
     organizations: Array<Organization>
     total: number
+}
+
+export interface UserQuery {
+    query: string
+    excludedUsers: Array<string>
 }
 
 function wait(timeout: number) {
@@ -358,13 +364,31 @@ export class Model {
             token: this.params.token
         })
 
-        return groupsClient.getGroupRequests(groupId, {
-            includeClosed: false,
-            sortDirection: groups.SortDirection.DESCENDING,
-            startAt: new Date(0)
-        })
-            .then((requests) => {
-                return Promise.all(requests.map((request) => {
+        return Promise.all([
+            groupsClient.getGroupRequests(groupId, {
+                includeClosed: false,
+                sortDirection: groups.SortDirection.DESCENDING,
+                startAt: new Date(0)
+            }),
+            groupsClient.getCreatedRequests({
+                includeClosed: false,
+                sortDirection: groups.SortDirection.DESCENDING,
+                startAt: new Date(0)
+            })
+        ])
+
+            // return groupsClient.getGroupRequests(groupId, {
+            //     includeClosed: false,
+            //     sortDirection: groups.SortDirection.DESCENDING,
+            //     startAt: new Date(0)
+            // })
+            .then(([groupRequests, adminRequests]) => {
+
+                const groupAdminRequests = adminRequests.filter((request) => {
+                    return (request.groupid === groupId)
+                })
+
+                return Promise.all(groupRequests.concat(groupAdminRequests).map((request) => {
                     return this.groupRequestToOrgRequest(request)
                 }))
             })
@@ -452,9 +476,19 @@ export class Model {
             allUsers = allUsers.concat(group.admins)
         }
         allUsers.push(group.owner)
+        return Promise.all([
+            ((): Promise<Map<string, GroupRequest[]>> => {
+                if (username === group.owner || group.admins.indexOf(username) >= 0) {
+                    return this.getPendingAdminRequests([group.id])
+                } else {
+                    return Promise.resolve(new Map<string, GroupRequest[]>())
+                }
+            })(),
+            this.getPendingRequests()
+        ])
+            // return this.getPendingRequests()
+            .then(([pendingAdminRequests, { requests, invitations }]) => {
 
-        return this.getPendingRequests()
-            .then(({ requests, invitations }) => {
                 // pending join requests
                 const pendingRequests = new Map<string, groups.Request>()
                 requests.forEach((req) => {
@@ -546,7 +580,7 @@ export class Model {
                                             relation: relation,
                                             members: members,
                                             // admins: admins,
-                                            adminRequests: requests
+                                            adminRequests: (pendingAdminRequests.has(id) ? pendingAdminRequests.get(id)! : [])
                                         }
                                     })
                             } else {
@@ -574,6 +608,7 @@ export class Model {
     }
 
     getPendingAdminRequests(groupIds: Array<string>): Promise<Map<string, Array<GroupRequest>>> {
+
         return Promise.all(groupIds.map((id) => {
             return this.getPendingOrganizationRequests(id)
                 .then((requests) => {
@@ -605,6 +640,8 @@ export class Model {
             return allUsers;
         }, new Map<string, boolean>()).keys()
 
+        // Note that here we are dealing with raw groups so we check whether the user is an
+        // admin by hand.
         const adminGroupIds = groups
             .filter(({ owner, admins }) => (owner === username || admins.indexOf(username) >= 0))
             .map(({ id }) => id)
@@ -972,19 +1009,26 @@ export class Model {
 
     // Users
 
-    searchUsers(query: string): Promise<Array<BriefUser>> {
+
+
+    searchUsers(query: UserQuery): Promise<Array<BriefUser>> {
         const userProfileClient = new userProfile.UserProfileClient({
             url: this.params.userProfileServiceURL,
             token: this.params.token
         })
 
-        return userProfileClient.searchUsers(query)
+        return userProfileClient.searchUsers(query.query)
             .then((users) => {
-                return users.map(({ username, realname }) => {
-                    return {
-                        username, realname
-                    }
-                })
+                return users
+                    .filter(({ username }) => {
+                        return (query.excludedUsers.indexOf(username) === -1)
+                    })
+                    .map(({ username, realname }) => {
+                        return {
+                            username, realname
+                        }
+                    })
+
             })
 
     }

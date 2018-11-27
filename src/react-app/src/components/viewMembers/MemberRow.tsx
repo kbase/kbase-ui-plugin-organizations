@@ -80,7 +80,7 @@ class MemberRow extends React.Component<MemberRowProps, MemberRowState> {
     renderMemberMenu(member: Member) {
         const menu = (
             <Menu>
-                <Menu.Item key="promoteToAdmin" onClick={() => { console.log('here'); this.props.onPromoteMemberToAdmin(member.user.username) }} >
+                <Menu.Item key="promoteToAdmin" onClick={() => { this.props.onPromoteMemberToAdmin(member.user.username) }} >
                     <Icon type="unlock" />Promote to Admin
                 </Menu.Item>
                 <Menu.Item key="removeMember" type="danger" onClick={() => { this.props.onRemoveMember(member.user.username) }}>

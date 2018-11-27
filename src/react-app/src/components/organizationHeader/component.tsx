@@ -24,7 +24,8 @@ enum NavigateTo {
     VIEW_MEMBERS,
     MANAGE_REQUESTS,
     VIEW_ORGANIZATION,
-    EDIT_ORGANIZATION
+    EDIT_ORGANIZATION,
+    INVITE_USER
 }
 
 export class OrganizationHeader extends React.Component<OrganizationHeaderProps, OrganizationHeaderState> {
@@ -73,6 +74,10 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
 
     onNavigateToEditOrganization() {
         this.setState({ navigateTo: NavigateTo.EDIT_ORGANIZATION })
+    }
+
+    onNavigateToInviteUser() {
+        this.setState({ navigateTo: NavigateTo.INVITE_USER })
     }
 
     renderOwnerInfo() {
@@ -140,7 +145,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                         >
                             <div style={{ textAlign: 'center' }}>
                                 <Icon type="eye" style={{ marginRight: '4px' }} />You are not a member of this Organization
-                        </div>
+                            </div>
                         </Tooltip>
                         <div style={{ textAlign: 'center' }}>
                             <Button
@@ -159,11 +164,13 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                             placement="bottomRight"
                             mouseEnterDelay={0.5}
                             title="You have requested membership in this Organization"
-                        ><div>
-                                <Icon type="user" style={{ color: 'orange' }} spin={true} />
-                                Your membership <b>request</b> is pending
-                    {' '}
-                                <Icon type="question-circle" />
+                        >   <div style={{ textAlign: 'center' }}>
+                                <span>
+                                    <Icon type="user" style={{ color: 'orange' }} spin={true} />
+                                    Your membership <b>request</b> is pending
+                                {' '}
+                                    <Icon type="question-circle" />
+                                </span>
                             </div>
                         </Tooltip>
                         <div style={{ textAlign: 'center' }}>
@@ -234,6 +241,9 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                         <Menu.Item key="editOrg" onClick={this.onNavigateToEditOrganization.bind(this)}>
                             Edit this Org
                         </Menu.Item>
+                        <Menu.Item key="editOrg" onClick={this.onNavigateToInviteUser.bind(this)}>
+                            Invite User
+                        </Menu.Item>
                     </Menu>
                 )
                 return (
@@ -272,6 +282,9 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                         </Menu.Item>
                         <Menu.Item key="editOrg" onClick={this.onNavigateToEditOrganization.bind(this)}>
                             Edit this Org
+                        </Menu.Item>
+                        <Menu.Item key="editOrg" onClick={this.onNavigateToInviteUser.bind(this)}>
+                            Invite User
                         </Menu.Item>
                     </Menu>
                 )
@@ -358,6 +371,8 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                 return <Redirect push to={"/editOrganization/" + this.props.organization.id} />
             case NavigateTo.MANAGE_REQUESTS:
                 return <Redirect push to={"/manageOrganizationRequests/" + this.props.organization.id} />
+            case NavigateTo.INVITE_USER:
+                return <Redirect push to={"/inviteUser/" + this.props.organization.id} />
             default:
             // nothing, fall through
         }

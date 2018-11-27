@@ -230,7 +230,6 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result) => {
-                console.log('got group', result)
                 return result as Group
             })
     }
@@ -305,6 +304,7 @@ export class GroupsClient {
         if (params.startAt) {
             query.append('excludeupto', String(params.startAt.getTime()))
         }
+
         return fetch(this.url + '/group/' + groupId + '/requests?' + params.toString(), {
             headers: {
                 Authorization: this.token,

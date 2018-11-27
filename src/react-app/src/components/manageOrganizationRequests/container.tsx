@@ -17,7 +17,8 @@ interface StateProps {
 interface DispatchProps {
     // onStart: (organizationId: string) => void,
     onAcceptJoinRequest: (requestId: string) => void,
-    onDenyJoinRequest: (requestId: string) => void
+    onDenyJoinRequest: (requestId: string) => void,
+    onCancelJoinInvitation: (requestId: string) => void
 }
 
 function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
@@ -38,10 +39,13 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.ManageOrganization
         //     dispatch(actions.manageOrganizationRequests(organizationId) as any)
         // },
         onAcceptJoinRequest: (requestId: string) => {
-            dispatch(actions.manageOrganizationRequestsAcceptJoinRequest(requestId) as any)
+            dispatch(actions.acceptJoinRequest(requestId) as any)
         },
         onDenyJoinRequest: (requestId: string) => {
-            dispatch(actions.manageOrganizationRequestsDenyJoinRequest(requestId) as any)
+            dispatch(actions.denyJoinRequest(requestId) as any)
+        },
+        onCancelJoinInvitation: (requestId: string) => {
+            dispatch(actions.cancelJoinInvitation(requestId) as any)
         }
     }
 }

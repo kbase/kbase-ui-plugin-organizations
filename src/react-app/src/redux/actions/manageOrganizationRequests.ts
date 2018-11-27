@@ -30,42 +30,42 @@ export interface ManageOrganizationRequestsError extends Action {
 
 // Accept join requests
 
-export interface ManageOrganizationRequestsAcceptJoinRequest extends Action {
+export interface AcceptJoinRequest extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST,
     requestId: string
 }
 
-export interface ManageOrganizationRequestsAcceptJoinRequestStart extends Action {
+export interface AcceptJoinRequestStart extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_START,
     requestId: string
 }
 
-export interface ManageOrganizationRequestsAcceptJoinRequestSuccess extends Action {
+export interface AcceptJoinRequestSuccess extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_SUCCESS,
     request: GroupRequest
 }
 
-export interface ManageOrganizationRequestsAcceptJoinRequestError extends Action {
+export interface AcceptJoinRequestError extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_ERROR,
     error: AppError
 }
 
 
-export function manageOrganizationRequestsAcceptJoinRequestStart(requestId: string): ManageOrganizationRequestsAcceptJoinRequestStart {
+export function acceptJoinRequestStart(requestId: string): AcceptJoinRequestStart {
     return {
         type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_START,
         requestId: requestId
     }
 }
 
-export function manageOrganizationRequestsAcceptJoinRequestSuccess(request: GroupRequest): ManageOrganizationRequestsAcceptJoinRequestSuccess {
+export function acceptJoinRequestSuccess(request: GroupRequest): AcceptJoinRequestSuccess {
     return {
         type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_SUCCESS,
         request: request
     }
 }
 
-export function manageOrganizationRequestsAcceptJoinRequestError(error: AppError): ManageOrganizationRequestsAcceptJoinRequestError {
+export function acceptJoinRequestError(error: AppError): AcceptJoinRequestError {
     return {
         type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_ERROR,
         error: error
@@ -74,49 +74,89 @@ export function manageOrganizationRequestsAcceptJoinRequestError(error: AppError
 
 // Deny join requests
 
-export interface ManageOrganizationRequestsDenyJoinRequest extends Action {
+export interface DenyJoinRequest extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_DENY_JOIN_REQUEST,
     requestId: string
 }
 
-export interface ManageOrganizationRequestsDenyJoinRequestStart extends Action {
+export interface DenyJoinRequestStart extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_DENY_JOIN_REQUEST_START,
     requestId: string
 }
 
-export interface ManageOrganizationRequestsDenyJoinRequestSuccess extends Action {
+export interface DenyJoinRequestSuccess extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_DENY_JOIN_REQUEST_SUCCESS,
     request: GroupRequest
 }
 
-export interface ManageOrganizationRequestsDenyJoinRequestError extends Action {
+export interface DenyJoinRequestError extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_DENY_JOIN_REQUEST_ERROR,
     error: AppError
 }
 
 
-export function manageOrganizationRequestsDenyJoinRequestStart(requestId: string): ManageOrganizationRequestsDenyJoinRequestStart {
+export function denyJoinRequestStart(requestId: string): DenyJoinRequestStart {
     return {
         type: ActionFlag.ADMIN_MANAGE_REQUESTS_DENY_JOIN_REQUEST_START,
         requestId: requestId
     }
 }
 
-export function manageOrganizationRequestsDenyJoinRequestSuccess(request: GroupRequest): ManageOrganizationRequestsDenyJoinRequestSuccess {
+export function denyJoinRequestSuccess(request: GroupRequest): DenyJoinRequestSuccess {
     return {
         type: ActionFlag.ADMIN_MANAGE_REQUESTS_DENY_JOIN_REQUEST_SUCCESS,
         request: request
     }
 }
 
-export function manageOrganizationRequestsDenyJoinRequestError(error: AppError): ManageOrganizationRequestsDenyJoinRequestError {
+export function denyJoinRequestError(error: AppError): DenyJoinRequestError {
     return {
         type: ActionFlag.ADMIN_MANAGE_REQUESTS_DENY_JOIN_REQUEST_ERROR,
         error: error
     }
 }
 
+// Cancel join invitations
 
+export interface CancelJoinInvitation extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_CANCEL_JOIN_INVITATION
+    requestId: string
+}
+
+export interface CancelJoinInvitationStart extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_CANCEL_JOIN_INVITATION_START
+}
+
+export interface CancelJoinInvitationSuccess extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_CANCEL_JOIN_INVITATION_SUCCESS
+    request: GroupRequest
+}
+
+export interface CancelJoinInvitationError extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_CANCEL_JOIN_INVITATION_ERROR,
+    error: AppError
+}
+
+
+export function cancelJoinInvitationStart(): CancelJoinInvitationStart {
+    return {
+        type: ActionFlag.ADMIN_MANAGE_REQUESTS_CANCEL_JOIN_INVITATION_START
+    }
+}
+
+export function cancelJoinInvitationSuccess(request: GroupRequest): CancelJoinInvitationSuccess {
+    return {
+        type: ActionFlag.ADMIN_MANAGE_REQUESTS_CANCEL_JOIN_INVITATION_SUCCESS,
+        request: request
+    }
+}
+
+export function cancelJoinInvitationError(error: AppError): CancelJoinInvitationError {
+    return {
+        type: ActionFlag.ADMIN_MANAGE_REQUESTS_CANCEL_JOIN_INVITATION_ERROR,
+        error: error
+    }
+}
 
 // Action generators
 
@@ -173,7 +213,7 @@ export function manageOrganizationRequests(organizationId: string) {
     }
 }
 
-export function manageOrganizationRequestsAcceptJoinRequest(requestId: string) {
+export function acceptJoinRequest(requestId: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const {
             auth: { authorization: { token, username } },
@@ -194,13 +234,13 @@ export function manageOrganizationRequestsAcceptJoinRequest(requestId: string) {
             model.acceptRequest(requestId),
         ])
             .then(([request]) => {
-                dispatch(manageOrganizationRequestsAcceptJoinRequestSuccess(request))
+                dispatch(acceptJoinRequestSuccess(request))
                 if (manageOrganizationRequestsView.viewState) {
                     dispatch(manageOrganizationRequests(manageOrganizationRequestsView.viewState.organization.id))
                 }
             })
             .catch((err) => {
-                dispatch(manageOrganizationRequestsAcceptJoinRequestError({
+                dispatch(acceptJoinRequestError({
                     code: err.name,
                     message: err.message
                 }))
@@ -208,7 +248,7 @@ export function manageOrganizationRequestsAcceptJoinRequest(requestId: string) {
     }
 }
 
-export function manageOrganizationRequestsDenyJoinRequest(requestId: string) {
+export function denyJoinRequest(requestId: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const {
             auth: { authorization: { token, username } },
@@ -229,13 +269,49 @@ export function manageOrganizationRequestsDenyJoinRequest(requestId: string) {
             model.denyRequest(requestId),
         ])
             .then(([request]) => {
-                dispatch(manageOrganizationRequestsDenyJoinRequestSuccess(request))
+                dispatch(denyJoinRequestSuccess(request))
                 if (manageOrganizationRequestsView.viewState) {
                     dispatch(manageOrganizationRequests(manageOrganizationRequestsView.viewState.organization.id))
                 }
             })
             .catch((err) => {
-                dispatch(manageOrganizationRequestsDenyJoinRequestError({
+                dispatch(denyJoinRequestError({
+                    code: err.name,
+                    message: err.message
+                }))
+            })
+    }
+}
+
+export function cancelJoinInvitation(requestId: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        const {
+            auth: { authorization: { token, username } },
+            manageOrganizationRequestsView,
+            app: { config } } = getState()
+
+        const model = new Model({
+            token, username,
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url,
+            workspaceServiceURL: config.services.Workspace.url
+        })
+
+        if (!manageOrganizationRequestsView) {
+            return
+        }
+
+        Promise.all([
+            model.cancelRequest(requestId),
+        ])
+            .then(([request]) => {
+                dispatch(cancelJoinInvitationSuccess(request))
+                if (manageOrganizationRequestsView.viewState) {
+                    dispatch(manageOrganizationRequests(manageOrganizationRequestsView.viewState.organization.id))
+                }
+            })
+            .catch((err) => {
+                dispatch(cancelJoinInvitationError({
                     code: err.name,
                     message: err.message
                 }))

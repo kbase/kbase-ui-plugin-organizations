@@ -57,7 +57,7 @@
 }
 
 .ManageGroupRequests table.pendingRequestsTable th {
-    width: 5em;
+    width: 7em;
     text-align: right;
     font-weight: bold;
     color: rgba(150, 150, 150, 1);

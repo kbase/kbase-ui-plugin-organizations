@@ -3,8 +3,8 @@ import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
 
-import { AppError, StoreState, Organization, BriefUser, User, InviteUserState, InviteUserValue } from '../../types'
-import { Model } from '../../data/model'
+import { AppError, StoreState, Organization, BriefUser, User, InviteUserValue, ComponentLoadingState, RequestType, RequestResourceType, UserInvitation, UserRequest } from '../../types'
+import { Model, UserQuery } from '../../data/model'
 import * as userProfile from '../../data/userProfile'
 
 // View Loading
@@ -85,9 +85,11 @@ export function inviteUserLoad(organizationId: string) {
 
 // User Selection
 
+
+
 export interface InviteUserSearchUsers extends Action {
     type: ActionFlag.INVITE_USER_SEARCH_USERS,
-    query: string
+    query: UserQuery
 }
 
 interface SearchUsersStart extends Action {
@@ -124,13 +126,20 @@ function searchUsersError(error: AppError): SearchUsersError {
     }
 }
 
-export function inviteUserSearchUsers(query: string) {
+export function inviteUserSearchUsers(query: UserQuery) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(searchUsersStart())
 
         const {
+            inviteUserView: { value },
             auth: { authorization: { token, username } },
             app: { config } } = getState()
+
+        // TODO: better form of type narrowing? 
+        if (value === null) {
+            return
+        }
+        const org = value.organization
 
         const model = new Model({
             token, username,
@@ -139,11 +148,32 @@ export function inviteUserSearchUsers(query: string) {
             workspaceServiceURL: config.services.Workspace.url
         })
 
+        let excludedUsers: Array<string> = []
+
+        excludedUsers.push(org.owner.user.username)
+        excludedUsers = excludedUsers.concat(org.members.map((member) => {
+            return member.user.username
+        }))
+
+        org.adminRequests.forEach((request) => {
+            if (request.resourceType === RequestResourceType.USER) {
+                switch (request.type) {
+                    case RequestType.INVITATION:
+                        excludedUsers.push((<UserInvitation>request).user.username)
+                    case RequestType.REQUEST:
+                        excludedUsers.push((<UserRequest>request).requester.username)
+                }
+            }
+        })
+
         Promise.all([
             model.searchUsers(query)
         ])
             .then(([users]) => {
-                dispatch(searchUsersSuccess(users))
+                const filteredUsers = users.filter((user) => {
+                    return (excludedUsers.indexOf(user.username) === -1)
+                })
+                dispatch(searchUsersSuccess(filteredUsers))
             })
             .catch((err) => {
                 dispatch(searchUsersError({
@@ -162,7 +192,7 @@ export interface SelectUser extends Action {
     username: string
 }
 
-interface SelectUserStart extends Action {
+export interface SelectUserStart extends Action {
     type: ActionFlag.INVITE_USER_SELECT_USER_START
 }
 
@@ -171,7 +201,7 @@ export interface SelectUserSuccess extends Action {
     user: User
 }
 
-interface SelectUserError extends Action {
+export interface SelectUserError extends Action {
     type: ActionFlag.INVITE_USER_SELECT_USER_ERROR,
     error: AppError
 }
@@ -231,33 +261,33 @@ export interface SendInvitation extends Action {
     type: ActionFlag.INVITE_USER_SEND_INVITATION
 }
 
-interface SendInvitationStart extends Action {
+export interface SendInvitationStart extends Action {
     type: ActionFlag.INVITE_USER_SEND_INVITATION_START
 }
 
-interface SendInvitationSuccess extends Action {
+export interface SendInvitationSuccess extends Action {
     type: ActionFlag.INVITE_USER_SEND_INVITATION_SUCCESS
 }
 
-interface SendInvitationError extends Action {
+export interface SendInvitationError extends Action {
     type: ActionFlag.INVITE_USER_SEND_INVITATION_ERROR,
     error: AppError
 }
 
 
-function sendInvitationStart(): SendInvitationStart {
+export function sendInvitationStart(): SendInvitationStart {
     return {
         type: ActionFlag.INVITE_USER_SEND_INVITATION_START
     }
 }
 
-function sendInvitationSuccess(): SendInvitationSuccess {
+export function sendInvitationSuccess(): SendInvitationSuccess {
     return {
         type: ActionFlag.INVITE_USER_SEND_INVITATION_SUCCESS
     }
 }
 
-function sendInvitationError(error: AppError): SendInvitationError {
+export function sendInvitationError(error: AppError): SendInvitationError {
     return {
         type: ActionFlag.INVITE_USER_SEND_INVITATION_ERROR,
         error: error
@@ -271,17 +301,17 @@ export function sendInvitation() {
         const {
             auth: { authorization: { token, username } },
             app: { config },
-            inviteUserView: { state, viewState } } = getState()
+            inviteUserView: { loadingState, value, error } } = getState()
 
-        if (state !== InviteUserState.READY) {
+        if (loadingState !== ComponentLoadingState.SUCCESS) {
             return
         }
 
-        if (viewState === null) {
+        if (value === null) {
             return
         }
 
-        const { selectedUser, organization: { id } } = viewState as InviteUserValue
+        const { selectedUser, organization: { id } } = value as InviteUserValue
 
         if (!selectedUser) {
             return

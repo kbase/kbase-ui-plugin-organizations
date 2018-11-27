@@ -1,10 +1,10 @@
 import * as React from 'react'
 
 import InviteUserContainer from './InviteUserContainer'
-import { InviteUserState } from '../../types';
+import { ComponentLoadingState } from '../../types';
 
 export interface InviteUserLoaderProps {
-    state: InviteUserState,
+    loadingState: ComponentLoadingState,
     organizationId: string,
     onInviteUserLoad: (organizationId: string) => void
 }
@@ -36,16 +36,15 @@ class InviteUserLoader extends React.Component<InviteUserLoaderProps, InviteUser
     }
 
     render() {
-        console.log('loader', this.props)
-        switch (this.props.state) {
-            case InviteUserState.NONE:
+        switch (this.props.loadingState) {
+            case ComponentLoadingState.NONE:
                 this.props.onInviteUserLoad(this.props.organizationId)
                 return this.renderLoading()
-            case InviteUserState.LOADING:
+            case ComponentLoadingState.LOADING:
                 return this.renderLoading()
-            case InviteUserState.ERROR:
+            case ComponentLoadingState.ERROR:
                 return this.renderError()
-            case InviteUserState.READY:
+            case ComponentLoadingState.SUCCESS:
                 return (
                     <InviteUserContainer />
                 )
@@ -68,7 +67,7 @@ export interface OwnProps {
 }
 
 interface StateProps {
-    state: types.InviteUserState
+    loadingState: types.ComponentLoadingState
 }
 
 interface DispatchProps {
@@ -76,9 +75,8 @@ interface DispatchProps {
 }
 
 function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
-    console.log('mapping state to props', props)
     return {
-        state: state.inviteUserView.state
+        loadingState: state.inviteUserView.loadingState
     }
 }
 

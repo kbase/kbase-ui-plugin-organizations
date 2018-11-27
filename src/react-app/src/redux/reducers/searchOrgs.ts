@@ -95,7 +95,6 @@ export function searchOrgsSuccess(state: types.StoreState, action: actions.Searc
 // TODO: hmm, uses the global error -- this was early in the development of this (a whole two weeks ago!)
 // and this should now go in the "browseOrgs" (or better named "searchOrgs") branch.
 export function searchOrgsError(state: types.StoreState, action: actions.SearchOrgsError): types.StoreState {
-    console.log('error action', action)
     if (state.browseOrgs.view) {
         return {
             ...state,

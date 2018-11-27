@@ -421,10 +421,12 @@ export interface BrowseOrgsView {
     } | null
 }
 
-export enum InviteUserState {
+export enum InviteUserViewState {
     NONE = 0,
-    LOADING,
-    READY,
+    EDITING,
+    SENDABLE,
+    SENDING,
+    SUCCESS,
     ERROR
 }
 
@@ -434,14 +436,17 @@ export interface BriefUser {
 }
 
 export interface InviteUserValue {
-    organization: Organization,
+    organization: Organization
     users: Array<BriefUser>
     selectedUser: User | null
+    editState: InviteUserViewState
 }
 
 export interface InviteUserView {
-    state: InviteUserState,
-    viewState: AppError | InviteUserValue | null
+    loadingState: ComponentLoadingState
+    value: InviteUserValue | null
+    error: AppError | null
+    // viewState: AppError | InviteUserValue | null
 }
 
 export interface ManageMembershipValue {

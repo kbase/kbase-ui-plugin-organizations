@@ -274,7 +274,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
     }
 
     renderOrganizations() {
-        console.log('props...', this.props)
         if (this.props.error) {
             return (
                 <Alert

@@ -46,7 +46,6 @@ export function loadError(error: AppError): LoadError {
 
 export function manageMembershipLoad(organizationId: string, memberUsername: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        console.log('here?')
         dispatch(loadStart())
 
         const {

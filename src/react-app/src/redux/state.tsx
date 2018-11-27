@@ -1,4 +1,4 @@
-import { StoreState, SortDirection, AuthState, AppState, EditState, SaveState, ValidationState, ViewOrgState, EditOrgState, ViewMembersViewState, BrowseOrgsState, InviteUserState, ComponentLoadingState } from "../types";
+import { StoreState, SortDirection, AuthState, AppState, EditState, SaveState, ValidationState, ViewOrgState, ViewMembersViewState, BrowseOrgsState, InviteUserViewState, ComponentLoadingState } from "../types";
 import { StaticData } from "../data/model";
 
 export class StateInstances {
@@ -80,8 +80,9 @@ export class StateInstances {
                 view: null
             },
             inviteUserView: {
-                state: InviteUserState.NONE,
-                viewState: null
+                loadingState: ComponentLoadingState.NONE,
+                value: null,
+                error: null
             },
             manageMembershipView: {
                 loading: false,
