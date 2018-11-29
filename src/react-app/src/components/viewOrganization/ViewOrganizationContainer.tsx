@@ -29,6 +29,7 @@ interface DispatchProps {
     onCancelJoinRequest: (requestId: string) => void
     onAcceptInvitation: (requestId: string) => void
     onRejectInvitation: (requestId: string) => void
+    onRemoveNarrative: (narrative: types.NarrativeResource) => void
 }
 
 // hmm this bit would be for the interface for the wrapped component.
@@ -62,6 +63,9 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.ViewOrgFetch>): Di
         },
         onRejectInvitation: (requestId: string) => {
             dispatch(actions.rejectJoinInvitation(requestId) as any)
+        },
+        onRemoveNarrative: (narrative: types.NarrativeResource) => {
+            dispatch(actions.removeNarrative(narrative) as any)
         }
     }
 }

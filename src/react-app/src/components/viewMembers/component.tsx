@@ -173,13 +173,15 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
             )
         } else {
             members = this.props.organization.members.map((member) => (
-                <MemberRowComponent
-                    member={member}
-                    organization={this.props.organization}
-                    onPromoteMemberToAdmin={this.props.onPromoteMemberToAdmin}
-                    onDemoteAdminToMember={this.props.onDemoteAdminToMember}
-                    onRemoveMember={this.props.onRemoveMember}
-                />
+                <React.Fragment key={member.user.username}>
+                    <MemberRowComponent
+                        member={member}
+                        organization={this.props.organization}
+                        onPromoteMemberToAdmin={this.props.onPromoteMemberToAdmin}
+                        onDemoteAdminToMember={this.props.onDemoteAdminToMember}
+                        onRemoveMember={this.props.onRemoveMember}
+                    />
+                </React.Fragment>
             ))
         }
         return (

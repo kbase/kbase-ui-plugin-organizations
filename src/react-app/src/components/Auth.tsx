@@ -69,21 +69,21 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
                 )
             case types.AuthState.AUTHORIZED:
                 return (
-                    <div className="Auth Auth-authorized">
+                    <div className="Auth Auth-authorized scrollable-flex-column">
                         {this.buildAuthToolbar()}
                         {this.props.children}
                     </div>
                 )
             case types.AuthState.UNAUTHORIZED:
                 return (
-                    <div className="Auth Auth-unauthorized">
+                    <div className="Auth Auth-unauthorized scrollable-flex-column">
                         <p>Not authorized! Enter a user token below</p>
                         {this.buildAuthForm()}
                     </div>
                 )
             case types.AuthState.ERROR:
                 return (
-                    <div className="Auth Auth-unauthorized">
+                    <div className="Auth Auth-unauthorized scrollable-flex-column">
                         <p>Error</p>
                         {this.props.authorization.message}
                     </div>
@@ -104,19 +104,19 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
                 )
             case types.AuthState.AUTHORIZED:
                 return (
-                    <div className="Auth Auth-authorized">
+                    <div className="Auth Auth-authorized scrollable-flex-column">
                         {this.props.children}
                     </div>
                 )
             case types.AuthState.UNAUTHORIZED:
                 return (
-                    <div className="Auth Auth-unauthorized">
+                    <div className="Auth Auth-unauthorized scrollable-flex-column">
                         <p>Not authorized!</p>
                     </div>
                 )
             case types.AuthState.ERROR:
                 return (
-                    <div className="Auth Auth-error">
+                    <div className="Auth Auth-error scrollable-flex-column">
                         <p>Error: ??</p>
                     </div>
                 )
@@ -130,7 +130,7 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
 
     render() {
         return (
-            <div className="Auth">
+            <div className="Auth scrollable-flex-column">
                 {this.props.hosted ? this.buildAuthProd() : this.buildAuthDev()}
             </div>
         )

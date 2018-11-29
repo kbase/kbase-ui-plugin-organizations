@@ -80,6 +80,10 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
         this.setState({ navigateTo: NavigateTo.INVITE_USER })
     }
 
+    onNavigateToViewOrganization() {
+        this.setState({ navigateTo: NavigateTo.VIEW_ORGANIZATION })
+    }
+
     renderOwnerInfo() {
         const org = this.props.organization
         return (
@@ -124,6 +128,8 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
     renderOrgAvatar(org: Organization) {
         return (
             <img style={{ width: 64, height: 64 }}
+                onClick={this.onNavigateToViewOrganization.bind(this)}
+                className="avatarImage"
                 src={this.getOrgAvatarUrl(this.props.organization)} />
         )
     }
@@ -283,7 +289,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                         <Menu.Item key="editOrg" onClick={this.onNavigateToEditOrganization.bind(this)}>
                             Edit this Org
                         </Menu.Item>
-                        <Menu.Item key="editOrg" onClick={this.onNavigateToInviteUser.bind(this)}>
+                        <Menu.Item key="inviteUser" onClick={this.onNavigateToInviteUser.bind(this)}>
                             Invite User
                         </Menu.Item>
                     </Menu>
@@ -373,6 +379,8 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                 return <Redirect push to={"/manageOrganizationRequests/" + this.props.organization.id} />
             case NavigateTo.INVITE_USER:
                 return <Redirect push to={"/inviteUser/" + this.props.organization.id} />
+            case NavigateTo.VIEW_ORGANIZATION:
+                return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
             default:
             // nothing, fall through
         }

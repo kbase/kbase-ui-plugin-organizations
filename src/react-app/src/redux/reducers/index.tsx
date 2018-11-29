@@ -10,6 +10,7 @@ import manageOrganizatiopRequests from './manageOrganizationRequests';
 import viewMembers from './viewMembers';
 import inviteUser from './inviteUser';
 import manageMembership from './manageMembership'
+import requestAddNarrative from './requestAddNarrative';
 
 
 export function reducer(state: StoreState, action: Action): StoreState {
@@ -23,6 +24,7 @@ export function reducer(state: StoreState, action: Action): StoreState {
         viewMembers(state, action) ||
         inviteUser(state, action) ||
         manageMembership(state, action) ||
+        requestAddNarrative(state, action) ||
         state;
 }
 

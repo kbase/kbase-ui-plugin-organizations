@@ -453,7 +453,6 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
     }
 
     renderRequest(request: types.GroupRequest) {
-
         switch (request.type) {
             case types.RequestType.REQUEST:
                 switch (request.resourceType) {

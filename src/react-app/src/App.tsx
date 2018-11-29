@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Route } from 'react-router'
+import { Route, Switch } from 'react-router'
 import { BrowserRouter, Redirect, HashRouter } from 'react-router-dom'
 
 // redux
@@ -27,6 +27,7 @@ import ManageOrganizationRequests from './components/manageOrganizationRequests/
 import ViewMembers from './components/viewMembers/loader'
 import InviteUser from './components/inviteUser/InviteUserLoader'
 import ManageMembership from './components/manageMembership/loader'
+import RequestAddNarrative from './components/requestAddNarrative/loader'
 import { StateInstances } from './redux/state';
 
 // Put the redux store together
@@ -58,19 +59,22 @@ class App extends Component {
         <Auth hosted={hosted}>
           <KBaseIntegration>
             <HashRouter basename="/orgs/">
-              <div className="App">
-                <div className="App-body">
-                  <Route path="/organizations" component={OrganizationsBrowser} />
-                  <Route path="/newOrganization" component={NewOrganization} />
-                  {/* The destructuring below is ugly, but effective */}
-                  <Route path="/viewOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewOrganization id={id} />} />
-                  <Route path="/editOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <EditOrganization id={id} />} />
-                  <Route path="/manageOrganizationRequests/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ManageOrganizationRequests organizationId={id} />} />
-                  <Route path="/viewMembers/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewMembers organizationId={id} />} />
-                  <Route path="/inviteUser/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<InviteUser organizationId={id} />)} />
-                  <Route path="/membership/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<ManageMembership organizationId={id} />)} />
+              <div className="App scrollable-flex-column">
+                <div className="App-body scrollable-flex-column">
+                  <Switch>
+                    <Route path="/organizations" component={OrganizationsBrowser} />
+                    <Route path="/newOrganization" component={NewOrganization} />
+                    {/* The destructuring below is ugly, but effective */}
+                    <Route path="/viewOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewOrganization id={id} />} />
+                    <Route path="/editOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <EditOrganization id={id} />} />
+                    <Route path="/manageOrganizationRequests/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ManageOrganizationRequests organizationId={id} />} />
+                    <Route path="/viewMembers/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewMembers organizationId={id} />} />
+                    <Route path="/inviteUser/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<InviteUser organizationId={id} />)} />
+                    <Route path="/membership/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<ManageMembership organizationId={id} />)} />
+                    <Route path="/requestAddNarrative/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<RequestAddNarrative organizationId={id} />)} />
 
-                  <Redirect from="/" to="/organizations" exact={true} />
+                    <Redirect from="/" to="/organizations" exact={true} />
+                  </Switch>
                 </div>
               </div>
             </HashRouter>

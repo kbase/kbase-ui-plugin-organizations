@@ -63,7 +63,8 @@ export function inviteUserLoad(organizationId: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         Promise.all([
@@ -145,7 +146,8 @@ export function inviteUserSearchUsers(query: UserQuery) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         let excludedUsers: Array<string> = []
@@ -239,7 +241,8 @@ export function selectUser(selectedUsername: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         model.getUser(selectedUsername)
@@ -321,7 +324,8 @@ export function sendInvitation() {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         model.requestJoinGroup(id, selectedUser.username)

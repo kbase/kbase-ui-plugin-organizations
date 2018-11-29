@@ -1,0 +1,73 @@
+.RequestNarrative {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RequestNarrative .body {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.RequestNarrative .body .selectNarrativeCol {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RequestNarrative .body .selectedNarrativeCol {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RequestNarrative .body .selectNarrativeCol .narrativeSelector {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RequestNarrative .body .selectNarrativeCol .narrativeSelector .control {
+    flex: 0 0 auto;
+}
+
+.RequestNarrative .body .selectNarrativeCol .narrativeSelector .narratives {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RequestNarrative .body .selectNarrativeCol .narrativeSelector .narratives .narrativesTable {
+    overflow-y: auto;
+}
+
+.RequestNarrative .footer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0;
+    justify-content: center;
+}
+
+.RequestNarrative .narrativesTable .narrative.narrativeInOrg {
+    font-weight: normal;
+    color: rgba(100, 100, 100, 1)
+}
+
+.RequestNarrative .narrativesTable .narrative {
+    /* border: 1px red solid; */
+    font-weight: bold;
+    padding: 4px;
+}
+
+.RequestNarrative .narrativesTable .narrative+.narrative {
+    /* border: 1px red solid; */
+    /* margin-top: 10px; */
+}
+
+.RequestNarrative .narrativesTable .narrative.narrativeNotInOrg:hover {
+    /* border: 1px red solid; */
+    background-color: rgba(200, 200, 200, 0.5);
+    cursor: pointer;
+}

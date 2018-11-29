@@ -26,13 +26,15 @@ import {
     AppRequest,
     UserInvitation,
     WorkspaceInvitation,
-    AppInvitation
+    AppInvitation,
+    Narrative
 } from '../types';
 // import { organizations } from './data';
 import * as userProfile from './userProfile'
 import { GroupsClient, Group } from './groups'
 import * as groups from './groups'
-import { string } from 'prop-types';
+import { NarrativeServiceClient } from './narrativeService';
+import { WorkspaceInfo, ObjectInfo, workspaceInfoToObject, objectInfoToObject } from './workspaceUtils';
 
 function stringToRequestType(type: string): RequestType {
     switch (type) {
@@ -173,11 +175,12 @@ function wait(timeout: number) {
 // }
 
 interface ModelParams {
-    token: string,
-    username: string,
-    groupsServiceURL: string,
-    userProfileServiceURL: string,
+    token: string
+    username: string
+    groupsServiceURL: string
+    userProfileServiceURL: string
     workspaceServiceURL: string
+    serviceWizardURL: string
 }
 
 function promiseTry<T>(fun: () => Promise<T>) {
@@ -189,6 +192,8 @@ function promiseTry<T>(fun: () => Promise<T>) {
         }
     })
 }
+
+type GroupRequestOrBoolean = GroupRequest | boolean
 
 export class Model {
     // organizations: Organizations
@@ -560,6 +565,22 @@ export class Model {
                             } as ViewRelation
                         }
 
+                        // Get Narratives
+                        const narratives = group.resources.workspace.map((workspace) => {
+                            return {
+                                title: workspace.narrname,
+                                workspaceId: parseInt(workspace.rid, 10)
+                            }
+                        })
+
+                        const apps = group.resources.catalogmethod.map((app) => {
+                            return {
+                                id: app.rid
+                            }
+                        })
+
+                        // Get Apps
+
                         // perhaps get the pending admin requests
                         return promiseTry<Organization>((): Promise<Organization> => {
                             if (relation.type === UserRelationToOrganization.ADMIN ||
@@ -580,7 +601,9 @@ export class Model {
                                             relation: relation,
                                             members: members,
                                             // admins: admins,
-                                            adminRequests: (pendingAdminRequests.has(id) ? pendingAdminRequests.get(id)! : [])
+                                            adminRequests: (pendingAdminRequests.has(id) ? pendingAdminRequests.get(id)! : []),
+                                            narratives,
+                                            apps
                                         }
                                     })
                             } else {
@@ -598,7 +621,9 @@ export class Model {
                                     relation: relation,
                                     members: members,
                                     // admins: admins,
-                                    adminRequests: []
+                                    adminRequests: [],
+                                    narratives,
+                                    apps
                                 })
                             }
                         })
@@ -707,6 +732,20 @@ export class Model {
                         } as ViewRelation
                     }
 
+                    // Get Narratives
+                    const narratives = group.resources.workspace.map((workspace) => {
+                        return {
+                            title: workspace.narrname,
+                            workspaceId: parseInt(workspace.rid, 10)
+                        }
+                    })
+
+                    const apps = group.resources.catalogmethod.map((app) => {
+                        return {
+                            id: app.rid
+                        }
+                    })
+
                     return {
                         id, name, description,
                         gravatarHash: gravatarhash || null,
@@ -719,7 +758,9 @@ export class Model {
                         relation: relation,
                         members: orgMembers,
                         // admins: admins.map((username) => this.profileToUser(profileMap.get(username)!)),
-                        adminRequests: (pendingAdminRequests.has(id) ? pendingAdminRequests.get(id)! : [])
+                        adminRequests: (pendingAdminRequests.has(id) ? pendingAdminRequests.get(id)! : []),
+                        narratives,
+                        apps
                     }
                 }))
             })
@@ -871,6 +912,42 @@ export class Model {
             .catch((err) => {
                 throw err;
             })
+    }
+
+    addOrRequestNarrativeToGroup(groupId: string, narrative: Narrative): Promise<GroupRequest | boolean> {
+        const groupsClient = new GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        return groupsClient.addOrRequestNarrative({
+            groupId: groupId,
+            workspaceId: narrative.workspaceId
+        })
+            .then((request): Promise<GroupRequest | boolean> => {
+                if (request.complete === true) {
+                    return Promise.resolve(true)
+                } else {
+                    return this.groupRequestToOrgRequest(request)
+                }
+
+            })
+            .catch((err: Error) => {
+                throw err;
+            })
+    }
+
+    removeNarrativeFromGroup(groupId: string, workspaceId: number): Promise<void> {
+        const groupsClient = new GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        return groupsClient.deleteResource(
+            groupId,
+            'workspace',
+            String(workspaceId)
+        )
     }
 
     cancelRequest(requestId: string): Promise<GroupRequest> {
@@ -1044,6 +1121,59 @@ export class Model {
                 return this.profileToUser(userProfile)
             })
     }
+
+    // Narratives
+
+    getOwnNarratives(organizationId: string): Promise<Array<Narrative>> {
+        const narrativeServiceClient = new NarrativeServiceClient({
+            url: this.params.serviceWizardURL,
+            token: this.params.token,
+            timeout: 10000,
+        })
+
+        return Promise.all([
+            narrativeServiceClient.listNarratives('mine'),
+            this.getOrg(organizationId)
+        ])
+            .then(([narrativesResult, organization]) => {
+                const workspacesInOrg = organization.narratives.map((narrative) => {
+                    return narrative.workspaceId
+                })
+                return narrativesResult.narratives
+                    .map((nar) => {
+                        return {
+                            workspaceInfo: workspaceInfoToObject(nar.ws) as NarrativeWorkspaceInfo,
+                            objectInfo: objectInfoToObject(nar.nar)
+                        }
+                    })
+                    .filter((nar) => {
+                        return (nar.workspaceInfo.metadata.is_temporary === 'false')
+                    })
+                    .map((narrative) => {
+                        return {
+                            workspaceId: narrative.workspaceInfo.id,
+                            objectId: narrative.objectInfo.id,
+                            title: narrative.workspaceInfo.metadata.narrative_nice_name,
+                            inOrganization: (workspacesInOrg.indexOf(narrative.workspaceInfo.id) !== -1)
+                        }
+                    })
+                    .sort((a, b) => {
+                        return (a.title.localeCompare(b.title))
+                    })
+            })
+    }
+}
+
+export interface NarrativeWorkspaceInfo extends WorkspaceInfo {
+    metadata: {
+        narrative_nice_name: string
+        version: string
+        is_temporary: string
+    }
+}
+export interface GetOwnNarrativesResult {
+    workspaceInfo: WorkspaceInfo
+    objectInfo: ObjectInfo
 }
 
 export class Validation {

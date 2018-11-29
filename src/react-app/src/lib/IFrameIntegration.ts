@@ -1,10 +1,11 @@
 export interface IFrameParams {
-    channelId: string,
-    frameId: string,
+    channelId: string
+    frameId: string
     params: {
-        groupsServiceURL: string,
-        userProfileServiceURL: string,
+        groupsServiceURL: string
+        userProfileServiceURL: string
         workspaceServiceURL: string
+        serviceWizardURL: string
     },
     parentHost: string
 }

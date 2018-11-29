@@ -290,7 +290,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
     render() {
         return (
-            <div className="OrganizationsBrowser">
+            <div className="OrganizationsBrowser scrollable-flex-column">
                 {this.renderHeader()}
                 <div className="searchBarRow">
                     <div className="searchBarCol">
@@ -300,9 +300,9 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                         {this.renderSearchFilter()}
                     </div>
                 </div>
-                <div className="bodyRow">
+                <div className="bodyRow scrollable-flex-column">
 
-                    <div className="col2">
+                    <div className="col2 scrollable-flex-column">
                         {this.renderOrganizations()}
                     </div>
                     {/* <div className="col1">

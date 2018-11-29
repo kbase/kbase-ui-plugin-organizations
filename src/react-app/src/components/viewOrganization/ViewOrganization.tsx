@@ -1,18 +1,24 @@
 import * as React from 'react'
 import marked from 'marked'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Redirect } from 'react-router-dom'
 
 import './ViewOrganization.css'
 
-import { ViewOrgState, Organization, AppError, UserRelationToOrganization, MembershipRequestPendingRelation } from '../../types'
+import { ViewOrgState, Organization, AppError, UserRelationToOrganization, MembershipRequestPendingRelation, NarrativeResource } from '../../types'
 import { Button, Modal, Icon, Tooltip, Card } from 'antd'
 import Header from '../Header'
 import Avatar from '../Avatar'
 import Member from '../Member';
 import OrganizationHeader from '../organizationHeader/container'
 
+enum NavigateTo {
+    NONE = 0,
+    REQUEST_ADD_NARRATIVE
+}
+
 export interface ViewOrganizationState {
-    showInfo: boolean
+    showInfo: boolean,
+    navigateTo: NavigateTo
 }
 
 export interface ViewOrganizationProps {
@@ -26,6 +32,7 @@ export interface ViewOrganizationProps {
     onCancelJoinRequest: (requestId: string) => void
     onAcceptInvitation: (requestId: string) => void
     onRejectInvitation: (requestId: string) => void
+    onRemoveNarrative: (narrative: NarrativeResource) => void
 }
 
 class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrganizationState> {
@@ -33,7 +40,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         super(props)
 
         this.state = {
-            showInfo: false
+            showInfo: false,
+            navigateTo: NavigateTo.NONE
         }
 
         this.props.onViewOrg(this.props.id)
@@ -69,6 +77,14 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         }
         const relation = this.props.organization.relation as MembershipRequestPendingRelation
         this.props.onRejectInvitation(relation.requestId)
+    }
+
+    onRequestAddNarrative() {
+        this.setState({ navigateTo: NavigateTo.REQUEST_ADD_NARRATIVE })
+    }
+
+    onRemoveNarrative(narrative: NarrativeResource) {
+        this.props.onRemoveNarrative(narrative)
     }
 
     onShowInfo() {
@@ -310,7 +326,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         } else {
             members = this.props.organization.members.map((member) => {
                 return (
-                    <Member member={member} avatarSize={50} key={member.user.username} />
+                    <React.Fragment key={member.user.username}>
+                        <Member member={member} avatarSize={50} />
+                    </React.Fragment>
                 )
             })
         }
@@ -605,20 +623,21 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderNarratives() {
-        const fakeNarratives = []
-        for (let i = 0; i < 20; i += 1) {
-            fakeNarratives.push({
-                workspaceId: i,
-                // name: 'workspace_' + i,
-                title: 'Narrative Title Here ' + i,
-                public: Math.random() < 0.5 ? true : false,
-                perm: ['None', 'Read', 'Write', 'Admin', 'Own'][Math.floor(Math.random() * 4)]
-            })
-        }
+        // const fakeNarratives = []
+        // for (let i = 0; i < 20; i += 1) {
+        //     fakeNarratives.push({
+        //         workspaceId: i,
+        //         // name: 'workspace_' + i,
+        //         title: 'Narrative Title Here ' + i,
+        //         public: Math.random() < 0.5 ? true : false,
+        //         perm: ['None', 'Read', 'Write', 'Admin', 'Own'][Math.floor(Math.random() * 4)]
+        //     })
+        // }
+
         if (!this.isMember()) {
             return (
                 <Card
-                    className="slimCard membersCard narratives"
+                    className="slimCard  narratives"
                     title={<span><Icon type="folder-open" /> narratives</span>}
                 >
                     <p style={{ textAlign: 'center', fontStyle: 'italic' }}>
@@ -627,49 +646,105 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </Card>
             )
         }
-        const narrativesTable = fakeNarratives.map((narrative) => {
+        if (!this.props.organization) {
+            return <div>
+                sorry, no org yet
+            </div>
+        }
+        const extras = [
+            (
+                <NavLink
+                    key="requestAddNarrative"
+                    to={`/requestAddNarrative/${this.props.organization!.id}`}>
+                    <Button
+                        onClick={this.onRequestAddNarrative.bind(this)}>
+                        <Icon type="plus" /> Add a Narrative
+                    </Button>
+                </NavLink>
+            )
+        ]
+
+        if (this.props.organization.narratives.length === 0) {
             return (
-                <div className="narrative">
-                    <div className="title">{narrative.title}</div>
-                    <div><i>abstract here?</i></div>
-                    <div><i>sharing info here?</i></div>
-                    <div><i>owner and save info here?</i></div>
+                <Card
+                    className="slimCard  narratives"
+                    title={<span><Icon type="folder-open" /> narratives (none)</span>}
+                    extra={extras}
+                >
+                    <div>
+                        sorry, no narratives
+                </div>
+                </Card>
+            )
+
+        }
+        const isAdmin = (this.props.organization.relation.type === UserRelationToOrganization.OWNER ||
+            this.props.organization.relation.type === UserRelationToOrganization.ADMIN)
+        const narrativesTable = this.props.organization.narratives.map((narrative) => {
+            // create buttons or not, depending on being an admin
+            let button
+            if (isAdmin) {
+                button = (
+                    <Button
+                        onClick={() => { this.onRemoveNarrative.call(this, narrative) }}
+                        type="danger"><Icon type="delete" />Delete
+                        </Button>
+                )
+            } else {
+                button = (
+                    <div></div>
+                )
+            }
+            return (
+                <div className="narrative" key={String(narrative.workspaceId)}>
+                    <div className="dataCol">
+                        <div className="title">{narrative.title}</div>
+                        <div><i>abstract here?</i></div>
+                        <div><i>sharing info here?</i></div>
+                        <div><i>owner and save info here?</i></div>
+                    </div>
+                    <div className="buttonCol">
+                        {button}
+                    </div>
                 </div>
             )
         })
-        const narrativeCount = fakeNarratives.length
+
+        const narrativeCount = this.props.organization.narratives.length
         return (
             <Card
-                className="slimCard membersCard narratives"
+                className="slimCard narratives narrativesCard scrollable-flex-column"
                 title={<span><Icon type="folder-open" /> narratives ({narrativeCount})</span>}
+                extra={extras}
             >
                 <div className="narrativesTable">
                     {narrativesTable}
                 </div>
             </Card>
         )
-        // return (
-        //     <div className="narratives">
-        //         <h3>Narratives</h3>
-        //         <div className="narrativesTable">
-        //             {narrativesTable}
-        //         </div>
-        //     </div>
-        // )
     }
 
     render() {
+        switch (this.state.navigateTo) {
+            case NavigateTo.REQUEST_ADD_NARRATIVE:
+                return (
+                    <Redirect to={"/requestAddNarrative"} />
+                )
+            case NavigateTo.NONE:
+            default:
+            // do nothing.
+        }
         if (typeof this.props.organization !== 'undefined') {
             return (
-                <div className="ViewOrganization">
+                <div className="ViewOrganization  scrollable-flex-column">
                     {this.renderHeader()}
                     {this.renderOrgHeader()}
-                    <div className="mainRow">
-                        <div className="mainColumn">
+                    <div className="mainRow  scrollable-flex-column">
+                        <div className="mainColumn  scrollable-flex-column">
                             <div className="orgRow">
                                 {this.renderOrg()}
                             </div>
-                            <div className="narrativesRow">
+                            <div className="narrativesRow scrollable-flex-column">
                                 {this.renderNarratives()}
                             </div>
                         </div>

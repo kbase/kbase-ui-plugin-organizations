@@ -8,7 +8,6 @@ import { Icon } from 'antd';
 export interface MemberProps {
     member: types.Member
     avatarSize?: number
-    key: string
 }
 
 interface MemberState {
@@ -45,7 +44,7 @@ class Member extends React.Component<MemberProps, MemberState> {
 
     render() {
         return (
-            <div className="Member" key={this.props.key}>
+            <div className="Member" >
                 <div className="avatarCol">
                     <Avatar user={this.props.member.user} size={this.props.avatarSize || 30} />
                 </div>

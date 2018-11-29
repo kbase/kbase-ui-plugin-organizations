@@ -233,8 +233,10 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
     render() {
         return (
             <div className="Organizations">
-                {this.renderOrgs()}
-            </div>
+                <div style={{ overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+                    {this.renderOrgs()}
+                </div>
+            </div >
         )
     }
 }

@@ -286,7 +286,8 @@ export function editOrgEdit(organizationId: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         return model.getOrg(organizationId)
@@ -349,7 +350,8 @@ export function editOrgSave() {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         if (!editedOrganization) {
@@ -453,7 +455,8 @@ export function editOrgUpdateDescription(description: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
         const [validatedDescription, error] = model.validateOrgDescription(description)
 

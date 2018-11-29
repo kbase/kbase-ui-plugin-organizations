@@ -50,6 +50,16 @@
     padding: 4px;
     margin: 0 0 10px 0;
     flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.ViewOrganization .mainRow>.mainColumn>.narrativesRow .narrativesTable .narrative .dataCol {
+    flex: 1 1 0px;
+}
+
+.ViewOrganization .mainRow>.mainColumn>.narrativesRow .narrativesTable .narrative .buttonCol {
+    flex: 0 0 auto;
 }
 
 .ViewOrganization .mainRow>.mainColumn>.narrativesRow .narrativesTable .narrative .title {
@@ -154,7 +164,7 @@
     /* border-radius: 8px; */
     flex: 1 1 0px;
     overflow-y: auto;
-    box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5);
+    /* box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5); */
 }
 
 .ViewOrganization .adminTasksBox {
@@ -244,4 +254,17 @@
 .membersCard.ant-card .ant-card-body {
     max-height: 400px;
     overflow-y: auto;
+}
+
+/*
+    To make the narratives card scrollable when stretched to bottom of viewport
+    For some browsers - FF specifically - but actually makes this usage compliant
+    to css.
+*/
+
+.narrativesCard.ant-card .ant-card-body {
+    min-height: 0;
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
 }

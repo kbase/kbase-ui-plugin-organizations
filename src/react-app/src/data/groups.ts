@@ -1,4 +1,5 @@
 import { string, number } from "prop-types";
+import { request } from "http";
 
 export interface GroupsServiceInfo {
     servname: string;
@@ -24,11 +25,15 @@ export type GroupList = Array<BriefGroup>
 export type Username = string;
 
 export interface WorkspaceInfo {
-    wsid: number
+    rid: string
     name: string
     narrname: string
     public: boolean
-    admin: boolean
+    perm: string
+}
+
+export interface AppInfo {
+    rid: string
 }
 
 export interface Group {
@@ -41,7 +46,10 @@ export interface Group {
     description: string
     createdate: number
     moddate: number
-    workspaces: Array<WorkspaceInfo>
+    resources: {
+        workspace: Array<WorkspaceInfo>,
+        catalogmethod: Array<AppInfo>
+    }
     custom: {
         gravatarhash?: string
     }
@@ -72,6 +80,14 @@ export interface Request {
     createdate: number
     expiredate: number
     moddate: number
+}
+
+export interface RequestWithCompletion extends Request {
+    complete: false
+}
+
+export interface Completion {
+    complete: true
 }
 
 export interface ErrorInfo {
@@ -135,6 +151,11 @@ export interface GetRequestsParams {
 }
 
 export interface RequestMemebershipParams {
+    groupId: string
+}
+
+export interface RequestNarrativeParams {
+    workspaceId: number
     groupId: string
 }
 
@@ -403,6 +424,65 @@ export class GroupsClient {
             })
             .then((result) => {
                 return result as Request
+            })
+    }
+
+    addOrRequestNarrative(params: RequestNarrativeParams): Promise<RequestWithCompletion | Completion> {
+        const url = [
+            this.url,
+            'group',
+            params.groupId,
+            'resource',
+            'workspace',
+            String(params.workspaceId)
+        ].join('/')
+        return fetch(url, {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            method: 'POST'
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then((result) => {
+                if (result.complete === false) {
+                    return result as RequestWithCompletion
+                } else {
+                    return result as Completion
+                }
+
+            })
+    }
+
+    deleteResource(groupId: string, resourceType: string, resourceId: string): Promise<void> {
+        const url = [
+            this.url,
+            'group',
+            groupId,
+            'resource',
+            resourceType,
+            resourceId
+        ].join('/')
+        return fetch(url, {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            method: 'DELETE'
+        })
+            .then((response) => {
+                if (response.status !== 204) {
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+                }
             })
     }
 

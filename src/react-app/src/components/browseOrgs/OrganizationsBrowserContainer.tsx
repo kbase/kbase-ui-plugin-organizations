@@ -22,7 +22,6 @@ export interface LinkDispatchProps {
     onFilterOrgs: (filter: string) => void
 }
 
-
 // note second arg is the component props, but we don't have any component props to merge in.
 export function mapStateToProps(storeState: StoreState): LinkStateProps {
     // TODO: more insanity we must find a way of working around
@@ -54,29 +53,6 @@ export function mapStateToProps(storeState: StoreState): LinkStateProps {
     }
 }
 
-// function onSortOrgs(sortBy: string, sortDescending: boolean) : Dispatch<actions.SortOrgs> {
-//     dispatch(actions.sortOrgs(sortBy, sortDescending))
-// }
-
-// note second arg is the component props, but we don't have any to merge in.
-// export function mapDispatchToProps(dispatch: actions.SearchOrgs | Dispatch<actions.SortOrgs> | Dispatch<actions.FilterOrgs>) : LinkDispatchProps {
-//     return {
-//         onSearchOrgs: (searchTerms) => {
-
-//             dispatch(actions.searchOrgs(searchTerms))
-
-
-
-//         },
-//         onSortOrgs: (sortBy, sortDescending) => {
-//             dispatch(actions.sortOrgs(sortBy, sortDescending))
-//         },
-//         onFilterOrgs: (filter) => {
-//             dispatch(actions.filterOrgs(filter))
-//         }
-//     }
-// }
-
 export function mapDispatchToProps(dispatch: Dispatch<actions.SearchOrgs | actions.SortOrgs | actions.FilterOrgs>): LinkDispatchProps {
     return {
         onSearchOrgs: (searchTerms: Array<string>) => {
@@ -92,17 +68,5 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.SearchOrgs | actio
         }
     }
 }
-
-// export function mapDispatchToProps(dispatch: Dispatch<any>) : LinkDispatchProps {
-//     return {
-//         onSearchOrgs: (searchTerms) => {
-//             dispatch(actions.searchOrgs(searchTerms))
-//         },
-//         onSortOrgs: (sortBy, sortDescending) => {
-//             dispatch(actions.sortOrgs(sortBy, sortDescending))
-//         }
-//     }
-// }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationsBrowser)

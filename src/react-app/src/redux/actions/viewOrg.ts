@@ -4,7 +4,7 @@ import { ThunkDispatch } from 'redux-thunk'
 import { ActionFlag } from './index'
 import {
     StoreState, Organization,
-    AppError, SortDirection, UIError, UIErrorType
+    AppError, SortDirection, UIError, UIErrorType, Narrative, NarrativeResource
 } from '../../types'
 import { Model } from '../../data/model'
 
@@ -109,6 +109,106 @@ export interface RejectJoinInvitationSuccess extends Action {
 export interface RejectJoinInvitationError extends Action {
     type: ActionFlag.VIEW_ORG_REJECT_JOIN_INVITATION_ERROR,
     error: AppError
+}
+
+// Delete Narrative
+
+export interface RemoveNarrative {
+    type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE
+}
+
+export interface RemoveNarrativeStart {
+    type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_START
+}
+
+export interface RemoveNarrativeSuccess {
+    type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_SUCCESS,
+    narrative: NarrativeResource
+}
+
+export interface RemoveNarrativeError {
+    type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_ERROR,
+    error: AppError
+}
+
+// Generators
+
+export function removeNarrativeStart(): RemoveNarrativeStart {
+    return {
+        type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_START
+    }
+}
+
+export function removeNarrativeSuccess(narrative: NarrativeResource): RemoveNarrativeSuccess {
+    return {
+        type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_SUCCESS,
+        narrative: narrative
+    }
+}
+
+export function removeNarrativeError(error: AppError): RemoveNarrativeError {
+    return {
+        type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_ERROR,
+        error: error
+    }
+}
+
+// THunk
+
+export function removeNarrative(narrative: NarrativeResource) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(removeNarrativeStart())
+
+        // TODO: need to restructure this view -- this is crazy
+
+        const state = getState()
+        if (!state.viewOrg.organization) {
+            dispatch(removeNarrativeError({
+                code: 'bad state',
+                message: 'View orgs does not have an org'
+            }))
+            return
+        }
+
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config },
+            viewOrg: {
+                organization
+            }
+        } = state
+
+
+        if (!organization) {
+            dispatch(removeNarrativeError({
+                code: 'bad state',
+                message: 'View orgs does not have an org'
+            }))
+            return
+        }
+
+        const groupId = organization.id
+
+        const model = new Model({
+            token, username,
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url,
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
+        })
+
+        model.removeNarrativeFromGroup(groupId, narrative.workspaceId)
+            .then((org) => {
+                dispatch(removeNarrativeSuccess(narrative))
+            })
+            .catch((err) => {
+                dispatch(removeNarrativeError({
+                    code: err.name,
+                    message: err.message
+                }))
+            })
+    }
 }
 
 
@@ -242,7 +342,8 @@ export function viewOrgFetch(id: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         model.getOrg(id)
@@ -269,7 +370,8 @@ export function viewOrgJoinRequest() {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         if (typeof organization === 'undefined') {
@@ -306,7 +408,8 @@ export function viewOrgCancelJoinRequest(requestId: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
         if (typeof organization === 'undefined') {
             dispatch(viewOrgCancelJoinRequestError({
@@ -344,7 +447,8 @@ export function acceptJoinInvitation(requestId: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
         if (typeof organization === 'undefined') {
             dispatch(acceptJoinInvitationError({
@@ -380,7 +484,8 @@ export function rejectJoinInvitation(requestId: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
         if (typeof organization === 'undefined') {
             dispatch(acceptJoinInvitationError({

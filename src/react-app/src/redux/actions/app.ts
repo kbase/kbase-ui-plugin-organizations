@@ -57,7 +57,10 @@ export function appStart() {
                         url: iframeParams.params.userProfileServiceURL
                     },
                     Workspace: {
-                        url: iframeParams.params.userProfileServiceURL
+                        url: iframeParams.params.workspaceServiceURL
+                    },
+                    ServiceWizard: {
+                        url: iframeParams.params.serviceWizardURL
                     }
                 }
             }))
@@ -74,6 +77,9 @@ export function appStart() {
                     },
                     Workspace: {
                         url: fakeIframeParams.params.workspaceServiceURL
+                    },
+                    ServiceWizard: {
+                        url: fakeIframeParams.params.serviceWizardURL
                     }
                 }
             }))

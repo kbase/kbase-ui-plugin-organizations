@@ -55,7 +55,8 @@ export function manageMembershipLoad(organizationId: string, memberUsername: str
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         model.getOrg(organizationId)

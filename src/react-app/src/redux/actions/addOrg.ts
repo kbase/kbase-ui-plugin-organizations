@@ -261,7 +261,8 @@ export function addOrg() {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         if (!newOrganization) {
@@ -328,7 +329,8 @@ function newModelFromState(state: StoreState) {
         token, username,
         groupsServiceURL: config.services.Groups.url,
         userProfileServiceURL: config.services.UserProfile.url,
-        workspaceServiceURL: config.services.Workspace.url
+        workspaceServiceURL: config.services.Workspace.url,
+        serviceWizardURL: config.services.ServiceWizard.url
     })
 }
 
@@ -392,7 +394,8 @@ export function addOrgUpdateDescription(description: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
         const [validatedDescription, error] = model.validateOrgDescription(description)
 

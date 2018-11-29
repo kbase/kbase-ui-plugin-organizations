@@ -45,6 +45,25 @@ export function viewOrgStop(state: types.StoreState, action: actions.ViewOrgStop
 }
 
 
+export function removeNarrativeSuccess(state: types.StoreState, action: actions.RemoveNarrativeSuccess): types.StoreState {
+    if (!state.viewOrg.organization) {
+        return state
+    }
+    const newNarratives = state.viewOrg.organization.narratives.filter((narrative) => {
+        return (narrative.workspaceId !== action.narrative.workspaceId)
+    })
+    return {
+        ...state,
+        viewOrg: {
+            ...state.viewOrg,
+            organization: {
+                ...state.viewOrg.organization,
+                narratives: newNarratives
+            }
+        }
+    }
+}
+
 function reducer(state: types.StoreState, action: Action): types.StoreState | null {
     // NB using discriminant union nature of the ActionX types to narrow
     // the type.
@@ -58,6 +77,8 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
             return viewOrgError(state, action as actions.ViewOrgError)
         case ActionFlag.VIEW_ORG_STOP:
             return viewOrgStop(state, action as actions.ViewOrgStop)
+        case ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_SUCCESS:
+            return removeNarrativeSuccess(state, action as actions.RemoveNarrativeSuccess)
         default:
             return null
     }

@@ -2,10 +2,11 @@
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    min-height: 0;
+    /* overflow-y: auto; */
 }
 
-.Organizations>.row {
+.Organizations .row {
     flex: 0 0 auto;
     /* border: 1px silver dashed; */
     /* border-bottom: 1px rgba(200, 200, 200, 0.8) solid; */
@@ -15,16 +16,16 @@
     flex-direction: row;
 }
 
-.Organizations>.row:hover {
+.Organizations .row:hover {
     background-color: rgba(200, 200, 200, 0.5)
 }
 
-.Organizations>.row>.col1 {
+.Organizations .row>.col1 {
     flex: 1 1 0px;
     margin-left: 10px;
 }
 
-.Organizations>.row>.col2 {
+.Organizations .row>.col2 {
     flex: 0 0 64px;
 }
 

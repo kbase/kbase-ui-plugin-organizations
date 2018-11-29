@@ -29,7 +29,7 @@ class KBaseIntegration extends React.Component<KBaseIntegrationProps, object> {
             )
         } else {
             return (
-                <div className="KBaseIntegration">
+                <div className="KBaseIntegration scrollable-flex-column">
                     {this.props.children}
                 </div>
             )

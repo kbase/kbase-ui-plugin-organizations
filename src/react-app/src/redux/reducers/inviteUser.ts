@@ -2,7 +2,6 @@ import { Action } from 'redux'
 import * as actions from '../actions/inviteUser'
 import * as types from '../../types'
 import { ActionFlag } from '../actions'
-import { StateInstances } from '../state';
 
 export function inviteUserLoadStart(state: types.StoreState, action: actions.InviteUserLoadStart): types.StoreState {
     return {

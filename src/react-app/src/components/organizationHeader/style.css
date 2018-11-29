@@ -10,6 +10,10 @@
     margin-right: 6px;
 }
 
+.OrganizationHeader .avatar .avatarImage {
+    cursor: pointer;
+}
+
 .OrganizationHeader .orgInfo {
     flex: 2 1 0px;
 }

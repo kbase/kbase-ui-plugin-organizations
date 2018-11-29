@@ -10,7 +10,6 @@ export interface InviteUserLoaderProps {
 }
 
 interface InviteUserLoaderState {
-
 }
 
 class InviteUserLoader extends React.Component<InviteUserLoaderProps, InviteUserLoaderState> {
@@ -31,7 +30,6 @@ class InviteUserLoader extends React.Component<InviteUserLoaderProps, InviteUser
             <div>
                 Error!
             </div>
-
         )
     }
 
@@ -49,8 +47,6 @@ class InviteUserLoader extends React.Component<InviteUserLoaderProps, InviteUser
                     <InviteUserContainer />
                 )
         }
-
-
     }
 }
 

@@ -219,6 +219,19 @@ export interface AppInvitation extends GroupRequest {
     app: string
 }
 
+export interface App {
+    id: string,
+    module: string,
+    func: string,
+    version: string,
+    title: string,
+    category: string
+}
+
+export interface AppResource {
+    id: string
+}
+
 export interface Organization {
     id: string
     name: string
@@ -230,7 +243,9 @@ export interface Organization {
     modifiedAt: Date,
     members: Array<Member>,
     // admins: Array<Admin>,
-    adminRequests: Array<GroupRequest>
+    adminRequests: Array<GroupRequest>,
+    narratives: Array<NarrativeResource>,
+    apps: Array<AppResource>
 }
 
 export interface EditedOrganization {
@@ -461,6 +476,39 @@ export interface ManageMembershipView {
     // viewState: AppError | ManageMembershipValue | null
 }
 
+export interface Narrative {
+    workspaceId: number,
+    objectId: number,
+    title: string,
+    inOrganization: boolean
+}
+
+export interface NarrativeResource {
+    workspaceId: number
+    title: string
+}
+
+export enum RequestNarrativeState {
+    NONE = 0,
+    LOADING,
+    ERROR,
+    LOADED,
+    SENDING,
+    SENT
+}
+
+export interface RequestNarrativeValue {
+    organization: Organization
+    narratives: Array<Narrative>
+    selectedNarrative: Narrative | null
+}
+
+export interface RequestNarrativeView {
+    status: RequestNarrativeState
+    error: AppError | null
+    value: RequestNarrativeValue | null
+}
+
 export interface StoreState {
     browseOrgs: BrowseOrgsView,
 
@@ -496,9 +544,10 @@ export interface StoreState {
         error?: AppError
     }
     manageOrganizationRequestsView: ManageOrganizationRequestsView
-    viewMembersView: ViewMembersView,
-    inviteUserView: InviteUserView,
+    viewMembersView: ViewMembersView
+    inviteUserView: InviteUserView
     manageMembershipView: ManageMembershipView
+    requestNarrativeView: RequestNarrativeView
 }
 
 /* COMPONENT PROPS */
@@ -539,6 +588,9 @@ export interface AppConfig {
             url: string
         },
         Workspace: {
+            url: string
+        },
+        ServiceWizard: {
             url: string
         }
     }

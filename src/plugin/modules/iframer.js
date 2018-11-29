@@ -30,7 +30,7 @@ define([
                 params: config.params
             };
 
-            console.warn('PARAMS', JSON.parse(JSON.stringify(config)));
+            // console.warn('PARAMS', JSON.parse(JSON.stringify(config)));
 
             // All plugins need to follow this pattern for the index for now (but that
             // could be part of the constructor...)
@@ -127,21 +127,21 @@ define([
         // Lifecycle
 
         /*
-            iframe messages lifecycle.
+                    iframe messages lifecycle.
 
-            create iframe, don't set source yet
-            set up postmessage listener on the iframe content window
-            listem for 'ready' message
-            load content for iframe
-            content will set up listening on window's postmessage too
-            content sends 'ready' message
-            host receives ready message and finishes setting up postmessage listener for the
-                iframe client
-            host sets up all listeners to support client
-            life goes on
-            when client is being removed e.g. for navigation it is sent the 'stop' message given
-                some interval in which to finish this work before it is just axed.
-                                                        */
+                    create iframe, don't set source yet
+                    set up postmessage listener on the iframe content window
+                    listem for 'ready' message
+                    load content for iframe
+                    content will set up listening on window's postmessage too
+                    content sends 'ready' message
+                    host receives ready message and finishes setting up postmessage listener for the
+                        iframe client
+                    host sets up all listeners to support client
+                    life goes on
+                    when client is being removed e.g. for navigation it is sent the 'stop' message given
+                        some interval in which to finish this work before it is just axed.
+                                                                */
 
         start() {
             // Use raw promise just to reduce a minor dependency upon bluebird.

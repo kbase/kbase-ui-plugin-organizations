@@ -69,7 +69,8 @@ export function viewMembersLoad(organizationId: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         model.getOrg(organizationId)
@@ -142,7 +143,8 @@ export function viewMembersPromoteToAdmin(memberUsername: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         model.memberToAdmin(view.organization.id, memberUsername)
@@ -229,7 +231,8 @@ export function viewMembersDemoteToMember(memberUsername: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         model.adminToMember(view.organization.id, memberUsername)
@@ -300,7 +303,8 @@ export function viewMembersRemoveMember(memberUsername: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         model.removeMember(view.organization.id, memberUsername)

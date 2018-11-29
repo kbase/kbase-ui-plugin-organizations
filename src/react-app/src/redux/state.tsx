@@ -1,4 +1,4 @@
-import { StoreState, SortDirection, AuthState, AppState, EditState, SaveState, ValidationState, ViewOrgState, ViewMembersViewState, BrowseOrgsState, InviteUserViewState, ComponentLoadingState } from "../types";
+import { StoreState, SortDirection, AuthState, AppState, EditState, SaveState, ValidationState, ViewOrgState, ViewMembersViewState, BrowseOrgsState, InviteUserViewState, ComponentLoadingState, RequestNarrativeState } from "../types";
 import { StaticData } from "../data/model";
 
 export class StateInstances {
@@ -46,6 +46,9 @@ export class StateInstances {
                         },
                         Workspace: {
                             url: ''
+                        },
+                        ServiceWizard: {
+                            url: ''
                         }
                     }
                 }
@@ -86,6 +89,11 @@ export class StateInstances {
             },
             manageMembershipView: {
                 loading: false,
+                error: null,
+                value: null
+            },
+            requestNarrativeView: {
+                status: RequestNarrativeState.NONE,
                 error: null,
                 value: null
             }

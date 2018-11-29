@@ -37,7 +37,8 @@ define([
                 params: {
                     groupsServiceURL: this.runtime.config('services.Groups.url'),
                     userProfileServiceURL: this.runtime.config('services.UserProfile.url'),
-                    workspaceServiceURL: this.runtime.config('services.Workspace.url')
+                    workspaceServiceURL: this.runtime.config('services.Workspace.url'),
+                    serviceWizardURL: this.runtime.config('services.ServiceWizard.url')
                 }
             });
 

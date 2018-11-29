@@ -1,16 +1,8 @@
-
-// export interface User {
-//     username: string,
-//     realname: string,
-//     thumbnail: string
-// }
-
-// export interface UserProfile {
-//     user: User,
-//     profile: any
-// }
-
-
+export interface GenericClientParams {
+    url: string
+    module: string
+    token?: string
+}
 
 export interface JSONPayload {
     version: string,
@@ -19,19 +11,21 @@ export interface JSONPayload {
     params: any
 }
 
-export class WorkspaceClient {
+export class GenericClient {
     url: string;
-    token: string
+    token: string | null
+    module: string
 
-    constructor({ url, token }: { url: string, token: string }) {
+    constructor({ url, token, module }: GenericClientParams) {
         this.url = url
-        this.token = token
+        this.token = token || null
+        this.module = module
     }
 
     makePayload(method: string, param: any): JSONPayload {
         return {
             version: '1.1',
-            method: 'Workspace.' + method,
+            method: this.module + '.' + method,
             id: String(Math.random()).slice(2),
             params: [param]
         }
@@ -40,30 +34,44 @@ export class WorkspaceClient {
     makeEmptyPayload(method: string): JSONPayload {
         return {
             version: '1.1',
-            method: 'Workspace.' + method,
+            method: this.module + '.' + method,
             id: String(Math.random()).slice(2),
             params: []
         }
     }
 
-    getVersion(): Promise<any> {
+
+}
+
+export class AuthorizedGenericClient extends GenericClient {
+    token: string;
+
+    constructor(params: GenericClientParams) {
+        super(params)
+        if (!params.token) {
+            throw new Error('Authorized client requires token')
+        }
+        this.token = params.token
+    }
+
+    callFunc(func: string, param: any) {
         return fetch(this.url, {
             method: 'POST',
             mode: 'cors',
             cache: 'no-store',
             headers: {
-                Authorization: this.token,
+                Authorization: this.token!,
                 'Content-Type': 'application/json',
                 Accept: 'application/json'
             },
-            body: JSON.stringify(this.makeEmptyPayload('ver'))
+            body: JSON.stringify(this.makePayload(func, param))
         })
             .then((response) => {
                 if (response.status !== 200) {
-                    throw new Error('User profile request error: ' + response.status + ', ' + response.statusText)
+                    throw new Error('Request error: ' + response.status + ', ' + response.statusText)
                 }
                 return response.json()
             })
     }
-
 }
+
