@@ -6,6 +6,7 @@ export interface Props {
     organizationId: string
     view: types.RequestNarrativeView
     onLoad: (organizationId: string) => void
+    onUnload: () => void
 }
 
 interface State {
@@ -19,7 +20,7 @@ class Loader extends React.Component<Props, State> {
     renderLoading() {
         return (
             <div>
-                Loading...
+                Loading Your Narratives...
             </div>
         )
     }
@@ -57,22 +58,10 @@ class Loader extends React.Component<Props, State> {
                     <Container />
                 )
         }
+    }
 
-
-        // if (this.props.view.loading) {
-        //     return this.renderLoading()
-        // } else {
-        //     if (this.props.view.error) {
-        //         return this.renderError(this.props.view.error)
-        //     } else if (this.props.view.value) {
-        //         return (
-        //             <Container />
-        //         )
-        //     } else {
-        //         this.props.onLoad(this.props.organizationId)
-        //         return this.renderLoading()
-        //     }
-        // }
+    componentWillUnmount() {
+        this.props.onUnload()
     }
 }
 
@@ -95,6 +84,7 @@ interface StateProps {
 
 interface DispatchProps {
     onLoad: (organizationId: string) => void
+    onUnload: () => void
 }
 
 function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
@@ -107,6 +97,9 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.Load>): DispatchPr
     return {
         onLoad: (organizationId: string) => {
             dispatch(actions.load(organizationId) as any)
+        },
+        onUnload: () => {
+            dispatch(actions.unload() as any)
         }
     }
 }

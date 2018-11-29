@@ -6,7 +6,7 @@ export type RawObjectInfo = [
     number, // objid - object id
     string, // name - object name
     string, // type - object type
-    number, // save_date - timestamp when last saved
+    string, // save_date - iso8601 timestamp when last saved
     number, // ver - object version
     string, // saved_by - username who saved it last
     number, // wsid - workspace id
@@ -20,7 +20,7 @@ export type RawWorkspaceInfo = [
     number, // id - workspace id
     string, // workspace - workspace name
     string, // owner - username who owns it
-    number, // moddate - timestamp when last modified
+    string, // moddate - iso8601 timestamp when last modified
     number, // max_objid - last object id assigned to object in workspace
     string, // user_permission - permission of user who made reqeust wrt workspace
     number, // globalread - int bool whether this workspace is shared globally
@@ -61,12 +61,25 @@ export interface ObjectInfo {
     metadata: Metadata
 }
 
+function iso8601ToDate(dateString: string) {
+    const isoRE = /(\d\d\d\d)-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)([\+\-])(\d\d)(:?[\:]*)(\d\d)/;
+    const dateParts = isoRE.exec(dateString);
+    if (!dateParts) {
+        throw new TypeError('Invalid Date Format for ' + dateString);
+    }
+    // This is why we do this -- JS insists on the colon in the tz offset.
+    const offset = dateParts[7] + dateParts[8] + ':' + dateParts[10];
+    const newDateString = dateParts[1] + '-' + dateParts[2] + '-' + dateParts[3] + 'T' + dateParts[4] + ':' + dateParts[5] + ':' + dateParts[6] + offset;
+    return new Date(newDateString);
+}
+
 export function workspaceInfoToObject(wsInfo: RawWorkspaceInfo): WorkspaceInfo {
+
     return {
         id: wsInfo[0],
         name: wsInfo[1],
         owner: wsInfo[2],
-        modifiedAt: new Date(wsInfo[3]),
+        modifiedAt: iso8601ToDate(wsInfo[3]),
         objectCount: wsInfo[4],
         userPermission: wsInfo[5],
         globalReadPermission: wsInfo[6] === 1 ? true : false,
@@ -89,7 +102,7 @@ export function objectInfoToObject(data: RawObjectInfo): ObjectInfo {
             majorVersion: parseInt(type[2], 10),
             minorVersion: parseInt(type[3], 10)
         },
-        savedAt: new Date(data[3]),
+        savedAt: iso8601ToDate(data[3]),
         version: data[4],
         savedBy: data[5],
         workspaceId: data[6],

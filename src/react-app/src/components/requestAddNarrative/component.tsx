@@ -129,9 +129,10 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 return (
                     <div
                         className="narrative narrativeInOrg"
+                        onClick={() => { this.doSelectNarrative.call(this, narrative) }}
                         key={String(index)}>
                         <div className="title">
-                            {narrative.title || 'n/a'} <i>(already in org)</i>
+                            {narrative.title || 'n/a'}
                         </div>
                     </div>
                 )
@@ -154,9 +155,9 @@ export class RequestAddNarrative extends React.Component<Props, State> {
     renderSelectNarrative() {
         return (
             <div className="narrativeSelector scrollable-flex-column">
-                <div className="control">
+                {/* <div className="control">
                     <input placeholder="Search for a Narrative You Own" />
-                </div>
+                </div> */}
                 <div className="narratives scrollable-flex-column">
                     <div className="narrativesTable">
                         {this.renderNarratives()}
@@ -167,12 +168,49 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         )
     }
 
+    renderSelectedNarrativeButton() {
+        if (!this.props.selectedNarrative) {
+            return
+        }
+        if (this.props.selectedNarrative.inOrganization) {
+            return (
+                <i>
+                    This Narrative is associated with this Organization
+                </i>
+            )
+        }
+        let buttonLabel
+        if (this.props.organization.relation.type === UserRelationToOrganization.ADMIN ||
+            this.props.organization.relation.type === UserRelationToOrganization.OWNER) {
+            buttonLabel = 'Add Selected Narrative to Organization'
+        } else {
+            buttonLabel = 'Request Addition of Selected Narrative to Organization'
+        }
+        return (
+            <Button
+                type="primary"
+                onClick={this.doSendRequest.bind(this)}
+                disabled={!this.canSendRequest.call(this)}
+            >{buttonLabel}</Button>
+        )
+
+    }
+
     renderSelectedNarrative() {
         if (this.props.selectedNarrative) {
             return (
-                <div>
-                    <div>
+                <div className="selectedNarrative">
+                    <div className="title">
                         {this.props.selectedNarrative.title}
+                    </div>
+                    <div>
+                        <i>last modified</i>
+                        {' '}
+                        {Intl.DateTimeFormat('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric'
+                        }).format(this.props.selectedNarrative.modifiedAt)}
                     </div>
                 </div>
             )
@@ -196,13 +234,13 @@ export class RequestAddNarrative extends React.Component<Props, State> {
             // do nothing.
         }
 
-        let buttonLabel
-        if (this.props.organization.relation.type === UserRelationToOrganization.ADMIN ||
-            this.props.organization.relation.type === UserRelationToOrganization.OWNER) {
-            buttonLabel = 'Add Selected Narrative to Organization'
-        } else {
-            buttonLabel = 'Request Addition of Selected Narrative to Organization'
-        }
+        // let buttonLabel
+        // if (this.props.organization.relation.type === UserRelationToOrganization.ADMIN ||
+        //     this.props.organization.relation.type === UserRelationToOrganization.OWNER) {
+        //     buttonLabel = 'Add Selected Narrative to Organization'
+        // } else {
+        //     buttonLabel = 'Request Addition of Selected Narrative to Organization'
+        // }
 
         return (
             <div className="RequestNarrative scrollable-flex-column">
@@ -216,14 +254,17 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     <div className="selectedNarrativeCol">
                         <h3>Selected Narrative</h3>
                         {this.renderSelectedNarrative()}
+                        <div className="selectedNarrativeButtonBar">
+                            {this.renderSelectedNarrativeButton()}
+                        </div>
                     </div>
                 </div>
                 <div className="footer">
-                    <Button
+                    {/* <Button
                         type="primary"
                         onClick={this.doSendRequest.bind(this)}
                         disabled={!this.canSendRequest.call(this)}
-                    >{buttonLabel}</Button>
+                    >{buttonLabel}</Button> */}
                 </div>
             </div>
         )

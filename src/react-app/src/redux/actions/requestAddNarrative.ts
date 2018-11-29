@@ -134,15 +134,10 @@ export function selectNarrative(narrative: Narrative) {
             serviceWizardURL: config.services.ServiceWizard.url
         })
 
-
         // TODO: fetch narrative and populate the selected narrative accordingly...
         dispatch(selectNarrativeSuccess(narrative))
     }
 }
-
-
-
-
 
 // Sending Request
 export interface SendRequest {
@@ -213,5 +208,17 @@ export function sendRequest(groupId: string, narrative: Narrative) {
                     message: err.message
                 }))
             })
+    }
+}
+
+// Unloading
+
+export interface Unload extends Action {
+    type: ActionFlag.REQUEST_ADD_NARRATIVE_UNLOAD
+}
+
+export function unload(): Unload {
+    return {
+        type: ActionFlag.REQUEST_ADD_NARRATIVE_UNLOAD
     }
 }

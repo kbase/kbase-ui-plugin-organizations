@@ -104,6 +104,17 @@ export function selectNarrativeSuccess(state: types.StoreState, action: actions.
     }
 }
 
+export function unload(state: types.StoreState, action: actions.Unload): types.StoreState {
+    return {
+        ...state,
+        requestNarrativeView: {
+            status: types.RequestNarrativeState.NONE,
+            error: null,
+            value: null
+        }
+    }
+}
+
 
 function reducer(state: types.StoreState, action: Action): types.StoreState | null {
     switch (action.type) {
@@ -121,6 +132,8 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
             return sendRequestStart(state, action as actions.SendRequestStart)
         case ActionFlag.REQUEST_ADD_NARRATIVE_SELECT_NARRATIVE_SUCCESS:
             return selectNarrativeSuccess(state, action as actions.SelectNarrativeSuccess)
+        case ActionFlag.REQUEST_ADD_NARRATIVE_UNLOAD:
+            return unload(state, action as actions.Unload)
         default:
             return null
     }

@@ -1176,7 +1176,8 @@ export class Model {
                             workspaceId: narrative.workspaceInfo.id,
                             objectId: narrative.objectInfo.id,
                             title: narrative.workspaceInfo.metadata.narrative_nice_name,
-                            inOrganization: (workspacesInOrg.indexOf(narrative.workspaceInfo.id) !== -1)
+                            inOrganization: (workspacesInOrg.indexOf(narrative.workspaceInfo.id) !== -1),
+                            modifiedAt: narrative.workspaceInfo.modifiedAt
                         }
                     })
                     .sort((a, b) => {

@@ -748,7 +748,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 <div>{this.renderNarrativePermission(narrative)}</div>
 
                 {/* <div><i>abstract here?</i></div> */}
-                <div><i>owner and save info here?</i></div>
+                <div><i>One-liner abstract?</i></div>
+                <div><i>created, saved info here?</i></div>
             </React.Fragment>
         )
     }

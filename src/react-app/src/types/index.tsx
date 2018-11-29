@@ -480,7 +480,9 @@ export interface Narrative {
     workspaceId: number,
     objectId: number,
     title: string,
-    inOrganization: boolean
+    inOrganization: boolean,
+    // createdAt: Date,
+    modifiedAt: Date
 }
 
 export enum UserWorkspacePermission {
