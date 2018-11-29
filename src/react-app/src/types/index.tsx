@@ -483,9 +483,19 @@ export interface Narrative {
     inOrganization: boolean
 }
 
+export enum UserWorkspacePermission {
+    NONE = 0,
+    READ,
+    WRITE,
+    ADMIN,
+    OWN
+}
+
 export interface NarrativeResource {
     workspaceId: number
     title: string
+    permission: UserWorkspacePermission
+    isPublic: boolean
 }
 
 export enum RequestNarrativeState {

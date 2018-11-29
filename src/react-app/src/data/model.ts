@@ -27,7 +27,8 @@ import {
     UserInvitation,
     WorkspaceInvitation,
     AppInvitation,
-    Narrative
+    Narrative,
+    UserWorkspacePermission
 } from '../types';
 // import { organizations } from './data';
 import * as userProfile from './userProfile'
@@ -133,6 +134,23 @@ function applyFilter(organizations: Array<Organization>, filter: string, usernam
         default:
             console.warn('unknown filter : ' + filter)
             return organizations
+    }
+}
+
+function groupPermissionToWorkspacePermission(groupsPermission: string) {
+    switch (groupsPermission) {
+        case 'None':
+            return UserWorkspacePermission.NONE
+        case 'Read':
+            return UserWorkspacePermission.READ
+        case 'Write':
+            return UserWorkspacePermission.WRITE
+        case 'Admin':
+            return UserWorkspacePermission.ADMIN
+        case 'Own':
+            return UserWorkspacePermission.OWN
+        default:
+            throw new Error('Invalid groups user permission: ' + groupsPermission)
     }
 }
 
@@ -569,7 +587,9 @@ export class Model {
                         const narratives = group.resources.workspace.map((workspace) => {
                             return {
                                 title: workspace.narrname,
-                                workspaceId: parseInt(workspace.rid, 10)
+                                workspaceId: parseInt(workspace.rid, 10),
+                                permission: groupPermissionToWorkspacePermission(workspace.perm),
+                                isPublic: workspace.public ? true : false
                             }
                         })
 
@@ -736,7 +756,9 @@ export class Model {
                     const narratives = group.resources.workspace.map((workspace) => {
                         return {
                             title: workspace.narrname,
-                            workspaceId: parseInt(workspace.rid, 10)
+                            workspaceId: parseInt(workspace.rid, 10),
+                            permission: groupPermissionToWorkspacePermission(workspace.perm),
+                            isPublic: workspace.public ? true : false
                         }
                     })
 

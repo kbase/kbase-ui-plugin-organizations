@@ -4,12 +4,14 @@ import { NavLink, Redirect } from 'react-router-dom'
 
 import './ViewOrganization.css'
 
-import { ViewOrgState, Organization, AppError, UserRelationToOrganization, MembershipRequestPendingRelation, NarrativeResource } from '../../types'
-import { Button, Modal, Icon, Tooltip, Card } from 'antd'
+import { ViewOrgState, Organization, AppError, UserRelationToOrganization, MembershipRequestPendingRelation, NarrativeResource, UserWorkspacePermission } from '../../types'
+import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu } from 'antd'
 import Header from '../Header'
 import Avatar from '../Avatar'
 import Member from '../Member';
 import OrganizationHeader from '../organizationHeader/container'
+// import faGlobe from '@fortawesome/free-solid-svg-icons/faGlobe'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 enum NavigateTo {
     NONE = 0,
@@ -98,6 +100,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </div>
             )
         })
+    }
+
+    onRequestShare(narrative: NarrativeResource) {
+        alert('not yet implemented')
     }
 
     buildFooter() {
@@ -622,6 +628,175 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
+    renderNarrativePermission(narrative: NarrativeResource) {
+        let label
+        let shareButton
+        let tooltip
+        switch (narrative.permission) {
+            case UserWorkspacePermission.NONE:
+                if (narrative.isPublic) {
+                    tooltip = "You have View access to this narrative narrative because it is shared publicly; you may view it, but not edit, run, or share it"
+                    label = (
+                        <span>
+                            View Only (public)
+                            </span>
+                    )
+                    shareButton = (
+                        <Button size="small" onClick={() => { this.onRequestShare.call(this, narrative) }}>
+                            Request Access
+                        </Button>
+                    )
+                } else {
+                    tooltip = "You have No access to this narrative narrative; you may not view, edit, run, or share it"
+                    label = (
+                        <span>
+                            No Access
+                        </span>
+                    )
+                    shareButton = (
+                        <Button size="small" onClick={() => { this.onRequestShare.call(this, narrative) }}>
+                            Request Access
+                        </Button>
+                    )
+                }
+                break
+            case UserWorkspacePermission.READ:
+                tooltip = "You have View access to this narrative narrative; you may view it, but not edit, run, or share it"
+                label = (
+                    <span>
+                        View Only
+                        </span>
+                )
+                shareButton = (
+                    <Button size="small" onClick={() => { this.onRequestShare.call(this, narrative) }}>
+                        Request Additional Access
+                    </Button>
+                )
+                break
+            case UserWorkspacePermission.WRITE:
+                tooltip = "You have Edit access to this narrative narrative; you may view, edit, and run, but not share it"
+                label = (
+                    <span>
+                        Edit
+                        </span>
+                )
+                shareButton = (
+                    <Button size="small" onClick={() => { this.onRequestShare.call(this, narrative) }}>
+                        Request Admin Access
+                    </Button>
+                )
+                break
+            case UserWorkspacePermission.ADMIN:
+                tooltip = "You have Admin access to this narrative narrative; you may view, edit, run, and share it"
+                label = (
+                    <span>
+                        Admin
+                        </span>
+                )
+                break
+            case UserWorkspacePermission.OWN:
+                tooltip = "You are the Owner of this narrative; you may view, edit, run, and share it"
+                label = (
+                    <span>
+                        Owner
+                        </span>
+                )
+                break
+            default:
+                label = (
+                    <span>
+                        Unknown
+                    </span>
+                )
+        }
+
+        return (
+            <Tooltip title={tooltip} placement="right">
+                <span style={{ cursor: 'help' }}>
+                    <span className="field-label">your permission</span>
+                    {label}{' '}{shareButton}
+                </span>
+            </Tooltip>
+        )
+    }
+
+    renderPublicPermission(narrative: NarrativeResource) {
+        if (narrative.isPublic) {
+            return (
+                <Tooltip title="This narrative is viewable by all KBase users" placement="right">
+                    <span style={{ cursor: 'help' }}>
+                        <FontAwesomeIcon icon="globe" /> Public Narrative
+                    </span>
+                </Tooltip>
+            )
+        } else {
+            return (
+                <Tooltip title="This narrative is only accessible to those with whom it is directly shared" placement="right">
+                    <span style={{ cursor: 'help' }}>
+                        <FontAwesomeIcon icon="user-lock" /> Private Narrative
+                    </span>
+                </Tooltip>
+            )
+        }
+    }
+
+    renderNarrative(narrative: NarrativeResource) {
+        return (
+            <React.Fragment>
+                <div className="title">{narrative.title}</div>
+                <div>{this.renderPublicPermission(narrative)}</div>
+                <div>{this.renderNarrativePermission(narrative)}</div>
+
+                {/* <div><i>abstract here?</i></div> */}
+                <div><i>owner and save info here?</i></div>
+            </React.Fragment>
+        )
+    }
+
+    renderNarrativeMenu(narrative: NarrativeResource) {
+        if (!this.props.organization) {
+            return <div>
+                sorry, no org yet
+            </div>
+        }
+        const isAdmin = (this.props.organization.relation.type === UserRelationToOrganization.OWNER ||
+            this.props.organization.relation.type === UserRelationToOrganization.ADMIN)
+        let menu
+        const org = this.props.organization
+        switch (org.relation.type) {
+            case (UserRelationToOrganization.NONE):
+                // should never occur
+                break;
+            case (UserRelationToOrganization.VIEW):
+            case (UserRelationToOrganization.MEMBER_REQUEST_PENDING):
+            case (UserRelationToOrganization.MEMBER_INVITATION_PENDING):
+            case (UserRelationToOrganization.MEMBER):
+                break;
+            case (UserRelationToOrganization.ADMIN):
+            case (UserRelationToOrganization.OWNER):
+                menu = (
+                    <Menu>
+                        <Menu.Item
+                            type="danger"
+                            onClick={() => { this.onRemoveNarrative.call(this, narrative) }}
+                            key="removeNarrative">
+                            <Icon type="delete" /> Remove Narrative from Organization
+                        </Menu.Item>
+                    </Menu>
+                )
+        }
+        if (!menu) {
+            return
+        }
+        return (
+            <Dropdown overlay={menu} trigger={['click']}>
+                <Button shape="circle">
+                    <Icon type="setting" theme="filled" style={{ fontSize: '120%' }} />
+                </Button>
+            </Dropdown>
+        )
+    }
+
     renderNarratives() {
         // const fakeNarratives = []
         // for (let i = 0; i < 20; i += 1) {
@@ -678,33 +853,17 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             )
 
         }
-        const isAdmin = (this.props.organization.relation.type === UserRelationToOrganization.OWNER ||
-            this.props.organization.relation.type === UserRelationToOrganization.ADMIN)
+
         const narrativesTable = this.props.organization.narratives.map((narrative) => {
             // create buttons or not, depending on being an admin
-            let button
-            if (isAdmin) {
-                button = (
-                    <Button
-                        onClick={() => { this.onRemoveNarrative.call(this, narrative) }}
-                        type="danger"><Icon type="delete" />Delete
-                        </Button>
-                )
-            } else {
-                button = (
-                    <div></div>
-                )
-            }
+
             return (
                 <div className="narrative" key={String(narrative.workspaceId)}>
                     <div className="dataCol">
-                        <div className="title">{narrative.title}</div>
-                        <div><i>abstract here?</i></div>
-                        <div><i>sharing info here?</i></div>
-                        <div><i>owner and save info here?</i></div>
+                        {this.renderNarrative(narrative)}
                     </div>
                     <div className="buttonCol">
-                        {button}
+                        {this.renderNarrativeMenu(narrative)}
                     </div>
                 </div>
             )

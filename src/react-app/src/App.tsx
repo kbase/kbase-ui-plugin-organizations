@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Route, Switch } from 'react-router'
-import { BrowserRouter, Redirect, HashRouter } from 'react-router-dom'
+import { Redirect, HashRouter } from 'react-router-dom'
 
 // redux
 import { Provider } from 'react-redux';
@@ -14,8 +14,8 @@ import './App.css';
 
 // fontawesome setup
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSpinner, faSearch } from '@fortawesome/free-solid-svg-icons'
-library.add(faSpinner, faSearch)
+import { faSpinner, faSearch, faGlobe, faUserLock } from '@fortawesome/free-solid-svg-icons'
+library.add(faSpinner, faSearch, faGlobe, faUserLock)
 
 import OrganizationsBrowser from './components/browseOrgs/OrganizationsBrowserContainer'
 import NewOrganization from './components/newOrganization/container'
