@@ -4,9 +4,10 @@ import { ComponentLoadingState } from '../../types'
 import Container from './container'
 
 export interface LoaderProps {
-    organizationId: string,
-    loadingState: ComponentLoadingState,
+    organizationId: string
+    loadingState: ComponentLoadingState
     onLoad: (organizationId: string) => void
+    onUnload: () => void
 }
 
 interface LoaderState {
@@ -39,9 +40,13 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
                 )
         }
     }
+
+    componentWillUnmount() {
+        this.props.onUnload()
+    }
 }
 
-import { Dispatch } from 'redux'
+import { Dispatch, Action } from 'redux'
 import { connect } from 'react-redux'
 
 import * as types from '../../types'
@@ -60,6 +65,7 @@ interface StateProps {
 // the loader can just load this view
 interface DispatchProps {
     onLoad: (organizationId: string) => void
+    onUnload: () => void
 }
 
 function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
@@ -68,10 +74,13 @@ function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
     }
 }
 
-export function mapDispatchToProps(dispatch: Dispatch<actions.ManageOrganizationRequests>): DispatchProps {
+export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {
         onLoad: (organizationId: string) => {
-            dispatch(actions.manageOrganizationRequests(organizationId) as any)
+            dispatch(actions.load(organizationId) as any)
+        },
+        onUnload: () => {
+            dispatch(actions.unload() as any)
         }
     }
 }

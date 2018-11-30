@@ -2,14 +2,15 @@ import * as React from 'react'
 
 import './component.css'
 
-import { Member, Organization, UserRelationToOrganization, MemberType } from '../../types'
+import { Member, Organization, UserRelationToOrganization, MemberType, RequestResourceType } from '../../types'
 import Header from '../Header'
 import { Redirect } from 'react-router'
-import { Button, Icon, Modal, Row, Col, Menu, Dropdown } from 'antd';
+import { Button, Icon, Modal, Row, Col, Menu, Dropdown, Alert } from 'antd';
 import MemberComponent from '../Member';
 import MemberRowComponent from './MemberRow'
 import { NavLink } from 'react-router-dom';
 import OrganizationHeader from '../organizationHeader/container';
+import { Request } from '../request/component'
 
 export interface ViewMembersProps {
     organization: Organization,
@@ -71,6 +72,17 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
         if (this.props.organization.relation.type === UserRelationToOrganization.OWNER ||
             this.props.organization.relation.type === UserRelationToOrganization.ADMIN ||
             this.props.organization.relation.type === UserRelationToOrganization.MEMBER) {
+            return true
+        }
+        return false
+    }
+
+    isAdmin(): boolean {
+        if (!this.props.organization) {
+            return false
+        }
+        if (this.props.organization.relation.type === UserRelationToOrganization.OWNER ||
+            this.props.organization.relation.type === UserRelationToOrganization.ADMIN) {
             return true
         }
         return false
@@ -194,6 +206,31 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
             </div>
         )
     }
+
+    renderPendingMembers() {
+
+        if (!this.isAdmin()) {
+            return (
+                <Alert type="info" showIcon message="Sorry, pending group membership restricted to admin members only" />
+            )
+        }
+        const pendingRequests = this.props.organization.adminRequests.filter((request) => {
+            return (request.resourceType === RequestResourceType.USER)
+        })
+        if (pendingRequests.length === 0) {
+            return (
+                <Alert type="info" message="No pending member requests or invitations" />
+            )
+        }
+        return pendingRequests.map((request) => {
+            return (
+                <div key={request.id}>
+                    <Request request={request} />
+                </div>
+            )
+        })
+    }
+
     renderAdminsToolbar() {
         return (
             <div className="toolbar">
@@ -279,9 +316,18 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
                         {this.renderMembers()}
                     </div>
                     <div className="otherCol">
-                        <h2>Admins</h2>
+                        <h2>Pending Members</h2>
                         {this.renderAdminsToolbar()}
-                        {this.renderAdmins()}
+
+                        <p>
+                            This space to provide a list of user requests and invitations. This will allow this view
+                            to provide all user management tools in one place.
+                        </p>
+                        <p>
+                            In progress... currently renders the requests but does not provide actions (buttons).
+                        </p>
+                        {this.renderPendingMembers()}
+
                     </div>
                 </div>
 

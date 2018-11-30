@@ -20,7 +20,7 @@ library.add(faSpinner, faSearch, faGlobe, faUserLock)
 import OrganizationsBrowser from './components/browseOrgs/OrganizationsBrowserContainer'
 import NewOrganization from './components/newOrganization/container'
 import ViewOrganization from './components/viewOrganization/ViewOrganizationContainer'
-import EditOrganization from './containers/EditOrganization'
+import EditOrganization from './components/editOrganization/container'
 import Auth from './containers/Auth'
 import KBaseIntegration from './containers/KBaseIntegration'
 import ManageOrganizationRequests from './components/manageOrganizationRequests/loader'

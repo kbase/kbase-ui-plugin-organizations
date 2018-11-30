@@ -4,9 +4,10 @@ import InviteUserContainer from './InviteUserContainer'
 import { ComponentLoadingState } from '../../types';
 
 export interface InviteUserLoaderProps {
-    loadingState: ComponentLoadingState,
-    organizationId: string,
+    loadingState: ComponentLoadingState
+    organizationId: string
     onInviteUserLoad: (organizationId: string) => void
+    onUnload: () => void
 }
 
 interface InviteUserLoaderState {
@@ -20,7 +21,7 @@ class InviteUserLoader extends React.Component<InviteUserLoaderProps, InviteUser
     renderLoading() {
         return (
             <div>
-                Loading...
+                Loading Users...
             </div>
         )
     }
@@ -48,6 +49,11 @@ class InviteUserLoader extends React.Component<InviteUserLoaderProps, InviteUser
                 )
         }
     }
+
+    componentWillUnmount() {
+        this.props.onUnload()
+    }
+
 }
 
 // The container component -- just in this file!
@@ -68,6 +74,7 @@ interface StateProps {
 
 interface DispatchProps {
     onInviteUserLoad: (organizationId: string) => void
+    onUnload: () => void
 }
 
 function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
@@ -76,10 +83,13 @@ function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
     }
 }
 
-export function mapDispatchToProps(dispatch: Dispatch<actions.InviteUserLoad>): DispatchProps {
+export function mapDispatchToProps(dispatch: Dispatch<actions.Load>): DispatchProps {
     return {
         onInviteUserLoad: (organizationId: string) => {
             dispatch(actions.inviteUserLoad(organizationId) as any)
+        },
+        onUnload: () => {
+            dispatch(actions.unload() as any)
         }
     }
 }

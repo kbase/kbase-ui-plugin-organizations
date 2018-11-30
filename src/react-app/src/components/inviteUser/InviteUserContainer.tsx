@@ -11,9 +11,12 @@ export interface OwnProps {
 }
 
 interface StateProps {
-    organization: types.Organization,
-    users: Array<types.BriefUser>,
-    selectedUser: types.User | null,
+    organization: types.Organization
+    users: Array<types.OrganizationUser> | null
+    selectedUser: {
+        user: types.User,
+        relation: types.UserRelationToOrganization
+    } | null
     state: types.InviteUserViewState
 }
 
@@ -39,7 +42,7 @@ function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
     }
 }
 
-export function mapDispatchToProps(dispatch: Dispatch<actions.InviteUserLoad>): DispatchProps {
+export function mapDispatchToProps(dispatch: Dispatch<actions.Load>): DispatchProps {
     return {
         onSearchUsers: ({ query, excludedUsers }) => {
             dispatch(actions.inviteUserSearchUsers({ query, excludedUsers }) as any)

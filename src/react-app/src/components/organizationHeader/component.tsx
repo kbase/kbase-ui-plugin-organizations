@@ -3,7 +3,7 @@ import { Organization, UserRelationToOrganization, MembershipRequestPendingRelat
 import { Avatar } from '../Avatar';
 import { Icon, Tooltip, Button, message, Menu, Dropdown } from 'antd';
 
-import './style.css'
+import './component.css'
 import { NavLink, Redirect } from 'react-router-dom';
 
 export interface OrganizationHeaderProps {
@@ -82,31 +82,6 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
 
     onNavigateToViewOrganization() {
         this.setState({ navigateTo: NavigateTo.VIEW_ORGANIZATION })
-    }
-
-    renderOwnerInfo() {
-        const org = this.props.organization
-        return (
-            <div className="ownerTable">
-                <div className="avatarCol">
-                    <Avatar user={org.owner.user} size={60} />
-                </div>
-                <div className="proprietorCol">
-
-                    <div className="owner">
-                        <a href={"#people/" + org.owner.user.username} target="_blank">{org.owner.user.realname}</a>
-                        {' '}
-                        ❨{org.owner.user.username}❩
-                    </div>
-                    <div className="profileOrganization">
-                        {org.owner.user.organization}
-                    </div>
-                    <div className="profileOrganization">
-                        {org.owner.user.city}, {org.owner.user.state}, {org.owner.user.country}
-                    </div>
-                </div>
-            </div>
-        )
     }
 
     getOrgAvatarUrl(org: Organization) {
@@ -393,9 +368,6 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                 <div className="orgInfo">
                     {this.renderOrgInfo()}
                 </div>
-                {/* <div className="ownerInfo">
-                    {this.renderOwnerInfo()}
-                </div> */}
                 <div className={"yourRelation " + this.getRelationClass(this.props.organization)}>
                     {this.renderRelation()}
                 </div>

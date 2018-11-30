@@ -52,14 +52,14 @@ export interface EditableOrganization {
 export interface User {
     username: string
     realname: string
-    title: string,
-    organization: string
-    city: string
-    state: string
-    country: string
-    avatarOption: string
-    gravatarHash: string
-    gravatarDefault: string
+    title: string | null
+    organization: string | null
+    city: string | null
+    state: string | null
+    country: string | null
+    avatarOption: string | null
+    gravatarHash: string | null
+    gravatarDefault: string | null
 }
 
 export enum MemberType {
@@ -445,15 +445,27 @@ export enum InviteUserViewState {
     ERROR
 }
 
+// user info we get out of user profile search
 export interface BriefUser {
     username: string
     realname: string
 }
 
+// a user who may or may not be in an org, with org relation info
+// todo: fetch more profile info.
+export interface OrganizationUser {
+    username: string
+    realname: string
+    relation: UserRelationToOrganization
+}
+
 export interface InviteUserValue {
     organization: Organization
-    users: Array<BriefUser>
-    selectedUser: User | null
+    users: Array<OrganizationUser> | null
+    selectedUser: {
+        user: User,
+        relation: UserRelationToOrganization
+    } | null
     editState: InviteUserViewState
 }
 
@@ -553,6 +565,7 @@ export interface StoreState {
         saveState: SaveState
         validationState: ValidationState
         editedOrganization: EditableOrganization
+        organization: Organization | null
         error?: AppError
     }
     manageOrganizationRequestsView: ManageOrganizationRequestsView

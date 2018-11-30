@@ -9,23 +9,27 @@ import { Action } from 'redux';
 
 // Start up requests manager
 
-export interface ManageOrganizationRequests extends Action {
-    type: ActionFlag.ADMIN_MANAGE_REQUESTS
+export interface Load extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD
 }
 
-export interface ManageOrganizationRequestsStart extends Action {
-    type: ActionFlag.ADMIN_MANAGE_REQUESTS_START
+export interface LoadStart extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD_START
 }
 
-export interface ManageOrganizationRequestsSuccess extends Action {
-    type: ActionFlag.ADMIN_MANAGE_REQUESTS_SUCCESS,
+export interface LoadSuccess extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD_SUCCESS,
     organization: Organization,
     requests: Array<GroupRequest>
 }
 
-export interface ManageOrganizationRequestsError extends Action {
-    type: ActionFlag.ADMIN_MANAGE_REQUESTS_ERROR,
+export interface LoadError extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD_ERROR,
     error: AppError
+}
+
+export interface Unload extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_UNLOAD
 }
 
 // Accept join requests
@@ -162,30 +166,36 @@ export function cancelJoinInvitationError(error: AppError): CancelJoinInvitation
 
 
 
-export function manageOrganizationRequestsStart(): ManageOrganizationRequestsStart {
+export function loadStart(): LoadStart {
     return {
-        type: ActionFlag.ADMIN_MANAGE_REQUESTS_START
+        type: ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD_START
     }
 }
 
-export function manageOrganizationRequestsSuccess(organization: Organization, requests: Array<GroupRequest>): ManageOrganizationRequestsSuccess {
+export function loadSuccess(organization: Organization, requests: Array<GroupRequest>): LoadSuccess {
     return {
-        type: ActionFlag.ADMIN_MANAGE_REQUESTS_SUCCESS,
+        type: ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD_SUCCESS,
         organization: organization,
         requests: requests
     }
 }
 
-export function manageOrganizationRequestsError(error: AppError): ManageOrganizationRequestsError {
+export function loadError(error: AppError): LoadError {
     return {
-        type: ActionFlag.ADMIN_MANAGE_REQUESTS_ERROR,
+        type: ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD_ERROR,
         error: error
+    }
+}
+
+export function unload(): Unload {
+    return {
+        type: ActionFlag.ADMIN_MANAGE_REQUESTS_UNLOAD
     }
 }
 
 // Action thunks
 
-export function manageOrganizationRequests(organizationId: string) {
+export function load(organizationId: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const { auth: { authorization: { token, username } },
             app: { config } } = getState()
@@ -203,10 +213,10 @@ export function manageOrganizationRequests(organizationId: string) {
             model.getPendingOrganizationRequests(organizationId)
         ])
             .then(([organization, requests]) => {
-                dispatch(manageOrganizationRequestsSuccess(organization, requests))
+                dispatch(loadSuccess(organization, requests))
             })
             .catch((err) => {
-                dispatch(manageOrganizationRequestsError({
+                dispatch(loadError({
                     code: err.name,
                     message: err.message
                 }))
@@ -238,7 +248,7 @@ export function acceptJoinRequest(requestId: string) {
             .then(([request]) => {
                 dispatch(acceptJoinRequestSuccess(request))
                 if (manageOrganizationRequestsView.viewState) {
-                    dispatch(manageOrganizationRequests(manageOrganizationRequestsView.viewState.organization.id))
+                    dispatch(load(manageOrganizationRequestsView.viewState.organization.id))
                 }
             })
             .catch((err) => {
@@ -274,7 +284,7 @@ export function denyJoinRequest(requestId: string) {
             .then(([request]) => {
                 dispatch(denyJoinRequestSuccess(request))
                 if (manageOrganizationRequestsView.viewState) {
-                    dispatch(manageOrganizationRequests(manageOrganizationRequestsView.viewState.organization.id))
+                    dispatch(load(manageOrganizationRequestsView.viewState.organization.id))
                 }
             })
             .catch((err) => {
@@ -311,7 +321,7 @@ export function cancelJoinInvitation(requestId: string) {
             .then(([request]) => {
                 dispatch(cancelJoinInvitationSuccess(request))
                 if (manageOrganizationRequestsView.viewState) {
-                    dispatch(manageOrganizationRequests(manageOrganizationRequestsView.viewState.organization.id))
+                    dispatch(load(manageOrganizationRequestsView.viewState.organization.id))
                 }
             })
             .catch((err) => {

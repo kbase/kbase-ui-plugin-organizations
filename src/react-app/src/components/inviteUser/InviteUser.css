@@ -6,13 +6,15 @@
 
 .InviteUser h3 {
     border-bottom: 2px silver solid;
+    text-align: center;
 }
 
 .InviteUser .row {
-    flex: 0 0 auto;
+    flex: 1 1 0px;
     display: flex;
     flex-direction: row;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
+    margin-top: 10px;
 }
 
 .InviteUser .row .col1 {
@@ -38,7 +40,7 @@
 }
 
 .InviteUser .invitationForm table {
-    width: 50em;
+    width: 100%;
     margin: 20px auto 20px auto;
 }
 
@@ -54,4 +56,62 @@
     padding: 8px;
     border: 1px rgba(200, 200, 200, 0.5) solid;
     box-shadow: 4px 4px 4px rgba(200, 200, 200, 1);
+}
+
+.InviteUser .users {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.InviteUser .usersTable {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.InviteUser .usersTable .user.notInOrganization .name {
+    font-weight: bold;
+}
+
+.InviteUser .usersTable .user.inOrganization .name {
+    font-weight: normal;
+    font-style: italic;
+    color: rgba(100, 100, 100, 1)
+}
+
+.InviteUser .users .user {
+    cursor: pointer;
+    padding: 4px;
+    margin: 0;
+}
+
+.InviteUser .users .user:hover {
+    background-color: rgba(200, 200, 200, 0.5);
+}
+
+.InviteUser .footer {
+    flex: 0 0 auto;
+    min-height: 10px;
+}
+
+.InviteUser .searchBar {
+    flex: 0 0 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.InviteUser .searchBar input {
+    width: 20em;
+    height: 100%;
+    flex: 1 1 0px;
+}
+
+.InviteUser .searchBar .searchButton {
+    height: 100%;
+    padding: 4px;
+    flex: 0 0 auto;
 }

@@ -20,7 +20,8 @@ export interface EditOrgEditStart extends Action {
 
 export interface EditOrgEditSuccess extends Action {
     type: ActionFlag.EDIT_ORG_EDIT_SUCCESS,
-    editedOrganization: EditableOrganization
+    editedOrganization: EditableOrganization,
+    organization: Organization
 }
 
 export interface EditOrgEditError extends Action<ActionFlag.EDIT_ORG_EDIT_ERROR> {
@@ -149,10 +150,11 @@ export function editOrgEditStart() {
     }
 }
 
-export function editOrgEditSuccess(editedOrganization: EditableOrganization) {
+export function editOrgEditSuccess(editedOrganization: EditableOrganization, organization: Organization) {
     return {
         type: ActionFlag.EDIT_ORG_EDIT_SUCCESS,
-        editedOrganization: editedOrganization
+        editedOrganization: editedOrganization,
+        organization: organization
     }
 }
 
@@ -326,7 +328,7 @@ export function editOrgEdit(organizationId: string) {
                         }
                     }
                 }
-                dispatch(editOrgEditSuccess(editableOrg))
+                dispatch(editOrgEditSuccess(editableOrg, org))
             })
             .catch((err) => {
                 console.error('load org error', err)

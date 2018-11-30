@@ -3,7 +3,7 @@ import * as actions from '../actions/inviteUser'
 import * as types from '../../types'
 import { ActionFlag } from '../actions'
 
-export function inviteUserLoadStart(state: types.StoreState, action: actions.InviteUserLoadStart): types.StoreState {
+export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
     return {
         ...state,
         inviteUserView: {
@@ -13,7 +13,7 @@ export function inviteUserLoadStart(state: types.StoreState, action: actions.Inv
     }
 }
 
-export function inviteUserLoadReady(state: types.StoreState, action: actions.InviteUserLoadReady): types.StoreState {
+export function loadReady(state: types.StoreState, action: actions.LoadReady): types.StoreState {
     return {
         ...state,
         inviteUserView: {
@@ -22,7 +22,7 @@ export function inviteUserLoadReady(state: types.StoreState, action: actions.Inv
             error: null,
             value: {
                 editState: types.InviteUserViewState.EDITING,
-                users: [],
+                users: action.users,
                 organization: action.organization,
                 selectedUser: null
             }
@@ -30,13 +30,25 @@ export function inviteUserLoadReady(state: types.StoreState, action: actions.Inv
     }
 }
 
-export function inviteUserLoadError(state: types.StoreState, action: actions.InviteUserLoadError): types.StoreState {
+export function loadError(state: types.StoreState, action: actions.LoadError): types.StoreState {
     return {
         ...state,
         inviteUserView: {
             ...state.inviteUserView,
             loadingState: types.ComponentLoadingState.SUCCESS,
             error: action.error,
+            value: null
+        }
+    }
+}
+
+export function unload(state: types.StoreState, action: actions.Unload): types.StoreState {
+    return {
+        ...state,
+        inviteUserView: {
+            ...state.inviteUserView,
+            loadingState: types.ComponentLoadingState.NONE,
+            error: null,
             value: null
         }
     }
@@ -68,7 +80,10 @@ export function selectUserSuccess(state: types.StoreState, action: actions.Selec
             ...state.inviteUserView,
             value: {
                 ...state.inviteUserView.value,
-                selectedUser: action.user
+                selectedUser: {
+                    user: action.user,
+                    relation: action.relation
+                }
             }
         }
     }
@@ -94,13 +109,35 @@ export function sendInvitationSuccess(state: types.StoreState, action: actions.S
     if (state.inviteUserView.value === null) {
         throw new Error('view value is null')
     }
+
+    const { inviteUserView: { value: { selectedUser, users } } } = state
+
+    // const selectedUser = state.inviteUserView.value.selectedUser
+    if (!selectedUser) {
+        throw new Error('selected user is null')
+    }
+    selectedUser.relation = types.UserRelationToOrganization.MEMBER_INVITATION_PENDING
+
+    if (!users) {
+        throw new Error('users is null')
+    }
+    const newUsers = users.map((user) => {
+        if (user.username === selectedUser.user.username) {
+            user.relation = types.UserRelationToOrganization.MEMBER_INVITATION_PENDING
+        }
+        return user
+    })
+
+
     return {
         ...state,
         inviteUserView: {
             ...state.inviteUserView,
             value: {
                 ...state.inviteUserView.value,
-                editState: types.InviteUserViewState.SUCCESS
+                editState: types.InviteUserViewState.SUCCESS,
+                selectedUser: selectedUser,
+                users: newUsers
             }
         }
     }
@@ -126,11 +163,13 @@ export function sendInvitationError(state: types.StoreState, action: actions.Sen
 function reducer(state: types.StoreState, action: Action): types.StoreState | null {
     switch (action.type) {
         case ActionFlag.INVITE_USER_LOAD_START:
-            return inviteUserLoadStart(state, action as actions.InviteUserLoadStart)
+            return loadStart(state, action as actions.LoadStart)
         case ActionFlag.INVITE_USER_LOAD_READY:
-            return inviteUserLoadReady(state, action as actions.InviteUserLoadReady)
+            return loadReady(state, action as actions.LoadReady)
         case ActionFlag.INVITE_USER_LOAD_ERROR:
-            return inviteUserLoadError(state, action as actions.InviteUserLoadError)
+            return loadError(state, action as actions.LoadError)
+        case ActionFlag.INVITE_USER_UNLOAD:
+            return unload(state, action as actions.Unload)
         case ActionFlag.INVITE_USER_SEARCH_USERS_SUCCESS:
             return searchUsersSuccess(state, action as actions.SearchUsersSuccess)
         case ActionFlag.INVITE_USER_SELECT_USER_SUCCESS:

@@ -1,4 +1,4 @@
-import { Dispatch } from 'redux'
+import { Dispatch, Action } from 'redux'
 import { connect } from 'react-redux'
 
 import * as types from '../../types'
@@ -33,7 +33,7 @@ function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
     }
 }
 
-export function mapDispatchToProps(dispatch: Dispatch<actions.ManageOrganizationRequests>): DispatchProps {
+export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {
         // onStart: (organizationId: string) => {
         //     dispatch(actions.manageOrganizationRequests(organizationId) as any)

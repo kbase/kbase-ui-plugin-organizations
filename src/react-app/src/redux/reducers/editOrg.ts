@@ -65,6 +65,7 @@ export function editOrgEditSuccess(state: StoreState, action: EditOrgEditSuccess
         ...state, editOrg: {
             ...state.editOrg,
             editedOrganization: action.editedOrganization,
+            organization: action.organization,
             editState: EditState.UNEDITED
         }
     }

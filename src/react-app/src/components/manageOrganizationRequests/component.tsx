@@ -489,9 +489,30 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                 </p>
             )
         }
-        return this.props.viewState.requests.map((request) => {
-            return this.renderRequest(request)
-        })
+        return this.props.viewState.requests
+            .filter((request) => {
+                return (request.type === types.RequestType.REQUEST)
+            })
+            .map((request) => {
+                return this.renderRequest(request)
+            })
+    }
+
+    renderInvitations() {
+        if (this.props.viewState.requests.length === 0) {
+            return (
+                <p style={{ textAlign: 'center', padding: '10px' }}>
+                    No pending requests for this organization
+                </p>
+            )
+        }
+        return this.props.viewState.requests
+            .filter((request) => {
+                return (request.type === types.RequestType.INVITATION)
+            })
+            .map((request) => {
+                return this.renderRequest(request)
+            })
     }
 
     render() {
@@ -517,19 +538,7 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                     </div>
                     <div className="historyCol">
                         <h2>Invitations</h2>
-                        <p>[to be done]</p>
-                        <p>
-                            This will show invitations sent on behalf of the organization.
-                        </p>
-
-                        <p>
-                            In addition, both the requests and invitations lists will be at least filterable by status: pending, canceled, rejected, accepted
-                        </p>
-
-                        <p>
-                            At the moment the requests column contains both requests (from users to org, from narrative owner to org, from app author to org)
-                            and invitations (from org admin to user)
-                        </p>
+                        {this.renderInvitations()}
                     </div>
                 </div>
             </div>

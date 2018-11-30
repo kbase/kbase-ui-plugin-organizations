@@ -70,7 +70,8 @@ export class StateInstances {
                 editState: EditState.NONE,
                 saveState: SaveState.NONE,
                 validationState: ValidationState.NONE,
-                editedOrganization: StaticData.makeEmptyEditableOrganization()
+                editedOrganization: StaticData.makeEmptyEditableOrganization(),
+                organization: null
             },
             manageOrganizationRequestsView: {
                 state: ComponentLoadingState.NONE,

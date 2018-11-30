@@ -820,11 +820,26 @@ export class Model {
 
     profileToUser(profile: userProfile.UserProfile): User {
         let jobTitle
+        if (!profile.profile.userdata) {
+            return {
+                username: profile.user.username,
+                realname: profile.user.realname,
+                city: null,
+                state: null,
+                country: null,
+                title: null,
+                organization: null,
+                avatarOption: null,
+                gravatarHash: null,
+                gravatarDefault: null
+            }
+        }
         if (profile.profile.userdata.jobTitle === 'Other') {
             jobTitle = profile.profile.userdata.jobTitleOther
         } else {
             jobTitle = profile.profile.userdata.jobTitle
         }
+
         return {
             username: profile.user.username,
             realname: profile.user.realname,
@@ -1129,7 +1144,6 @@ export class Model {
                     })
 
             })
-
     }
 
     getUser(username: string): Promise<User> {
