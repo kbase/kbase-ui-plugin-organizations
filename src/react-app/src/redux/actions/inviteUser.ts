@@ -372,7 +372,6 @@ export function selectUser(selectedUsername: string) {
                 dispatch(selectUserSuccess(user, relation))
             })
             .catch((err) => {
-                console.log('error?', err)
                 dispatch(selectUserError({
                     code: err.name,
                     message: err.message

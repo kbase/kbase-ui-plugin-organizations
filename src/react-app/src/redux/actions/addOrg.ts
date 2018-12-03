@@ -2,41 +2,51 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
-import { StoreState, Organization, AppError, UIError, UIErrorType, FieldState } from '../../types'
+import { StoreState, Organization, AppError, UIError, UIErrorType, FieldState, EditableOrganization } from '../../types'
 import { Model, Validation } from '../../data/model'
 
 // ACTIONS
 
-export interface AddOrg extends Action {
-    type: ActionFlag.ADD_ORG
+export interface Save extends Action<ActionFlag.ADD_ORG_SAVE> {
+    type: ActionFlag.ADD_ORG_SAVE
 }
 
-export interface AddOrgStart extends Action {
-    type: ActionFlag.ADD_ORG_START
+export interface SaveStart extends Action<ActionFlag.ADD_ORG_SAVE_START> {
+    type: ActionFlag.ADD_ORG_SAVE_START
 }
 
-export interface AddOrgSuccess extends Action {
-    type: ActionFlag.ADD_ORG_SUCCESS,
+export interface SaveSuccess extends Action<ActionFlag.ADD_ORG_SAVE_SUCCESS> {
+    type: ActionFlag.ADD_ORG_SAVE_SUCCESS,
     organization: Organization
 }
 
-export interface AddOrgError extends Action<ActionFlag.ADD_ORG_ERROR> {
-    type: ActionFlag.ADD_ORG_ERROR,
+export interface SaveError extends Action<ActionFlag.ADD_ORG_SAVE_ERROR> {
+    type: ActionFlag.ADD_ORG_SAVE_ERROR,
     error: AppError
 }
 
 // Editing
 
-export interface AddOrgEdit extends Action<ActionFlag.ADD_ORG_EDIT> {
-    type: ActionFlag.ADD_ORG_EDIT;
+export interface Load extends Action<ActionFlag.ADD_ORG_LOAD> {
+    type: ActionFlag.ADD_ORG_LOAD;
 }
 
-export interface AddOrgEditStart {
-    type: ActionFlag.ADD_ORG_EDIT_START
+export interface LoadStart {
+    type: ActionFlag.ADD_ORG_LOAD_START
 }
 
-export interface AddOrgEditFinish {
-    type: ActionFlag.ADD_ORG_EDIT_FINISH
+export interface LoadSuccess {
+    type: ActionFlag.ADD_ORG_LOAD_SUCCESS,
+    newOrganization: EditableOrganization
+}
+
+export interface LoadError {
+    type: ActionFlag.ADD_ORG_LOAD_ERROR,
+    error: AppError
+}
+
+export interface Unload {
+    type: ActionFlag.ADD_ORG_UNLOAD
 }
 
 // Evaluating state of form 
@@ -55,17 +65,17 @@ export interface AddOrgEvaluateErrors extends Action<ActionFlag.ADD_ORG_EVALUATE
 
 // Updating name field
 
-export interface AddOrgUpdateName extends Action {
+export interface UpdateName extends Action {
     type: ActionFlag.ADD_ORG_UPDATE_NAME,
     name: string
 }
 
-export interface AddOrgUpdateNameSuccess {
+export interface UpdateNameSuccess {
     type: ActionFlag.ADD_ORG_UPDATE_NAME_SUCCESS,
     name: string
 }
 
-export interface AddOrgUpdateNameError extends Action {
+export interface UpdateNameError extends Action {
     type: ActionFlag.ADD_ORG_UPDATE_NAME_ERROR,
     name: string,
     error: UIError
@@ -73,17 +83,17 @@ export interface AddOrgUpdateNameError extends Action {
 
 // Updating gravatar hash field
 
-export interface AddOrgUpdateGravatarHash extends Action {
+export interface UpdateGravatarHash extends Action {
     type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH,
     name: string
 }
 
-export interface AddOrgUpdateGravatarHashSuccess {
+export interface UpdateGravatarHashSuccess {
     type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
     gravatarHash: string
 }
 
-export interface AddOrgUpdateGravatarHashError extends Action {
+export interface UpdateGravatarHashError extends Action {
     type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_ERROR,
     gravatarHash: string,
     error: UIError
@@ -91,17 +101,17 @@ export interface AddOrgUpdateGravatarHashError extends Action {
 
 // Updating id Field
 
-export interface AddOrgUpdateId extends Action {
+export interface UpdateId extends Action {
     type: ActionFlag.ADD_ORG_UPDATE_ID,
     id: string
 }
 
-export interface AddOrgUpdateIdSuccess {
+export interface UpdateIdSuccess {
     type: ActionFlag.ADD_ORG_UPDATE_ID_SUCCESS,
     id: string
 }
 
-export interface AddOrgUpdateIdError extends Action {
+export interface UpdateIdError extends Action {
     type: ActionFlag.ADD_ORG_UPDATE_ID_ERROR,
     id: string,
     error: UIError
@@ -109,17 +119,17 @@ export interface AddOrgUpdateIdError extends Action {
 
 // Updating description field
 
-export interface AddOrgUpdateDescription extends Action {
+export interface UpdateDescription extends Action {
     type: ActionFlag.ADD_ORG_UPDATE_DESCRIPTION,
     description: string
 }
 
-export interface AddOrgUpdateDescriptionSuccess {
+export interface UpdateDescriptionSuccess {
     type: ActionFlag.ADD_ORG_UPDATE_DESCRIPTION_SUCCESS,
     description: string
 }
 
-export interface AddOrgUpdateDescriptionError extends Action {
+export interface UpdateDescriptionError extends Action {
     type: ActionFlag.ADD_ORG_UPDATE_DESCRIPTION_ERROR,
     description: string,
     error: UIError
@@ -128,35 +138,51 @@ export interface AddOrgUpdateDescriptionError extends Action {
 
 // ACTION CREATORS
 
-export function addOrgStart(): AddOrgStart {
+export function saveStart(): SaveStart {
     return {
-        type: ActionFlag.ADD_ORG_START
+        type: ActionFlag.ADD_ORG_SAVE_START
     }
 }
 
-export function addOrgSuccess(org: Organization): AddOrgSuccess {
+export function saveSuccess(org: Organization): SaveSuccess {
     return {
-        type: ActionFlag.ADD_ORG_SUCCESS,
+        type: ActionFlag.ADD_ORG_SAVE_SUCCESS,
         organization: org
     }
 }
 
-export function addOrgError(error: AppError): AddOrgError {
+export function saveError(error: AppError): SaveError {
     return {
-        type: ActionFlag.ADD_ORG_ERROR,
+        type: ActionFlag.ADD_ORG_SAVE_ERROR,
         error: error
     }
 }
 
-export function addOrgEditStart() {
+// Eiditing
+
+function loadStart() {
     return {
-        type: ActionFlag.ADD_ORG_EDIT_START
+        type: ActionFlag.ADD_ORG_LOAD_START
     }
 }
 
-export function addOrgEditFinish() {
+function loadSuccess(newOrganization: EditableOrganization) {
     return {
-        type: ActionFlag.ADD_ORG_EDIT_FINISH
+        type: ActionFlag.ADD_ORG_LOAD_SUCCESS,
+        newOrganization: newOrganization
+    }
+}
+
+function loadError(error: AppError) {
+    return {
+        type: ActionFlag.ADD_ORG_LOAD_ERROR,
+        error: error
+    }
+}
+
+export function unload() {
+    return {
+        type: ActionFlag.ADD_ORG_UNLOAD
     }
 }
 
@@ -176,14 +202,14 @@ export function AddOrgEvaluateErrors(): AddOrgEvaluateErrors {
 
 // Update Name
 
-export function addOrgUpdateNameSuccess(name: string): AddOrgUpdateNameSuccess {
+export function updateNameSuccess(name: string): UpdateNameSuccess {
     return {
         type: ActionFlag.ADD_ORG_UPDATE_NAME_SUCCESS,
         name: name
     }
 }
 
-export function addOrgUpdateNameError(name: string, error: UIError): AddOrgUpdateNameError {
+export function updateNameError(name: string, error: UIError): UpdateNameError {
     return {
         type: ActionFlag.ADD_ORG_UPDATE_NAME_ERROR,
         name: name,
@@ -191,7 +217,7 @@ export function addOrgUpdateNameError(name: string, error: UIError): AddOrgUpdat
     }
 }
 
-export function addOrgUpdateIdSuccess(id: string): AddOrgUpdateIdSuccess {
+export function updateIdSuccess(id: string): UpdateIdSuccess {
     return {
         type: ActionFlag.ADD_ORG_UPDATE_ID_SUCCESS,
         id: id
@@ -200,14 +226,14 @@ export function addOrgUpdateIdSuccess(id: string): AddOrgUpdateIdSuccess {
 
 // Update Gravatar Hash
 
-export function addOrgUpdateGravatarHashSuccess(gravatarHash: string): AddOrgUpdateGravatarHashSuccess {
+export function updateGravatarHashSuccess(gravatarHash: string): UpdateGravatarHashSuccess {
     return {
         type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
         gravatarHash: gravatarHash
     }
 }
 
-export function addOrgUpdateGravatarHashError(gravatarHash: string, error: UIError): AddOrgUpdateGravatarHashError {
+export function updateGravatarHashError(gravatarHash: string, error: UIError): UpdateGravatarHashError {
     return {
         type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_ERROR,
         gravatarHash: gravatarHash,
@@ -218,7 +244,7 @@ export function addOrgUpdateGravatarHashError(gravatarHash: string, error: UIErr
 
 // Update Id
 
-export function addOrgUpdateIdError(id: string, error: UIError): AddOrgUpdateIdError {
+export function updateIdError(id: string, error: UIError): UpdateIdError {
     return {
         type: ActionFlag.ADD_ORG_UPDATE_ID_ERROR,
         id: id,
@@ -226,14 +252,14 @@ export function addOrgUpdateIdError(id: string, error: UIError): AddOrgUpdateIdE
     }
 }
 
-export function addOrgUpdateDescriptionSuccess(description: string): AddOrgUpdateDescriptionSuccess {
+export function updateDescriptionSuccess(description: string): UpdateDescriptionSuccess {
     return {
         type: ActionFlag.ADD_ORG_UPDATE_DESCRIPTION_SUCCESS,
         description: description
     }
 }
 
-export function addOrgUpdateDescriptionError(description: string, error: UIError): AddOrgUpdateDescriptionError {
+export function updateDescriptionError(description: string, error: UIError): UpdateDescriptionError {
     return {
         type: ActionFlag.ADD_ORG_UPDATE_DESCRIPTION_ERROR,
         description: description,
@@ -243,20 +269,71 @@ export function addOrgUpdateDescriptionError(description: string, error: UIError
 
 // ACTION THUNKS
 
-export function addOrgEdit() {
+export function load() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(addOrgEditStart())
+        dispatch(loadStart())
+
+        const newOrg: EditableOrganization = {
+            id: {
+                value: '',
+                status: FieldState.NONE,
+                error: {
+                    type: UIErrorType.NONE
+                }
+            },
+            name: {
+                value: '',
+                status: FieldState.NONE,
+                error: {
+                    type: UIErrorType.NONE
+                }
+            },
+            gravatarHash: {
+                value: '',
+                status: FieldState.NONE,
+                error: {
+                    type: UIErrorType.NONE
+                }
+            },
+            description: {
+                value: '',
+                status: FieldState.NONE,
+                error: {
+                    type: UIErrorType.NONE
+                }
+            }
+        }
+        dispatch(loadSuccess(newOrg))
         dispatch(addOrgEvaluate())
     }
 }
 
 export function addOrg() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(addOrgStart())
+        const state = getState()
 
-        const { auth: { authorization: { token, username } },
-            addOrg: { newOrganization },
-            app: { config } } = getState()
+        // This check is to satisfy TS. Since viewModel is nullable, it has no way 
+        // of knowing that our app flow ensures that it is populated.
+        // In terms of generalized usage of the redux store, though, there is no
+        // way to ensure this! So we really should perform our state checks before 
+        // handling any event
+        if (!state.addOrgView.viewModel) {
+            dispatch(saveError({
+                code: 'invalid',
+                message: 'Unexpected condition: no view model'
+            }))
+            return
+        }
+
+        // TODO: other validations!!!
+
+        dispatch(saveStart())
+
+        const {
+            auth: { authorization: { token, username } },
+            addOrgView: { viewModel: { newOrganization } },
+            app: { config }
+        } = state
         const model = new Model({
             token, username,
             groupsServiceURL: config.services.Groups.url,
@@ -266,7 +343,7 @@ export function addOrg() {
         })
 
         if (!newOrganization) {
-            dispatch(addOrgError({
+            dispatch(saveError({
                 code: 'app',
                 message: 'The new organization data does not yet exist'
             }))
@@ -275,13 +352,17 @@ export function addOrg() {
 
         model.addOrg(newOrganization, username)
             .then((org: Organization) => {
-                dispatch(addOrgSuccess(org))
+                dispatch(saveSuccess(org))
             })
             .catch((error) => {
                 console.error('error adding', newOrganization, error)
-                dispatch(addOrgError({
-                    code: 'invalid',
-                    message: error.message
+
+                // note that we dispatch an AppError compliant object,
+                // which wraps the original exception object.
+                dispatch(saveError({
+                    code: error.code || error.name,
+                    message: error.message,
+                    exception: error
                 }))
             })
     }
@@ -289,9 +370,17 @@ export function addOrg() {
 
 export function addOrgEvaluate() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        const { addOrg: { newOrganization } } = getState()
+        const state = getState()
+        if (!state.addOrgView.viewModel) {
+            dispatch(saveError({
+                code: 'invalid',
+                message: 'Unexpected condition: no view model'
+            }))
+            return
+        }
 
-        const { addOrg: editState } = getState()
+
+        const { addOrgView: { viewModel: { editState, newOrganization } } } = state
 
         if (!newOrganization) {
             dispatch(AddOrgEvaluateErrors())
@@ -334,37 +423,37 @@ function newModelFromState(state: StoreState) {
     })
 }
 
-export function addOrgUpdateName(name: string) {
+export function updateName(name: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
         const [validatedName, error] = Validation.validateOrgName(name)
 
         if (error.type === UIErrorType.ERROR) {
-            dispatch(addOrgUpdateNameError(validatedName, error))
+            dispatch(updateNameError(validatedName, error))
         } else {
-            dispatch(addOrgUpdateNameSuccess(validatedName))
+            dispatch(updateNameSuccess(validatedName))
         }
         dispatch(addOrgEvaluate())
     }
 }
 
-export function addOrgUpdateGravatarHash(name: string) {
+export function updateGravatarHash(name: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
         const [validateGravatarHash, error] = Validation.validateOrgGravatarHash(name)
 
         if (error.type === UIErrorType.ERROR) {
-            dispatch(addOrgUpdateGravatarHashError(validateGravatarHash, error))
+            dispatch(updateGravatarHashError(validateGravatarHash, error))
         } else {
-            dispatch(addOrgUpdateGravatarHashSuccess(validateGravatarHash))
+            dispatch(updateGravatarHashSuccess(validateGravatarHash))
         }
         dispatch(addOrgEvaluate())
     }
 }
 
-export function addOrgUpdateId(id: string) {
+export function updateId(id: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const [validatedId, error] = Validation.validateOrgId(id)
         if (error.type === UIErrorType.ERROR) {
-            dispatch(addOrgUpdateIdError(validatedId, error))
+            dispatch(updateIdError(validatedId, error))
             dispatch(addOrgEvaluate())
             return
         }
@@ -372,12 +461,12 @@ export function addOrgUpdateId(id: string) {
         model.groupExists(validatedId)
             .then((exists) => {
                 if (exists) {
-                    dispatch(addOrgUpdateIdError(validatedId, {
+                    dispatch(updateIdError(validatedId, {
                         type: UIErrorType.ERROR,
                         message: 'This org id is already in use'
                     }))
                 } else {
-                    dispatch(addOrgUpdateIdSuccess(validatedId))
+                    dispatch(updateIdSuccess(validatedId))
                 }
 
                 dispatch(addOrgEvaluate())
@@ -385,7 +474,7 @@ export function addOrgUpdateId(id: string) {
     }
 }
 
-export function addOrgUpdateDescription(description: string) {
+export function updateDescription(description: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>,
         getState: () => StoreState) => {
         const { auth: { authorization: { token, username } },
@@ -400,9 +489,9 @@ export function addOrgUpdateDescription(description: string) {
         const [validatedDescription, error] = model.validateOrgDescription(description)
 
         if (error.type === UIErrorType.ERROR) {
-            dispatch(addOrgUpdateDescriptionError(validatedDescription, error))
+            dispatch(updateDescriptionError(validatedDescription, error))
         } else {
-            dispatch(addOrgUpdateDescriptionSuccess(validatedDescription))
+            dispatch(updateDescriptionSuccess(validatedDescription))
         }
         dispatch(addOrgEvaluate())
     }

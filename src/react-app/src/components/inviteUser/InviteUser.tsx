@@ -9,8 +9,6 @@ import OrganizationHeader from '../organizationHeader/container';
 import { UserQuery } from '../../data/model';
 import UserComponent from '../User'
 
-import SelectUserComponent from '../selectUser/component'
-
 export interface InviteUserProps {
     organization: Organization,
     selectedUser: {
@@ -252,7 +250,6 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         let button
         let message
         if (this.props.selectedUser) {
-            // console.log('form?', this.props.selectedUser, UserRelationToOrganization.NONE, (this.props.selectedUser.relation === UserRelationToOrganization.NONE))
             if (this.props.selectedUser.relation === UserRelationToOrganization.VIEW) {
                 button = (
                     <Button
@@ -347,7 +344,6 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
     }
 
     renderRelation(relation: UserRelationToOrganization) {
-        console.log('relation', relation)
         switch (relation) {
             case (UserRelationToOrganization.NONE):
                 return (

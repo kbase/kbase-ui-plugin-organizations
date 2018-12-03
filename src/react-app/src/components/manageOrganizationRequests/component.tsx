@@ -3,7 +3,7 @@ import * as React from 'react'
 import './component.css'
 import * as types from '../../types';
 import Header from '../Header';
-import { Icon, Button, Modal, Card } from 'antd';
+import { Icon, Button, Modal, Card, Alert } from 'antd';
 import { Redirect } from 'react-router';
 import User from '../User';
 import OrganizationHeader from '../organizationHeader/container';
@@ -79,7 +79,7 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                         <span>
                             <Icon type="tool" />
                             {' '}
-                            Managing Requests for Org "
+                            <span style={{ fontSize: '120%' }}>Managing Requests</span> for Org "
                             {this.props.viewState.organization.name}
                             "
                         </span>
@@ -482,34 +482,43 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
     }
 
     renderRequests() {
-        if (this.props.viewState.requests.length === 0) {
-            return (
-                <p style={{ textAlign: 'center', padding: '10px' }}>
-                    No pending requests for this organization
-                </p>
-            )
-        }
-        return this.props.viewState.requests
+        const requests = this.props.viewState.requests
             .filter((request) => {
                 return (request.type === types.RequestType.REQUEST)
             })
+
+
+        if (requests.length === 0) {
+            return (
+                <Alert
+                    type="info"
+                    showIcon
+                    style={{ minWidth: '5em', maxWidth: '20em', margin: '0 auto' }}
+                    message="No pending requests for this organization" />
+            )
+        }
+        return requests
             .map((request) => {
                 return this.renderRequest(request)
             })
     }
 
     renderInvitations() {
-        if (this.props.viewState.requests.length === 0) {
-            return (
-                <p style={{ textAlign: 'center', padding: '10px' }}>
-                    No pending requests for this organization
-                </p>
-            )
-        }
-        return this.props.viewState.requests
+        const invitations = this.props.viewState.requests
             .filter((request) => {
                 return (request.type === types.RequestType.INVITATION)
-            })
+            });
+
+        if (invitations.length === 0) {
+            return (
+                <Alert
+                    type="info"
+                    showIcon
+                    style={{ minWidth: '5em', maxWidth: '20em', margin: '0 auto' }}
+                    message="No pending invitations for this organization" />
+            )
+        }
+        return invitations
             .map((request) => {
                 return this.renderRequest(request)
             })
@@ -525,19 +534,29 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
             return <Redirect push to={"/viewOrganization/" + this.props.viewState.organization.id} />
         }
 
+        const invitationCount = this.props.viewState.requests
+            .filter((request) => {
+                return (request.type === types.RequestType.INVITATION)
+            }).length;
+
+        const requestCount = this.props.viewState.requests
+            .filter((request) => {
+                return (request.type === types.RequestType.REQUEST)
+            }).length;
+
         return (
             <div className="ManageGroupRequests">
                 {this.renderHeader()}
                 <OrganizationHeader organization={this.props.viewState.organization} />
                 <div className="row">
                     <div className="pendingCol">
-                        <h2>Requests ({this.props.viewState.organization.adminRequests.length})</h2>
+                        <h2>Requests ({requestCount})</h2>
                         <div className="pendingRequests">
                             {this.renderRequests()}
                         </div>
                     </div>
                     <div className="historyCol">
-                        <h2>Invitations</h2>
+                        <h2>Invitations ({invitationCount})</h2>
                         {this.renderInvitations()}
                     </div>
                 </div>

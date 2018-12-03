@@ -436,7 +436,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
 
     renderOrgHeader() {
         // apparently TS is not smart enough to know this from the conditional branch in render()!
-        console.log('org?', this.props.organization)
         if (!this.props.organization) {
             return
         }

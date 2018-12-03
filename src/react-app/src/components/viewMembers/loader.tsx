@@ -1,7 +1,5 @@
 import * as React from 'react'
 
-import './component.css'
-
 import { ViewMembersViewState } from '../../types'
 import ViewMembersContainer from './container'
 

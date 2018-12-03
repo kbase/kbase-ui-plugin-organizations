@@ -72,7 +72,6 @@ import { connect } from 'react-redux'
 
 import * as types from '../../types'
 import * as actions from '../../redux/actions/requestAddNarrative'
-import RequestAddNarrative from './component';
 
 export interface OwnProps {
     organizationId: string

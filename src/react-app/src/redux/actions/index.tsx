@@ -57,9 +57,15 @@ export enum ActionFlag {
     VIEW_ORG_REMOVE_NARRATIVE_ERROR,
 
     // add org fields
-    ADD_ORG_EDIT,
-    ADD_ORG_EDIT_START,
-    ADD_ORG_EDIT_FINISH,
+
+
+
+
+    ADD_ORG_LOAD,
+    ADD_ORG_LOAD_START,
+    ADD_ORG_LOAD_SUCCESS,
+    ADD_ORG_LOAD_ERROR,
+    ADD_ORG_UNLOAD,
 
     ADD_ORG_UPDATE_NAME,
     ADD_ORG_UPDATE_NAME_SUCCESS,
@@ -81,10 +87,11 @@ export enum ActionFlag {
     ADD_ORG_EVALUATE_OK,
     ADD_ORG_EVALUATE_ERRORS,
 
-    ADD_ORG,
-    ADD_ORG_START,
-    ADD_ORG_SUCCESS,
-    ADD_ORG_ERROR,
+    ADD_ORG_SAVE,
+    ADD_ORG_SAVE_START,
+    ADD_ORG_SAVE_SUCCESS,
+    ADD_ORG_SAVE_ERROR,
+
 
     // editing org
     EDIT_ORG_EDIT,

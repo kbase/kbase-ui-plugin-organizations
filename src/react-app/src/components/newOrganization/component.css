@@ -1,0 +1,115 @@
+.NewOrganization {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.NewOrganization h3 {
+    padding: 8px;
+    /* background-color: rgba(200, 200, 200, 0.5); */
+    border-bottom: 2px rgba(200, 200, 200, 0.8) solid;
+    text-align: center;
+}
+
+.NewOrganization .mainRow {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    overflow-y: auto;
+}
+
+.NewOrganization .footerRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    border-top: 1px silver solid;
+}
+
+.NewOrganization .footerRow .col2 {
+    align-items: center;
+}
+
+.NewOrganization .editorColumn {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+}
+
+.NewOrganization .previewColumn {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.NewOrganization .editor,
+.NewOrganization .preview {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.NewOrganization .row {
+    flex: 0 0 auto;
+    min-height: 30px;
+    display: flex;
+    flex-direction: row;
+    /* height: 30px; */
+    margin: 4px 0;
+}
+
+.NewOrganization .col1 {
+    flex: 0 0 7em;
+    font-weight: bold;
+    text-align: left;
+    /* color: rgba(100, 100, 100, 1); */
+    /* border: 1px silver solid; */
+}
+
+.NewOrganization .col2 {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    /* border: 1px silver solid; */
+}
+
+.NewOrganization .editor input {
+    box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+}
+
+.NewOrganization .editor textarea {
+    flex: 1 1 0px;
+    box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+}
+
+.NewOrganization .editor .footer {
+    flex: 0 0 30px;
+    text-align: center;
+    padding: 6px;
+}
+
+.NewOrganization .editor .gravatarHash {
+    height: 64px;
+}
+
+.NewOrganization .preview .id {
+    font-family: monospace;
+}
+
+.NewOrganization .preview .description {
+    padding: 8px;
+    border: 1px rgba(200, 200, 200, 0.5) solid;
+    /* border-radius: 8px; */
+    flex: 1 1 0px;
+    overflow-y: auto;
+    box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5);
+}
+
+.NewOrganization .preview .gravatarHash {
+    height: 64px;
+}

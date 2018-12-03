@@ -1,5 +1,6 @@
 import { StoreState, SortDirection, AuthState, AppState, EditState, SaveState, ValidationState, ViewOrgState, ViewMembersViewState, BrowseOrgsState, InviteUserViewState, ComponentLoadingState, RequestNarrativeState } from "../types";
 import { StaticData } from "../data/model";
+import { NONAME } from "dns";
 
 export class StateInstances {
     static makeInitialState(): StoreState {
@@ -53,11 +54,10 @@ export class StateInstances {
                     }
                 }
             },
-            addOrg: {
-                editState: EditState.NONE,
-                saveState: SaveState.NONE,
-                validationState: ValidationState.NONE,
-                newOrganization: StaticData.makeEmptyEditableOrganization()
+            addOrgView: {
+                loadingStatus: ComponentLoadingState.NONE,
+                error: null,
+                viewModel: null
             },
             updateOrg: {
                 pending: false

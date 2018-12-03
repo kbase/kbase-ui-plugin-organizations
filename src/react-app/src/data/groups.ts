@@ -1,5 +1,7 @@
 import { string, number } from "prop-types";
 import { request } from "http";
+import { T } from "antd/lib/upload/utils";
+import { AppError, AppException } from "../types";
 
 export interface GroupsServiceInfo {
     servname: string;
@@ -15,7 +17,6 @@ export interface BriefGroup {
         gravatarhash?: string
     }
     owner: string;
-    type: string;
     // createdAt: number;
     // modifiedAt: number
 }
@@ -40,7 +41,6 @@ export interface Group {
     id: string
     name: string
     owner: Username
-    type: string
     admins: Array<Username>
     members: Array<Username>
     description: string
@@ -59,7 +59,6 @@ export interface NewGroup {
     id: string
     name: string
     gravatarhash: string | null
-    type: string
     description: string
 }
 
@@ -159,6 +158,59 @@ export interface RequestNarrativeParams {
     groupId: string
 }
 
+function promiseTry<T>(fun: () => Promise<T>): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+        try {
+            return resolve(fun())
+        } catch (ex) {
+            reject(ex)
+        }
+    })
+}
+
+export interface GroupError {
+    httpcode: number
+    httpstatus: string
+    appcode: number
+    apperror: string
+    message: string
+    callid: string
+    time: number
+}
+
+export class Exception extends Error {
+
+}
+
+export class GroupException extends AppException {
+    originalError: GroupError
+    constructor(error: GroupError) {
+        super({
+            code: 'group-exception',
+            message: error.apperror,
+            detail: error.message,
+            info: new Map<string, any>([
+                ['httpcode', error.httpcode],
+                ['httpstatus', error.httpstatus],
+                ['appcode', error.appcode],
+                ['apperror', error.apperror],
+                ['message', error.message],
+                ['callid', error.callid],
+                ['time', error.time]
+            ])
+        })
+        this.name = 'GroupException'
+        this.originalError = error
+    }
+}
+
+export class ServerException extends AppException {
+    constructor(detail: string) {
+        super({ code: 'server-exception', message: 'Server Exception', detail: detail })
+        this.name = 'ServerException'
+    }
+}
+
 export class GroupsClient {
     token: string;
     url: string;
@@ -228,8 +280,7 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result: GroupList) => {
-                const orgs = result.filter(({ type }) => type === 'Organization')
-                return Promise.all(orgs.map((group) => (this.getGroupById(group.id))))
+                return Promise.all(result.map((group) => (this.getGroupById(group.id))))
             })
             .then((result) => {
                 return result;
@@ -255,8 +306,9 @@ export class GroupsClient {
             })
     }
 
-    createGroup(newGroup: NewGroup): Promise<Group> {
-        return fetch(this.url + '/group/' + newGroup.id, {
+    put<T>(path: Array<string>, body: any): Promise<T> {
+        const url = ([this.url].concat(path)).join('/')
+        return fetch(url, {
             headers: {
                 Authorization: this.token,
                 Accept: 'application/json',
@@ -264,21 +316,43 @@ export class GroupsClient {
             },
             mode: 'cors',
             method: 'PUT',
-            body: JSON.stringify({
-                name: newGroup.name,
-                custom: {
-                    gravatarhash: newGroup.gravatarhash
-                },
-                type: newGroup.type,
-                description: newGroup.description
-            })
+            body: JSON.stringify(body)
         })
             .then((response) => {
-                return response.json()
+                if (response.status === 500) {
+                    switch (response.headers.get('Content-Type')) {
+                        case 'application/json':
+                            return response.json()
+                                .then((result) => {
+                                    throw new GroupException(result)
+                                })
+                        case 'text/plain':
+                            return response.text()
+                                .then((result) => {
+                                    throw new ServerException(result)
+                                })
+                        default:
+                            throw new Error('Unexpected content type: ' + response.headers.get('Content-Type'))
+                    }
+                } else if (response.status !== 200) {
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+                } else {
+                    return response.json()
+                        .then((result) => {
+                            return result as T
+                        })
+                }
             })
-            .then((result) => {
-                return result as Group
-            })
+    }
+
+    createGroup(newGroup: NewGroup): Promise<Group> {
+        return this.put<Group>(['group', newGroup.id], {
+            name: newGroup.name,
+            custom: {
+                gravatarhash: newGroup.gravatarhash
+            },
+            description: newGroup.description
+        })
     }
 
     updateGroup(id: string, groupUpdate: GroupUpdate): Promise<void> {
@@ -297,7 +371,6 @@ export class GroupsClient {
                 custom: {
                     gravatarhash: groupUpdate.gravatarhash
                 },
-                type: 'Organization',
                 description: groupUpdate.description
             })
         })

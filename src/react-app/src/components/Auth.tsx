@@ -55,7 +55,7 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
             <div className="Auth-toolbar">
                 Logged in as <b><span>{this.props.authorization.authorization.realname}</span> (<span>{this.props.authorization.authorization.username}</span></b>)
                 {' '}
-                <Button icon="logout" onClick={this.onLogoutClick.bind(this)}>Sign out</Button>
+                <Button icon="logout" onClick={this.onLogoutClick.bind(this)}></Button>
             </div>
         )
     }

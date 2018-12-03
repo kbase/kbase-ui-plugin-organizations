@@ -95,7 +95,13 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
         if (org.adminRequests.length > 0) {
             requestsPending = (
                 <div>
-                    <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" />  group has <b>{org.adminRequests.length} pending request{org.adminRequests.length > 1 ? 's' : ''}</b>
+                    <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" />
+                    {' '}
+                    there
+                    {' '}
+                    {org.adminRequests.length > 1 ? 'are' : 'is'}
+                    {' '}
+                    <b>{org.adminRequests.length} pending request{org.adminRequests.length > 1 ? 's' : ''}</b>
                 </div>
             )
         }

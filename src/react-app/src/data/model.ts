@@ -908,12 +908,20 @@ export class Model {
             id: newOrg.id.value,
             name: newOrg.name.value,
             gravatarhash: newOrg.gravatarHash.value,
-            description: newOrg.description.value,
-            type: 'Organization'
+            description: newOrg.description.value
         })
             .then((group) => {
                 return this.groupToOrg(group, username)
             })
+        // .catch((err) => {
+        //     if (err instanceof groups.ServerException) {
+        //         throw new Error('Server Error')
+        //     } else if (err instanceof groups.GroupException) {
+        //         throw new Error('Group Service Error')
+        //     } else {
+        //         throw err
+        //     }
+        // })
     }
 
     // TODO this is fake until update is implemented on the back end

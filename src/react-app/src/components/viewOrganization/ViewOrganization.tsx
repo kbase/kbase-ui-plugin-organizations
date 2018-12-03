@@ -4,14 +4,15 @@ import { NavLink, Redirect } from 'react-router-dom'
 
 import './ViewOrganization.css'
 
-import { ViewOrgState, Organization, AppError, UserRelationToOrganization, MembershipRequestPendingRelation, NarrativeResource, UserWorkspacePermission } from '../../types'
-import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu } from 'antd'
+import { ViewOrgState, Organization, AppError, UserRelationToOrganization, MembershipRequestPendingRelation, NarrativeResource, UserWorkspacePermission, Narrative } from '../../types'
+import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu, Drawer } from 'antd'
 import Header from '../Header'
 import Avatar from '../Avatar'
 import Member from '../Member';
 import OrganizationHeader from '../organizationHeader/container'
 // import faGlobe from '@fortawesome/free-solid-svg-icons/faGlobe'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { RequestAccess } from '../requestAccess/component';
 
 enum NavigateTo {
     NONE = 0,
@@ -19,8 +20,11 @@ enum NavigateTo {
 }
 
 export interface ViewOrganizationState {
-    showInfo: boolean,
+    showInfo: boolean
     navigateTo: NavigateTo
+    requestAccess: {
+        narrative: NarrativeResource | null
+    }
 }
 
 export interface ViewOrganizationProps {
@@ -43,7 +47,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
         this.state = {
             showInfo: false,
-            navigateTo: NavigateTo.NONE
+            navigateTo: NavigateTo.NONE,
+            requestAccess: {
+                narrative: null
+            }
         }
 
         this.props.onViewOrg(this.props.id)
@@ -103,7 +110,17 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     onRequestShare(narrative: NarrativeResource) {
-        alert('not yet implemented')
+        // Drawer.
+        // Drawer.open({
+        //     title: 'Request Access to Narrative',
+        //     content: 'Are you sure?'
+        // })
+        this.setState({ requestAccess: { narrative: narrative } })
+        // alert('not yet implemented')
+    }
+
+    onCloseRequestAccess() {
+        this.setState({ requestAccess: { narrative: null } })
     }
 
     buildFooter() {
@@ -427,6 +444,31 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             org.relation.type === UserRelationToOrganization.OWNER)) {
             return
         }
+        let inner
+        if (org.adminRequests.length) {
+            inner = (
+                <div>
+                    group has no pending requests
+                </div>
+            )
+        } else {
+            inner = (
+                <div>
+                    <div>
+                        <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" /> group has
+                        {' '}
+                        <span style={{ fontWeight: 'bold' }}>{org.adminRequests.length}</span>
+                        {' '}
+                        pending request{org.adminRequests.length > 1 ? 's' : ''}
+                    </div>
+                    <div>
+                        <NavLink to={"/manageOrganizationRequests/" + this.props.organization!.id}>
+                            <Button>Manage Requests</Button>
+                        </NavLink>
+                    </div>
+                </div>
+            )
+        }
         return (
             <div className="row">
                 <div className="col1">
@@ -434,20 +476,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </div>
                 <div className="col2">
                     <div className="relation">
-                        <div>
-                            <div>
-                                <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" /> group has
-                    {' '}
-                                <span style={{ fontWeight: 'bold' }}>{org.adminRequests.length}</span>
-                                {' '}
-                                pending request{org.adminRequests.length > 1 ? 's' : ''}
-                            </div>
-                            <div>
-                                <NavLink to={"/manageOrganizationRequests/" + this.props.organization!.id}>
-                                    <Button>Manage Requests</Button>
-                                </NavLink>
-                            </div>
-                        </div>
+                        {inner}
                     </div>
                 </div>
             </div>
@@ -456,22 +485,60 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderAdminRequests(org: Organization) {
-        return (
-            <div>
+        if (!org.adminRequests.length) {
+            return (
                 <div>
-                    <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" /> group has
-                    {' '}
-                    <span style={{ fontWeight: 'bold' }}>{org.adminRequests.length}</span>
-                    {' '}
-                    pending request{org.adminRequests.length > 1 ? 's' : ''}
+                    There are no pending requests
                 </div>
+            )
+        } else {
+            return (
                 <div>
-                    <NavLink to={"/manageOrganizationRequests/" + this.props.organization!.id}>
-                        <Button>Manage Requests</Button>
-                    </NavLink>
+                    <div>
+                        <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" /> There are
+                        {' '}
+                        <span style={{ fontWeight: 'bold' }}>{org.adminRequests.length}</span>
+                        {' '}
+                        pending request{org.adminRequests.length > 1 ? 's' : ''}
+                    </div>
+                    <div>
+                        <NavLink to={"/manageOrganizationRequests/" + this.props.organization!.id}>
+                            <Button>Manage Requests</Button>
+                        </NavLink>
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        }
+        // return (
+        //     <div className="row">
+        //         <div className="col1">
+        //             <span className="label">admin</span>
+        //         </div>
+        //         <div className="col2">
+        //             <div className="relation">
+        //                 {inner}
+        //             </div>
+        //         </div>
+        //     </div>
+
+        // )
+
+        // return (
+        //     <div>
+        //         <div>
+        //             <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" /> group has
+        //             {' '}
+        //             <span style={{ fontWeight: 'bold' }}>{org.adminRequests.length}</span>
+        //             {' '}
+        //             pending request{org.adminRequests.length > 1 ? 's' : ''}
+        //         </div>
+        //         <div>
+        //             <NavLink to={"/manageOrganizationRequests/" + this.props.organization!.id}>
+        //                 <Button>Manage Requests</Button>
+        //             </NavLink>
+        //         </div>
+        //     </div>
+        // )
     }
 
     renderRelationClass(org: Organization) {
@@ -741,17 +808,32 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderNarrative(narrative: NarrativeResource) {
-        return (
-            <React.Fragment>
-                <div className="title">{narrative.title}</div>
-                <div>{this.renderPublicPermission(narrative)}</div>
-                <div>{this.renderNarrativePermission(narrative)}</div>
+        if (narrative.permission === UserWorkspacePermission.NONE) {
+            return (
+                <React.Fragment>
+                    <div className="title">{narrative.title}</div>
+                    <div>{this.renderPublicPermission(narrative)}</div>
+                    <div>{this.renderNarrativePermission(narrative)}</div>
 
-                {/* <div><i>abstract here?</i></div> */}
-                <div><i>One-liner abstract?</i></div>
-                <div><i>created, saved info here?</i></div>
-            </React.Fragment>
-        )
+                    {/* <div><i>abstract here?</i></div> */}
+                    <div><i>One-liner abstract?</i></div>
+                    <div><i>created, saved info here?</i></div>
+                </React.Fragment>
+            )
+        } else {
+            return (
+                <React.Fragment>
+                    <div className="title"><a href={'https://ci.kbase.us/narrative/ws.' + narrative.workspaceId + '.obj.' + '1'} target="_blank">{narrative.title}</a></div>
+                    <div>{this.renderPublicPermission(narrative)}</div>
+                    <div>{this.renderNarrativePermission(narrative)}</div>
+
+                    {/* <div><i>abstract here?</i></div> */}
+                    <div><i>One-liner abstract?</i></div>
+                    <div><i>created, saved info here?</i></div>
+                </React.Fragment>
+            )
+        }
+
     }
 
     renderNarrativeMenu(narrative: NarrativeResource) {
@@ -894,6 +976,33 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             default:
             // do nothing.
         }
+        let accessModal
+        if (this.state.requestAccess.narrative && this.props.organization) {
+            // TODO: replace with our own implementation...n
+            // accessModal = (
+            //     <Drawer title="Request Access to Narrative"
+            //         placement="right"
+            //         closable={true}
+            //         visible={true}
+            //         onClose={() => { this.onCloseRequestAccess.call(this) }}
+            //     >
+            //         Requesting access...
+            //     </Drawer>
+            // )
+            const member = this.props.organization.members.find((member) => {
+                return member.user.username === this.props.username
+            })
+            // another type narrowing hack 
+            if (member) {
+                accessModal = (
+                    <RequestAccess
+                        narrative={this.state.requestAccess.narrative}
+                        organization={this.props.organization}
+                        member={member}
+                        onClose={() => { this.onCloseRequestAccess.call(this) }} />
+                )
+            }
+        }
         if (typeof this.props.organization !== 'undefined') {
             return (
                 <div className="ViewOrganization  scrollable-flex-column">
@@ -922,6 +1031,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                             </div> */}
                         </div>
                     </div>
+                    {accessModal}
                 </div>
             )
         }

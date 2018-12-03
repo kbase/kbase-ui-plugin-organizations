@@ -1,59 +1,66 @@
-import { Dispatch } from 'redux';
+import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
 
-import { StoreState } from '../../types';
+import { StoreState, EditState, SaveState, ValidationState, EditableOrganization, AppError } from '../../types';
 import {
-    AddOrg, addOrg,
-    addOrgUpdateName, addOrgUpdateId, addOrgUpdateDescription, addOrgEdit, addOrgUpdateGravatarHash
+    addOrg, updateName, updateGravatarHash, updateId, updateDescription
 } from '../../redux/actions/addOrg';
 
-import NewOrganization from './NewOrganization';
+import Component from './component';
 
 interface OwnProps {
 }
 
 export interface StateProps {
+    editState: EditState
+    saveState: SaveState
+    validationState: ValidationState
+    newOrganization: EditableOrganization
+    error: AppError | null
 }
 
 export interface DispatchProps {
-    onAddOrg: () => void,
-    onAddOrgEdit: () => void,
+    onSave: () => void,
     onUpdateName: (name: string) => void,
     onUpdateGravatarHash: (gravatarHash: string) => void,
     onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
 }
 
-export function mapStateToProps({ addOrg: { editState, saveState, validationState, newOrganization } }: StoreState): StateProps {
+export function mapStateToProps(state: StoreState): StateProps {
+    if (!state.addOrgView.viewModel) {
+        throw new Error('View model missing in state')
+    }
+    const {
+        addOrgView: {
+            viewModel: { editState, saveState, validationState, newOrganization, error } } } = state
     return {
         editState,
         saveState,
         validationState,
-        newOrganization
+        newOrganization,
+        error
     }
 }
 
-export function mapDispatchToProps(dispatch: Dispatch<AddOrg>): DispatchProps {
+export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {
-        onAddOrgEdit: () => {
-            dispatch(addOrgEdit() as any)
-        },
-        onAddOrg: () => {
+        onSave: () => {
             dispatch(addOrg() as any)
         },
         onUpdateName: (name) => {
-            dispatch(addOrgUpdateName(name) as any)
+            dispatch(updateName(name) as any)
         },
         onUpdateGravatarHash: (gravatarHash: string) => {
-            dispatch(addOrgUpdateGravatarHash(gravatarHash) as any)
+            dispatch(updateGravatarHash(gravatarHash) as any)
         },
         onUpdateId: (id) => {
-            dispatch(addOrgUpdateId(id) as any)
+            dispatch(updateId(id) as any)
         },
         onUpdateDescription: (description) => {
-            dispatch(addOrgUpdateDescription(description) as any)
+            dispatch(updateDescription(description) as any)
         }
     }
 }
 
-export default connect<StateProps, DispatchProps, OwnProps, StoreState>(mapStateToProps, mapDispatchToProps)(NewOrganization)
+export default connect<StateProps, DispatchProps, OwnProps, StoreState>(mapStateToProps, mapDispatchToProps)(Component)

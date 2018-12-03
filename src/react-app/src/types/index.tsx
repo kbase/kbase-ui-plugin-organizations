@@ -1,6 +1,7 @@
 import { ViewOrganizationState } from "../components/viewOrganization/ViewOrganization";
 import { types, error } from "util";
 import Organizations from "../components/browseOrgs/OrganizationsContainer";
+import { string } from "prop-types";
 
 /* Types from the organization service (approximately) */
 
@@ -533,6 +534,20 @@ export interface RequestNarrativeView {
     value: RequestNarrativeValue | null
 }
 
+export interface AddOrgViewModel {
+    editState: EditState
+    saveState: SaveState
+    error: AppError | null
+    validationState: ValidationState
+    newOrganization: EditableOrganization
+}
+
+export interface AddOrgView {
+    loadingStatus: ComponentLoadingState
+    error: AppError | null
+    viewModel: AddOrgViewModel | null
+}
+
 export interface StoreState {
     browseOrgs: BrowseOrgsView,
 
@@ -544,13 +559,7 @@ export interface StoreState {
         config: AppConfig
         error?: AppError
     }
-    addOrg: {
-        editState: EditState
-        saveState: SaveState
-        validationState: ValidationState
-        newOrganization: EditableOrganization
-        error?: AppError
-    }
+    addOrgView: AddOrgView
     updateOrg: {
         pending: boolean
     }
@@ -599,12 +608,44 @@ export interface StoreState {
 
 
 export interface AppError {
-    code: string,
+    code: string
     message: string
+    trace?: Array<string>
+    errors?: Array<AppError>
+    exception?: AppException
+}
+
+export class AppException extends Error {
+    code: string
+    message: string
+    detail?: string
+    trace?: Array<string>
+    errors?: Array<AppException>
+    info?: Map<string, any>
+    constructor({ code, message, detail, info }: { code: string, message: string, detail?: string, info?: Map<string, any> }) {
+        super(message)
+        this.name = 'AppException'
+        this.code = code
+        this.message = message
+        this.detail = detail
+        this.info = info
+
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, AppException)
+        }
+
+        if (this.stack) {
+            if (this.stack.indexOf('\n') >= 0) {
+                this.trace = this.stack.split('\n')
+            } else {
+                this.trace = [this.stack]
+            }
+        }
+    }
 }
 
 export interface AppConfig {
-    baseUrl: string,
+    baseUrl: string
     services: {
         Groups: {
             url: string
