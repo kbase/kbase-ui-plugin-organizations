@@ -508,7 +508,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             return (
                 <div>
                     <div>
-                        <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" /> There are
+                        <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" /> There
+                        {' '}
+                        {org.adminRequests.length > 1 ? 'are' : 'is'}
                         {' '}
                         <span style={{ fontWeight: 'bold' }}>{org.adminRequests.length}</span>
                         {' '}
