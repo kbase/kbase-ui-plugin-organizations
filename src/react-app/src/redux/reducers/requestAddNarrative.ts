@@ -64,12 +64,23 @@ export function sendRequestSuccess(state: types.StoreState, action: actions.Send
 
     const selectedNarrative = newState.requestNarrativeView.value!.selectedNarrative
 
-    newState.requestNarrativeView.value!.narratives = newState.requestNarrativeView.value!.narratives.map((narrative) => {
-        if (narrative.workspaceId === selectedNarrative!.workspaceId) {
-            narrative.inOrganization = true
-        }
-        return narrative
-    })
+    // If the request is by an admin, it will be returned as true, not the request
+    // (the api returns {complete: true})
+    if (action.request === true) {
+        newState.requestNarrativeView.value!.narratives = newState.requestNarrativeView.value!.narratives.map((narrative) => {
+            if (narrative.workspaceId === selectedNarrative!.workspaceId) {
+                narrative.status = types.NarrativeState.ASSOCIATED
+            }
+            return narrative
+        })
+    } else {
+        newState.requestNarrativeView.value!.narratives = newState.requestNarrativeView.value!.narratives.map((narrative) => {
+            if (narrative.workspaceId === selectedNarrative!.workspaceId) {
+                narrative.status = types.NarrativeState.REQUESTED
+            }
+            return narrative
+        })
+    }
 
     return newState
 }

@@ -7,7 +7,8 @@ import {
     LoadSuccess, UpdateNameSuccess, UpdateNameError, UpdateGravatarHashSuccess,
     UpdateGravatarHashError, UpdateIdSuccess, UpdateIdError, UpdateDescriptionSuccess,
     UpdateDescriptionError,
-    LoadError
+    LoadError,
+    UpdateIdPass
 } from '../actions/addOrg'
 
 // ADD ORG
@@ -165,7 +166,10 @@ export function updateNameSuccess(state: StoreState, action: UpdateNameSuccess):
                     ...state.addOrgView.viewModel.newOrganization,
                     name: {
                         value: action.name,
-                        status: FieldState.EDITED_OK,
+                        validationState: ValidationState.VALID,
+                        editState: EditState.EDITED,
+                        validatedAt: new Date(),
+                        // status: FieldState.EDITED_OK,
                         error: {
                             type: UIErrorType.NONE
                         }
@@ -192,7 +196,9 @@ export function updateNameError(state: StoreState, action: UpdateNameError): Sto
                     ...state.addOrgView.viewModel.newOrganization,
                     name: {
                         value: action.name,
-                        status: FieldState.EDITED_ERROR,
+                        validationState: ValidationState.INVALID,
+                        editState: EditState.EDITED,
+                        validatedAt: new Date(),
                         error: action.error
                     }
                 }
@@ -218,7 +224,9 @@ export function updateGravatarHashSuccess(state: StoreState, action: UpdateGrava
                     ...state.addOrgView.viewModel.newOrganization,
                     gravatarHash: {
                         value: action.gravatarHash,
-                        status: FieldState.EDITED_OK,
+                        validationState: ValidationState.VALID,
+                        editState: EditState.EDITED,
+                        validatedAt: new Date(),
                         error: {
                             type: UIErrorType.NONE
                         }
@@ -245,7 +253,9 @@ export function updateGravatarHashError(state: StoreState, action: UpdateGravata
                     ...state.addOrgView.viewModel.newOrganization,
                     gravatarHash: {
                         value: action.gravatarHash,
-                        status: FieldState.EDITED_ERROR,
+                        validationState: ValidationState.INVALID,
+                        editState: EditState.EDITED,
+                        validatedAt: new Date(),
                         error: action.error
                     }
                 }
@@ -272,7 +282,9 @@ export function updateIdSuccess(state: StoreState, action: UpdateIdSuccess): Sto
                     ...state.addOrgView.viewModel.newOrganization,
                     id: {
                         value: action.id,
-                        status: FieldState.EDITED_OK,
+                        validationState: ValidationState.VALID,
+                        editState: EditState.EDITED,
+                        validatedAt: new Date(),
                         error: {
                             type: UIErrorType.NONE
                         }
@@ -299,8 +311,35 @@ export function updateIdError(state: StoreState, action: UpdateIdError): StoreSt
                     ...state.addOrgView.viewModel.newOrganization,
                     id: {
                         value: action.id,
-                        status: FieldState.EDITED_ERROR,
+                        validationState: ValidationState.INVALID,
+                        editState: EditState.EDITED,
+                        validatedAt: new Date(),
                         error: action.error
+                    }
+                }
+            }
+        }
+    }
+}
+
+export function updateIdPass(state: StoreState, action: UpdateIdPass): StoreState {
+    if (!state.addOrgView.viewModel) {
+        console.warn('attempting updateIdSuccess without view model')
+        return state
+    }
+    return {
+        ...state,
+        addOrgView: {
+            ...state.addOrgView,
+            viewModel: {
+                ...state.addOrgView.viewModel,
+                editState: EditState.EDITED,
+                newOrganization: {
+                    ...state.addOrgView.viewModel.newOrganization,
+                    id: {
+                        ...state.addOrgView.viewModel.newOrganization.id,
+                        value: action.id,
+                        editState: EditState.EDITED
                     }
                 }
             }
@@ -324,7 +363,9 @@ export function updateDescriptionSuccess(state: StoreState, action: UpdateDescri
                     ...state.addOrgView.viewModel.newOrganization,
                     description: {
                         value: action.description,
-                        status: FieldState.EDITED_OK,
+                        validationState: ValidationState.VALID,
+                        editState: EditState.EDITED,
+                        validatedAt: new Date(),
                         error: {
                             type: UIErrorType.NONE
                         }
@@ -351,7 +392,9 @@ export function updateDescriptionError(state: StoreState, action: UpdateDescript
                     ...state.addOrgView.viewModel.newOrganization,
                     description: {
                         value: action.description,
-                        status: FieldState.EDITED_ERROR,
+                        validationState: ValidationState.INVALID,
+                        editState: EditState.EDITED,
+                        validatedAt: new Date(),
                         error: action.error
                     }
                 }
@@ -395,6 +438,8 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
             return updateIdSuccess(state, action as UpdateIdSuccess)
         case ActionFlag.ADD_ORG_UPDATE_ID_ERROR:
             return updateIdError(state, action as UpdateIdError)
+        case ActionFlag.ADD_ORG_UPDATE_ID_PASS:
+            return updateIdPass(state, action as UpdateIdPass)
 
         case ActionFlag.ADD_ORG_UPDATE_DESCRIPTION_SUCCESS:
             return updateDescriptionSuccess(state, action as UpdateDescriptionSuccess)

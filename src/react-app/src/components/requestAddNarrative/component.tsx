@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import OrganizationHeader from '../organizationHeader/container';
 import { Redirect } from 'react-router-dom';
-import { Organization, Narrative, UserRelationToOrganization } from '../../types';
+import { Organization, Narrative, UserRelationToOrganization, NarrativeState } from '../../types';
 import Header from '../Header';
 import { Icon, Button, Modal } from 'antd';
 import './component.css'
@@ -52,7 +52,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
     doShowInfo() {
         // this.setState({ showInfo: true })
         Modal.info({
-            title: 'Reqeust to Add Narrative Help',
+            title: 'Request to Add Narrative Help',
             width: '50em',
             content: (
                 <div>
@@ -125,14 +125,25 @@ export class RequestAddNarrative extends React.Component<Props, State> {
 
     renderNarratives() {
         return this.props.narratives.map((narrative, index) => {
-            if (narrative.inOrganization) {
+            if (narrative.status === NarrativeState.ASSOCIATED) {
                 return (
                     <div
                         className="narrative narrativeInOrg"
                         onClick={() => { this.doSelectNarrative.call(this, narrative) }}
                         key={String(index)}>
                         <div className="title">
-                            {narrative.title || 'n/a'}
+                            {narrative.title || 'n/a'} (associated)
+                        </div>
+                    </div>
+                )
+            } else if (narrative.status === NarrativeState.REQUESTED) {
+                return (
+                    <div
+                        className="narrative narrativeInOrg"
+                        onClick={() => { this.doSelectNarrative.call(this, narrative) }}
+                        key={String(index)}>
+                        <div className="title">
+                            {narrative.title || 'n/a'} (request pending)
                         </div>
                     </div>
                 )
@@ -172,10 +183,16 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         if (!this.props.selectedNarrative) {
             return
         }
-        if (this.props.selectedNarrative.inOrganization) {
+        if (this.props.selectedNarrative.status === NarrativeState.ASSOCIATED) {
             return (
                 <i>
                     This Narrative is associated with this Organization
+                </i>
+            )
+        } else if (this.props.selectedNarrative.status === NarrativeState.REQUESTED) {
+            return (
+                <i>
+                    You have requested to associate this Narrative with this Organization
                 </i>
             )
         }
@@ -184,7 +201,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
             this.props.organization.relation.type === UserRelationToOrganization.OWNER) {
             buttonLabel = 'Add Selected Narrative to Organization'
         } else {
-            buttonLabel = 'Request Addition of Selected Narrative to Organization'
+            buttonLabel = 'Request Association of Selected Narrative to Organization'
         }
         return (
             <Button

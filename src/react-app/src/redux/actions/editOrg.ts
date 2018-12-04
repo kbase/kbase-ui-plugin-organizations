@@ -2,7 +2,7 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
-import { StoreState, Organization, AppError, UIError, UIErrorType, FieldState, EditableOrganization } from '../../types'
+import { StoreState, Organization, AppError, UIError, UIErrorType, FieldState, EditableOrganization, ValidationState, EditState } from '../../types'
 import { Model, Validation } from '../../data/model'
 
 // ACTIONS
@@ -173,7 +173,7 @@ export function editOrgEvaluateOk(): EditOrgEvaluateOK {
     }
 }
 
-export function EditOrgEvaluateErrors(): EditOrgEvaluateErrors {
+export function editOrgEvaluateErrors(): EditOrgEvaluateErrors {
     return {
         type: ActionFlag.EDIT_ORG_EVALUATE_ERRORS
     }
@@ -297,7 +297,9 @@ export function editOrgEdit(organizationId: string) {
                 const editableOrg: EditableOrganization = {
                     id: {
                         value: org.id,
-                        status: FieldState.UNEDITED_OK,
+                        validationState: ValidationState.VALID,
+                        editState: EditState.NONE,
+                        validatedAt: null,
                         error: {
                             type: UIErrorType.NONE,
                             message: ''
@@ -305,7 +307,9 @@ export function editOrgEdit(organizationId: string) {
                     },
                     name: {
                         value: org.name,
-                        status: FieldState.UNEDITED_OK,
+                        validationState: ValidationState.VALID,
+                        editState: EditState.NONE,
+                        validatedAt: null,
                         error: {
                             type: UIErrorType.NONE,
                             message: ''
@@ -313,7 +317,9 @@ export function editOrgEdit(organizationId: string) {
                     },
                     gravatarHash: {
                         value: org.gravatarHash,
-                        status: FieldState.UNEDITED_OK,
+                        validationState: ValidationState.VALID,
+                        editState: EditState.NONE,
+                        validatedAt: null,
                         error: {
                             type: UIErrorType.NONE,
                             message: ''
@@ -321,7 +327,9 @@ export function editOrgEdit(organizationId: string) {
                     },
                     description: {
                         value: org.description,
-                        status: FieldState.UNEDITED_OK,
+                        validationState: ValidationState.VALID,
+                        editState: EditState.NONE,
+                        validatedAt: null,
                         error: {
                             type: UIErrorType.NONE,
                             message: ''
@@ -388,16 +396,13 @@ export function editOrgEvaluate() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const { editOrg: { editedOrganization } } = getState()
 
-        const { editOrg: editState } = getState()
-
         if (!editedOrganization) {
-            dispatch(EditOrgEvaluateErrors())
+            dispatch(editOrgEvaluateErrors())
             return
         }
 
-        if (!(editedOrganization.name.status === FieldState.EDITED_OK ||
-            editedOrganization.name.status === FieldState.UNEDITED_OK)) {
-            dispatch(EditOrgEvaluateErrors())
+        if (editedOrganization.name.validationState !== ValidationState.VALID) {
+            dispatch(editOrgEvaluateErrors())
             return
         }
 
@@ -406,15 +411,13 @@ export function editOrgEvaluate() {
         //     return
         // }
 
-        if (!(editedOrganization.gravatarHash.status === FieldState.EDITED_OK ||
-            editedOrganization.gravatarHash.status === FieldState.UNEDITED_OK)) {
-            dispatch(EditOrgEvaluateErrors())
+        if (editedOrganization.gravatarHash.validationState !== ValidationState.VALID) {
+            dispatch(editOrgEvaluateErrors())
             return
         }
 
-        if (!(editedOrganization.description.status === FieldState.EDITED_OK ||
-            editedOrganization.description.status === FieldState.UNEDITED_OK)) {
-            dispatch(EditOrgEvaluateErrors())
+        if (editedOrganization.description.validationState !== ValidationState.VALID) {
+            dispatch(editOrgEvaluateErrors())
             return
         }
 

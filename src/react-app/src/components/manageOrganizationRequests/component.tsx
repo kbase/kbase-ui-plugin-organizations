@@ -12,9 +12,10 @@ export interface ManageGroupRequestsProps {
     // organizationId: string,
     viewState: types.ManageOrganizationRequestsValue
     // onStart: (organizationId: string) => void,
-    onAcceptJoinRequest: (requestId: string) => void,
-    onDenyJoinRequest: (requestId: string) => void,
+    onAcceptJoinRequest: (requestId: string) => void
+    onDenyJoinRequest: (requestId: string) => void
     onCancelJoinInvitation: (requestId: string) => void
+    onGetViewAccess: (requestId: string) => void
 }
 
 export interface ManageGroupRequestsState {
@@ -50,6 +51,9 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
     }
     onCancelJoinInvitation(requestId: string) {
         this.props.onCancelJoinInvitation(requestId)
+    }
+    onGetViewAccess(requestId: string) {
+        this.props.onGetViewAccess(requestId)
     }
     onViewProfile(username: string) {
         window.open('#people/' + username, '_blank')
@@ -316,6 +320,25 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
         )
     }
 
+    renderNarrativePermission(permission: types.UserWorkspacePermission) {
+        switch (permission) {
+            case types.UserWorkspacePermission.NONE:
+                return 'None'
+            case types.UserWorkspacePermission.READ:
+                return 'View Only'
+            // return 'View and Copy'
+            case types.UserWorkspacePermission.WRITE:
+                return 'Edit'
+            // return 'View, Copy, Save, Run'
+            case types.UserWorkspacePermission.ADMIN:
+                return 'Admin'
+            // return 'View, Copy, Save, Run, Manage Sharing'
+            case types.UserWorkspacePermission.OWN:
+                return 'Owner'
+            // return 'View, Copy, Save, Run, Manage Sharing, Own'
+        }
+    }
+
     renderRequestNarrativeRequest(request: types.WorkspaceRequest) {
         const title = (
             <span>
@@ -326,6 +349,7 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                 Request to Add Narrative
             </span>
         )
+
         const actions = [
             <Button
                 type="primary"
@@ -340,6 +364,38 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                 Deny
             </Button>
         ]
+
+        let narrativeAccess
+        if (request.narrative) {
+            // TODO: note the '1' below -- we dont' get the object id form the groups service,
+            // and the narrative will soon accept just the workspace id (and will look up the object id by itself)
+            // but not yet, so we just use 1, which is INCORRECT.
+            narrativeAccess = (
+                <div>
+                    <div>
+                        <a href={"/narrative/ws." + request.narrative.workspaceId + '.obj.' + '1'} target="_blank">{request.narrative.title}</a>
+                    </div>
+                    <div>
+                        <span className="field-label">your access</span>{' '}{this.renderNarrativePermission(request.narrative.permission)}
+                    </div>
+                    <div>
+                        <span className="field-label">public?</span>{' '}{request.narrative.isPublic ? 'yes' : 'no'}
+                    </div>
+
+                </div>
+            )
+        } else {
+            narrativeAccess = (
+                <span>
+                    You don't have access to this narrative
+                    {' '}
+                    <Button
+                        onClick={() => { this.onGetViewAccess.call(this, request.id) }}>
+                        Click for View Access
+                    </Button>
+                </span>
+            )
+        }
 
         return (
             <Card key={request.id}
@@ -357,9 +413,15 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                             </td>
                         </tr>
                         <tr>
+                            <th>workspace</th>
+                            <td className="workspace">
+                                {request.workspace}
+                            </td>
+                        </tr>
+                        <tr>
                             <th>narrative</th>
                             <td className="narrative">
-                                {request.workspace}
+                                {narrativeAccess}
                             </td>
                         </tr>
                         <tr>
@@ -482,11 +544,10 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
     }
 
     renderRequests() {
-        const requests = this.props.viewState.requests
+        const requests = this.props.viewState.organization.adminRequests
             .filter((request) => {
                 return (request.type === types.RequestType.REQUEST)
             })
-
 
         if (requests.length === 0) {
             return (
@@ -504,7 +565,7 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
     }
 
     renderInvitations() {
-        const invitations = this.props.viewState.requests
+        const invitations = this.props.viewState.organization.adminRequests
             .filter((request) => {
                 return (request.type === types.RequestType.INVITATION)
             });
@@ -525,7 +586,6 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
     }
 
     render() {
-
         if (this.state.cancelToBrowser) {
             return <Redirect push to="/organizations" />
         }
@@ -534,12 +594,12 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
             return <Redirect push to={"/viewOrganization/" + this.props.viewState.organization.id} />
         }
 
-        const invitationCount = this.props.viewState.requests
+        const invitationCount = this.props.viewState.organization.adminRequests
             .filter((request) => {
                 return (request.type === types.RequestType.INVITATION)
             }).length;
 
-        const requestCount = this.props.viewState.requests
+        const requestCount = this.props.viewState.organization.adminRequests
             .filter((request) => {
                 return (request.type === types.RequestType.REQUEST)
             }).length;

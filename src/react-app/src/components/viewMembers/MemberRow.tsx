@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import './component.css'
 
-import { Member, Organization, UserRelationToOrganization, MemberType } from '../../types'
+import { Member, Organization, UserRelationToOrganization, MemberType, User } from '../../types'
 import { Button, Icon, Menu, Dropdown } from 'antd';
 import MemberComponent from '../Member';
 
@@ -38,11 +38,12 @@ class MemberRow extends React.Component<MemberRowProps, MemberRowState> {
                     </Button>
                 )
             case MemberType.ADMIN:
-                return (<Button
-                    style={{ width: '100%' }}
-                    disabled={!this.state.over}
-                    onClick={() => { this.props.onDemoteAdminToMember(this.props.member.user.username) }}>
-                    <Icon type="user" />Demote to Member
+                return (
+                    <Button
+                        style={{ width: '100%' }}
+                        disabled={!this.state.over}
+                        onClick={() => { this.props.onDemoteAdminToMember(this.props.member.user.username) }}>
+                        <Icon type="user" />Demote to Member
                 </Button>
                 )
             case MemberType.OWNER:
@@ -77,13 +78,32 @@ class MemberRow extends React.Component<MemberRowProps, MemberRowState> {
         )
     }
 
+    onMemberMenu(key: string, user: User) {
+        switch (key) {
+            case 'promoteToAdmin':
+                this.props.onPromoteMemberToAdmin(user.username)
+                break
+            case 'removeMember':
+                this.props.onRemoveMember(user.username)
+                break
+        }
+    }
+
+    onAdminMenu(key: string, user: User) {
+        switch (key) {
+            case 'demoteToMember':
+                this.props.onDemoteAdminToMember(user.username)
+                break
+        }
+    }
+
     renderMemberMenu(member: Member) {
         const menu = (
-            <Menu>
-                <Menu.Item key="promoteToAdmin" onClick={() => { this.props.onPromoteMemberToAdmin(member.user.username) }} >
+            <Menu onClick={({ key }) => { this.onMemberMenu.call(this, key, member.user) }}>
+                <Menu.Item key="promoteToAdmin" >
                     <Icon type="unlock" />Promote to Admin
                 </Menu.Item>
-                <Menu.Item key="removeMember" type="danger" onClick={() => { this.props.onRemoveMember(member.user.username) }}>
+                <Menu.Item key="removeMember" >
                     <Icon type="delete" />Remove Member
                 </Menu.Item>
             </Menu>
@@ -99,8 +119,8 @@ class MemberRow extends React.Component<MemberRowProps, MemberRowState> {
 
     renderAdminMenu(member: Member) {
         const menu = (
-            <Menu>
-                <Menu.Item key="demoteToMember" onClick={() => { this.props.onDemoteAdminToMember(member.user.username) }}>
+            <Menu onClick={({ key }) => { this.onAdminMenu.call(this, key, member.user) }}>
+                <Menu.Item key="demoteToMember">
                     <Icon type="user" />Demote to Member
                     </Menu.Item>
             </Menu>

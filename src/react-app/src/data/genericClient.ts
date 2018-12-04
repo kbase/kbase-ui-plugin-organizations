@@ -27,7 +27,7 @@ export class GenericClient {
             version: '1.1',
             method: this.module + '.' + method,
             id: String(Math.random()).slice(2),
-            params: [param]
+            params: param
         }
     }
 
@@ -39,8 +39,6 @@ export class GenericClient {
             params: []
         }
     }
-
-
 }
 
 export class AuthorizedGenericClient extends GenericClient {
@@ -54,7 +52,7 @@ export class AuthorizedGenericClient extends GenericClient {
         this.token = params.token
     }
 
-    callFunc(func: string, param: any) {
+    async callFunc(func: string, param: any) {
         return fetch(this.url, {
             method: 'POST',
             mode: 'cors',
@@ -67,10 +65,37 @@ export class AuthorizedGenericClient extends GenericClient {
             body: JSON.stringify(this.makePayload(func, param))
         })
             .then((response) => {
-                if (response.status !== 200) {
-                    throw new Error('Request error: ' + response.status + ', ' + response.statusText)
+                if (response.status === 200) {
+                    return response.json()
+                        .then(({ result, error }) => {
+                            if (result) {
+                                return [result, null]
+                            } else {
+                                return [null, error]
+                            }
+                        })
+                } else if (response.status === 204) {
+                    return [null, null]
                 }
-                return response.json()
+                if (response.status === 500) {
+                    if (response.headers.get('Content-Type') === 'application/json') {
+                        response.json()
+                            .then((result) => {
+                                if (result.error) {
+                                    return [null, result.error]
+                                } else {
+                                    return [null, result]
+                                }
+                            })
+                    } else {
+                        return response.text()
+                            .then((text) => {
+                                return [null, text]
+                            })
+                        // return Promise.all([null, response.text()])
+                    }
+                }
+                throw new Error('Unexpected response: ' + response.status + ', ' + response.statusText)
             })
     }
 }

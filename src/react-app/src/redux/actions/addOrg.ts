@@ -2,7 +2,7 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
-import { StoreState, Organization, AppError, UIError, UIErrorType, FieldState, EditableOrganization } from '../../types'
+import { StoreState, Organization, AppError, UIError, UIErrorType, FieldState, EditableOrganization, EditState, ValidationState } from '../../types'
 import { Model, Validation } from '../../data/model'
 
 // ACTIONS
@@ -117,6 +117,11 @@ export interface UpdateIdError extends Action {
     error: UIError
 }
 
+export interface UpdateIdPass extends Action {
+    type: ActionFlag.ADD_ORG_UPDATE_ID_PASS,
+    id: string
+}
+
 // Updating description field
 
 export interface UpdateDescription extends Action {
@@ -224,6 +229,13 @@ export function updateIdSuccess(id: string): UpdateIdSuccess {
     }
 }
 
+export function updateIdPass(id: string): UpdateIdPass {
+    return {
+        type: ActionFlag.ADD_ORG_UPDATE_ID_PASS,
+        id: id
+    }
+}
+
 // Update Gravatar Hash
 
 export function updateGravatarHashSuccess(gravatarHash: string): UpdateGravatarHashSuccess {
@@ -276,28 +288,36 @@ export function load() {
         const newOrg: EditableOrganization = {
             id: {
                 value: '',
-                status: FieldState.NONE,
+                editState: EditState.NONE,
+                validationState: ValidationState.NONE,
+                validatedAt: null,
                 error: {
                     type: UIErrorType.NONE
                 }
             },
             name: {
                 value: '',
-                status: FieldState.NONE,
+                editState: EditState.NONE,
+                validationState: ValidationState.NONE,
+                validatedAt: null,
                 error: {
                     type: UIErrorType.NONE
                 }
             },
             gravatarHash: {
                 value: '',
-                status: FieldState.NONE,
+                editState: EditState.NONE,
+                validationState: ValidationState.NONE,
+                validatedAt: null,
                 error: {
                     type: UIErrorType.NONE
                 }
             },
             description: {
                 value: '',
-                status: FieldState.NONE,
+                editState: EditState.NONE,
+                validationState: ValidationState.NONE,
+                validatedAt: null,
                 error: {
                     type: UIErrorType.NONE
                 }
@@ -387,22 +407,22 @@ export function addOrgEvaluate() {
             return
         }
 
-        if (newOrganization.name.status !== FieldState.EDITED_OK) {
+        if (newOrganization.name.validationState !== ValidationState.VALID) {
             dispatch(AddOrgEvaluateErrors())
             return
         }
 
-        if (newOrganization.id.status !== FieldState.EDITED_OK) {
+        if (newOrganization.id.validationState !== ValidationState.VALID) {
             dispatch(AddOrgEvaluateErrors())
             return
         }
 
-        if (newOrganization.gravatarHash.status !== FieldState.EDITED_OK) {
+        if (newOrganization.gravatarHash.validationState !== ValidationState.VALID) {
             dispatch(AddOrgEvaluateErrors())
             return
         }
 
-        if (newOrganization.description.status !== FieldState.EDITED_OK) {
+        if (newOrganization.description.validationState !== ValidationState.VALID) {
             dispatch(AddOrgEvaluateErrors())
             return
         }
@@ -449,6 +469,37 @@ export function updateGravatarHash(name: string) {
     }
 }
 
+class Debouncer {
+
+    delay: number
+    fun: () => void
+    canceled: boolean
+    timer: number | null
+
+    constructor(delay: number, fun: () => void) {
+        this.delay = delay
+        this.fun = fun
+        this.canceled = false
+        this.timer = null
+        this.startWaiting()
+    }
+
+    startWaiting() {
+        if (this.timer) {
+            window.clearTimeout(this.timer)
+        }
+        this.timer = window.setTimeout(() => {
+            this.fun()
+        }, this.delay)
+    }
+
+    cancel() {
+        this.canceled = true
+    }
+}
+
+let activeDebouncer: Debouncer | null = null
+
 export function updateId(id: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const [validatedId, error] = Validation.validateOrgId(id)
@@ -457,6 +508,71 @@ export function updateId(id: string) {
             dispatch(addOrgEvaluate())
             return
         }
+
+        const { addOrgView: { viewModel } } = getState()
+        if (!viewModel) {
+            // do nothing
+            return
+        }
+
+        const lastValidatedAt = viewModel.newOrganization.id.validatedAt
+        const now = new Date().getTime()
+        const debounce = 500 // ms
+        if (lastValidatedAt) {
+
+            const elapsed = now - lastValidatedAt.getTime()
+            if (elapsed < debounce) {
+                dispatch(updateIdPass(validatedId))
+                if (!activeDebouncer) {
+                    activeDebouncer = new Debouncer(500, () => {
+                        dispatch(evaluateId())
+                    })
+                }
+                return
+            }
+        }
+
+        if (activeDebouncer) {
+            activeDebouncer.cancel()
+        }
+        activeDebouncer = null
+
+
+        const model = newModelFromState(getState())
+        model.groupExists(validatedId)
+            .then((exists) => {
+                if (exists) {
+                    dispatch(updateIdError(validatedId, {
+                        type: UIErrorType.ERROR,
+                        message: 'This org id is already in use'
+                    }))
+                } else {
+                    dispatch(updateIdSuccess(validatedId))
+                }
+
+                dispatch(addOrgEvaluate())
+            })
+    }
+}
+
+export function evaluateId() {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+
+        const { addOrgView: { viewModel } } = getState()
+        if (!viewModel) {
+            // do nothing
+            return
+        }
+
+        const id = viewModel.newOrganization.id
+
+        const [validatedId, error] = Validation.validateOrgId(id.value)
+        if (error.type === UIErrorType.ERROR) {
+            dispatch(updateIdError(validatedId, error))
+            dispatch(addOrgEvaluate())
+            return
+        }
+
         const model = newModelFromState(getState())
         model.groupExists(validatedId)
             .then((exists) => {

@@ -84,6 +84,27 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
         this.setState({ navigateTo: NavigateTo.VIEW_ORGANIZATION })
     }
 
+    onMenuClick({ key }: { key: string }) {
+        switch (key) {
+            case 'manageMyMembership':
+                this.setState({ navigateTo: NavigateTo.MANAGE_MEMBERSHIP })
+                break
+            case 'viewMembers':
+                this.setState({ navigateTo: NavigateTo.VIEW_MEMBERS })
+                break
+            case 'editOrg':
+                this.setState({ navigateTo: NavigateTo.EDIT_ORGANIZATION })
+                break
+            case 'inviteUser':
+                this.setState({ navigateTo: NavigateTo.INVITE_USER })
+                break
+            case 'manageRequests':
+                this.setState({ navigateTo: NavigateTo.MANAGE_REQUESTS })
+                break
+        }
+    }
+
+
     getOrgAvatarUrl(org: Organization) {
         // const defaultImages = [
         //     'orgs-64.png',
@@ -176,8 +197,8 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                 )
             case (UserRelationToOrganization.MEMBER):
                 const menu = (
-                    <Menu>
-                        <Menu.Item key="manageMyMembership" onClick={this.onNavigateToMembership.bind(this)}>
+                    <Menu onClick={this.onMenuClick.bind(this)}>
+                        <Menu.Item key="manageMyMembership">
                             Manage My Membership
                         </Menu.Item>
                     </Menu>
@@ -209,20 +230,20 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                 )
             case (UserRelationToOrganization.ADMIN):
                 const adminMenu = (
-                    <Menu>
-                        <Menu.Item key="manageMyMembership" onClick={this.onNavigateToMembership.bind(this)}>
+                    <Menu onClick={this.onMenuClick.bind(this)}>
+                        <Menu.Item key="manageMyMembership">
                             Manage My Membership
                         </Menu.Item>
-                        <Menu.Item key="viewMembers" onClick={this.onNavigateToViewMembers.bind(this)}>
+                        <Menu.Item key="viewMembers">
                             Members
                         </Menu.Item>
-                        <Menu.Item key="manageRequests" onClick={this.onNavigateToManageRequests.bind(this)}>
+                        <Menu.Item key="manageRequests">
                             Requests and Invitations
                         </Menu.Item>
-                        <Menu.Item key="editOrg" onClick={this.onNavigateToEditOrganization.bind(this)}>
+                        <Menu.Item key="editOrg" >
                             Edit this Org
                         </Menu.Item>
-                        <Menu.Item key="editOrg" onClick={this.onNavigateToInviteUser.bind(this)}>
+                        <Menu.Item key="inviteUser">
                             Invite User
                         </Menu.Item>
                     </Menu>
@@ -254,17 +275,17 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                 )
             case (UserRelationToOrganization.OWNER):
                 const ownerMenu = (
-                    <Menu>
-                        <Menu.Item key="viewMembers" onClick={this.onNavigateToViewMembers.bind(this)}>
+                    <Menu onClick={this.onMenuClick.bind(this)}>
+                        <Menu.Item key="viewMembers" >
                             Members
                         </Menu.Item>
-                        <Menu.Item key="manageRequests" onClick={this.onNavigateToManageRequests.bind(this)}>
+                        <Menu.Item key="manageRequests">
                             Requests and Invitations
                         </Menu.Item>
-                        <Menu.Item key="editOrg" onClick={this.onNavigateToEditOrganization.bind(this)}>
+                        <Menu.Item key="editOrg">
                             Edit this Org
                         </Menu.Item>
-                        <Menu.Item key="inviteUser" onClick={this.onNavigateToInviteUser.bind(this)}>
+                        <Menu.Item key="inviteUser">
                             Invite User
                         </Menu.Item>
                     </Menu>

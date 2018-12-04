@@ -79,7 +79,7 @@ export class UserProfileClient {
             })
     }
 
-    getUserProfile(username: string): Promise<UserProfile> {
+    async getUserProfile(username: string): Promise<UserProfile> {
 
         if (UserProfileClient.profileCache.has(username)) {
             return Promise.resolve(UserProfileClient.profileCache.get(username)!)

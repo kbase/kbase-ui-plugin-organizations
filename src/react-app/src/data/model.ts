@@ -28,14 +28,20 @@ import {
     WorkspaceInvitation,
     AppInvitation,
     Narrative,
-    UserWorkspacePermission
+    UserWorkspacePermission,
+    ValidationState,
+    EditState,
+    NarrativeResource,
+    NarrativeState
 } from '../types';
 // import { organizations } from './data';
 import * as userProfile from './userProfile'
 import { GroupsClient, Group } from './groups'
 import * as groups from './groups'
 import { NarrativeServiceClient } from './narrativeService';
-import { WorkspaceInfo, ObjectInfo, workspaceInfoToObject, objectInfoToObject } from './workspaceUtils';
+import { WorkspaceInfo, ObjectInfo, workspaceInfoToObject, objectInfoToObject, RawObjectInfo, RawWorkspaceInfo } from './workspaceUtils';
+import { WorkspaceClient } from './workspace';
+import { GenericClient, AuthorizedGenericClient } from './genericClient';
 
 function stringToRequestType(type: string): RequestType {
     switch (type) {
@@ -154,6 +160,21 @@ function groupPermissionToWorkspacePermission(groupsPermission: string) {
     }
 }
 
+function userPermissionToWorkspacePermission(userPermission: string) {
+    switch (userPermission) {
+        case 'r':
+            return UserWorkspacePermission.READ
+        case 'w':
+            return UserWorkspacePermission.WRITE
+        case 'a':
+            return UserWorkspacePermission.ADMIN
+        // case 'Own':
+        //     return UserWorkspacePermission.OWN
+        default:
+            throw new Error('Invalid workspace user permission: ' + userPermission)
+    }
+}
+
 export interface Query {
     searchTerms: Array<string>
     username: string
@@ -238,16 +259,14 @@ export class Model {
         return Promise.all([
             groupsClient.getCreatedRequests({
                 includeClosed: false,
-                sortDirection: groups.SortDirection.DESCENDING,
-                startAt: new Date(0)
+                sortDirection: groups.SortDirection.DESCENDING
             })
                 .then((requests) => {
                     return requests
                 }),
             groupsClient.getTargetedRequests({
                 includeClosed: false,
-                sortDirection: groups.SortDirection.DESCENDING,
-                startAt: new Date(0)
+                sortDirection: groups.SortDirection.DESCENDING
             })
                 .then((requests) => {
                     return requests
@@ -263,7 +282,50 @@ export class Model {
             })
     }
 
-    groupRequestToOrgRequest(request: groups.Request): Promise<UserRequest | UserInvitation | WorkspaceRequest | WorkspaceInvitation | AppRequest | AppInvitation> {
+    async workspaceToNarrative(workspaceId: number): Promise<NarrativeResource | null> {
+        const workspaceClient = new AuthorizedGenericClient({
+            module: 'Workspace',
+            url: this.params.workspaceServiceURL,
+            token: this.params.token
+        })
+        try {
+            const [[[rawObjectInfo], rawObjectInfoError], [[rawWorkspaceInfo], rawWorkspaceInfoError]] = await Promise.all([
+                workspaceClient.callFunc('get_object_info3', [{
+                    objects: [{
+                        wsid: workspaceId,
+                        // TODO: fix this!!
+                        objid: 1
+                    }],
+                    includeMetadata: 1,
+                    ignoreErrors: 0
+                }]),
+                workspaceClient.callFunc('get_workspace_info', [{
+                    id: workspaceId
+                }])
+            ])
+
+            if (rawObjectInfoError || rawWorkspaceInfoError) {
+                console.warn('narrative not accessible', rawObjectInfoError, rawWorkspaceInfoError)
+                return null
+            }
+
+            const workspaceInfo: NarrativeWorkspaceInfo = workspaceInfoToObject(rawWorkspaceInfo) as NarrativeWorkspaceInfo
+
+            return {
+                workspaceId: workspaceInfo.id,
+                title: workspaceInfo.metadata.narrative_nice_name || 'Unknown',
+                permission: userPermissionToWorkspacePermission(workspaceInfo.userPermission),
+                isPublic: false
+            }
+
+        } catch (ex) {
+            // assume it is an inaccessible workspace
+            console.warn('narrative not accessible', ex)
+            return null
+        }
+    }
+
+    async groupRequestToOrgRequest(request: groups.Request): Promise<UserRequest | UserInvitation | WorkspaceRequest | WorkspaceInvitation | AppRequest | AppInvitation> {
         const userProfileClient = new userProfile.UserProfileClient({
             url: this.params.userProfileServiceURL,
             token: this.params.token
@@ -279,44 +341,76 @@ export class Model {
             case 'user':
         }
 
-        return userProfileClient.getUserProfiles(usernames)
-            .then((profiles) => {
+        let profiles = await userProfileClient.getUserProfiles(usernames)
 
-                const requestType = stringToRequestType(request.type);
-                const resourceType = stringToResourceType(request.resourcetype)
-                const requestStatus = stringToRequestStatus(request.status)
+        const requestType = stringToRequestType(request.type);
+        const resourceType = stringToResourceType(request.resourcetype)
+        const requestStatus = stringToRequestStatus(request.status)
 
-                switch (resourceType) {
-                    case RequestResourceType.USER:
-                        if (requestType === RequestType.REQUEST) {
-                            return {
-                                id: request.id,
-                                groupId: request.groupid,
-                                resourceType: resourceType,
-                                requester: this.profileToUser(profiles[0]),
-                                type: requestType,
-                                status: requestStatus,
-                                user: this.profileToUser(profiles[1]),
-                                createdAt: new Date(request.createdate),
-                                expireAt: new Date(request.expiredate),
-                                modifiedAt: new Date(request.moddate)
-                            } as UserRequest
-                        } else {
-                            return {
-                                id: request.id,
-                                groupId: request.groupid,
-                                resourceType: resourceType,
-                                requester: this.profileToUser(profiles[0]),
-                                type: requestType,
-                                status: requestStatus,
-                                user: this.profileToUser(profiles[1]),
-                                createdAt: new Date(request.createdate),
-                                expireAt: new Date(request.expiredate),
-                                modifiedAt: new Date(request.moddate)
-                            } as UserInvitation
-                        }
+        switch (resourceType) {
+            case RequestResourceType.USER:
+                if (requestType === RequestType.REQUEST) {
+                    return {
+                        id: request.id,
+                        groupId: request.groupid,
+                        resourceType: resourceType,
+                        requester: this.profileToUser(profiles[0]),
+                        type: requestType,
+                        status: requestStatus,
+                        user: this.profileToUser(profiles[1]),
+                        createdAt: new Date(request.createdate),
+                        expireAt: new Date(request.expiredate),
+                        modifiedAt: new Date(request.moddate)
+                    } as UserRequest
+                } else {
+                    return {
+                        id: request.id,
+                        groupId: request.groupid,
+                        resourceType: resourceType,
+                        requester: this.profileToUser(profiles[0]),
+                        type: requestType,
+                        status: requestStatus,
+                        user: this.profileToUser(profiles[1]),
+                        createdAt: new Date(request.createdate),
+                        expireAt: new Date(request.expiredate),
+                        modifiedAt: new Date(request.moddate)
+                    } as UserInvitation
+                }
 
-                    case RequestResourceType.WORKSPACE:
+            // case RequestResourceType.WORKSPACE:
+            //     if (requestType === RequestType.REQUEST) {
+            //         return {
+            //             id: request.id,
+            //             groupId: request.groupid,
+            //             resourceType: resourceType,
+            //             requester: this.profileToUser(profiles[0]),
+            //             type: requestType,
+            //             status: requestStatus,
+            //             workspace: request.resource,
+            //             narrative: null,
+            //             createdAt: new Date(request.createdate),
+            //             expireAt: new Date(request.expiredate),
+            //             modifiedAt: new Date(request.moddate)
+            //         } as WorkspaceRequest
+            //     } else {
+            //         return {
+            //             id: request.id,
+            //             groupId: request.groupid,
+            //             resourceType: resourceType,
+            //             requester: this.profileToUser(profiles[0]),
+            //             type: requestType,
+            //             status: requestStatus,
+            //             workspace: request.resource,
+            //             narrative: null,
+            //             createdAt: new Date(request.createdate),
+            //             expireAt: new Date(request.expiredate),
+            //             modifiedAt: new Date(request.moddate)
+            //         } as WorkspaceInvitation
+            //     }
+
+            case RequestResourceType.WORKSPACE:
+                return this.workspaceToNarrative(parseInt(request.resource, 10))
+                    .then((narrative) => {
                         if (requestType === RequestType.REQUEST) {
                             return {
                                 id: request.id,
@@ -326,6 +420,7 @@ export class Model {
                                 type: requestType,
                                 status: requestStatus,
                                 workspace: request.resource,
+                                narrative: narrative,
                                 createdAt: new Date(request.createdate),
                                 expireAt: new Date(request.expiredate),
                                 modifiedAt: new Date(request.moddate)
@@ -339,45 +434,45 @@ export class Model {
                                 type: requestType,
                                 status: requestStatus,
                                 workspace: request.resource,
+                                narrative: narrative,
                                 createdAt: new Date(request.createdate),
                                 expireAt: new Date(request.expiredate),
                                 modifiedAt: new Date(request.moddate)
                             } as WorkspaceInvitation
                         }
-                    case RequestResourceType.APP:
-                        if (requestType === RequestType.REQUEST) {
-                            return {
-                                id: request.id,
-                                groupId: request.groupid,
-                                resourceType: resourceType,
-                                requester: this.profileToUser(profiles[0]),
-                                type: requestType,
-                                status: requestStatus,
-                                app: request.resource,
-                                createdAt: new Date(request.createdate),
-                                expireAt: new Date(request.expiredate),
-                                modifiedAt: new Date(request.moddate)
-                            } as AppRequest
-                        } else {
-                            return {
-                                id: request.id,
-                                groupId: request.groupid,
-                                resourceType: resourceType,
-                                requester: this.profileToUser(profiles[0]),
-                                type: requestType,
-                                status: requestStatus,
-                                app: request.resource,
-                                createdAt: new Date(request.createdate),
-                                expireAt: new Date(request.expiredate),
-                                modifiedAt: new Date(request.moddate)
-                            } as AppInvitation
-                        }
-                    default:
-                        throw new Error('resource type not handled yet: ' + request.resourcetype)
+                    })
+
+            case RequestResourceType.APP:
+                if (requestType === RequestType.REQUEST) {
+                    return {
+                        id: request.id,
+                        groupId: request.groupid,
+                        resourceType: resourceType,
+                        requester: this.profileToUser(profiles[0]),
+                        type: requestType,
+                        status: requestStatus,
+                        app: request.resource,
+                        createdAt: new Date(request.createdate),
+                        expireAt: new Date(request.expiredate),
+                        modifiedAt: new Date(request.moddate)
+                    } as AppRequest
+                } else {
+                    return {
+                        id: request.id,
+                        groupId: request.groupid,
+                        resourceType: resourceType,
+                        requester: this.profileToUser(profiles[0]),
+                        type: requestType,
+                        status: requestStatus,
+                        app: request.resource,
+                        createdAt: new Date(request.createdate),
+                        expireAt: new Date(request.expiredate),
+                        modifiedAt: new Date(request.moddate)
+                    } as AppInvitation
                 }
-
-
-            })
+            default:
+                throw new Error('resource type not handled yet: ' + request.resourcetype)
+        }
     }
 
 
@@ -390,13 +485,11 @@ export class Model {
         return Promise.all([
             groupsClient.getGroupRequests(groupId, {
                 includeClosed: false,
-                sortDirection: groups.SortDirection.DESCENDING,
-                startAt: new Date(0)
+                sortDirection: groups.SortDirection.DESCENDING
             }),
             groupsClient.getCreatedRequests({
                 includeClosed: false,
-                sortDirection: groups.SortDirection.DESCENDING,
-                startAt: new Date(0)
+                sortDirection: groups.SortDirection.DESCENDING
             })
         ])
 
@@ -406,7 +499,6 @@ export class Model {
             //     startAt: new Date(0)
             // })
             .then(([groupRequests, adminRequests]) => {
-
                 const groupAdminRequests = adminRequests.filter((request) => {
                     return (request.groupid === groupId)
                 })
@@ -414,6 +506,21 @@ export class Model {
                 return Promise.all(groupRequests.concat(groupAdminRequests).map((request) => {
                     return this.groupRequestToOrgRequest(request)
                 }))
+            })
+    }
+
+    grantViewAccess(requestId: string): Promise<GroupRequest> {
+        const groupsClient = new GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        return groupsClient.grantReadAccessToRequestedResource({ requestId })
+            .then(() => {
+                return groupsClient.getRequest(requestId)
+            })
+            .then((request) => {
+                return this.groupRequestToOrgRequest(request)
             })
     }
 
@@ -1177,12 +1284,14 @@ export class Model {
 
         return Promise.all([
             narrativeServiceClient.listNarratives('mine'),
-            this.getOrg(organizationId)
+            this.getOrg(organizationId),
+            this.getPendingRequests()
         ])
-            .then(([narrativesResult, organization]) => {
+            .then(([narrativesResult, organization, { requests, invitations }]) => {
                 const workspacesInOrg = organization.narratives.map((narrative) => {
                     return narrative.workspaceId
                 })
+
                 return narrativesResult.narratives
                     .map((nar) => {
                         return {
@@ -1194,11 +1303,25 @@ export class Model {
                         return (nar.workspaceInfo.metadata.is_temporary === 'false')
                     })
                     .map((narrative) => {
+                        let status: NarrativeState
+                        if (workspacesInOrg.indexOf(narrative.workspaceInfo.id) !== -1) {
+                            status = NarrativeState.ASSOCIATED
+                        } else if (requests.find((request) => {
+                            // TODO: these requests should have already been converted to 
+                            // model-friendly requests (typed!)
+                            return (request.resourcetype === 'workspace' &&
+                                request.resource === String(narrative.workspaceInfo.id))
+                        })) {
+                            status = NarrativeState.REQUESTED
+                        } else {
+                            status = NarrativeState.NONE
+                        }
                         return {
                             workspaceId: narrative.workspaceInfo.id,
                             objectId: narrative.objectInfo.id,
                             title: narrative.workspaceInfo.metadata.narrative_nice_name,
-                            inOrganization: (workspacesInOrg.indexOf(narrative.workspaceInfo.id) !== -1),
+                            // inOrganization: ,
+                            status: status,
                             modifiedAt: narrative.workspaceInfo.modifiedAt
                         }
                     })
@@ -1334,28 +1457,36 @@ export class StaticData {
         return {
             id: {
                 value: '',
-                status: FieldState.NONE,
+                validationState: ValidationState.NONE,
+                editState: EditState.NONE,
+                validatedAt: null,
                 error: {
                     type: UIErrorType.NONE
                 }
             },
             name: {
                 value: '',
-                status: FieldState.NONE,
+                validationState: ValidationState.NONE,
+                editState: EditState.NONE,
+                validatedAt: null,
                 error: {
                     type: UIErrorType.NONE
                 }
             },
             gravatarHash: {
                 value: '',
-                status: FieldState.NONE,
+                validationState: ValidationState.NONE,
+                editState: EditState.NONE,
+                validatedAt: null,
                 error: {
                     type: UIErrorType.NONE
                 }
             },
             description: {
                 value: '',
-                status: FieldState.NONE,
+                validationState: ValidationState.NONE,
+                editState: EditState.NONE,
+                validatedAt: null,
                 error: {
                     type: UIErrorType.NONE
                 }

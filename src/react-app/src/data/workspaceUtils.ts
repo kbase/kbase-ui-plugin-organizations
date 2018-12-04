@@ -74,7 +74,6 @@ function iso8601ToDate(dateString: string) {
 }
 
 export function workspaceInfoToObject(wsInfo: RawWorkspaceInfo): WorkspaceInfo {
-
     return {
         id: wsInfo[0],
         name: wsInfo[1],

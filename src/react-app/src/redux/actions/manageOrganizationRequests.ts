@@ -162,6 +162,81 @@ export function cancelJoinInvitationError(error: AppError): CancelJoinInvitation
     }
 }
 
+// Admin obtains view access
+export interface GetViewAccess extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_GET_VIEW_ACCESS
+    requestId: string
+}
+
+export interface GetViewAccessStart extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_GET_VIEW_ACCESS_START
+}
+
+export interface GetViewAccessSuccess extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_GET_VIEW_ACCESS_SUCCESS,
+    request: GroupRequest
+}
+
+export interface GetViewAccessError extends Action {
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_GET_VIEW_ACCESS_ERROR,
+    error: AppError
+}
+
+
+
+export function getViewAccessStart(): GetViewAccessStart {
+    return {
+        type: ActionFlag.ADMIN_MANAGE_REQUESTS_GET_VIEW_ACCESS_START
+    }
+}
+
+export function getViewAccessSuccess(request: GroupRequest): GetViewAccessSuccess {
+    return {
+        type: ActionFlag.ADMIN_MANAGE_REQUESTS_GET_VIEW_ACCESS_SUCCESS,
+        request: request
+    }
+}
+
+export function getViewAccessError(error: AppError): GetViewAccessError {
+    return {
+        type: ActionFlag.ADMIN_MANAGE_REQUESTS_GET_VIEW_ACCESS_ERROR,
+        error: error
+    }
+}
+
+export function getViewAccess(requestId: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(getViewAccessStart())
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config }
+        } = getState()
+
+        const model = new Model({
+            token, username,
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url,
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
+        })
+
+        // get requests 
+        Promise.all([
+            model.grantViewAccess(requestId),
+        ])
+            .then(([request]) => {
+                dispatch(getViewAccessSuccess(request))
+            })
+            .catch((err) => {
+                dispatch(getViewAccessError({
+                    code: err.name,
+                    message: err.message
+                }))
+            })
+    }
+}
+
 // Action generators
 
 

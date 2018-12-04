@@ -62,29 +62,27 @@ export class NarrativeServiceClient extends DynamicServiceClient {
     }
 
 
-    listNarratives(type: string): Promise<ListNarrativesResponseResult> {
-
+    async listNarratives(type: string): Promise<ListNarrativesResponseResult> {
         // note usage of unknown below -- Bluebird and native Promise!
-
-        return Promise.resolve(<unknown>this.callFunc('list_narratives', {
+        const [result, error] = await this.callFunc('list_narratives', [{
             type: type
-        }) as Promise<ServiceResponse<ListNarrativesResponseResult>>)
-            .then(({ id, version, result, error }) => {
-                // should check id and version, or should call func do that?
-                if (result && result[0]) {
-                    return result[0]
-                    // return result[0].narratives.map((nar) => {
-                    //     return {
-                    //         workspaceInfo: workspaceInfoToObject(nar.ws),
-                    //         objectInfo: objectInfoToObject(nar.nar)
-                    //     }
-                    // })
-                } else {
-                    // TODO: handle error
-                    console.error('Result is missing', id, version, result, error)
-                    throw new Error('Result is missing!')
-                }
-            })
+        }])
+        // as Promise<ServiceResponse<ListNarrativesResponseResult>>
+
+        // should check id and version, or should call func do that?
+        if (result && result[0]) {
+            return result[0]
+            // return result[0].narratives.map((nar) => {
+            //     return {
+            //         workspaceInfo: workspaceInfoToObject(nar.ws),
+            //         objectInfo: objectInfoToObject(nar.nar)
+            //     }
+            // })
+        } else {
+            // TODO: handle error
+            // console.error('Result is missing', id, version, result, error)
+            throw new Error('Result is missing!')
+        }
     }
 
 }

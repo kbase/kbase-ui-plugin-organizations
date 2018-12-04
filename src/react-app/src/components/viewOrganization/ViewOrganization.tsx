@@ -92,8 +92,21 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         this.setState({ navigateTo: NavigateTo.REQUEST_ADD_NARRATIVE })
     }
 
+    onGetViewAccess(narrative: NarrativeResource) {
+        // this.props.onGetViewAccess(narrative)
+        console.log('so you want view access?')
+    }
+
     onRemoveNarrative(narrative: NarrativeResource) {
         this.props.onRemoveNarrative(narrative)
+    }
+
+    onNarrativeMenu(key: string, narrative: NarrativeResource) {
+        switch (key) {
+            case 'removeNarrative':
+                this.props.onRemoveNarrative(narrative)
+                break
+        }
     }
 
     onShowInfo() {
@@ -709,8 +722,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                             </span>
                     )
                     shareButton = (
-                        <Button size="small" onClick={() => { this.onRequestShare.call(this, narrative) }}>
-                            Request Access
+                        <Button size="small" onClick={() => { this.onGetViewAccess.call(this, narrative) }}>
+                            Request View Access
                         </Button>
                     )
                 } else {
@@ -721,8 +734,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         </span>
                     )
                     shareButton = (
-                        <Button size="small" onClick={() => { this.onRequestShare.call(this, narrative) }}>
-                            Request Access
+                        <Button size="small" onClick={() => { this.onGetViewAccess.call(this, narrative) }}>
+                            Request View Access
                         </Button>
                     )
                 }
@@ -858,11 +871,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             case (UserRelationToOrganization.ADMIN):
             case (UserRelationToOrganization.OWNER):
                 menu = (
-                    <Menu>
-                        <Menu.Item
-                            type="danger"
-                            onClick={() => { this.onRemoveNarrative.call(this, narrative) }}
-                            key="removeNarrative">
+                    <Menu onClick={({ key }) => { this.onNarrativeMenu(key, narrative) }}>
+                        <Menu.Item key="removeNarrative">
                             <Icon type="delete" /> Remove Narrative from Organization
                         </Menu.Item>
                     </Menu>

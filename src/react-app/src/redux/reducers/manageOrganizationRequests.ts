@@ -50,6 +50,36 @@ export function unload(state: types.StoreState, action: actions.Unload): types.S
     }
 }
 
+export function getViewAccessSuccess(state: types.StoreState, action: actions.GetViewAccessSuccess) {
+    // we just update the specific request.
+    if (!state.manageOrganizationRequestsView.viewState) {
+        return state
+    }
+    const requests = state.manageOrganizationRequestsView.viewState.organization.adminRequests
+    const newRequests = requests.map((request) => {
+        if (request.id = action.request.id) {
+            return action.request
+        }
+        return request
+    })
+
+    const newState = {
+        ...state,
+        manageOrganizationRequestsView: {
+            ...state.manageOrganizationRequestsView,
+            viewState: {
+                ...state.manageOrganizationRequestsView.viewState,
+                organization: {
+                    ...state.manageOrganizationRequestsView.viewState.organization,
+                    adminRequests: newRequests
+                }
+            }
+        }
+    }
+
+    return newState
+}
+
 
 function reducer(state: types.StoreState, action: Action): types.StoreState | null {
     switch (action.type) {
@@ -61,6 +91,8 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
             return loadError(state, action as actions.LoadError)
         case ActionFlag.ADMIN_MANAGE_REQUESTS_UNLOAD:
             return unload(state, action as actions.Unload)
+        case ActionFlag.ADMIN_MANAGE_REQUESTS_GET_VIEW_ACCESS_SUCCESS:
+            return getViewAccessSuccess(state, action as actions.GetViewAccessSuccess)
         default:
             return null
     }

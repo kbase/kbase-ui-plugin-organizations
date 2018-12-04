@@ -345,6 +345,69 @@ export class GroupsClient {
             })
     }
 
+    async post<T>(path: Array<string>, body: any): Promise<T | null> {
+        const url = ([this.url].concat(path)).join('/')
+        const response = await fetch(url, {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            method: 'POST',
+            body: body ? JSON.stringify(body) : ''
+        })
+
+        if (response.status === 500) {
+            switch (response.headers.get('Content-Type')) {
+                case 'application/json':
+                    const result = await response.json()
+                    throw new GroupException(result)
+                case 'text/plain':
+                    const errorText = await response.text()
+                    throw new ServerException(errorText)
+                default:
+                    throw new Error('Unexpected content type: ' + response.headers.get('Content-Type'))
+            }
+        } else if (response.status === 200) {
+            return await response.json() as T
+        } else if (response.status === 204) {
+            return null
+        } else {
+            throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+        }
+    }
+
+    async get<T>(path: Array<string>): Promise<T> {
+        const url = ([this.url].concat(path)).join('/')
+        const response = await fetch(url, {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            method: 'GET'
+        })
+
+        if (response.status === 500) {
+            switch (response.headers.get('Content-Type')) {
+                case 'application/json':
+                    const result = await response.json()
+                    throw new GroupException(result)
+                case 'text/plain':
+                    const errorText = await response.text()
+                    throw new ServerException(errorText)
+                default:
+                    throw new Error('Unexpected content type: ' + response.headers.get('Content-Type'))
+            }
+        } else if (response.status === 200) {
+            return await response.json() as T
+        } else {
+            throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+        }
+    }
+
     createGroup(newGroup: NewGroup): Promise<Group> {
         return this.put<Group>(['group', newGroup.id], {
             name: newGroup.name,
@@ -383,6 +446,11 @@ export class GroupsClient {
             })
     }
 
+    async getRequest(requestId: string): Promise<Request> {
+        const path = ['request', 'id', requestId]
+        return await this.get<Request>(path)
+    }
+
     getGroupRequests(groupId: string, params: GetRequestsParams): Promise<Array<Request>> {
         const query = new URLSearchParams()
         if (params.includeClosed) {
@@ -399,7 +467,7 @@ export class GroupsClient {
             query.append('excludeupto', String(params.startAt.getTime()))
         }
 
-        return fetch(this.url + '/group/' + groupId + '/requests?' + params.toString(), {
+        return fetch(this.url + '/group/' + groupId + '/requests?' + query.toString(), {
             headers: {
                 Authorization: this.token,
                 Accept: 'application/json',
@@ -431,7 +499,7 @@ export class GroupsClient {
         if (params.startAt) {
             query.append('excludeupto', String(params.startAt.getTime()))
         }
-        return fetch(this.url + '/request/targeted?' + params.toString(), {
+        return fetch(this.url + '/request/targeted?' + query.toString(), {
             headers: {
                 Authorization: this.token,
                 Accept: 'application/json',
@@ -462,7 +530,7 @@ export class GroupsClient {
         if (params.startAt) {
             query.append('excludeupto', String(params.startAt.getTime()))
         }
-        return fetch(this.url + '/request/created?' + params.toString(), {
+        return fetch(this.url + '/request/created?' + query.toString(), {
             headers: {
                 Authorization: this.token,
                 Accept: 'application/json',
@@ -534,6 +602,8 @@ export class GroupsClient {
             })
     }
 
+
+
     deleteResource(groupId: string, resourceType: string, resourceId: string): Promise<void> {
         const url = [
             this.url,
@@ -600,6 +670,12 @@ export class GroupsClient {
                 return result as Request
             })
     }
+
+    grantReadAccessToRequestedResource({ requestId }: { requestId: string }): Promise<null> {
+        const path = ['request', 'id', requestId, 'getperm']
+        return this.post<null>(path, null)
+    }
+
 
     denyRequest({ requestId }: { requestId: string }): Promise<Request> {
         return fetch(this.url + '/request/id/' + requestId + '/deny', {

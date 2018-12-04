@@ -29,23 +29,31 @@ export interface UIError {
 
 export interface EditableOrganization {
     id: {
-        value: string,
-        status: FieldState,
+        value: string
+        editState: EditState
+        validationState: ValidationState
+        validatedAt: Date | null
         error: UIError
     }
     name: {
-        value: string,
-        status: FieldState,
+        value: string
+        editState: EditState
+        validationState: ValidationState
+        validatedAt: Date | null
         error: UIError
     }
     gravatarHash: {
         value: string | null
-        status: FieldState
+        editState: EditState
+        validationState: ValidationState
+        validatedAt: Date | null
         error: UIError
     }
     description: {
-        value: string,
-        status: FieldState,
+        value: string
+        editState: EditState
+        validationState: ValidationState
+        validatedAt: Date | null
         error: UIError
     }
 }
@@ -199,7 +207,8 @@ export interface UserInvitation extends GroupRequest {
 export interface WorkspaceRequest extends GroupRequest {
     resourceType: RequestResourceType.WORKSPACE
     type: RequestType.REQUEST
-    workspace: string
+    workspace: string,
+    narrative: NarrativeResource | null
 }
 
 export interface WorkspaceInvitation extends GroupRequest {
@@ -350,7 +359,8 @@ export enum SaveState {
 export enum ValidationState {
     NONE = 'NONE',
     VALID = 'VALID',
-    INVALID = 'INVALID'
+    INVALID = 'INVALID',
+    DIRTY = 'DIRTY'
 }
 
 export enum FieldState {
@@ -489,11 +499,18 @@ export interface ManageMembershipView {
     // viewState: AppError | ManageMembershipValue | null
 }
 
+export enum NarrativeState {
+    NONE = 0,
+    ASSOCIATED,
+    REQUESTED
+}
+
 export interface Narrative {
     workspaceId: number,
     objectId: number,
     title: string,
-    inOrganization: boolean,
+    status: NarrativeState,
+    // inOrganization: boolean,
     // createdAt: Date,
     modifiedAt: Date
 }

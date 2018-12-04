@@ -29,28 +29,36 @@ export function editOrgEditStart(state: StoreState, action: EditOrgEditStart) {
             editedOrganization: {
                 id: {
                     value: '',
-                    status: FieldState.NONE,
+                    validationState: ValidationState.NONE,
+                    editState: EditState.NONE,
+                    validatedAt: null,
                     error: {
                         type: UIErrorType.NONE
                     }
                 },
                 name: {
                     value: '',
-                    status: FieldState.NONE,
+                    validationState: ValidationState.NONE,
+                    editState: EditState.NONE,
+                    validatedAt: null,
                     error: {
                         type: UIErrorType.NONE
                     }
                 },
                 gravatarHash: {
                     value: '',
-                    status: FieldState.NONE,
+                    validationState: ValidationState.NONE,
+                    editState: EditState.NONE,
+                    validatedAt: null,
                     error: {
                         type: UIErrorType.NONE
                     }
                 },
                 description: {
                     value: '',
-                    status: FieldState.NONE,
+                    validationState: ValidationState.NONE,
+                    editState: EditState.NONE,
+                    validatedAt: null,
                     error: {
                         type: UIErrorType.NONE
                     }
@@ -139,7 +147,9 @@ export function editOrgUpdateNameSuccess(state: StoreState, action: EditOrgUpdat
                 ...state.editOrg.editedOrganization,
                 name: {
                     value: action.name,
-                    status: FieldState.EDITED_OK,
+                    validationState: ValidationState.VALID,
+                    editState: EditState.EDITED,
+                    validatedAt: new Date(),
                     error: {
                         type: UIErrorType.NONE
                     }
@@ -158,7 +168,9 @@ export function editOrgUpdateNameError(state: StoreState, action: EditOrgUpdateN
                 ...state.editOrg.editedOrganization,
                 name: {
                     value: action.name,
-                    status: FieldState.EDITED_ERROR,
+                    validationState: ValidationState.INVALID,
+                    editState: EditState.EDITED,
+                    validatedAt: new Date(),
                     error: action.error
                 }
             }
@@ -176,7 +188,9 @@ export function editOrgUpdateGravatarHashSuccess(state: StoreState, action: Edit
                 ...state.editOrg.editedOrganization,
                 gravatarHash: {
                     value: action.gravatarHash,
-                    status: FieldState.EDITED_OK,
+                    validationState: ValidationState.VALID,
+                    editState: EditState.EDITED,
+                    validatedAt: new Date(),
                     error: {
                         type: UIErrorType.NONE
                     }
@@ -195,7 +209,9 @@ export function editOrgUpdateGravatarHashError(state: StoreState, action: EditOr
                 ...state.editOrg.editedOrganization,
                 gravatarHash: {
                     value: action.gravatarHash,
-                    status: FieldState.EDITED_ERROR,
+                    validationState: ValidationState.INVALID,
+                    editState: EditState.EDITED,
+                    validatedAt: new Date(),
                     error: action.error
                 }
             }
@@ -250,7 +266,9 @@ export function editOrgUpdateDescriptionSuccess(state: StoreState, action: EditO
                 ...state.editOrg.editedOrganization,
                 description: {
                     value: action.description,
-                    status: FieldState.EDITED_OK,
+                    validationState: ValidationState.VALID,
+                    editState: EditState.EDITED,
+                    validatedAt: new Date(),
                     error: {
                         type: UIErrorType.NONE
                     }
@@ -269,7 +287,9 @@ export function editOrgUpdateDescriptionError(state: StoreState, action: EditOrg
                 ...state.editOrg.editedOrganization,
                 description: {
                     value: action.description,
-                    status: FieldState.EDITED_ERROR,
+                    validationState: ValidationState.INVALID,
+                    editState: EditState.EDITED,
+                    validatedAt: new Date(),
                     error: action.error
                 }
             }

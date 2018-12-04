@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Redirect } from 'react-router-dom';
 import marked from 'marked';
-import { Button, Icon, Modal } from 'antd';
+import { Button, Icon, Modal, Input, InputNumber } from 'antd';
 import md5 from 'md5'
 
 import { EditableOrganization, SaveState, ValidationState, EditState, AppError } from '../../types';
@@ -35,6 +35,8 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
     origin: string;
     gravatarEmail: React.RefObject<HTMLInputElement>
 
+    // idDebounceTime: number | null
+
     constructor(props: NewOrganizationProps) {
         super(props)
 
@@ -46,6 +48,8 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         this.gravatarEmail = React.createRef()
 
         this.origin = document.location!.origin
+
+        // this.idDebounceTime = null
     }
 
     onShowInfo() {
@@ -200,7 +204,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="row">
                     <div className="col1 field-label">name</div>
                     <div className="col2">
-                        <input value={this.props.newOrganization.name.value || ''}
+                        <Input value={this.props.newOrganization.name.value || ''}
                             onChange={this.onNameChange.bind(this)} />
                         {this.props.newOrganization.name.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.name.error.message}</span>) : ''}
                     </div>
@@ -210,7 +214,9 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     <div className="col2">
                         <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '4px' }}>
                             <div style={{ flex: '1 1 0px' }}>
-                                <input ref={this.gravatarEmail} placeholder="Provide your gravatar-linked email address, if any" />
+                                <input
+                                    ref={this.gravatarEmail}
+                                    placeholder="Provide your gravatar-linked email address, if any" />
                             </div>
                             <div style={{ flex: '0 0 auto' }}>
                                 <Button
@@ -219,7 +225,8 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                                     onClick={this.onGravatarEmailSync.bind(this)} />
                             </div>
                         </div>
-                        <input value={this.props.newOrganization.gravatarHash.value || ''}
+                        <Input
+                            value={this.props.newOrganization.gravatarHash.value || ''}
                             onChange={this.onGravatarHashChange.bind(this)} />
                         {this.props.newOrganization.gravatarHash.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.gravatarHash.error.message}</span>) : ''}
                     </div>
@@ -227,7 +234,8 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="row">
                     <div className="col1 field-label">id</div>
                     <div className="col2">
-                        <input value={this.props.newOrganization.id.value || ''}
+                        <Input
+                            value={this.props.newOrganization.id.value || ''}
                             onChange={this.onIdChange.bind(this)} />
                         {this.props.newOrganization.id.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.id.error.message}</span>) : ''}
                     </div>
