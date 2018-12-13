@@ -17,17 +17,18 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSpinner, faSearch, faGlobe, faUserLock } from '@fortawesome/free-solid-svg-icons'
 library.add(faSpinner, faSearch, faGlobe, faUserLock)
 
-import OrganizationsBrowser from './components/browseOrgs/OrganizationsBrowserContainer'
-import NewOrganization from './components/newOrganization/loader'
-import ViewOrganization from './components/viewOrganization/ViewOrganizationContainer'
-import EditOrganization from './components/editOrganization/container'
+import OrganizationsBrowser from './components/views/browseOrgs/loader'
+import NewOrganization from './components/views/newOrganization/loader'
+import ViewOrganization from './components/views/viewOrganization/loader'
+import EditOrganization from './components/views/editOrganization/loader'
 import Auth from './containers/Auth'
 import KBaseIntegration from './containers/KBaseIntegration'
-import ManageOrganizationRequests from './components/manageOrganizationRequests/loader'
-import ViewMembers from './components/viewMembers/loader'
-import InviteUser from './components/inviteUser/InviteUserLoader'
-import ManageMembership from './components/manageMembership/loader'
-import RequestAddNarrative from './components/requestAddNarrative/loader'
+import ManageOrganizationRequests from './components/views/manageOrganizationRequests/loader'
+import ViewMembers from './components/views/viewMembers/loader'
+import InviteUser from './components/views/inviteUser/loader'
+import ManageMembership from './components/views/manageMembership/loader'
+import RequestAddNarrative from './components/views/requestAddNarrative/loader'
+import DashboardView from './components/views/dashboard/loader'
 import { StateInstances } from './redux/state';
 
 // Put the redux store together
@@ -62,18 +63,19 @@ class App extends Component {
               <div className="App scrollable-flex-column">
                 <div className="App-body scrollable-flex-column">
                   <Switch>
+                    <Route path="/" exact={true} component={DashboardView} />
                     <Route path="/organizations" component={OrganizationsBrowser} />
                     <Route path="/newOrganization" component={NewOrganization} />
                     {/* The destructuring below is ugly, but effective */}
-                    <Route path="/viewOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewOrganization id={id} />} />
-                    <Route path="/editOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <EditOrganization id={id} />} />
+                    <Route path="/viewOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewOrganization organizationId={id} />} />
+                    <Route path="/editOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <EditOrganization organizationId={id} />} />
                     <Route path="/manageOrganizationRequests/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ManageOrganizationRequests organizationId={id} />} />
                     <Route path="/viewMembers/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewMembers organizationId={id} />} />
                     <Route path="/inviteUser/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<InviteUser organizationId={id} />)} />
                     <Route path="/membership/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<ManageMembership organizationId={id} />)} />
                     <Route path="/requestAddNarrative/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<RequestAddNarrative organizationId={id} />)} />
 
-                    <Redirect from="/" to="/organizations" exact={true} />
+                    {/* <Redirect from="/" to="/organizations" exact={true} /> */}
                   </Switch>
                 </div>
               </div>

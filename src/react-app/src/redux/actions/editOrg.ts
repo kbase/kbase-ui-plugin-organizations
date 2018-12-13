@@ -2,31 +2,35 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
-import { StoreState, Organization, AppError, UIError, UIErrorType, FieldState, EditableOrganization, ValidationState, EditState } from '../../types'
-import { Model, Validation } from '../../data/model'
+import { StoreState, AppError, UIError, UIErrorType, EditableOrganization, ValidationState, EditState } from '../../types'
+import Validation from '../../data/models/organization/validation'
+import * as orgModel from '../../data/models/organization/model'
 
 // ACTIONS
 
 // Loading the editor
-export interface EditOrgEdit extends Action {
-    type: ActionFlag.EDIT_ORG_EDIT,
-    id: string
+export interface Load extends Action {
+    type: ActionFlag.EDIT_ORG_LOAD,
+    organizationId: string
 }
 
-export interface EditOrgEditStart extends Action {
-    type: ActionFlag.EDIT_ORG_EDIT_START,
-    id: string
+export interface LoadStart extends Action {
+    type: ActionFlag.EDIT_ORG_LOAD_START
 }
 
-export interface EditOrgEditSuccess extends Action {
-    type: ActionFlag.EDIT_ORG_EDIT_SUCCESS,
+export interface LoadSuccess extends Action {
+    type: ActionFlag.EDIT_ORG_LOAD_SUCCESS,
     editedOrganization: EditableOrganization,
-    organization: Organization
+    organization: orgModel.Organization
 }
 
-export interface EditOrgEditError extends Action<ActionFlag.EDIT_ORG_EDIT_ERROR> {
-    type: ActionFlag.EDIT_ORG_EDIT_ERROR,
+export interface LoadError extends Action<ActionFlag.EDIT_ORG_LOAD_ERROR> {
+    type: ActionFlag.EDIT_ORG_LOAD_ERROR,
     error: AppError
+}
+
+export interface Unload extends Action<ActionFlag.EDIT_ORG_UNLOAD> {
+    type: ActionFlag.EDIT_ORG_UNLOAD
 }
 
 // Evaluating state of form 
@@ -137,31 +141,37 @@ export interface EditOrgUpdateDescriptionError extends Action {
 
 // ACTION CREATORS
 
-export function editOrgStart(id: string): EditOrgEditStart {
+// export function editOrgStart(id: string): LoadStart {
+//     return {
+//         type: ActionFlag.EDIT_ORG_LOAD_START,
+//         id: id
+//     }
+// }
+
+export function loadStart(): LoadStart {
     return {
-        type: ActionFlag.EDIT_ORG_EDIT_START,
-        id: id
+        type: ActionFlag.EDIT_ORG_LOAD_START
     }
 }
 
-export function editOrgEditStart() {
+export function loadSuccess(editedOrganization: EditableOrganization, organization: orgModel.Organization): LoadSuccess {
     return {
-        type: ActionFlag.EDIT_ORG_EDIT_START
-    }
-}
-
-export function editOrgEditSuccess(editedOrganization: EditableOrganization, organization: Organization) {
-    return {
-        type: ActionFlag.EDIT_ORG_EDIT_SUCCESS,
+        type: ActionFlag.EDIT_ORG_LOAD_SUCCESS,
         editedOrganization: editedOrganization,
         organization: organization
     }
 }
 
-export function editOrgEditError(error: AppError): EditOrgEditError {
+export function loadError(error: AppError): LoadError {
     return {
-        type: ActionFlag.EDIT_ORG_EDIT_ERROR,
+        type: ActionFlag.EDIT_ORG_LOAD_ERROR,
         error: error
+    }
+}
+
+export function unload(): Unload {
+    return {
+        type: ActionFlag.EDIT_ORG_UNLOAD
     }
 }
 
@@ -275,24 +285,29 @@ export function editOrgUpdateDescriptionError(description: string, error: UIErro
 
 // ACTION THUNKS
 
-export function editOrgEdit(organizationId: string) {
+export function load(organizationId: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(editOrgStart(organizationId))
+        dispatch(loadStart())
 
         const {
             auth: { authorization: { token, username } },
             app: { config }
         } = getState()
 
-        const model = new Model({
+        // const model = new Model({
+        //     token, username,
+        //     groupsServiceURL: config.services.Groups.url,
+        //     userProfileServiceURL: config.services.UserProfile.url,
+        //     workspaceServiceURL: config.services.Workspace.url,
+        //     serviceWizardURL: config.services.ServiceWizard.url
+        // })
+
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
-        return model.getOrg(organizationId)
+        return orgClient.getOrg(organizationId)
             .then((org) => {
                 const editableOrg: EditableOrganization = {
                     id: {
@@ -336,11 +351,11 @@ export function editOrgEdit(organizationId: string) {
                         }
                     }
                 }
-                dispatch(editOrgEditSuccess(editableOrg, org))
+                dispatch(loadSuccess(editableOrg, org))
             })
             .catch((err) => {
                 console.error('load org error', err)
-                dispatch(editOrgEditError({
+                dispatch(loadError({
                     code: err.name,
                     message: err.message
                 }))
@@ -353,15 +368,23 @@ export function editOrgSave() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(editOrgSaveStart())
 
-        const { auth: { authorization: { token, username } },
-            editOrg: { organizationId, editedOrganization },
-            app: { config } } = getState()
-        const model = new Model({
+        const state = getState()
+        if (!state.views.editOrgView.viewModel) {
+            throw new Error('Argh, no view model')
+        }
+
+        const {
+            auth: { authorization: { token, username } },
+            views: {
+                editOrgView: {
+                    viewModel: { organization, editedOrganization }
+                }
+            },
+            app: { config } } = state
+
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
         if (!editedOrganization) {
@@ -378,7 +401,7 @@ export function editOrgSave() {
             description: editedOrganization.description.value
         }
 
-        model.updateOrg(organizationId, update)
+        orgClient.updateOrg(organization.id, update)
             .then(() => {
                 dispatch(editOrgSaveSuccess())
             })
@@ -394,7 +417,20 @@ export function editOrgSave() {
 
 export function editOrgEvaluate() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        const { editOrg: { editedOrganization } } = getState()
+        const state = getState()
+        if (!state.views.editOrgView.viewModel) {
+            throw new Error('Argh, no view model')
+        }
+
+        const {
+            views: {
+                editOrgView: {
+                    viewModel: {
+                        editedOrganization
+                    }
+                }
+            }
+        } = state
 
         if (!editedOrganization) {
             dispatch(editOrgEvaluateErrors())
@@ -454,16 +490,16 @@ export function editOrgUpdateGravatarHash(name: string) {
 export function editOrgUpdateDescription(description: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>,
         getState: () => StoreState) => {
-        const { auth: { authorization: { token, username } },
-            app: { config } } = getState()
-        const model = new Model({
+        const {
+            auth: { authorization: { token, username } },
+            app: { config }
+        } = getState()
+
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
-        const [validatedDescription, error] = model.validateOrgDescription(description)
+        const [validatedDescription, error] = orgClient.validateOrgDescription(description)
 
         if (error.type === UIErrorType.ERROR) {
             dispatch(editOrgUpdateDescriptionError(validatedDescription, error))

@@ -1,12 +1,13 @@
 import * as React from 'react'
 import { Drawer, Radio } from 'antd';
-import { Narrative, Member, Organization, NarrativeResource, UserWorkspacePermission } from '../../types';
+import { Member } from '../../types';
 import './component.css'
+import * as orgModel from '../../data/models/organization/model'
 
 export interface RequestAccessProps {
-    narrative: NarrativeResource
+    narrative: orgModel.NarrativeResource
     member: Member
-    organization: Organization
+    organization: orgModel.Organization
     onClose: () => void
 }
 
@@ -21,15 +22,15 @@ export class RequestAccess extends React.Component<RequestAccessProps, RequestAc
 
     renderNarrativePermission() {
         switch (this.props.narrative.permission) {
-            case UserWorkspacePermission.NONE:
+            case orgModel.UserWorkspacePermission.NONE:
                 return 'None'
-            case UserWorkspacePermission.READ:
+            case orgModel.UserWorkspacePermission.VIEW:
                 return 'View and Copy'
-            case UserWorkspacePermission.WRITE:
+            case orgModel.UserWorkspacePermission.EDIT:
                 return 'View, Copy, Save, Run'
-            case UserWorkspacePermission.ADMIN:
+            case orgModel.UserWorkspacePermission.ADMIN:
                 return 'View, Copy, Save, Run, Manage Sharing'
-            case UserWorkspacePermission.OWN:
+            case orgModel.UserWorkspacePermission.OWNER:
                 return 'View, Copy, Save, Run, Manage Sharing, Own'
         }
     }
@@ -68,8 +69,7 @@ export class RequestAccess extends React.Component<RequestAccessProps, RequestAc
                     </Radio.Group>
                 </div>
                 <p style={{ marginTop: '10px' }}>
-                    This request will be sent to all Organization admins, with whom the narrative will be automatically shared
-                    read-only.
+                    This request will be sent directly to the Narrative owner as well as any Narrative admins.
                 </p>
 
             </Drawer>

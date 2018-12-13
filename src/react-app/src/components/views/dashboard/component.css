@@ -1,0 +1,94 @@
+.Dashboard {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.Dashboard .body {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.Dashboard .body .col1 {
+    flex: 2 1 0px;
+    display: flex;
+    flex-direction: column;
+    margin-right: 5px;
+}
+
+.Dashboard .body .col2 {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 5px;
+}
+
+.Dashboard .notificationsCard {
+    margin-bottom: 10px
+}
+
+.Dashboard .pendingRequestsCard {
+    margin-bottom: 10px;
+}
+
+.Dashboard .pendingInvitationsCard {
+    margin-bottom: 10px;
+}
+
+.Dashboard .message {
+    font-style: italic;
+    color: gray;
+    text-align: center;
+}
+
+.Dashboard .aRequest {
+    border: 1px silver solid;
+    border-radius: 4px;
+    /* padding: 4px; */
+    margin-bottom: 4px;
+    background-color: rgba(200, 200, 200, 0.3)
+}
+
+.Dashboard .aRequest:hover {
+    background-color: rgba(200, 200, 200, 0.8)
+}
+
+.Dashboard .requestHeader {
+    border-bottom: 1px silver solid;
+    padding: 4px;
+}
+
+.Dashboard .requestHeader .requestHeaderRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.Dashboard .requestHeader .requestHeaderType {
+    flex: 1 1 0px;
+    font-weight: bold;
+}
+
+.Dashboard .requestHeader .requestHeaderCreatedAt {
+    flex: 1 1 0px;
+    text-align: left;
+}
+
+.Dashboard .requestHeader .requestHeaderExpireAt {
+    flex: 1 1 0px;
+    text-align: right;
+}
+
+.Dashboard .requestBody {
+    padding: 4px;
+}
+
+.Dashboard .requestType {
+    flex: 1 1 0px;
+    font-weight: bold;
+}
+
+.Dashboard .miniDetail {
+    border: 1px rgba(200, 200, 200, 0.5) solid;
+    padding: 4px
+}

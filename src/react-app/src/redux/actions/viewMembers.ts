@@ -3,153 +3,159 @@ import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
 
-import { Organization, AppError, StoreState, MemberType } from '../../types'
-import { Model } from '../../data/model'
+import { AppError, StoreState, MemberType } from '../../types'
+import * as orgModel from '../../data/models/organization/model'
+import * as uberModel from '../../data/models/uber'
 
 // LOADING
 
-export interface ViewMembersLoad extends Action {
+export interface Load extends Action {
     type: ActionFlag.VIEW_MEMBERS_LOAD,
     organizationId: string
 }
 
-export interface ViewMembersLoadStart extends Action {
+export interface LoadStart extends Action {
     type: ActionFlag.VIEW_MEMBERS_LOAD_START
 }
 
-export interface ViewMembersUnload extends Action {
+export interface Unload extends Action {
     type: ActionFlag.VIEW_MEMBERS_UNLOAD
 }
 
-export interface ViewMembersLoadSuccess extends Action {
-    type: ActionFlag.VIEW_MEMBERS_LOAD_SUCCESS,
-    organization: Organization
+export interface LoadSuccess extends Action {
+    type: ActionFlag.VIEW_MEMBERS_LOAD_SUCCESS
+    organization: orgModel.Organization
+    relation: orgModel.Relation
 }
 
-export interface ViewMembersLoadError extends Action {
-    type: ActionFlag.VIEW_MEMBERS_LOAD_ERROR,
+export interface LoadError extends Action {
+    type: ActionFlag.VIEW_MEMBERS_LOAD_ERROR
     error: AppError
 }
 
 
-export function viewMembersLoadStart(): ViewMembersLoadStart {
+export function loadStart(): LoadStart {
     return {
         type: ActionFlag.VIEW_MEMBERS_LOAD_START
     }
 }
 
-export function viewMembersLoadSuccess(organization: Organization): ViewMembersLoadSuccess {
+export function loadSuccess(organization: orgModel.Organization, relation: orgModel.Relation): LoadSuccess {
     return {
         type: ActionFlag.VIEW_MEMBERS_LOAD_SUCCESS,
-        organization: organization
+        organization: organization,
+        relation: relation
     }
 }
 
-export function viewMembersLoadError(error: AppError): ViewMembersLoadError {
+export function loadError(error: AppError): LoadError {
     return {
         type: ActionFlag.VIEW_MEMBERS_LOAD_ERROR,
         error: error
     }
 }
 
-export function viewMembersUnload(): ViewMembersUnload {
+export function unload(): Unload {
     return {
         type: ActionFlag.VIEW_MEMBERS_UNLOAD
     }
 }
 
-export function viewMembersLoad(organizationId: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(viewMembersLoadStart())
+export function load(organizationId: string) {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(loadStart())
 
         const {
             auth: { authorization: { token, username } },
             app: { config } } = getState()
-        const model = new Model({
+
+
+        const uberClient = new uberModel.UberModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
+            serviceWizardURL: config.services.ServiceWizard.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            workspaceServiceURL: config.services.Workspace.url
         })
 
-        model.getOrg(organizationId)
-            .then((org) => {
-                dispatch(viewMembersLoadSuccess(org))
-            })
-            .catch((err) => {
-                dispatch(viewMembersLoadError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
+        console.log('loading?', organizationId)
+        try {
+            const { organization, relation } = await uberClient.getOrganizationForUser(organizationId)
+            dispatch(loadSuccess(organization, relation))
+
+        } catch (ex) {
+            dispatch(loadError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 
 // Promoting member to admin
 
-export interface ViewMembersPromoteToAdmin extends Action {
+export interface PromoteToAdmin extends Action {
     type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN,
     memberUsername: string
 }
 
-export interface ViewMembersPromoteToAdminStart extends Action {
+export interface PromoteToAdminStart extends Action {
     type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_START
 }
 
-export interface ViewMembersPromoteToAdminSuccess extends Action {
+export interface PromoteToAdminSuccess extends Action {
     type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_SUCCESS,
     memberUsername: string
 }
 
-export interface ViewMembersPromoteToAdminError extends Action {
+export interface PromoteToAdminError extends Action {
     type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_ERROR,
     error: AppError
 }
 
 
-export function viewMembersPromoteToAdminStart(): ViewMembersPromoteToAdminStart {
+export function promoteToAdminStart(): PromoteToAdminStart {
     return {
         type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_START
     }
 }
 
-export function viewMembersPromoteToAdminSuccess(memberUsername: string): ViewMembersPromoteToAdminSuccess {
+export function promoteToAdminSuccess(memberUsername: string): PromoteToAdminSuccess {
     return {
         type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_SUCCESS,
         memberUsername
     }
 }
 
-export function viewMembersPromoteToAdminError(error: AppError): ViewMembersPromoteToAdminError {
+export function promoteToAdminError(error: AppError): PromoteToAdminError {
     return {
         type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_ERROR,
         error: error
     }
 }
 
-export function viewMembersPromoteToAdmin(memberUsername: string) {
+export function promoteToAdmin(memberUsername: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(viewMembersPromoteToAdminStart())
+        dispatch(promoteToAdminStart())
 
         const {
             auth: { authorization: { token, username } },
             app: { config },
-            viewMembersView: { view } } = getState()
-        if (view === null) {
+            views: {
+                viewMembersView: { viewModel }
+            }
+        } = getState()
+        if (viewModel === null) {
             throw new Error('view is not populated')
         }
-        const model = new Model({
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
-        model.memberToAdmin(view.organization.id, memberUsername)
+        orgClient.memberToAdmin(viewModel.organization.id, memberUsername)
             .then((org) => {
-                dispatch(viewMembersPromoteToAdminSuccess(memberUsername))
+                dispatch(promoteToAdminSuccess(memberUsername))
 
                 // Brute force, update the in-store organization
                 // const { viewMembersView: { view } } = getState()
@@ -166,7 +172,7 @@ export function viewMembersPromoteToAdmin(memberUsername: string) {
                 // dispatch(viewMembersLoad(view.organization.id))
             })
             .catch((err: Error) => {
-                dispatch(viewMembersPromoteToAdminError({
+                dispatch(promoteToAdminError({
                     code: err.name,
                     message: err.message
                 }))
@@ -176,72 +182,73 @@ export function viewMembersPromoteToAdmin(memberUsername: string) {
 
 // Demote admin to member
 
-export interface ViewMembersDemoteToMember extends Action {
+export interface DemoteToMember extends Action {
     type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER,
     memberUsername: string
 }
 
-export interface ViewMembersDemoteToMemberStart extends Action {
+export interface DemoteToMemberStart extends Action {
     type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_START
 }
 
-export interface ViewMembersDemoteToMemberSuccess extends Action {
+export interface DemoteToMemberSuccess extends Action {
     type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_SUCCESS,
     memberUsername: string
 }
 
-export interface ViewMembersDemoteToMemberError extends Action {
+export interface DemoteToMemberError extends Action {
     type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_ERROR,
     error: AppError
 }
 
 
-export function viewMembersDemoteToMemberStart(): ViewMembersDemoteToMemberStart {
+export function demoteToMemberStart(): DemoteToMemberStart {
     return {
         type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_START
     }
 }
 
-export function viewMembersDemoteToMemberSuccess(memberUsername: string): ViewMembersDemoteToMemberSuccess {
+export function demoteToMemberSuccess(memberUsername: string): DemoteToMemberSuccess {
     return {
         type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_SUCCESS,
         memberUsername: memberUsername
     }
 }
 
-export function viewMembersDemoteToMemberError(error: AppError): ViewMembersDemoteToMemberError {
+export function demoteToMemberError(error: AppError): DemoteToMemberError {
     return {
         type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_ERROR,
         error: error
     }
 }
 
-export function viewMembersDemoteToMember(memberUsername: string) {
+export function demoteToMember(memberUsername: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(viewMembersDemoteToMemberStart())
+        dispatch(demoteToMemberStart())
 
         const {
             auth: { authorization: { token, username } },
             app: { config },
-            viewMembersView: { view } } = getState()
-        if (view === null) {
+            views: {
+                viewMembersView: { viewModel }
+            }
+        } = getState()
+
+        if (viewModel === null) {
             throw new Error('view is not populated')
         }
-        const model = new Model({
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
-        model.adminToMember(view.organization.id, memberUsername)
+        orgClient.adminToMember(viewModel.organization.id, memberUsername)
             .then((org) => {
-                dispatch(viewMembersDemoteToMemberSuccess(memberUsername))
+                dispatch(demoteToMemberSuccess(memberUsername))
                 // dispatch(viewMembersLoad(view.organization.id))
             })
             .catch((err: Error) => {
-                dispatch(viewMembersDemoteToMemberError({
+                dispatch(demoteToMemberError({
                     code: err.name,
                     message: err.message
                 }))
@@ -251,7 +258,7 @@ export function viewMembersDemoteToMember(memberUsername: string) {
 
 // Remove a member
 
-export interface ViewMembersRemoveMember extends Action {
+export interface RemoveMember extends Action {
     type: ActionFlag.VIEW_MEMBERS_REMOVE_MEMBER,
     memberUsername: string
 }
@@ -288,29 +295,30 @@ function removeMemberError(error: AppError): RemoveMemberError {
     }
 }
 
-export function viewMembersRemoveMember(memberUsername: string) {
+export function removeMember(memberUsername: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(removeMemberStart())
 
         const {
             auth: { authorization: { token, username } },
             app: { config },
-            viewMembersView: { view } } = getState()
-        if (view === null) {
+            views: {
+                viewMembersView: { viewModel }
+            }
+        } = getState()
+        if (viewModel === null) {
             throw new Error('view is not populated')
         }
-        const model = new Model({
+
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
-        model.removeMember(view.organization.id, memberUsername)
+        orgClient.removeMember(viewModel.organization.id, memberUsername)
             .then(() => {
                 dispatch(removeMemberSuccess())
-                dispatch(viewMembersLoad(view.organization.id))
+                dispatch(load(viewModel.organization.id))
             })
             .catch((err: Error) => {
                 dispatch(removeMemberError({

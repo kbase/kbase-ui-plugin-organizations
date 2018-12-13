@@ -1,11 +1,11 @@
 import { ActionFlag } from './index'
-import { Organization, GroupRequest, StoreState, AppError } from '../../types'
-import { Model } from '../../data/model'
-import { ThunkDispatch } from 'redux-thunk';
-import { Action } from 'redux';
+import { StoreState, AppError } from '../../types'
+import { ThunkDispatch } from 'redux-thunk'
+import { Action } from 'redux'
+import * as requestModel from '../../data/models/requests'
+import * as orgModel from '../../data/models/organization/model'
 
 // Action types
-
 
 // Start up requests manager
 
@@ -18,9 +18,10 @@ export interface LoadStart extends Action {
 }
 
 export interface LoadSuccess extends Action {
-    type: ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD_SUCCESS,
-    organization: Organization,
-    requests: Array<GroupRequest>
+    type: ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD_SUCCESS
+    organization: orgModel.Organization
+    requests: Array<requestModel.Request>
+    invitations: Array<requestModel.Request>
 }
 
 export interface LoadError extends Action {
@@ -46,14 +47,13 @@ export interface AcceptJoinRequestStart extends Action {
 
 export interface AcceptJoinRequestSuccess extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_SUCCESS,
-    request: GroupRequest
+    request: requestModel.Request
 }
 
 export interface AcceptJoinRequestError extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_ERROR,
     error: AppError
 }
-
 
 export function acceptJoinRequestStart(requestId: string): AcceptJoinRequestStart {
     return {
@@ -62,7 +62,7 @@ export function acceptJoinRequestStart(requestId: string): AcceptJoinRequestStar
     }
 }
 
-export function acceptJoinRequestSuccess(request: GroupRequest): AcceptJoinRequestSuccess {
+export function acceptJoinRequestSuccess(request: requestModel.Request): AcceptJoinRequestSuccess {
     return {
         type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_SUCCESS,
         request: request
@@ -90,7 +90,7 @@ export interface DenyJoinRequestStart extends Action {
 
 export interface DenyJoinRequestSuccess extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_DENY_JOIN_REQUEST_SUCCESS,
-    request: GroupRequest
+    request: requestModel.Request
 }
 
 export interface DenyJoinRequestError extends Action {
@@ -106,7 +106,7 @@ export function denyJoinRequestStart(requestId: string): DenyJoinRequestStart {
     }
 }
 
-export function denyJoinRequestSuccess(request: GroupRequest): DenyJoinRequestSuccess {
+export function denyJoinRequestSuccess(request: requestModel.Request): DenyJoinRequestSuccess {
     return {
         type: ActionFlag.ADMIN_MANAGE_REQUESTS_DENY_JOIN_REQUEST_SUCCESS,
         request: request
@@ -133,7 +133,7 @@ export interface CancelJoinInvitationStart extends Action {
 
 export interface CancelJoinInvitationSuccess extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_CANCEL_JOIN_INVITATION_SUCCESS
-    request: GroupRequest
+    request: requestModel.Request
 }
 
 export interface CancelJoinInvitationError extends Action {
@@ -148,7 +148,7 @@ export function cancelJoinInvitationStart(): CancelJoinInvitationStart {
     }
 }
 
-export function cancelJoinInvitationSuccess(request: GroupRequest): CancelJoinInvitationSuccess {
+export function cancelJoinInvitationSuccess(request: requestModel.Request): CancelJoinInvitationSuccess {
     return {
         type: ActionFlag.ADMIN_MANAGE_REQUESTS_CANCEL_JOIN_INVITATION_SUCCESS,
         request: request
@@ -174,7 +174,7 @@ export interface GetViewAccessStart extends Action {
 
 export interface GetViewAccessSuccess extends Action {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_GET_VIEW_ACCESS_SUCCESS,
-    request: GroupRequest
+    request: requestModel.Request
 }
 
 export interface GetViewAccessError extends Action {
@@ -190,7 +190,7 @@ export function getViewAccessStart(): GetViewAccessStart {
     }
 }
 
-export function getViewAccessSuccess(request: GroupRequest): GetViewAccessSuccess {
+export function getViewAccessSuccess(request: requestModel.Request): GetViewAccessSuccess {
     return {
         type: ActionFlag.ADMIN_MANAGE_REQUESTS_GET_VIEW_ACCESS_SUCCESS,
         request: request
@@ -205,7 +205,7 @@ export function getViewAccessError(error: AppError): GetViewAccessError {
 }
 
 export function getViewAccess(requestId: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(getViewAccessStart())
 
         const {
@@ -213,33 +213,25 @@ export function getViewAccess(requestId: string) {
             app: { config }
         } = getState()
 
-        const model = new Model({
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
         })
 
         // get requests 
-        Promise.all([
-            model.grantViewAccess(requestId),
-        ])
-            .then(([request]) => {
-                dispatch(getViewAccessSuccess(request))
-            })
-            .catch((err) => {
-                dispatch(getViewAccessError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
+        try {
+            const request = await orgClient.grantViewAccess(requestId)
+            dispatch(getViewAccessSuccess(request))
+        } catch (ex) {
+            dispatch(getViewAccessError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 
 // Action generators
-
-
 
 export function loadStart(): LoadStart {
     return {
@@ -247,11 +239,12 @@ export function loadStart(): LoadStart {
     }
 }
 
-export function loadSuccess(organization: Organization, requests: Array<GroupRequest>): LoadSuccess {
+export function loadSuccess(organization: orgModel.Organization, requests: Array<requestModel.Request>, invitations: Array<requestModel.Request>): LoadSuccess {
     return {
         type: ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD_SUCCESS,
         organization: organization,
-        requests: requests
+        requests: requests,
+        invitations: invitations
     }
 }
 
@@ -271,139 +264,123 @@ export function unload(): Unload {
 // Action thunks
 
 export function load(organizationId: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        const { auth: { authorization: { token, username } },
-            app: { config } } = getState()
-        const model = new Model({
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        const {
+            auth: { authorization: { token, username } },
+            app: { config }
+        } = getState()
+
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+        })
+
+        const requestClient = new requestModel.RequestsModel({
+            token, username, groupsServiceURL: config.services.Groups.url
         })
 
         // get requests 
-        Promise.all([
-            model.getOrg(organizationId),
-            model.getPendingOrganizationRequests(organizationId)
-        ])
-            .then(([organization, requests]) => {
-                dispatch(loadSuccess(organization, requests))
-            })
-            .catch((err) => {
-                dispatch(loadError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
+        try {
+            const [organization, requests, invitations] = await Promise.all([
+                orgClient.getOrg(organizationId),
+                requestClient.getPendingOrganizationRequestsForOrg(organizationId),
+                requestClient.getOrganizationInvitationsForOrg(organizationId)
+            ])
+            dispatch(loadSuccess(organization, requests, invitations))
+        } catch (ex) {
+            dispatch(loadError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 
 export function acceptJoinRequest(requestId: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const {
             auth: { authorization: { token, username } },
-            manageOrganizationRequestsView,
-            app: { config } } = getState()
-        const model = new Model({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            views: { manageOrganizationRequestsView },
+            app: { config }
+        } = getState()
+
+        const requestClient = new requestModel.RequestsModel({
+            token, username, groupsServiceURL: config.services.Groups.url
         })
 
         if (!manageOrganizationRequestsView) {
             return
         }
 
-        Promise.all([
-            model.acceptRequest(requestId),
-        ])
-            .then(([request]) => {
-                dispatch(acceptJoinRequestSuccess(request))
-                if (manageOrganizationRequestsView.viewState) {
-                    dispatch(load(manageOrganizationRequestsView.viewState.organization.id))
-                }
-            })
-            .catch((err) => {
-                dispatch(acceptJoinRequestError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
+        try {
+            const request = await requestClient.acceptRequest(requestId)
+            dispatch(acceptJoinRequestSuccess(request))
+        } catch (ex) {
+            dispatch(acceptJoinRequestError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 
 export function denyJoinRequest(requestId: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const {
             auth: { authorization: { token, username } },
-            manageOrganizationRequestsView,
-            app: { config } } = getState()
-        const model = new Model({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
-        })
+            views: { manageOrganizationRequestsView },
+            app: { config }
+        } = getState()
 
         if (!manageOrganizationRequestsView) {
             return
         }
 
-        Promise.all([
-            model.denyRequest(requestId),
-        ])
-            .then(([request]) => {
-                dispatch(denyJoinRequestSuccess(request))
-                if (manageOrganizationRequestsView.viewState) {
-                    dispatch(load(manageOrganizationRequestsView.viewState.organization.id))
-                }
-            })
-            .catch((err) => {
-                dispatch(denyJoinRequestError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
+        const requestClient = new requestModel.RequestsModel({
+            token, username, groupsServiceURL: config.services.Groups.url
+        })
+
+        try {
+            const request = await requestClient.denyRequest(requestId)
+            dispatch(denyJoinRequestSuccess(request))
+            if (manageOrganizationRequestsView.viewModel) {
+                dispatch(load(manageOrganizationRequestsView.viewModel.organization.id))
+            }
+        } catch (ex) {
+            dispatch(denyJoinRequestError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 
 export function cancelJoinInvitation(requestId: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const {
             auth: { authorization: { token, username } },
-            manageOrganizationRequestsView,
-            app: { config } } = getState()
-
-        const model = new Model({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
-        })
+            views: { manageOrganizationRequestsView },
+            app: { config }
+        } = getState()
 
         if (!manageOrganizationRequestsView) {
             return
         }
 
-        Promise.all([
-            model.cancelRequest(requestId),
-        ])
-            .then(([request]) => {
-                dispatch(cancelJoinInvitationSuccess(request))
-                if (manageOrganizationRequestsView.viewState) {
-                    dispatch(load(manageOrganizationRequestsView.viewState.organization.id))
-                }
-            })
-            .catch((err) => {
-                dispatch(cancelJoinInvitationError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
+        const requestClient = new requestModel.RequestsModel({
+            token, username, groupsServiceURL: config.services.Groups.url
+        })
+
+        try {
+            const request = await requestClient.cancelRequest(requestId)
+            if (manageOrganizationRequestsView.viewModel) {
+                dispatch(load(manageOrganizationRequestsView.viewModel.organization.id))
+            }
+        } catch (ex) {
+            dispatch(cancelJoinInvitationError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }

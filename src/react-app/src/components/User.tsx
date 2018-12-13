@@ -1,7 +1,7 @@
 import * as React from 'react'
 import './User.css'
 
-import Avatar from './Avatar'
+import Avatar from './entities/Avatar'
 import * as types from '../types';
 
 export interface UserProps {

@@ -59,6 +59,35 @@ button {
     margin-left: 2px
 }
 
+.slimCard.ant-card .ant-card-head {
+    padding: 0 6px;
+    min-height: unset;
+}
+
+.slimCard.ant-card .ant-card-head-title {
+    padding: 6px 0;
+}
+
+.slimCard.ant-card .ant-card-extra {
+    padding: 6px 0;
+}
+
+.slimCard.ant-card .ant-card-body {
+    padding: 6px
+}
+
 a:hover {
     text-decoration: underline;
+}
+
+.linkButton {
+    padding: 4px;
+}
+
+.linkButton:hover {
+    background-color: rgba(200, 200, 200, 0.5);
+}
+
+.linkButton.pressed {
+    background-color: rgba(200, 200, 200, 0.3);
 }

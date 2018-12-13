@@ -2,8 +2,11 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { ActionFlag } from './index'
 import { Model } from '../../data/model'
-import { AppError, Organization, StoreState, Narrative, GroupRequest } from '../../types'
-import { Group } from 'antd/lib/radio';
+import { AppError, StoreState, Narrative } from '../../types'
+
+import * as orgModel from '../../data/models/organization/model'
+import * as narrativeModel from '../../data/models/narrative'
+import * as requestModel from '../../data/models/requests'
 
 export interface Load extends Action {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD
@@ -14,9 +17,10 @@ export interface LoadStart extends Action {
 }
 
 export interface LoadSuccess extends Action {
-    type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD_SUCCESS,
-    organization: Organization,
+    type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD_SUCCESS
+    organization: orgModel.Organization
     narratives: Array<Narrative>
+    relation: orgModel.Relation
 }
 
 export interface LoadError extends Action {
@@ -30,11 +34,10 @@ export function loadStart(): LoadStart {
     }
 }
 
-export function loadSuccess(organization: Organization, narratives: Array<Narrative>): LoadSuccess {
+export function loadSuccess(organization: orgModel.Organization, narratives: Array<Narrative>, relation: orgModel.Relation): LoadSuccess {
     return {
         type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD_SUCCESS,
-        organization: organization,
-        narratives: narratives
+        organization, narratives, relation
     }
 }
 
@@ -46,35 +49,45 @@ export function loadError(error: AppError): LoadError {
 }
 
 export function load(organizationId: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(loadStart())
 
         const {
             auth: { authorization: { token, username } },
             app: { config } } = getState()
 
-        const model = new Model({
+        const orgClient = new orgModel.OrganizationModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+        const narrativeClient = new narrativeModel.NarrativeModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            serviceWizardURL: config.services.ServiceWizard.url,
+            workspaceServiceURL: config.services.Workspace.url
+        })
+        const requestClient = new requestModel.RequestsModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
         })
 
-        Promise.all([
-            model.getOrg(organizationId),
-            model.getOwnNarratives(organizationId)
-        ])
-            .then(([org, narratives]) => {
-                dispatch(loadSuccess(org, narratives))
-            })
-            .catch((err) => {
-                console.error('loading error', err)
-                dispatch(loadError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
+        try {
+            const [org, narratives, request, invitation] = await Promise.all([
+                orgClient.getOrg(organizationId),
+                narrativeClient.getOwnNarratives(organizationId),
+                requestClient.getUserRequestForOrg(organizationId),
+                requestClient.getUserInvitationForOrg(organizationId)
+            ])
+
+            const relation = orgModel.determineRelation(org, username, request, invitation)
+            dispatch(loadSuccess(org, narratives, relation))
+        } catch (ex) {
+            console.error('loading error', ex)
+            dispatch(loadError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 
@@ -126,15 +139,9 @@ export function selectNarrative(narrative: Narrative) {
             auth: { authorization: { token, username } },
             app: { config } } = getState()
 
-        const model = new Model({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
-        })
-
         // TODO: fetch narrative and populate the selected narrative accordingly...
+
+
         dispatch(selectNarrativeSuccess(narrative))
     }
 }
@@ -150,7 +157,7 @@ export interface SendRequestStart {
 
 export interface SendRequestSuccess {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_SEND_SUCCESS,
-    request: GroupRequest | boolean
+    request: requestModel.Request | boolean
 }
 
 export interface SendRequestError {
@@ -165,7 +172,7 @@ export function sendRequestStart(): SendRequestStart {
     }
 }
 
-export function sendRequestSuccess(request: GroupRequest | boolean): SendRequestSuccess {
+export function sendRequestSuccess(request: requestModel.Request | boolean): SendRequestSuccess {
     return {
         type: ActionFlag.REQUEST_ADD_NARRATIVE_SEND_SUCCESS,
         request: request
@@ -180,34 +187,27 @@ export function sendRequestError(error: AppError): SendRequestError {
 }
 
 export function sendRequest(groupId: string, narrative: Narrative) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(sendRequestStart())
 
         const {
             auth: { authorization: { token, username } },
             app: { config } } = getState()
 
-        const model = new Model({
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
-        Promise.all([
-            model.addOrRequestNarrativeToGroup(groupId, narrative)
-        ])
-            .then(([request]) => {
-                dispatch(sendRequestSuccess(request))
-            })
-            .catch((err) => {
-                console.error('loading error', err)
-                dispatch(sendRequestError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
+        try {
+            const request = await orgClient.addOrRequestNarrativeToGroup(groupId, narrative.workspaceId)
+            dispatch(sendRequestSuccess(request))
+        } catch (ex) {
+            dispatch(sendRequestError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 

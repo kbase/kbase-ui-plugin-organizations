@@ -3,9 +3,11 @@ import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
 
-import { AppError, StoreState, Organization, BriefUser, User, InviteUserValue, ComponentLoadingState, RequestType, RequestResourceType, UserInvitation, UserRequest, UserRelationToOrganization, MemberType, OrganizationUser, GroupRequest } from '../../types'
+import { AppError, StoreState, User, InviteUserViewModel, ComponentLoadingState, RequestType, RequestResourceType, MemberType, OrganizationUser } from '../../types'
 import { Model, UserQuery } from '../../data/model'
-import Organizations from '../../components/browseOrgs/Organizations';
+import * as orgModel from '../../data/models/organization/model'
+import * as userModel from '../../data/models/user'
+import * as requestModel from '../../data/models/requests'
 
 // View Loading
 
@@ -17,9 +19,9 @@ export interface LoadStart extends Action {
     type: ActionFlag.INVITE_USER_LOAD_START
 }
 
-export interface LoadReady extends Action {
-    type: ActionFlag.INVITE_USER_LOAD_READY,
-    organization: Organization,
+export interface LoadSuccess extends Action {
+    type: ActionFlag.INVITE_USER_LOAD_SUCCESS,
+    organization: orgModel.Organization,
     users: Array<OrganizationUser> | null
 }
 
@@ -39,9 +41,9 @@ export function loadStart(): LoadStart {
     }
 }
 
-export function loadReady(organization: Organization): LoadReady {
+export function loadSuccess(organization: orgModel.Organization): LoadSuccess {
     return {
-        type: ActionFlag.INVITE_USER_LOAD_READY,
+        type: ActionFlag.INVITE_USER_LOAD_SUCCESS,
         organization: organization,
         users: null
     }
@@ -60,43 +62,29 @@ export function unload(): Unload {
     }
 }
 
-export function inviteUserLoad(organizationId: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+export function load(organizationId: string) {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(loadStart())
 
         const {
             auth: { authorization: { token, username } },
-            app: { config } } = getState()
+            app: { config }
+        } = getState()
 
-        const model = new Model({
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
-        Promise.all([
-            model.getOrg(organizationId),
-            null
-            // model.searchUsers({
-            //     query: '',
-            //     excludedUsers: []
-            // })
-        ])
-            .then(([org, users]) => {
-                // users.sort((a, b) => {
-                //     return a.username.localeCompare(b.username)
-                // })
-                dispatch(loadReady(org))
-            })
-            .catch((err) => {
-                dispatch(loadError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
-
+        try {
+            const org = await orgClient.getOrg(organizationId)
+            dispatch(loadSuccess(org))
+        } catch (ex) {
+            dispatch(loadError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 
@@ -144,7 +132,7 @@ function searchUsersError(error: AppError): SearchUsersError {
 }
 
 export function inviteUserSearchUsers(query: UserQuery) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(searchUsersStart())
 
         if (query.query.length === 0) {
@@ -153,29 +141,28 @@ export function inviteUserSearchUsers(query: UserQuery) {
         }
 
         const {
-            inviteUserView: { value },
+            views: {
+                inviteUserView: { viewModel }
+            },
             auth: { authorization: { token, username } },
             app: { config } } = getState()
 
         // TODO: better form of type narrowing? 
-        if (value === null) {
+        if (viewModel === null) {
             return
         }
-        const org = value.organization
+        const org = viewModel.organization
 
-        const model = new Model({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+        const userClient = new userModel.UserModel({
+            token,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         let excludedUsers: Array<string> = []
 
         // excludedUsers.push(org.owner.user.username)
 
-        let owner: string = org.owner.user.username
+        let owner: string = org.owner.username
         let adminUsers: Array<string> = []
         let members: Array<string> = []
         let invited: Array<string> = []
@@ -184,9 +171,9 @@ export function inviteUserSearchUsers(query: UserQuery) {
         org.members.forEach((member) => {
             switch (member.type) {
                 case MemberType.MEMBER:
-                    members.push(member.user.username)
+                    members.push(member.username)
                 case MemberType.ADMIN:
-                    adminUsers.push(member.user.username)
+                    adminUsers.push(member.username)
             }
         })
 
@@ -194,57 +181,57 @@ export function inviteUserSearchUsers(query: UserQuery) {
         //     return member.
         // }))
 
-        org.adminRequests.forEach((request) => {
-            if (request.resourceType === RequestResourceType.USER) {
-                switch (request.type) {
-                    case RequestType.INVITATION:
-                        invited.push((<UserInvitation>request).user.username)
-                        // excludedUsers.push((<UserInvitation>request).user.username)
-                        break
-                    case RequestType.REQUEST:
-                        requested.push((<UserRequest>request).requester.username)
-                    // excludedUsers.push((<UserRequest>request).requester.username)
+        // TODO revive
+        // org.adminRequests.forEach((request) => {
+        //     if (request.resourceType === RequestResourceType.USER) {
+        //         switch (request.type) {
+        //             case RequestType.INVITATION:
+        //                 invited.push((<UserInvitation>request).user.username)
+        //                 // excludedUsers.push((<UserInvitation>request).user.username)
+        //                 break
+        //             case RequestType.REQUEST:
+        //                 requested.push((<UserRequest>request).requester.username)
+        //             // excludedUsers.push((<UserRequest>request).requester.username)
+        //         }
+        //     }
+        // })
+
+        try {
+            const users = await userClient.searchUsers(query)
+
+
+            // const filteredUsers = users.filter((user) => {
+            //     return (excludedUsers.indexOf(user.username) === -1)
+            // })
+            const orgUsers: Array<OrganizationUser> = users.map(({ username, realname }) => {
+                let relation: orgModel.UserRelationToOrganization
+                if (username === owner) {
+                    relation = orgModel.UserRelationToOrganization.OWNER
+                } else if (adminUsers.indexOf(username) >= 0) {
+                    relation = orgModel.UserRelationToOrganization.ADMIN
+                } else if (invited.indexOf(username) >= 0) {
+                    relation = orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING
+                } else if (requested.indexOf(username) >= 0) {
+                    relation = orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING
+                } else if (members.indexOf(username) >= 0) {
+                    relation = orgModel.UserRelationToOrganization.MEMBER
+                } else {
+                    relation = orgModel.UserRelationToOrganization.NONE
                 }
-            }
-        })
+                return {
+                    username, realname,
+                    relation: relation
+                }
+            })
+            dispatch(searchUsersSuccess(orgUsers))
+        } catch (ex) {
+            dispatch(searchUsersError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
 
-        Promise.all([
-            model.searchUsers(query)
-        ])
-            .then(([users]) => {
-                // const filteredUsers = users.filter((user) => {
-                //     return (excludedUsers.indexOf(user.username) === -1)
-                // })
-                const orgUsers: Array<OrganizationUser> = users.map(({ username, realname }) => {
-                    let relation: UserRelationToOrganization
-                    if (username === owner) {
-                        relation = UserRelationToOrganization.OWNER
-                    } else if (adminUsers.indexOf(username) >= 0) {
-                        relation = UserRelationToOrganization.ADMIN
-                    } else if (invited.indexOf(username) >= 0) {
-                        relation = UserRelationToOrganization.MEMBER_INVITATION_PENDING
-                    } else if (requested.indexOf(username) >= 0) {
-                        relation = UserRelationToOrganization.MEMBER_REQUEST_PENDING
-                    } else if (members.indexOf(username) >= 0) {
-                        relation = UserRelationToOrganization.MEMBER
-                    } else {
-                        relation = UserRelationToOrganization.NONE
-                    }
-                    return {
-                        username, realname,
-                        relation: relation
-                    }
-                })
-                dispatch(searchUsersSuccess(orgUsers))
-            })
-            .catch((err) => {
-                dispatch(searchUsersError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
     }
-
 }
 
 // Select a user
@@ -261,7 +248,7 @@ export interface SelectUserStart extends Action {
 export interface SelectUserSuccess extends Action {
     type: ActionFlag.INVITE_USER_SELECT_USER_SUCCESS,
     user: User,
-    relation: UserRelationToOrganization
+    relation: orgModel.UserRelationToOrganization
 }
 
 export interface SelectUserError extends Action {
@@ -276,7 +263,7 @@ function selectUserStart(): SelectUserStart {
     }
 }
 
-function selectUserSuccess(user: User, relation: UserRelationToOrganization): SelectUserSuccess {
+function selectUserSuccess(user: User, relation: orgModel.UserRelationToOrganization): SelectUserSuccess {
     return {
         type: ActionFlag.INVITE_USER_SELECT_USER_SUCCESS,
         user: user,
@@ -291,54 +278,55 @@ function selectUserError(error: AppError): SelectUserError {
     }
 }
 
-function isUserRequest(request: GroupRequest, username: string): request is UserRequest {
-    const req: UserRequest = <UserRequest>request
+function isUserRequest(request: requestModel.Request, username: string): request is requestModel.UserRequest {
+    const req: requestModel.UserRequest = <requestModel.UserRequest>request
     if (req.resourceType === RequestResourceType.USER &&
         req.type === RequestType.REQUEST &&
-        req.requester.username === username) {
+        req.requester === username) {
         return true
     }
     return false
 }
 
-function isUserInvitation(request: GroupRequest, username: string): request is UserRequest {
-    const req: UserInvitation = <UserInvitation>request
+function isUserInvitation(request: requestModel.Request, username: string): request is requestModel.UserRequest {
+    const req: requestModel.UserInvitation = <requestModel.UserInvitation>request
     if (req.resourceType === RequestResourceType.USER &&
         req.type === RequestType.INVITATION &&
         req.user &&
-        req.user.username === username) {
+        req.user === username) {
         return true
     }
     return false
 }
 
-function getUserRelation(user: User, organization: Organization): UserRelationToOrganization {
-    if (user.username === organization.owner.user.username) {
-        return UserRelationToOrganization.OWNER
+function getUserRelation(user: User, organization: orgModel.Organization): orgModel.UserRelationToOrganization {
+    if (user.username === organization.owner.username) {
+        return orgModel.UserRelationToOrganization.OWNER
     }
     const member = organization.members.find((member) => {
-        return member.user.username === user.username
+        return member.username === user.username
     })
     if (member) {
         switch (member.type) {
             case MemberType.ADMIN:
-                return UserRelationToOrganization.ADMIN
+                return orgModel.UserRelationToOrganization.ADMIN
             case MemberType.OWNER:
-                return UserRelationToOrganization.OWNER
+                return orgModel.UserRelationToOrganization.OWNER
             case MemberType.MEMBER:
-                return UserRelationToOrganization.MEMBER
+                return orgModel.UserRelationToOrganization.MEMBER
         }
     }
 
-    for (const request of organization.adminRequests) {
-        if (isUserInvitation(request, user.username)) {
-            return UserRelationToOrganization.MEMBER_INVITATION_PENDING
-        } else if (isUserRequest(request, user.username)) {
-            return UserRelationToOrganization.MEMBER_REQUEST_PENDING
-        }
-    }
+    // TODO revive
+    // for (const request of organization.adminRequests) {
+    //     if (isUserInvitation(request, user.username)) {
+    //         return UserRelationToOrganization.MEMBER_INVITATION_PENDING
+    //     } else if (isUserRequest(request, user.username)) {
+    //         return UserRelationToOrganization.MEMBER_REQUEST_PENDING
+    //     }
+    // }
 
-    return UserRelationToOrganization.VIEW
+    return orgModel.UserRelationToOrganization.VIEW
 }
 
 export function selectUser(selectedUsername: string) {
@@ -346,11 +334,13 @@ export function selectUser(selectedUsername: string) {
         dispatch(selectUserStart())
 
         const {
-            inviteUserView: { value },
+            views: {
+                inviteUserView: { viewModel }
+            },
             auth: { authorization: { token, username } },
             app: { config } } = getState()
 
-        if (!value) {
+        if (!viewModel) {
             dispatch(selectUserError({
                 code: 'invalid state',
                 message: 'select user invalid state -- no view value'
@@ -358,17 +348,15 @@ export function selectUser(selectedUsername: string) {
             return
         }
 
-        const model = new Model({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+        const userClient = new userModel.UserModel({
+            token,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
-        model.getUser(selectedUsername)
+        userClient.getUser(selectedUsername)
             .then((user) => {
-                const relation = getUserRelation(user, value.organization)
+                // TODO: use the new model getUserRelation, or even getUserWithRelation
+                const relation = getUserRelation(user, viewModel.organization)
                 dispatch(selectUserSuccess(user, relation))
             })
             .catch((err) => {
@@ -426,32 +414,32 @@ export function sendInvitation() {
         const {
             auth: { authorization: { token, username } },
             app: { config },
-            inviteUserView: { loadingState, value, error } } = getState()
+            views: {
+                inviteUserView: { loadingState, viewModel, error }
+            }
+        } = getState()
 
         if (loadingState !== ComponentLoadingState.SUCCESS) {
             return
         }
 
-        if (value === null) {
+        if (viewModel === null) {
             return
         }
 
-        const { selectedUser, organization: { id } } = value as InviteUserValue
+        const { selectedUser, organization: { id } } = viewModel as InviteUserViewModel
 
         if (!selectedUser) {
             return
         }
 
-        const model = new Model({
+        const requestClient = new requestModel.RequestsModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
-        model.requestJoinGroup(id, selectedUser.user.username)
-            .then((groupRequest) => {
+        requestClient.inviteUserToJoinOrg(id, selectedUser.user.username)
+            .then((request) => {
                 dispatch(sendInvitationSuccess())
             })
             .catch((err) => {

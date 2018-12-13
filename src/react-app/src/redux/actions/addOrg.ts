@@ -2,8 +2,10 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
-import { StoreState, Organization, AppError, UIError, UIErrorType, FieldState, EditableOrganization, EditState, ValidationState } from '../../types'
-import { Model, Validation } from '../../data/model'
+import { StoreState, AppError, UIError, UIErrorType, EditableOrganization, EditState, ValidationState } from '../../types'
+
+import * as orgModel from '../../data/models/organization/model'
+import Validation from '../../data/models/organization/validation'
 
 // ACTIONS
 
@@ -17,7 +19,7 @@ export interface SaveStart extends Action<ActionFlag.ADD_ORG_SAVE_START> {
 
 export interface SaveSuccess extends Action<ActionFlag.ADD_ORG_SAVE_SUCCESS> {
     type: ActionFlag.ADD_ORG_SAVE_SUCCESS,
-    organization: Organization
+    organization: orgModel.Organization
 }
 
 export interface SaveError extends Action<ActionFlag.ADD_ORG_SAVE_ERROR> {
@@ -149,7 +151,7 @@ export function saveStart(): SaveStart {
     }
 }
 
-export function saveSuccess(org: Organization): SaveSuccess {
+export function saveSuccess(org: orgModel.Organization): SaveSuccess {
     return {
         type: ActionFlag.ADD_ORG_SAVE_SUCCESS,
         organization: org
@@ -337,7 +339,7 @@ export function addOrg() {
         // In terms of generalized usage of the redux store, though, there is no
         // way to ensure this! So we really should perform our state checks before 
         // handling any event
-        if (!state.addOrgView.viewModel) {
+        if (!state.views.addOrgView.viewModel) {
             dispatch(saveError({
                 code: 'invalid',
                 message: 'Unexpected condition: no view model'
@@ -351,15 +353,15 @@ export function addOrg() {
 
         const {
             auth: { authorization: { token, username } },
-            addOrgView: { viewModel: { newOrganization } },
+            views: {
+                addOrgView: { viewModel: { newOrganization } },
+            },
             app: { config }
         } = state
-        const model = new Model({
+
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
         if (!newOrganization) {
@@ -370,8 +372,8 @@ export function addOrg() {
             return;
         }
 
-        model.addOrg(newOrganization, username)
-            .then((org: Organization) => {
+        orgClient.addOrg(newOrganization, username)
+            .then((org: orgModel.Organization) => {
                 dispatch(saveSuccess(org))
             })
             .catch((error) => {
@@ -391,7 +393,7 @@ export function addOrg() {
 export function addOrgEvaluate() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const state = getState()
-        if (!state.addOrgView.viewModel) {
+        if (!state.views.addOrgView.viewModel) {
             dispatch(saveError({
                 code: 'invalid',
                 message: 'Unexpected condition: no view model'
@@ -400,7 +402,12 @@ export function addOrgEvaluate() {
         }
 
 
-        const { addOrgView: { viewModel: { editState, newOrganization } } } = state
+        const {
+            views: {
+                addOrgView: {
+                    viewModel: { editState, newOrganization } }
+            }
+        } = state
 
         if (!newOrganization) {
             dispatch(AddOrgEvaluateErrors())
@@ -431,15 +438,13 @@ export function addOrgEvaluate() {
     }
 }
 
-function newModelFromState(state: StoreState) {
-    const { auth: { authorization: { token, username } },
+function orgModelFromState(state: StoreState) {
+    const {
+        auth: { authorization: { token, username } },
         app: { config } } = state
-    return new Model({
+    return new orgModel.OrganizationModel({
         token, username,
-        groupsServiceURL: config.services.Groups.url,
-        userProfileServiceURL: config.services.UserProfile.url,
-        workspaceServiceURL: config.services.Workspace.url,
-        serviceWizardURL: config.services.ServiceWizard.url
+        groupsServiceURL: config.services.Groups.url
     })
 }
 
@@ -509,7 +514,12 @@ export function updateId(id: string) {
             return
         }
 
-        const { addOrgView: { viewModel } } = getState()
+        const {
+            views: {
+                addOrgView: { viewModel }
+            }
+        } = getState()
+
         if (!viewModel) {
             // do nothing
             return
@@ -538,8 +548,8 @@ export function updateId(id: string) {
         activeDebouncer = null
 
 
-        const model = newModelFromState(getState())
-        model.groupExists(validatedId)
+        const model = orgModelFromState(getState())
+        model.orgExists(validatedId)
             .then((exists) => {
                 if (exists) {
                     dispatch(updateIdError(validatedId, {
@@ -558,7 +568,11 @@ export function updateId(id: string) {
 export function evaluateId() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
 
-        const { addOrgView: { viewModel } } = getState()
+        const {
+            views: {
+                addOrgView: { viewModel }
+            }
+        } = getState()
         if (!viewModel) {
             // do nothing
             return
@@ -573,8 +587,8 @@ export function evaluateId() {
             return
         }
 
-        const model = newModelFromState(getState())
-        model.groupExists(validatedId)
+        const model = orgModelFromState(getState())
+        model.orgExists(validatedId)
             .then((exists) => {
                 if (exists) {
                     dispatch(updateIdError(validatedId, {
@@ -591,17 +605,9 @@ export function evaluateId() {
 }
 
 export function updateDescription(description: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>,
-        getState: () => StoreState) => {
-        const { auth: { authorization: { token, username } },
-            app: { config } } = getState()
-        const model = new Model({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
-        })
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        const model = orgModelFromState(getState())
+
         const [validatedDescription, error] = model.validateOrgDescription(description)
 
         if (error.type === UIErrorType.ERROR) {

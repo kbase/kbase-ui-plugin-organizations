@@ -13,3 +13,26 @@
     justify-content: flex-start;
     align-items: center;
 }
+
+.Header .defaultCrumbs {
+    flex: 0 0 auto
+}
+
+.Header .userColumn {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.Header .breadcrumbs {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.Header .buttons {
+    flex: 0 0 auto
+}

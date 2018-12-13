@@ -3,37 +3,60 @@ import * as actions from '../actions/manageMembership'
 import * as types from '../../types'
 import { ActionFlag } from '../actions'
 
-export function manageMembershipLoadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
+export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
     return {
         ...state,
-        manageMembershipView: {
-            loading: true,
-            error: null,
-            value: null
-        }
-    }
-}
-
-export function manageMembershipLoadSuccess(state: types.StoreState, action: actions.LoadSuccess): types.StoreState {
-    return {
-        ...state,
-        manageMembershipView: {
-            loading: false,
-            error: null,
-            value: {
-                organization: action.organization
+        views: {
+            ...state.views,
+            manageMembershipView: {
+                loadingState: types.ComponentLoadingState.LOADING,
+                error: null,
+                viewModel: null
             }
         }
     }
 }
 
-export function manageMembershipLoadError(state: types.StoreState, action: actions.LoadError): types.StoreState {
+export function loadSuccess(state: types.StoreState, action: actions.LoadSuccess): types.StoreState {
     return {
         ...state,
-        manageMembershipView: {
-            loading: false,
-            error: action.error,
-            value: null
+        views: {
+            ...state.views,
+            manageMembershipView: {
+                loadingState: types.ComponentLoadingState.SUCCESS,
+                error: null,
+                viewModel: {
+                    organization: action.organization
+                }
+            }
+        }
+    }
+}
+
+export function loadError(state: types.StoreState, action: actions.LoadError): types.StoreState {
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            manageMembershipView: {
+                loadingState: types.ComponentLoadingState.LOADING,
+                error: action.error,
+                viewModel: null
+            }
+        }
+    }
+}
+
+export function unload(state: types.StoreState, action: actions.Unload): types.StoreState {
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            manageMembershipView: {
+                loadingState: types.ComponentLoadingState.NONE,
+                error: null,
+                viewModel: null
+            }
         }
     }
 }
@@ -41,11 +64,13 @@ export function manageMembershipLoadError(state: types.StoreState, action: actio
 function reducer(state: types.StoreState, action: Action): types.StoreState | null {
     switch (action.type) {
         case ActionFlag.MANAGE_MEMBERSHIP_LOAD_START:
-            return manageMembershipLoadStart(state, action as actions.LoadStart)
+            return loadStart(state, action as actions.LoadStart)
         case ActionFlag.MANAGE_MEMBERSHIP_LOAD_SUCCESS:
-            return manageMembershipLoadSuccess(state, action as actions.LoadSuccess)
+            return loadSuccess(state, action as actions.LoadSuccess)
         case ActionFlag.MANAGE_MEMBERSHIP_LOAD_ERROR:
-            return manageMembershipLoadError(state, action as actions.LoadError)
+            return loadError(state, action as actions.LoadError)
+        case ActionFlag.MANAGE_MEMBERSHIP_UNLOAD:
+            return unload(state, action as actions.Unload)
         default:
             return null
     }

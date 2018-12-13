@@ -14,87 +14,103 @@ import {
 // ADD ORG
 
 export function saveStart(state: StoreState, action: SaveStart): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting saveStart without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                saveState: SaveState.SAVING
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    saveState: SaveState.SAVING
+                }
             }
         }
     }
 }
 
 export function saveSuccess(state: StoreState, action: SaveSuccess): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting saveSuccess without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                editState: EditState.UNEDITED,
-                saveState: SaveState.SAVED
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.UNEDITED,
+                    saveState: SaveState.SAVED
+                }
             }
         }
     }
 }
 
 export function saveError(state: StoreState, action: SaveError): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting saveSuccess without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                saveState: SaveState.SAVE_ERROR,
-                error: action.error
+        views: {
+            ...state.views,
+
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    saveState: SaveState.SAVE_ERROR,
+                    error: action.error
+                }
             }
         }
     }
 }
 
 export function addOrgEvaluateOk(state: StoreState, action: AddOrgEvaluateOK): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting saveSuccess without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                validationState: ValidationState.VALID
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    validationState: ValidationState.VALID
+                }
             }
         }
     }
 }
 
 export function addOrgEvaluateErrors(state: StoreState, action: AddOrgEvaluateErrors): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting saveSuccess without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                validationState: ValidationState.INVALID
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    validationState: ValidationState.INVALID
+                }
             }
         }
     }
@@ -103,10 +119,13 @@ export function addOrgEvaluateErrors(state: StoreState, action: AddOrgEvaluateEr
 export function loadStart(state: StoreState, action: LoadStart): StoreState {
     return {
         ...state,
-        addOrgView: {
-            loadingStatus: ComponentLoadingState.LOADING,
-            error: null,
-            viewModel: null
+        views: {
+            ...state.views,
+            addOrgView: {
+                loadingState: ComponentLoadingState.LOADING,
+                error: null,
+                viewModel: null
+            }
         }
     }
 }
@@ -114,15 +133,18 @@ export function loadStart(state: StoreState, action: LoadStart): StoreState {
 export function loadSuccess(state: StoreState, action: LoadSuccess): StoreState {
     return {
         ...state,
-        addOrgView: {
-            loadingStatus: ComponentLoadingState.SUCCESS,
-            error: null,
-            viewModel: {
-                editState: EditState.UNEDITED,
-                validationState: ValidationState.NONE,
-                saveState: SaveState.NEW,
+        views: {
+            ...state.views,
+            addOrgView: {
+                loadingState: ComponentLoadingState.SUCCESS,
                 error: null,
-                newOrganization: action.newOrganization
+                viewModel: {
+                    editState: EditState.UNEDITED,
+                    validationState: ValidationState.NONE,
+                    saveState: SaveState.NEW,
+                    error: null,
+                    newOrganization: action.newOrganization
+                }
             }
         }
     }
@@ -130,10 +152,13 @@ export function loadSuccess(state: StoreState, action: LoadSuccess): StoreState 
 export function loadError(state: StoreState, action: LoadError): StoreState {
     return {
         ...state,
-        addOrgView: {
-            loadingStatus: ComponentLoadingState.SUCCESS,
-            error: action.error,
-            viewModel: null
+        views: {
+            ...state.views,
+            addOrgView: {
+                loadingState: ComponentLoadingState.SUCCESS,
+                error: action.error,
+                viewModel: null
+            }
         }
     }
 }
@@ -141,37 +166,43 @@ export function loadError(state: StoreState, action: LoadError): StoreState {
 export function unload(state: StoreState, action: Unload): StoreState {
     return {
         ...state,
-        addOrgView: {
-            loadingStatus: ComponentLoadingState.NONE,
-            error: null,
-            viewModel: null
+        views: {
+            ...state.views,
+            addOrgView: {
+                loadingState: ComponentLoadingState.NONE,
+                error: null,
+                viewModel: null
+            }
         }
     }
 }
 
 // Name
 export function updateNameSuccess(state: StoreState, action: UpdateNameSuccess): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting updateNameSuccess without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                editState: EditState.EDITED,
-                newOrganization: {
-                    ...state.addOrgView.viewModel.newOrganization,
-                    name: {
-                        value: action.name,
-                        validationState: ValidationState.VALID,
-                        editState: EditState.EDITED,
-                        validatedAt: new Date(),
-                        // status: FieldState.EDITED_OK,
-                        error: {
-                            type: UIErrorType.NONE
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        name: {
+                            value: action.name,
+                            validationState: ValidationState.VALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            // status: FieldState.EDITED_OK,
+                            error: {
+                                type: UIErrorType.NONE
+                            }
                         }
                     }
                 }
@@ -181,25 +212,28 @@ export function updateNameSuccess(state: StoreState, action: UpdateNameSuccess):
 }
 
 export function updateNameError(state: StoreState, action: UpdateNameError): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting updateNameError without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                editState: EditState.EDITED,
-                newOrganization: {
-                    ...state.addOrgView.viewModel.newOrganization,
-                    name: {
-                        value: action.name,
-                        validationState: ValidationState.INVALID,
-                        editState: EditState.EDITED,
-                        validatedAt: new Date(),
-                        error: action.error
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        name: {
+                            value: action.name,
+                            validationState: ValidationState.INVALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: action.error
+                        }
                     }
                 }
             }
@@ -209,26 +243,29 @@ export function updateNameError(state: StoreState, action: UpdateNameError): Sto
 
 // Gravatar hash
 export function updateGravatarHashSuccess(state: StoreState, action: UpdateGravatarHashSuccess): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting updateGravatarHashSuccess without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                editState: EditState.EDITED,
-                newOrganization: {
-                    ...state.addOrgView.viewModel.newOrganization,
-                    gravatarHash: {
-                        value: action.gravatarHash,
-                        validationState: ValidationState.VALID,
-                        editState: EditState.EDITED,
-                        validatedAt: new Date(),
-                        error: {
-                            type: UIErrorType.NONE
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        gravatarHash: {
+                            value: action.gravatarHash,
+                            validationState: ValidationState.VALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: {
+                                type: UIErrorType.NONE
+                            }
                         }
                     }
                 }
@@ -238,25 +275,28 @@ export function updateGravatarHashSuccess(state: StoreState, action: UpdateGrava
 }
 
 export function updateGravatarHashError(state: StoreState, action: UpdateGravatarHashError): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting updateGravatarHashError without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                editState: EditState.EDITED,
-                newOrganization: {
-                    ...state.addOrgView.viewModel.newOrganization,
-                    gravatarHash: {
-                        value: action.gravatarHash,
-                        validationState: ValidationState.INVALID,
-                        editState: EditState.EDITED,
-                        validatedAt: new Date(),
-                        error: action.error
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        gravatarHash: {
+                            value: action.gravatarHash,
+                            validationState: ValidationState.INVALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: action.error
+                        }
                     }
                 }
             }
@@ -267,26 +307,29 @@ export function updateGravatarHashError(state: StoreState, action: UpdateGravata
 // Id
 
 export function updateIdSuccess(state: StoreState, action: UpdateIdSuccess): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting updateIdSuccess without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                editState: EditState.EDITED,
-                newOrganization: {
-                    ...state.addOrgView.viewModel.newOrganization,
-                    id: {
-                        value: action.id,
-                        validationState: ValidationState.VALID,
-                        editState: EditState.EDITED,
-                        validatedAt: new Date(),
-                        error: {
-                            type: UIErrorType.NONE
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        id: {
+                            value: action.id,
+                            validationState: ValidationState.VALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: {
+                                type: UIErrorType.NONE
+                            }
                         }
                     }
                 }
@@ -296,25 +339,28 @@ export function updateIdSuccess(state: StoreState, action: UpdateIdSuccess): Sto
 }
 
 export function updateIdError(state: StoreState, action: UpdateIdError): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting updateIdError without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                editState: EditState.EDITED,
-                newOrganization: {
-                    ...state.addOrgView.viewModel.newOrganization,
-                    id: {
-                        value: action.id,
-                        validationState: ValidationState.INVALID,
-                        editState: EditState.EDITED,
-                        validatedAt: new Date(),
-                        error: action.error
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        id: {
+                            value: action.id,
+                            validationState: ValidationState.INVALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: action.error
+                        }
                     }
                 }
             }
@@ -323,23 +369,26 @@ export function updateIdError(state: StoreState, action: UpdateIdError): StoreSt
 }
 
 export function updateIdPass(state: StoreState, action: UpdateIdPass): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting updateIdSuccess without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                editState: EditState.EDITED,
-                newOrganization: {
-                    ...state.addOrgView.viewModel.newOrganization,
-                    id: {
-                        ...state.addOrgView.viewModel.newOrganization.id,
-                        value: action.id,
-                        editState: EditState.EDITED
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        id: {
+                            ...state.views.addOrgView.viewModel.newOrganization.id,
+                            value: action.id,
+                            editState: EditState.EDITED
+                        }
                     }
                 }
             }
@@ -348,26 +397,29 @@ export function updateIdPass(state: StoreState, action: UpdateIdPass): StoreStat
 }
 
 export function updateDescriptionSuccess(state: StoreState, action: UpdateDescriptionSuccess): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting updateDescriptionSuccess without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                editState: EditState.EDITED,
-                newOrganization: {
-                    ...state.addOrgView.viewModel.newOrganization,
-                    description: {
-                        value: action.description,
-                        validationState: ValidationState.VALID,
-                        editState: EditState.EDITED,
-                        validatedAt: new Date(),
-                        error: {
-                            type: UIErrorType.NONE
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        description: {
+                            value: action.description,
+                            validationState: ValidationState.VALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: {
+                                type: UIErrorType.NONE
+                            }
                         }
                     }
                 }
@@ -377,25 +429,28 @@ export function updateDescriptionSuccess(state: StoreState, action: UpdateDescri
 }
 
 export function updateDescriptionError(state: StoreState, action: UpdateDescriptionError): StoreState {
-    if (!state.addOrgView.viewModel) {
+    if (!state.views.addOrgView.viewModel) {
         console.warn('attempting updateDescriptionError without view model')
         return state
     }
     return {
         ...state,
-        addOrgView: {
-            ...state.addOrgView,
-            viewModel: {
-                ...state.addOrgView.viewModel,
-                editState: EditState.EDITED,
-                newOrganization: {
-                    ...state.addOrgView.viewModel.newOrganization,
-                    description: {
-                        value: action.description,
-                        validationState: ValidationState.INVALID,
-                        editState: EditState.EDITED,
-                        validatedAt: new Date(),
-                        error: action.error
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        description: {
+                            value: action.description,
+                            validationState: ValidationState.INVALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: action.error
+                        }
                     }
                 }
             }

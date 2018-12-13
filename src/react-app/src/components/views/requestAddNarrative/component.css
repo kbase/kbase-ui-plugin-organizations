@@ -1,0 +1,118 @@
+.RequestNarrative {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RequestNarrative .body {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.RequestNarrative .body .selectNarrativeCol {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RequestNarrative .body .selectedNarrativeCol {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RequestNarrative .body .selectNarrativeCol .narrativeSelector {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RequestNarrative .body .selectNarrativeCol .narrativeSelector .control {
+    flex: 0 0 auto;
+}
+
+.RequestNarrative .body .selectNarrativeCol .narrativeSelector .narratives {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RequestNarrative .body .selectNarrativeCol .narrativeSelector .narratives .narrativesTable {
+    overflow-y: auto;
+}
+
+.RequestNarrative .footer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0;
+    justify-content: center;
+}
+
+.RequestNarrative .narrativesTable .narrative.narrativeInOrg {
+    font-weight: normal;
+    font-style: italic;
+    color: rgba(100, 100, 100, 1)
+}
+
+.RequestNarrative .narrativesTable .narrative.selected {
+    background-color: rgba(200, 200, 200, 1);
+}
+
+.RequestNarrative .narrativesTable .narrative {
+    /* border: 1px red solid; */
+    font-weight: bold;
+    padding: 4px;
+}
+
+.RequestNarrative .narrativesTable .narrative+.narrative {
+    /* border: 1px red solid; */
+    /* margin-top: 10px; */
+}
+
+.RequestNarrative .narrativesTable .narrative.narrativeInOrg:hover,
+.RequestNarrative .narrativesTable .narrative.narrativeNotInOrg:hover {
+    /* border: 1px red solid; */
+    background-color: rgba(200, 200, 200, 0.5);
+    cursor: pointer;
+}
+
+.RequestNarrative .body .selectedNarrative {
+    border: 1px silver solid;
+    padding: 4px;
+}
+
+.RequestNarrative .body .selectedNarrative .title {
+    font-weight: bold;
+}
+
+.RequestNarrative .body .selectedNarrativeButtonBar {
+    margin-top: 10px;
+    text-align: center
+}
+
+.RequestNarrative h3 {
+    text-align: center;
+}
+
+.RequestNarrative .searchBar {
+    display: flex;
+    flex-direction: row;
+}
+
+.RequestNarrative .searchBar input {
+    width: 100%;
+    max-width: 16em;
+    min-width: 12em;
+}
+
+.RequestNarrative .searchBar .button {
+    padding: 0 4px;
+}
+
+.RequestNarrative .filterSortBar {
+    /* text-align: right; */
+    margin-left: 10px;
+}

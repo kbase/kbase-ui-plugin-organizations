@@ -3,41 +3,47 @@ import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
 import {
-    StoreState, Organization,
-    AppError, SortDirection, UIError, UIErrorType, Narrative, NarrativeResource
+    StoreState,
+    AppError, UIError, UIErrorType
 } from '../../types'
-import { Model } from '../../data/model'
+
+import * as orgModel from '../../data/models/organization/model'
+import * as requestModel from '../../data/models/requests'
+import * as uberModel from '../../data/models/uber'
 
 
 // Action Types
 
-export interface ViewOrgStart extends Action {
-    type: ActionFlag.VIEW_ORG_FETCH_START
+export interface Load extends Action {
+    type: ActionFlag.VIEW_ORG_LOAD
+    organizationId: string
 }
 
-export interface ViewOrgStop extends Action {
-    type: ActionFlag.VIEW_ORG_STOP
+export interface LoadStart extends Action {
+    type: ActionFlag.VIEW_ORG_LOAD_START
 }
 
-export interface ViewOrgSuccess extends Action {
-    type: ActionFlag.VIEW_ORG_FETCH_SUCCESS,
-    organization: Organization
+export interface LoadSuccess extends Action {
+    type: ActionFlag.VIEW_ORG_LOAD_SUCCESS
+    organization: orgModel.Organization
+    relation: orgModel.Relation
+    groupRequests: Array<requestModel.Request> | null
+    groupInvitations: Array<requestModel.Request> | null
 }
 
-export interface ViewOrgError extends Action {
-    type: ActionFlag.VIEW_ORG_FETCH_ERROR,
+export interface LoadError extends Action {
+    type: ActionFlag.VIEW_ORG_LOAD_ERROR
     error: AppError
 }
 
-export interface ViewOrgFetch extends Action {
-    type: ActionFlag.VIEW_ORG_FETCH,
-    id: string
+export interface Unload extends Action {
+    type: ActionFlag.VIEW_ORG_UNLOAD
 }
 
 // Join Requests
 
 export interface ViewOrgJoinRequest extends Action {
-    type: ActionFlag.VIEW_ORG_JOIN_REQUEST,
+    type: ActionFlag.VIEW_ORG_JOIN_REQUEST
     requestId: string
 }
 
@@ -50,7 +56,7 @@ export interface ViewOrgJoinRequestSuccess extends Action {
 }
 
 export interface ViewOrgJoinRequestError extends Action {
-    type: ActionFlag.VIEW_ORG_JOIN_REQUEST_ERROR,
+    type: ActionFlag.VIEW_ORG_JOIN_REQUEST_ERROR
     error: UIError
 }
 
@@ -113,20 +119,20 @@ export interface RejectJoinInvitationError extends Action {
 
 // Delete Narrative
 
-export interface RemoveNarrative {
+export interface RemoveNarrative extends Action {
     type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE
 }
 
-export interface RemoveNarrativeStart {
+export interface RemoveNarrativeStart extends Action {
     type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_START
 }
 
-export interface RemoveNarrativeSuccess {
+export interface RemoveNarrativeSuccess extends Action {
     type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_SUCCESS,
-    narrative: NarrativeResource
+    narrative: orgModel.NarrativeResource
 }
 
-export interface RemoveNarrativeError {
+export interface RemoveNarrativeError extends Action {
     type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_ERROR,
     error: AppError
 }
@@ -139,7 +145,7 @@ export function removeNarrativeStart(): RemoveNarrativeStart {
     }
 }
 
-export function removeNarrativeSuccess(narrative: NarrativeResource): RemoveNarrativeSuccess {
+export function removeNarrativeSuccess(narrative: orgModel.NarrativeResource): RemoveNarrativeSuccess {
     return {
         type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_SUCCESS,
         narrative: narrative
@@ -153,16 +159,16 @@ export function removeNarrativeError(error: AppError): RemoveNarrativeError {
     }
 }
 
-// THunk
+// Thunk
 
-export function removeNarrative(narrative: NarrativeResource) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+export function removeNarrative(narrative: orgModel.NarrativeResource) {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(removeNarrativeStart())
 
         // TODO: need to restructure this view -- this is crazy
 
         const state = getState()
-        if (!state.viewOrg.organization) {
+        if (!state.views.viewOrgView.viewModel) {
             dispatch(removeNarrativeError({
                 code: 'bad state',
                 message: 'View orgs does not have an org'
@@ -170,15 +176,17 @@ export function removeNarrative(narrative: NarrativeResource) {
             return
         }
 
-
         const {
             auth: { authorization: { token, username } },
             app: { config },
-            viewOrg: {
-                organization
+            views: {
+                viewOrgView: {
+                    viewModel: {
+                        organization
+                    }
+                }
             }
         } = state
-
 
         if (!organization) {
             dispatch(removeNarrativeError({
@@ -190,53 +198,148 @@ export function removeNarrative(narrative: NarrativeResource) {
 
         const groupId = organization.id
 
-        const model = new Model({
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
-        model.removeNarrativeFromGroup(groupId, narrative.workspaceId)
-            .then((org) => {
-                dispatch(removeNarrativeSuccess(narrative))
-            })
-            .catch((err) => {
-                dispatch(removeNarrativeError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
+
+        try {
+            await orgClient.removeNarrativeFromOrg(groupId, narrative.workspaceId)
+            dispatch(removeNarrativeSuccess(narrative))
+        } catch (ex) {
+            dispatch(removeNarrativeError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 
+// Access narrative
+
+export interface AccessNarrative extends Action {
+    type: ActionFlag.VIEW_ORG_ACCESS_NARRATIVE,
+    narrative: orgModel.NarrativeResource
+}
+
+export interface AccessNarrativeStart extends Action {
+    type: ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_START
+}
+
+export interface AccessNarrativeSuccess extends Action {
+    type: ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_SUCCESS,
+    organization: orgModel.Organization
+}
+
+export interface AccessNarrativeError extends Action {
+    type: ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_ERROR,
+    error: AppError
+}
+
+// Generators
+export function accessNarrativeStart(): AccessNarrativeStart {
+    return {
+        type: ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_START
+    }
+}
+
+export function accessNarrativeSuccess(organization: orgModel.Organization): AccessNarrativeSuccess {
+    return {
+        type: ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_SUCCESS,
+        organization: organization
+    }
+}
+
+export function accessNarrativeError(error: AppError): AccessNarrativeError {
+    return {
+        type: ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_ERROR,
+        error: error
+    }
+}
+
+// Thunk
+
+export function accessNarrative(narrative: orgModel.NarrativeResource) {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(accessNarrativeStart())
+
+        const state = getState()
+        if (!state.views.viewOrgView.viewModel) {
+            dispatch(accessNarrativeError({
+                code: 'error',
+                message: 'No view model'
+            }))
+            return
+        }
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config },
+            views: {
+                viewOrgView: {
+                    viewModel: {
+                        organization
+                    }
+                }
+            }
+        } = state
+
+        if (!organization) {
+            return
+        }
+
+        const groupId = organization.id
+        const resourceId = String(narrative.workspaceId)
+
+        const orgClient = new orgModel.OrganizationModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+
+        try {
+            await orgClient.grantNarrativeAccess(groupId, resourceId)
+            const org = await orgClient.getOrg(groupId)
+            dispatch(accessNarrativeSuccess(org))
+        } catch (ex) {
+            dispatch(accessNarrativeError({
+                code: 'error',
+                message: ex.message
+            }))
+        }
+
+    }
+}
 
 // Generators
 
-export function viewOrgStart() {
+export function loadStart(): LoadStart {
     return {
-        type: ActionFlag.VIEW_ORG_FETCH_START
+        type: ActionFlag.VIEW_ORG_LOAD_START
     }
 }
 
-export function viewOrgStop(): ViewOrgStop {
+export function unload(): Unload {
     return {
-        type: ActionFlag.VIEW_ORG_STOP
+        type: ActionFlag.VIEW_ORG_UNLOAD
     }
 }
 
-export function viewOrgSuccess(org: Organization): ViewOrgSuccess {
+export function loadSuccess(
+    organization: orgModel.Organization,
+    relation: orgModel.Relation,
+    groupRequests: Array<requestModel.Request> | null,
+    groupInvitations: Array<requestModel.Request> | null): LoadSuccess {
     return {
-        type: ActionFlag.VIEW_ORG_FETCH_SUCCESS,
-        organization: org
+        type: ActionFlag.VIEW_ORG_LOAD_SUCCESS,
+        organization, relation, groupRequests, groupInvitations
     }
 }
 
 
-export function viewOrgError(error: AppError): ViewOrgError {
+export function loadError(error: AppError): LoadError {
     return {
-        type: ActionFlag.VIEW_ORG_FETCH_ERROR,
+        type: ActionFlag.VIEW_ORG_LOAD_ERROR,
         error: error
     }
 }
@@ -332,178 +435,203 @@ export function rejectJoinInvitationError(error: AppError): RejectJoinInvitation
 
 // Thunks
 
-export function viewOrgFetch(id: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(viewOrgStart())
+export function load(organizationId: string) {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(loadStart())
 
-        const { auth: { authorization: { token, username } },
-            app: { config } } = getState()
-        const model = new Model({
+        const {
+            auth: { authorization: { token, username } },
+            app: { config }
+        } = getState()
+
+        const uberClient = new uberModel.UberModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
+            serviceWizardURL: config.services.ServiceWizard.url,
             userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            workspaceServiceURL: config.services.Workspace.url
         })
 
-        model.getOrg(id)
-            .then((org) => {
-                dispatch(viewOrgSuccess(org))
-            })
-            .catch((err) => {
-                dispatch(viewOrgError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
+        const requestClient = new requestModel.RequestsModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url,
+        })
+
+        try {
+            const { organization, relation } = await uberClient.getOrganizationForUser(organizationId)
+            let requests: Array<requestModel.Request> | null
+            let invitations: Array<requestModel.Request> | null
+            if (relation.type === orgModel.UserRelationToOrganization.OWNER ||
+                relation.type === orgModel.UserRelationToOrganization.ADMIN) {
+                requests = await requestClient.getPendingOrganizationRequestsForOrg(organizationId)
+                invitations = await requestClient.getOrganizationInvitationsForOrg(organizationId)
+            } else {
+                requests = null
+                invitations = null
+            }
+
+            dispatch(loadSuccess(organization, relation, requests, invitations))
+        } catch (ex) {
+            dispatch(loadError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 
 export function viewOrgJoinRequest() {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         //TODO: could do a start here...
-
-        const { auth: { authorization: { token, username } },
-            app: { config },
-            viewOrg: { organization } } = getState()
-        const model = new Model({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
-        })
-
-        if (typeof organization === 'undefined') {
+        const state = getState()
+        if (!state.views.viewOrgView.viewModel) {
             dispatch(viewOrgJoinRequestError({
                 type: UIErrorType.ERROR,
-                message: 'Org not currently defined'
+                message: 'Now view model!'
             }))
             return
         }
-
-        model.requestMembershipToGroup(organization.id)
-            .then(() => {
-                dispatch(viewOrgJoinRequestSuccess())
-                // quick 'n easy
-                dispatch(viewOrgFetch((organization.id)))
-            })
-            .catch((err) => {
-                dispatch(viewOrgJoinRequestError({
-                    type: UIErrorType.ERROR,
-                    message: err.message
-                }))
-            })
-    }
-}
-
-export function viewOrgCancelJoinRequest(requestId: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(viewOrgJoinRequestStart())
-
-        const { auth: { authorization: { token, username } },
-            app: { config },
-            viewOrg: { organization } } = getState()
-        const model = new Model({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
-        })
-        if (typeof organization === 'undefined') {
-            dispatch(viewOrgCancelJoinRequestError({
-                type: UIErrorType.ERROR,
-                message: 'Org not currently defined'
-            }))
-            return
-        }
-
-        model.cancelRequest(requestId)
-            .then((newRequest) => {
-                dispatch(viewOrgCancelJoinRequestSuccess())
-                // quick 'n easy
-                dispatch(viewOrgFetch(newRequest.groupId))
-            })
-            .catch((err) => {
-                dispatch(viewOrgCancelJoinRequestError({
-                    type: UIErrorType.ERROR,
-                    message: err.message
-                }))
-            })
-
-    }
-}
-
-export function acceptJoinInvitation(requestId: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(acceptJoinInvitationStart())
 
         const {
             auth: { authorization: { token, username } },
             app: { config },
-            viewOrg: { organization } } = getState()
-        const model = new Model({
+            views: {
+                viewOrgView: { viewModel: { organization } }
+            }
+        } = state
+
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
-        if (typeof organization === 'undefined') {
-            dispatch(acceptJoinInvitationError({
-                code: 'undefined',
-                message: 'Org not currently defined'
+
+        try {
+            await orgClient.requestMembershipToGroup(organization.id)
+            dispatch(viewOrgJoinRequestSuccess())
+            dispatch(load((organization.id)))
+        } catch (ex) {
+            dispatch(viewOrgJoinRequestError({
+                type: UIErrorType.ERROR,
+                message: ex.message
+            }))
+        }
+    }
+}
+
+export function viewOrgCancelJoinRequest(requestId: string) {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(viewOrgJoinRequestStart())
+
+        const state = getState()
+        if (!state.views.viewOrgView.viewModel) {
+            dispatch(viewOrgJoinRequestError({
+                type: UIErrorType.ERROR,
+                message: 'Now view model!'
             }))
             return
         }
 
-        model.acceptJoinInvitation(requestId)
-            .then((newRequest) => {
-                dispatch(acceptJoinInvitationSuccess())
-                // quick 'n easy
-                dispatch(viewOrgFetch(newRequest.groupId))
-            })
-            .catch((err) => {
-                dispatch(acceptJoinInvitationError(err))
-            })
+        const {
+            auth: { authorization: { token, username } },
+            app: { config },
+            views: {
+                viewOrgView: {
+                    viewModel: { organization } } } } = state
+
+        const requestClient = new requestModel.RequestsModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+
+        try {
+            const newRequest = await requestClient.cancelRequest(requestId)
+            dispatch(viewOrgCancelJoinRequestSuccess())
+            dispatch(load(newRequest.organizationId))
+        } catch (ex) {
+            dispatch(viewOrgCancelJoinRequestError({
+                type: UIErrorType.ERROR,
+                message: ex.message
+            }))
+        }
+    }
+}
+
+export function acceptJoinInvitation(requestId: string) {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(acceptJoinInvitationStart())
+
+        const state = getState()
+        if (!state.views.viewOrgView.viewModel) {
+            dispatch(viewOrgJoinRequestError({
+                type: UIErrorType.ERROR,
+                message: 'Now view model!'
+            }))
+            return
+        }
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config },
+            views: {
+                viewOrgView: {
+                    viewModel: { organization } } } } = state
+
+        const requestClient = new requestModel.RequestsModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+
+        try {
+            const newRequest = await requestClient.acceptJoinInvitation(requestId)
+            dispatch(acceptJoinInvitationSuccess())
+            // quick 'n easy
+            dispatch(load(newRequest.organizationId))
+        } catch (ex) {
+            dispatch(acceptJoinInvitationError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
 
     }
 }
 
 
 export function rejectJoinInvitation(requestId: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(acceptJoinInvitationStart())
 
-        const {
-            auth: { authorization: { token, username } },
-            app: { config },
-            viewOrg: { organization } } = getState()
-        const model = new Model({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
-        })
-        if (typeof organization === 'undefined') {
-            dispatch(acceptJoinInvitationError({
-                code: 'undefined',
-                message: 'Org not currently defined'
+        const state = getState()
+        if (!state.views.viewOrgView.viewModel) {
+            dispatch(viewOrgJoinRequestError({
+                type: UIErrorType.ERROR,
+                message: 'Now view model!'
             }))
             return
         }
 
-        model.rejectJoinInvitation(requestId)
-            .then((newRequest) => {
-                dispatch(rejectJoinInvitationSuccess())
-                // quick 'n easy
-                dispatch(viewOrgFetch(newRequest.groupId))
-            })
-            .catch((err) => {
-                dispatch(rejectJoinInvitationError(err))
-            })
+        const {
+            auth: { authorization: { token, username } },
+            app: { config },
+            views: {
+                viewOrgView: {
+                    viewModel: { organization } } } } = state
+
+        const requestClient = new requestModel.RequestsModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+
+        try {
+            const newRequest = await requestClient.rejectJoinInvitation(requestId)
+            dispatch(rejectJoinInvitationSuccess())
+            dispatch(load(newRequest.organizationId))
+        } catch (ex) {
+            dispatch(rejectJoinInvitationError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
 
     }
 }

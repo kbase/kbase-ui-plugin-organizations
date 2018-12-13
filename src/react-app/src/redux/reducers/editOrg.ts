@@ -1,8 +1,8 @@
 import { Action } from 'redux'
-import { StoreState, EditState, SaveState, UIErrorType, FieldState, ValidationState } from '../../types';
+import { StoreState, EditState, SaveState, UIErrorType, ValidationState, ComponentLoadingState } from '../../types';
 import { ActionFlag } from '../actions';
 import {
-    EditOrgEditStart, EditOrgEditSuccess, EditOrgEditError,
+    LoadStart, LoadSuccess, LoadError,
     EditOrgEvaluateOK, EditOrgEvaluateErrors,
     EditOrgSave, EditOrgSaveStart, EditOrgSaveError, EditOrgSaveSuccess,
     EditOrgUpdateNameSuccess, EditOrgUpdateNameError,
@@ -10,6 +10,7 @@ import {
     EditOrgUpdateDescriptionSuccess, EditOrgUpdateDescriptionError,
     EditOrgUpdateGravatarHashError, EditOrgUpdateGravatarHashSuccess
 } from '../actions/editOrg'
+import { StateInstances } from '../state';
 
 
 
@@ -17,64 +18,55 @@ import {
 
 // Edit session loading
 
-export function editOrgEditStart(state: StoreState, action: EditOrgEditStart) {
+export function loadStart(state: StoreState, action: LoadStart) {
     return {
-        ...state, editOrg: {
-            ...state.editOrg,
-            editState: EditState.UNEDITED,
-            validationState: ValidationState.NONE,
-            saveState: SaveState.NEW,
-            // TODO: get rid of this...
-            organizationId: action.id,
-            editedOrganization: {
-                id: {
-                    value: '',
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                loadingState: ComponentLoadingState.LOADING,
+                error: null,
+                viewModel: null
+
+            }
+        }
+    }
+}
+
+export function loadSuccess(state: StoreState, action: LoadSuccess) {
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                loadingState: ComponentLoadingState.SUCCESS,
+                error: null,
+                viewModel: {
+                    editState: EditState.UNEDITED,
                     validationState: ValidationState.NONE,
-                    editState: EditState.NONE,
-                    validatedAt: null,
-                    error: {
-                        type: UIErrorType.NONE
-                    }
-                },
-                name: {
-                    value: '',
-                    validationState: ValidationState.NONE,
-                    editState: EditState.NONE,
-                    validatedAt: null,
-                    error: {
-                        type: UIErrorType.NONE
-                    }
-                },
-                gravatarHash: {
-                    value: '',
-                    validationState: ValidationState.NONE,
-                    editState: EditState.NONE,
-                    validatedAt: null,
-                    error: {
-                        type: UIErrorType.NONE
-                    }
-                },
-                description: {
-                    value: '',
-                    validationState: ValidationState.NONE,
-                    editState: EditState.NONE,
-                    validatedAt: null,
-                    error: {
-                        type: UIErrorType.NONE
-                    }
+                    saveState: SaveState.NEW,
+                    // TODO: get rid of this...
+                    // organizationId: action.id,
+                    organization: action.organization,
+                    saveError: null,
+                    editedOrganization: action.editedOrganization
                 }
             }
         }
     }
 }
 
-export function editOrgEditSuccess(state: StoreState, action: EditOrgEditSuccess) {
+export function loadError(state: StoreState, action: LoadError) {
     return {
-        ...state, editOrg: {
-            ...state.editOrg,
-            editedOrganization: action.editedOrganization,
-            organization: action.organization,
-            editState: EditState.UNEDITED
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                loadingState: ComponentLoadingState.ERROR,
+                error: action.error,
+                viewModel: null
+
+            }
         }
     }
 }
@@ -82,33 +74,63 @@ export function editOrgEditSuccess(state: StoreState, action: EditOrgEditSuccess
 // save
 
 export function editOrgSaveStart(state: StoreState, action: EditOrgSaveStart): StoreState {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
     return {
         ...state,
-        editOrg: {
-            ...state.editOrg,
-            saveState: SaveState.SAVING
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
+                    saveState: SaveState.SAVING
+                }
+            }
         }
     }
 }
 
 export function editOrgSaveSuccess(state: StoreState, action: EditOrgSaveSuccess): StoreState {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
     return {
         ...state,
-        editOrg: {
-            ...state.editOrg,
-            editState: EditState.UNEDITED,
-            saveState: SaveState.SAVED
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
+                    editState: EditState.UNEDITED,
+                    saveState: SaveState.SAVED
+                }
+            }
         }
     }
 }
 
 export function editOrgSaveError(state: StoreState, action: EditOrgSaveError): StoreState {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
     return {
         ...state,
-        editOrg: {
-            ...state.editOrg,
-            saveState: SaveState.SAVE_ERROR,
-            error: action.error
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
+                    saveState: SaveState.SAVE_ERROR,
+                    saveError: action.error
+                }
+            }
         }
     }
 }
@@ -116,21 +138,41 @@ export function editOrgSaveError(state: StoreState, action: EditOrgSaveError): S
 // Evaluate edit session
 
 export function editOrgEvaluateOk(state: StoreState, action: EditOrgEvaluateOK): StoreState {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
     return {
         ...state,
-        editOrg: {
-            ...state.editOrg,
-            validationState: ValidationState.VALID
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
+                    validationState: ValidationState.VALID
+                }
+            }
         }
     }
 }
 
 export function editOrgEvaluateErrors(state: StoreState, action: EditOrgEvaluateErrors): StoreState {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
     return {
         ...state,
-        editOrg: {
-            ...state.editOrg,
-            validationState: ValidationState.INVALID
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
+                    validationState: ValidationState.INVALID
+                }
+            }
         }
     }
 }
@@ -139,19 +181,30 @@ export function editOrgEvaluateErrors(state: StoreState, action: EditOrgEvaluate
 
 // Name
 export function editOrgUpdateNameSuccess(state: StoreState, action: EditOrgUpdateNameSuccess) {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
     return {
-        ...state, editOrg: {
-            ...state.editOrg,
-            editState: EditState.EDITED,
-            editedOrganization: {
-                ...state.editOrg.editedOrganization,
-                name: {
-                    value: action.name,
-                    validationState: ValidationState.VALID,
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
                     editState: EditState.EDITED,
-                    validatedAt: new Date(),
-                    error: {
-                        type: UIErrorType.NONE
+                    editedOrganization: {
+                        ...state.views.editOrgView.viewModel.editedOrganization,
+                        name: {
+                            value: action.name,
+                            validationState: ValidationState.VALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: {
+                                type: UIErrorType.NONE
+                            }
+                        }
                     }
                 }
             }
@@ -160,18 +213,29 @@ export function editOrgUpdateNameSuccess(state: StoreState, action: EditOrgUpdat
 }
 
 export function editOrgUpdateNameError(state: StoreState, action: EditOrgUpdateNameError) {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
     return {
-        ...state, editOrg: {
-            ...state.editOrg,
-            editState: EditState.EDITED,
-            editedOrganization: {
-                ...state.editOrg.editedOrganization,
-                name: {
-                    value: action.name,
-                    validationState: ValidationState.INVALID,
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
                     editState: EditState.EDITED,
-                    validatedAt: new Date(),
-                    error: action.error
+                    editedOrganization: {
+                        ...state.views.editOrgView.viewModel.editedOrganization,
+                        name: {
+                            value: action.name,
+                            validationState: ValidationState.INVALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: action.error
+                        }
+                    }
                 }
             }
         }
@@ -180,19 +244,30 @@ export function editOrgUpdateNameError(state: StoreState, action: EditOrgUpdateN
 
 // Gravatar hash
 export function editOrgUpdateGravatarHashSuccess(state: StoreState, action: EditOrgUpdateGravatarHashSuccess) {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
     return {
-        ...state, editOrg: {
-            ...state.editOrg,
-            editState: EditState.EDITED,
-            editedOrganization: {
-                ...state.editOrg.editedOrganization,
-                gravatarHash: {
-                    value: action.gravatarHash,
-                    validationState: ValidationState.VALID,
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
                     editState: EditState.EDITED,
-                    validatedAt: new Date(),
-                    error: {
-                        type: UIErrorType.NONE
+                    editedOrganization: {
+                        ...state.views.editOrgView.viewModel.editedOrganization,
+                        gravatarHash: {
+                            value: action.gravatarHash,
+                            validationState: ValidationState.VALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: {
+                                type: UIErrorType.NONE
+                            }
+                        }
                     }
                 }
             }
@@ -201,18 +276,29 @@ export function editOrgUpdateGravatarHashSuccess(state: StoreState, action: Edit
 }
 
 export function editOrgUpdateGravatarHashError(state: StoreState, action: EditOrgUpdateGravatarHashError) {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
     return {
-        ...state, editOrg: {
-            ...state.editOrg,
-            editState: EditState.EDITED,
-            editedOrganization: {
-                ...state.editOrg.editedOrganization,
-                gravatarHash: {
-                    value: action.gravatarHash,
-                    validationState: ValidationState.INVALID,
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
                     editState: EditState.EDITED,
-                    validatedAt: new Date(),
-                    error: action.error
+                    editedOrganization: {
+                        ...state.views.editOrgView.viewModel.editedOrganization,
+                        gravatarHash: {
+                            value: action.gravatarHash,
+                            validationState: ValidationState.INVALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: action.error
+                        }
+                    }
                 }
             }
         }
@@ -258,19 +344,30 @@ export function editOrgUpdateGravatarHashError(state: StoreState, action: EditOr
 // }
 
 export function editOrgUpdateDescriptionSuccess(state: StoreState, action: EditOrgUpdateDescriptionSuccess) {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
     return {
-        ...state, editOrg: {
-            ...state.editOrg,
-            editState: EditState.EDITED,
-            editedOrganization: {
-                ...state.editOrg.editedOrganization,
-                description: {
-                    value: action.description,
-                    validationState: ValidationState.VALID,
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
                     editState: EditState.EDITED,
-                    validatedAt: new Date(),
-                    error: {
-                        type: UIErrorType.NONE
+                    editedOrganization: {
+                        ...state.views.editOrgView.viewModel.editedOrganization,
+                        description: {
+                            value: action.description,
+                            validationState: ValidationState.VALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: {
+                                type: UIErrorType.NONE
+                            }
+                        }
                     }
                 }
             }
@@ -279,18 +376,29 @@ export function editOrgUpdateDescriptionSuccess(state: StoreState, action: EditO
 }
 
 export function editOrgUpdateDescriptionError(state: StoreState, action: EditOrgUpdateDescriptionError) {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
     return {
-        ...state, editOrg: {
-            ...state.editOrg,
-            editState: EditState.EDITED,
-            editedOrganization: {
-                ...state.editOrg.editedOrganization,
-                description: {
-                    value: action.description,
-                    validationState: ValidationState.INVALID,
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
                     editState: EditState.EDITED,
-                    validatedAt: new Date(),
-                    error: action.error
+                    editedOrganization: {
+                        ...state.views.editOrgView.viewModel.editedOrganization,
+                        description: {
+                            value: action.description,
+                            validationState: ValidationState.INVALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: action.error
+                        }
+                    }
                 }
             }
         }
@@ -302,10 +410,12 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
     // the type.
 
     switch (action.type) {
-        case ActionFlag.EDIT_ORG_EDIT_START:
-            return editOrgEditStart(state, action as EditOrgEditStart)
-        case ActionFlag.EDIT_ORG_EDIT_SUCCESS:
-            return editOrgEditSuccess(state, action as EditOrgEditSuccess)
+        case ActionFlag.EDIT_ORG_LOAD_START:
+            return loadStart(state, action as LoadStart)
+        case ActionFlag.EDIT_ORG_LOAD_SUCCESS:
+            return loadSuccess(state, action as LoadSuccess)
+        case ActionFlag.EDIT_ORG_LOAD_ERROR:
+            return loadError(state, action as LoadError)
         case ActionFlag.EDIT_ORG_SAVE_START:
             return editOrgSaveStart(state, action as EditOrgSaveStart)
         case ActionFlag.EDIT_ORG_SAVE_SUCCESS:

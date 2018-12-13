@@ -1,7 +1,10 @@
-import { ViewOrganizationState } from "../components/viewOrganization/ViewOrganization";
-import { types, error } from "util";
-import Organizations from "../components/browseOrgs/OrganizationsContainer";
-import { string } from "prop-types";
+import * as userProfile from "../data/apis/userProfile"
+import * as groups from "../data/apis/groups"
+import * as orgModel from '../data/models/organization/model'
+import * as userModel from "../data/models/user"
+import * as requestModel from '../data/models/requests'
+import * as narrativeModel from '../data/models/narrative'
+import * as uberModel from '../data/models/uber'
 
 /* Types from the organization service (approximately) */
 
@@ -99,49 +102,49 @@ export interface Member {
 
 // }
 
-export enum UserRelationToOrganization {
-    NONE = 0,
-    VIEW,
-    MEMBER_REQUEST_PENDING,
-    MEMBER_INVITATION_PENDING,
-    MEMBER,
-    ADMIN,
-    OWNER
-}
+// export enum UserRelationToOrganization {
+//     NONE = 0,
+//     VIEW,
+//     MEMBER_REQUEST_PENDING,
+//     MEMBER_INVITATION_PENDING,
+//     MEMBER,
+//     ADMIN,
+//     OWNER
+// }
 
-export interface UserOrgRelation {
-    type: UserRelationToOrganization
-}
+// export interface UserOrgRelation {
+//     type: UserRelationToOrganization
+// }
 
-export interface NoRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.NONE
-}
+// export interface NoRelation extends UserOrgRelation {
+//     type: UserRelationToOrganization.NONE
+// }
 
-export interface ViewRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.VIEW
-}
+// export interface ViewRelation extends UserOrgRelation {
+//     type: UserRelationToOrganization.VIEW
+// }
 
-export interface MembershipRequestPendingRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.MEMBER_REQUEST_PENDING,
-    requestId: string
-}
+// export interface MembershipRequestPendingRelation extends UserOrgRelation {
+//     type: UserRelationToOrganization.MEMBER_REQUEST_PENDING,
+//     requestId: string
+// }
 
-export interface MembershipInvitationPendingRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.MEMBER_INVITATION_PENDING,
-    requestId: string
-}
+// export interface MembershipInvitationPendingRelation extends UserOrgRelation {
+//     type: UserRelationToOrganization.MEMBER_INVITATION_PENDING,
+//     requestId: string
+// }
 
-export interface MemberRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.MEMBER
-}
+// export interface MemberRelation extends UserOrgRelation {
+//     type: UserRelationToOrganization.MEMBER
+// }
 
-export interface AdminRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.ADMIN
-}
+// export interface AdminRelation extends UserOrgRelation {
+//     type: UserRelationToOrganization.ADMIN
+// }
 
-export interface OwnerRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.OWNER
-}
+// export interface OwnerRelation extends UserOrgRelation {
+//     type: UserRelationToOrganization.OWNER
+// }
 
 export interface BriefOrganization {
     id: string
@@ -151,7 +154,7 @@ export interface BriefOrganization {
         username: string
         realname: string
     },
-    relation: UserRelationToOrganization,
+    relation: orgModel.UserRelationToOrganization,
     createdAt: Date
     modifiedAt: Date
 }
@@ -177,57 +180,59 @@ export enum RequestStatus {
 
 export type Username = string
 
-export interface GroupRequest {
-    id: string
-    groupId: string
-    requester: User
-    type: RequestType
-    status: RequestStatus
-    resourceType: RequestResourceType
-    // subjectUser: User | null,
-    // subjectWorkspaceId: number | null,
-    createdAt: Date
-    expireAt: Date
-    modifiedAt: Date
-}
+// export interface GroupRequest {
+//     id: string
+//     organizationId: string
+//     // organization: orgModel.Organization
+//     requester: User
+//     type: RequestType
+//     status: RequestStatus
+//     resourceType: RequestResourceType
+//     // subjectUser: User | null,
+//     // subjectWorkspaceId: number | null,
+//     createdAt: Date
+//     expireAt: Date
+//     modifiedAt: Date
+// }
 
-export interface UserRequest extends GroupRequest {
-    resourceType: RequestResourceType.USER
-    type: RequestType.REQUEST
-    user: User
-}
+// export interface UserRequest extends GroupRequest {
+//     resourceType: RequestResourceType.USER
+//     type: RequestType.REQUEST
+//     user: User
+// }
 
-export interface UserInvitation extends GroupRequest {
-    resourceType: RequestResourceType.USER
-    type: RequestType.INVITATION
-    user: User
-}
+// export interface UserInvitation extends GroupRequest {
+//     resourceType: RequestResourceType.USER
+//     type: RequestType.INVITATION
+//     user: User
+// }
 
+// export interface WorkspaceRequest extends GroupRequest {
+//     resourceType: RequestResourceType.WORKSPACE
+//     type: RequestType.REQUEST
+//     workspace: string,
+//     narrative: NarrativeResource | null
+// }
 
-export interface WorkspaceRequest extends GroupRequest {
-    resourceType: RequestResourceType.WORKSPACE
-    type: RequestType.REQUEST
-    workspace: string,
-    narrative: NarrativeResource | null
-}
+// export interface WorkspaceInvitation extends GroupRequest {
+//     resourceType: RequestResourceType.WORKSPACE
+//     type: RequestType.INVITATION
+//     workspace: string
+// }
 
-export interface WorkspaceInvitation extends GroupRequest {
-    resourceType: RequestResourceType.WORKSPACE
-    type: RequestType.INVITATION
-    workspace: string
-}
+// export interface AppRequest extends GroupRequest {
+//     resourceType: RequestResourceType.APP
+//     type: RequestType.REQUEST
+//     app: string
+// }
 
-export interface AppRequest extends GroupRequest {
-    resourceType: RequestResourceType.APP
-    type: RequestType.REQUEST
-    app: string
-}
+// export interface AppInvitation extends GroupRequest {
+//     resourceType: RequestResourceType.APP
+//     type: RequestType.INVITATION
+//     app: string
+// }
 
-export interface AppInvitation extends GroupRequest {
-    resourceType: RequestResourceType.APP
-    type: RequestType.INVITATION
-    app: string
-}
+// export type Request = UserRequest | UserInvitation | WorkspaceRequest | WorkspaceInvitation | AppRequest | AppInvitation
 
 export interface App {
     id: string,
@@ -242,21 +247,22 @@ export interface AppResource {
     id: string
 }
 
-export interface Organization {
-    id: string
-    name: string
-    gravatarHash: string | null
-    description: string
-    owner: Member
-    relation: UserOrgRelation
-    createdAt: Date
-    modifiedAt: Date,
-    members: Array<Member>,
-    // admins: Array<Admin>,
-    adminRequests: Array<GroupRequest>,
-    narratives: Array<NarrativeResource>,
-    apps: Array<AppResource>
-}
+// REVIVE in a different form? Or not? This is the old Organization
+// export interface Organization {
+//     id: string
+//     name: string
+//     gravatarHash: string | null
+//     description: string
+//     owner: Member
+//     relation: UserOrgRelation
+//     createdAt: Date
+//     modifiedAt: Date,
+//     members: Array<Member>,
+//     // admins: Array<Admin>,
+//     adminRequests: Array<requestModel.Request>,
+//     narratives: Array<NarrativeResource>,
+//     apps: Array<AppResource>
+// }
 
 export interface EditedOrganization {
     id: {
@@ -276,9 +282,6 @@ export interface EditedOrganization {
 /*
     Collection of organizations
 */
-
-export type Organizations = Array<Organization>
-
 
 /* REDUX */
 
@@ -399,28 +402,27 @@ export enum ComponentLoadingState {
     ERROR
 }
 
-export interface ManageOrganizationRequestsValue {
-    organization: Organization
-    requests: Array<GroupRequest>
+export interface ManageOrganizationRequestsViewModel {
+    organization: orgModel.Organization
+    requests: Array<requestModel.Request>
+    invitations: Array<requestModel.Request>
 }
+
 export interface ManageOrganizationRequestsView {
-    state: ComponentLoadingState
-    viewState: ManageOrganizationRequestsValue | null
+    loadingState: ComponentLoadingState
     error: AppError | null
+    viewModel: ManageOrganizationRequestsViewModel | null
 }
-export enum ViewMembersViewState {
-    NONE = 0,
-    LOADING,
-    SUCCESS,
-    ERROR
+
+export interface ViewMembersViewModel {
+    organization: orgModel.Organization
+    relation: orgModel.Relation
 }
 
 export interface ViewMembersView {
-    state: ViewMembersViewState,
+    loadingState: ComponentLoadingState,
     error: AppError | null,
-    view: {
-        organization: Organization
-    } | null
+    viewModel: ViewMembersViewModel | null
 }
 
 export enum BrowseOrgsState {
@@ -430,21 +432,25 @@ export enum BrowseOrgsState {
     ERROR
 }
 
+export interface BrowseOrgsViewModel {
+    rawOrganizations: Array<orgModel.Organization>
+    organizations: Array<orgModel.Organization>
+    totalCount: number
+    filteredCount: number
+    sortBy: string
+    sortDirection: SortDirection
+    filter: string
+    searchTerms: Array<string>
+    selectedOrganizationId: string | null,
+    // TODO: let's make a new interface for running operations...
+    searching: boolean
+    error: AppError | null
+}
+
 export interface BrowseOrgsView {
-    state: BrowseOrgsState,
+    loadingState: ComponentLoadingState,
     error: AppError | null,
-    view: {
-        rawOrganizations: Array<Organization>
-        organizations: Array<Organization>
-        totalCount: number
-        filteredCount: number
-        sortBy: string
-        sortDirection: SortDirection
-        filter: string
-        searchTerms: Array<string>
-        selectedOrganizationId: string | null,
-        searching: boolean
-    } | null
+    viewModel: BrowseOrgsViewModel | null
 }
 
 export enum InviteUserViewState {
@@ -457,46 +463,41 @@ export enum InviteUserViewState {
 }
 
 // user info we get out of user profile search
-export interface BriefUser {
-    username: string
-    realname: string
-}
+
 
 // a user who may or may not be in an org, with org relation info
 // todo: fetch more profile info.
 export interface OrganizationUser {
     username: string
     realname: string
-    relation: UserRelationToOrganization
+    relation: orgModel.UserRelationToOrganization
 }
 
-export interface InviteUserValue {
-    organization: Organization
+export interface InviteUserViewModel {
+    organization: orgModel.Organization
     users: Array<OrganizationUser> | null
     selectedUser: {
         user: User,
-        relation: UserRelationToOrganization
+        relation: orgModel.UserRelationToOrganization
     } | null
     editState: InviteUserViewState
 }
 
 export interface InviteUserView {
     loadingState: ComponentLoadingState
-    value: InviteUserValue | null
+    viewModel: InviteUserViewModel | null
     error: AppError | null
     // viewState: AppError | InviteUserValue | null
 }
 
-export interface ManageMembershipValue {
-    organization: Organization
+export interface ManageMembershipViewModel {
+    organization: orgModel.Organization
 }
 
 export interface ManageMembershipView {
-    // state: ComponentLoadingState,
-    loading: boolean
+    loadingState: ComponentLoadingState
     error: AppError | null
-    value: ManageMembershipValue | null
-    // viewState: AppError | ManageMembershipValue | null
+    viewModel: ManageMembershipViewModel | null
 }
 
 export enum NarrativeState {
@@ -515,20 +516,22 @@ export interface Narrative {
     modifiedAt: Date
 }
 
-export enum UserWorkspacePermission {
+// export enum UserWorkspacePermission {
+//     NONE = 0,
+//     READ,
+//     WRITE,
+//     ADMIN,
+//     OWN
+// }
+
+
+export enum ProcessingState {
     NONE = 0,
-    READ,
-    WRITE,
-    ADMIN,
-    OWN
+    PROCESSING,
+    SUCCESS,
+    ERROR
 }
 
-export interface NarrativeResource {
-    workspaceId: number
-    title: string
-    permission: UserWorkspacePermission
-    isPublic: boolean
-}
 
 export enum RequestNarrativeState {
     NONE = 0,
@@ -539,16 +542,20 @@ export enum RequestNarrativeState {
     SENT
 }
 
-export interface RequestNarrativeValue {
-    organization: Organization
+
+export interface RequestNarrativeViewModel {
+    organization: orgModel.Organization
     narratives: Array<Narrative>
     selectedNarrative: Narrative | null
+    relation: orgModel.Relation
+    error: AppError | null
+    saveState: SaveState
 }
 
 export interface RequestNarrativeView {
-    status: RequestNarrativeState
+    loadingState: ComponentLoadingState
     error: AppError | null
-    value: RequestNarrativeValue | null
+    viewModel: RequestNarrativeViewModel | null
 }
 
 export interface AddOrgViewModel {
@@ -560,13 +567,106 @@ export interface AddOrgViewModel {
 }
 
 export interface AddOrgView {
-    loadingStatus: ComponentLoadingState
+    loadingState: ComponentLoadingState
     error: AppError | null
     viewModel: AddOrgViewModel | null
 }
 
+export interface Notification {
+
+}
+
+export interface DashboardViewModel {
+    organizations: Array<uberModel.UberOrganization>
+    // users: Map<userModel.Username, userModel.User>
+    pendingRequests: Array<requestModel.Request>
+    pendingInvitations: Array<requestModel.Request>
+    pendingAdminRequests: Array<requestModel.Request>
+    notifications: Array<Notification>
+}
+
+export interface DashboardView {
+    loadingState: ComponentLoadingState
+    error: AppError | null
+    viewModel: DashboardViewModel | null
+}
+
+export interface UserEntity {
+    userId: string
+    profile: userProfile.UserProfile
+}
+
+export interface OrganizationEntity {
+    groupId: string
+    group: groups.Group
+}
+
+export interface RequestEntity {
+    requestId: string
+    request: groups.Request
+}
+
+export interface OrganizationCentricView {
+    loadingState: ComponentLoadingState
+    error: AppError | null
+    viewModel: OrganizationCentricViewModel | null
+}
+export interface OrganizationCentricViewModel {
+    organization: orgModel.Organization
+    pendingJoinRequest: requestModel.UserRequest | null
+    pendingJoinInvitation: requestModel.UserInvitation | null
+    relation: orgModel.Relation
+}
+
+export interface ViewOrgViewModel {
+    organization: orgModel.Organization
+    relation: orgModel.Relation
+    groupRequests: Array<requestModel.Request> | null
+    groupInvitations: Array<requestModel.Request> | null
+}
+
+export interface ViewOrgView {
+    loadingState: ComponentLoadingState
+    error: AppError | null
+    viewModel: ViewOrgViewModel | null
+}
+
+export interface EditOrgViewModel {
+    editState: EditState
+    saveState: SaveState
+    validationState: ValidationState
+    editedOrganization: EditableOrganization
+    organization: orgModel.Organization
+    saveError: AppError | null
+}
+
+export interface EditOrgView {
+    loadingState: ComponentLoadingState,
+    error: AppError | null,
+    viewModel: EditOrgViewModel | null
+}
+
 export interface StoreState {
-    browseOrgs: BrowseOrgsView,
+    // new!!
+    entities: {
+        users: {
+            byId: Map<userModel.Username, userModel.User>
+            all: Array<string>
+        }
+        orgs: {
+            byId: Map<orgModel.OrganizationID, orgModel.Organization>
+            all: Array<string>
+        }
+        requests: {
+            byId: Map<requestModel.RequestID, requestModel.Request>
+            all: Array<string>
+        }
+        narratives: {
+            byId: Map<narrativeModel.WorkspaceID, narrativeModel.Narrative>
+        }
+    }
+
+
 
     auth: Authorization
     error: AppError | null
@@ -576,53 +676,26 @@ export interface StoreState {
         config: AppConfig
         error?: AppError
     }
-    addOrgView: AddOrgView
+
+    views: {
+        browseOrgsView: BrowseOrgsView
+        addOrgView: AddOrgView
+        viewOrgView: ViewOrgView
+        editOrgView: EditOrgView
+        manageOrganizationRequestsView: ManageOrganizationRequestsView
+        viewMembersView: ViewMembersView
+        inviteUserView: InviteUserView
+        manageMembershipView: ManageMembershipView
+        requestNarrativeView: RequestNarrativeView
+        dashboardView: DashboardView
+        organizationCentricView: OrganizationCentricView
+    }
     updateOrg: {
         pending: boolean
     }
-    viewOrg: {
-        state: ViewOrgState
-        organization?: Organization
-        error?: AppError
-    }
-    editOrg: {
-        organizationId: string
-        editState: EditState
-        saveState: SaveState
-        validationState: ValidationState
-        editedOrganization: EditableOrganization
-        organization: Organization | null
-        error?: AppError
-    }
-    manageOrganizationRequestsView: ManageOrganizationRequestsView
-    viewMembersView: ViewMembersView
-    inviteUserView: InviteUserView
-    manageMembershipView: ManageMembershipView
-    requestNarrativeView: RequestNarrativeView
 }
 
 /* COMPONENT PROPS */
-
-
-
-
-// ADD ORG
-
-
-
-
-// export interface EditOrganizationProps {
-//     id: string,
-//     state: EditOrgState
-//     organization?: Organization
-//     editedOrganization?: EditedOrganization
-//     error?: AppError
-//     onEditOrg: (id: string) => void
-//     onUpdateOrg: () => void
-//     onUpdateName: (name: string) => void,
-//     onUpdateDescription: (description: string) => void
-// }
-
 
 export interface AppError {
     code: string

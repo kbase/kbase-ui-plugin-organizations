@@ -1,11 +1,14 @@
 import * as React from 'react'
-import { GroupRequest, RequestType, RequestResourceType, UserRequest, WorkspaceRequest, AppRequest, UserInvitation } from '../../types';
-import { Card, Button, Icon } from 'antd';
-import User from '../User';
+import { RequestType, RequestResourceType } from '../../types';
+import { Card, Icon } from 'antd';
+import User from '../entities/UserContainer';
 import './component.css'
 
+import * as orgModel from '../../data/models/organization/model'
+import * as requestModel from '../../data/models/requests'
+
 export interface RequestProps {
-    request: GroupRequest
+    request: requestModel.Request
 }
 
 export interface RequestState {
@@ -78,7 +81,7 @@ export class Request extends React.Component<RequestProps, RequestState> {
         super(props)
     }
 
-    renderRequestJoinRequest(request: UserRequest) {
+    renderRequestJoinRequest(request: requestModel.UserRequest) {
         const title = (
             <span>
                 <Icon type="user" />
@@ -115,7 +118,7 @@ export class Request extends React.Component<RequestProps, RequestState> {
                         <tr>
                             <th>from</th>
                             <td className="requester">
-                                <User user={request.requester} avatarSize={50} />
+                                <User userId={request.requester} avatarSize={50} />
                             </td>
                         </tr>
                         <tr>
@@ -140,7 +143,7 @@ export class Request extends React.Component<RequestProps, RequestState> {
         )
     }
 
-    renderRequestJoinInvitation(request: UserInvitation) {
+    renderRequestJoinInvitation(request: requestModel.UserInvitation) {
         const title = (
             <span>
                 <Icon type="team" />
@@ -174,7 +177,7 @@ export class Request extends React.Component<RequestProps, RequestState> {
                         <tr>
                             <th>invitation to</th>
                             <td className="requester">
-                                <User user={request.user} avatarSize={50} />
+                                <User userId={request.user} avatarSize={50} />
                             </td>
                         </tr>
                         <tr>
@@ -199,7 +202,7 @@ export class Request extends React.Component<RequestProps, RequestState> {
         )
     }
 
-    renderRequestNarrativeRequest(request: WorkspaceRequest) {
+    renderRequestNarrativeRequest(request: requestModel.WorkspaceRequest) {
         const title = (
             <span>
                 <Icon type="file" />
@@ -236,13 +239,13 @@ export class Request extends React.Component<RequestProps, RequestState> {
                         <tr>
                             <th>from</th>
                             <td className="requester">
-                                <User user={request.requester} avatarSize={50} />
+                                <User userId={request.requester} avatarSize={50} />
                             </td>
                         </tr>
                         <tr>
                             <th>narrative</th>
                             <td className="narrative">
-                                {request.workspace}
+                                {request.narrativeId}
                             </td>
                         </tr>
                         <tr>
@@ -267,7 +270,7 @@ export class Request extends React.Component<RequestProps, RequestState> {
         )
     }
 
-    renderRequestAppRequest(request: AppRequest) {
+    renderRequestAppRequest(request: requestModel.AppRequest) {
         const title = (
             <span>
                 <Icon type="appstore" />
@@ -304,13 +307,13 @@ export class Request extends React.Component<RequestProps, RequestState> {
                         <tr>
                             <th>from</th>
                             <td className="requester">
-                                <User user={request.requester} avatarSize={50} />
+                                <User userId={request.requester} avatarSize={50} />
                             </td>
                         </tr>
                         <tr>
                             <th>app</th>
                             <td className="requester">
-                                {request.app}
+                                {request.appId}
                             </td>
                         </tr>
                         <tr>
@@ -341,18 +344,18 @@ export class Request extends React.Component<RequestProps, RequestState> {
             case RequestType.REQUEST:
                 switch (request.resourceType) {
                     case RequestResourceType.USER:
-                        return this.renderRequestJoinRequest(request as UserRequest)
+                        return this.renderRequestJoinRequest(request as requestModel.UserRequest)
                     case RequestResourceType.WORKSPACE:
-                        return this.renderRequestNarrativeRequest(request as WorkspaceRequest)
+                        return this.renderRequestNarrativeRequest(request as requestModel.WorkspaceRequest)
                     case RequestResourceType.APP:
-                        return this.renderRequestAppRequest(request as AppRequest)
+                        return this.renderRequestAppRequest(request as requestModel.AppRequest)
                     default:
                         throw new Error('Unsupported resource type: ' + request.resourceType)
                 }
             case RequestType.INVITATION:
                 switch (request.resourceType) {
                     case RequestResourceType.USER:
-                        return this.renderRequestJoinInvitation(request as UserInvitation)
+                        return this.renderRequestJoinInvitation(request as requestModel.UserInvitation)
                     case RequestResourceType.WORKSPACE:
                         throw new Error('Workspace invitations are not supported')
                     // return this.renderRequestNarrativeInvitation(request as WorkspaceRequest)

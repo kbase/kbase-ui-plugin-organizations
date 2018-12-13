@@ -1,26 +1,103 @@
-import { StoreState, SortDirection, AuthState, AppState, EditState, SaveState, ValidationState, ViewOrgState, ViewMembersViewState, BrowseOrgsState, InviteUserViewState, ComponentLoadingState, RequestNarrativeState } from "../types";
-import { StaticData } from "../data/model";
-import { NONAME } from "dns";
+import {
+    StoreState, SortDirection, AuthState, AppState,
+    EditState, SaveState, ValidationState, BrowseOrgsState, ComponentLoadingState
+} from "../types";
+import { StaticData } from '../data/models/organization/staticData'
 
+// rawOrganizations: [],
+//                         organizations: [],
+//                         totalCount: 0,
+//                         filteredCount: 0,
+//                         sortBy: 'name',
+//                         sortDirection: SortDirection.ASCENDING,
+//                         filter: 'all',
+//                         searchTerms: [],
+//                         selectedOrganizationId: null,
+//                         searching: false
 export class StateInstances {
     static makeInitialState(): StoreState {
         return {
-            browseOrgs: {
-                state: BrowseOrgsState.NONE,
-                error: null,
-                view: {
-                    rawOrganizations: [],
-                    organizations: [],
-                    totalCount: 0,
-                    filteredCount: 0,
-                    sortBy: 'name',
-                    sortDirection: SortDirection.ASCENDING,
-                    filter: 'all',
-                    searchTerms: [],
-                    selectedOrganizationId: null,
-                    searching: false
+            entities: {
+                users: {
+                    byId: new Map(),
+                    all: []
+                },
+                orgs: {
+                    byId: new Map(),
+                    all: []
+                },
+                requests: {
+                    byId: new Map(),
+                    all: []
+                },
+                narratives: {
+                    byId: new Map()
                 }
             },
+            views: {
+                browseOrgsView: {
+                    loadingState: ComponentLoadingState.NONE,
+                    error: null,
+                    viewModel: null
+                },
+                organizationCentricView: {
+                    loadingState: ComponentLoadingState.NONE,
+                    error: null,
+                    viewModel: null
+                },
+                addOrgView: {
+                    loadingState: ComponentLoadingState.NONE,
+                    error: null,
+                    viewModel: null
+                },
+                editOrgView: {
+                    loadingState: ComponentLoadingState.NONE,
+                    error: null,
+                    viewModel: null
+                    // organizationId: '',
+                    // editState: EditState.NONE,
+                    // saveState: SaveState.NONE,
+                    // validationState: ValidationState.NONE,
+                    // editedOrganization: StaticData.makeEmptyEditableOrganization(),
+                    // organization: null
+                },
+                manageOrganizationRequestsView: {
+                    loadingState: ComponentLoadingState.NONE,
+                    error: null,
+                    viewModel: null
+                },
+                viewMembersView: {
+                    loadingState: ComponentLoadingState.NONE,
+                    error: null,
+                    viewModel: null
+                },
+                inviteUserView: {
+                    loadingState: ComponentLoadingState.NONE,
+                    error: null,
+                    viewModel: null
+                },
+                manageMembershipView: {
+                    loadingState: ComponentLoadingState.NONE,
+                    error: null,
+                    viewModel: null
+                },
+                requestNarrativeView: {
+                    loadingState: ComponentLoadingState.NONE,
+                    error: null,
+                    viewModel: null
+                },
+                dashboardView: {
+                    loadingState: ComponentLoadingState.NONE,
+                    error: null,
+                    viewModel: null
+                },
+                viewOrgView: {
+                    loadingState: ComponentLoadingState.NONE,
+                    error: null,
+                    viewModel: null
+                },
+            },
+
 
             auth: {
                 status: AuthState.NONE,
@@ -54,50 +131,12 @@ export class StateInstances {
                     }
                 }
             },
-            addOrgView: {
-                loadingStatus: ComponentLoadingState.NONE,
-                error: null,
-                viewModel: null
-            },
+
             updateOrg: {
                 pending: false
             },
-            viewOrg: {
-                state: ViewOrgState.NONE
-            },
-            editOrg: {
-                organizationId: '',
-                editState: EditState.NONE,
-                saveState: SaveState.NONE,
-                validationState: ValidationState.NONE,
-                editedOrganization: StaticData.makeEmptyEditableOrganization(),
-                organization: null
-            },
-            manageOrganizationRequestsView: {
-                state: ComponentLoadingState.NONE,
-                error: null,
-                viewState: null
-            },
-            viewMembersView: {
-                state: ViewMembersViewState.NONE,
-                error: null,
-                view: null
-            },
-            inviteUserView: {
-                loadingState: ComponentLoadingState.NONE,
-                value: null,
-                error: null
-            },
-            manageMembershipView: {
-                loading: false,
-                error: null,
-                value: null
-            },
-            requestNarrativeView: {
-                status: RequestNarrativeState.NONE,
-                error: null,
-                value: null
-            }
+
+
         }
     }
 }

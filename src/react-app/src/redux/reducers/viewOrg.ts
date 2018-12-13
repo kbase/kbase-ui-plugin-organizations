@@ -3,62 +3,106 @@ import * as actions from '../actions/viewOrg'
 import * as types from '../../types'
 import { ActionFlag } from '../actions'
 
-export function viewOrgStart(state: types.StoreState,
-    action: actions.ViewOrgStart): types.StoreState {
+export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
     return {
         ...state,
-        viewOrg: { ...state.viewOrg, state: types.ViewOrgState.FETCHING }
-    }
-}
-
-export function viewOrgSuccess(state: types.StoreState,
-    action: actions.ViewOrgSuccess): types.StoreState {
-    return {
-        ...state,
-        viewOrg: {
-            ...state.viewOrg,
-            state: types.ViewOrgState.READY,
-            organization: action.organization
+        views: {
+            ...state.views,
+            viewOrgView: {
+                loadingState: types.ComponentLoadingState.LOADING,
+                error: null,
+                viewModel: null
+            }
         }
     }
 }
 
-export function viewOrgError(state: types.StoreState,
-    action: actions.ViewOrgError): types.StoreState {
+export function loadSuccess(state: types.StoreState, action: actions.LoadSuccess): types.StoreState {
     return {
         ...state,
-        viewOrg: {
-            ...state.viewOrg,
-            state: types.ViewOrgState.ERROR,
-            error: action.error
+        views: {
+            ...state.views,
+            viewOrgView: {
+                loadingState: types.ComponentLoadingState.SUCCESS,
+                error: null,
+                viewModel: {
+                    organization: action.organization,
+                    relation: action.relation,
+                    groupRequests: action.groupRequests,
+                    groupInvitations: action.groupInvitations
+                }
+            }
         }
     }
 }
 
-export function viewOrgStop(state: types.StoreState, action: actions.ViewOrgStop): types.StoreState {
+export function loadError(state: types.StoreState, action: actions.LoadError): types.StoreState {
     return {
         ...state,
-        viewOrg: {
-            state: types.ViewOrgState.NONE
+        views: {
+            ...state.views,
+            viewOrgView: {
+                loadingState: types.ComponentLoadingState.ERROR,
+                error: action.error,
+                viewModel: null
+            }
         }
     }
 }
 
+export function unload(state: types.StoreState, action: actions.Unload): types.StoreState {
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            viewOrgView: {
+                loadingState: types.ComponentLoadingState.NONE,
+                error: null,
+                viewModel: null
+            }
+        }
+    }
+}
 
 export function removeNarrativeSuccess(state: types.StoreState, action: actions.RemoveNarrativeSuccess): types.StoreState {
-    if (!state.viewOrg.organization) {
+    if (!state.views.viewOrgView.viewModel) {
         return state
     }
-    const newNarratives = state.viewOrg.organization.narratives.filter((narrative) => {
+    const newNarratives = state.views.viewOrgView.viewModel.organization.narratives.filter((narrative) => {
         return (narrative.workspaceId !== action.narrative.workspaceId)
     })
     return {
         ...state,
-        viewOrg: {
-            ...state.viewOrg,
-            organization: {
-                ...state.viewOrg.organization,
-                narratives: newNarratives
+        views: {
+            ...state.views,
+            viewOrgView: {
+                ...state.views.viewOrgView,
+                viewModel: {
+                    ...state.views.viewOrgView.viewModel,
+                    organization: {
+                        ...state.views.viewOrgView.viewModel.organization,
+                        narratives: newNarratives
+                    }
+                }
+            }
+        }
+    }
+}
+
+export function accessNarrativeSuccess(state: types.StoreState, action: actions.AccessNarrativeSuccess): types.StoreState {
+    if (!state.views.viewOrgView.viewModel) {
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            viewOrgView: {
+                ...state.views.viewOrgView,
+                viewModel: {
+                    ...state.views.viewOrgView.viewModel,
+                    organization: action.organization
+                }
             }
         }
     }
@@ -69,18 +113,21 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
     // the type.
 
     switch (action.type) {
-        case ActionFlag.VIEW_ORG_FETCH_START:
-            return viewOrgStart(state, action as actions.ViewOrgStart)
-        case ActionFlag.VIEW_ORG_FETCH_SUCCESS:
-            return viewOrgSuccess(state, action as actions.ViewOrgSuccess)
-        case ActionFlag.VIEW_ORG_FETCH_ERROR:
-            return viewOrgError(state, action as actions.ViewOrgError)
-        case ActionFlag.VIEW_ORG_STOP:
-            return viewOrgStop(state, action as actions.ViewOrgStop)
+        case ActionFlag.VIEW_ORG_LOAD_START:
+            return loadStart(state, action as actions.LoadStart)
+        case ActionFlag.VIEW_ORG_LOAD_SUCCESS:
+            return loadSuccess(state, action as actions.LoadSuccess)
+        case ActionFlag.VIEW_ORG_LOAD_ERROR:
+            return loadError(state, action as actions.LoadError)
+        case ActionFlag.VIEW_ORG_UNLOAD:
+            return unload(state, action as actions.Unload)
         case ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_SUCCESS:
             return removeNarrativeSuccess(state, action as actions.RemoveNarrativeSuccess)
+        case ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_SUCCESS:
+            return accessNarrativeSuccess(state, action as actions.AccessNarrativeSuccess)
         default:
             return null
     }
 }
+
 export default reducer

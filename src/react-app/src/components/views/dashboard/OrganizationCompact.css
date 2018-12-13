@@ -1,0 +1,45 @@
+.OrganizationCompact {
+    flex: 0 0 auto;
+    /* border: 1px silver dashed; */
+    /* border-bottom: 1px rgba(200, 200, 200, 0.8) solid; */
+    padding: 4px;
+    margin: 4px 0 20px;
+    display: flex;
+    flex-direction: row;
+}
+
+.OrganizationCompact:hover {
+    background-color: rgba(200, 200, 200, 0.5)
+}
+
+.OrganizationCompact>.avatarCol {
+    flex: 0 0 auto;
+}
+
+.OrganizationCompact>.bodyCol {
+    flex: 1 1 0px;
+    margin-left: 10px;
+}
+
+.OrganizationCompact .orgName {
+    font-weight: bold;
+    font-size: 120%;
+    cursor: pointer;
+}
+
+.OrganizationCompact .Organizations-info-table {
+    width: 100%
+}
+
+.OrganizationCompact .Organizations-info-table th {
+    text-align: right;
+    font-weight: bold;
+    color: rgba(150, 150, 150, 1);
+    width: 8em;
+    vertical-align: top;
+}
+
+.OrganizationCompact .Organizations-info-table td {
+    /* width: 50% */
+    vertical-align: top;
+}
