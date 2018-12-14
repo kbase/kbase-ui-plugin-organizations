@@ -39,7 +39,6 @@ function loadStart(): LoadStart {
 }
 
 function loadSuccess(defaultViewModel: BrowseOrgsViewModel): LoadSuccess {
-    console.log('about to dispatch success...')
     return {
         type: ActionFlag.BROWSE_ORGS_LOAD_SUCCESS,
         defaultViewModel: defaultViewModel
@@ -172,8 +171,6 @@ export function filterOrgsStart(filter: string): FilterOrgsStart {
 export function load() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(loadStart())
-
-        console.log('loading?')
 
         // populate default browse orgs props
         const defaultViewModel: BrowseOrgsViewModel = {

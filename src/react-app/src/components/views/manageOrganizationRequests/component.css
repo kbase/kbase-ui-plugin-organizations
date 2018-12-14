@@ -16,11 +16,6 @@
     box-shadow: 4px 4px 4px gray;
 }
 
-.ManageGroupRequests .requester {
-    font-weight: bold;
-    display: inline-block;
-}
-
 .ManageGroupRequests .createdAt {
     font-weight: bold;
 }

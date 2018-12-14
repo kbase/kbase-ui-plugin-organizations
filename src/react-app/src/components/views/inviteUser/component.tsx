@@ -4,7 +4,7 @@ import './component.css'
 import { User, InviteUserViewState, OrganizationUser } from '../../../types';
 import { Button, Icon, Modal, Alert } from 'antd';
 import Header from '../../Header';
-import { Redirect } from 'react-router-dom';
+import { Redirect, NavLink } from 'react-router-dom';
 import OrganizationHeader from '../organizationHeader/loader';
 import UserComponent from '../../User'
 import * as orgModel from '../../../data/models/organization/model'
@@ -143,6 +143,19 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
     //     return users
     // }
 
+    renderOrgName(name: string) {
+        const maxLength = 25
+        if (name.length < 25) {
+            return name
+        }
+        return (
+            <span>
+                {name.slice(0, 25)}
+                …
+            </span>
+        )
+    }
+
     renderHeader() {
         let orgName: string
         // if (this.props.manageGroupRequestsView && this.props.manageGroupRequestsView.view) {
@@ -152,9 +165,19 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         // }
         const breadcrumbs = (
             <React.Fragment>
-                <Icon type="mail" style={{ marginRight: '0.5em', verticalAlign: 'middle' }} />
-                {' '}
-                Invite a User to Join Org
+                <span>
+                    <NavLink to={`/viewOrganization/${this.props.organization.id}`}>
+                        <span style={{ fontWeight: 'bold' }}>
+                            {this.renderOrgName(this.props.organization.name)}
+                        </span>
+                    </NavLink>
+
+                    <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
+
+                    <Icon type="tool" />
+                    {' '}
+                    <span style={{ fontSize: '120%' }}>Invite a User to Join Org</span>
+                </span>
             </React.Fragment>
         )
         const buttons = (
@@ -169,11 +192,8 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                     onClick={this.onClickCancelToViewer.bind(this)}>
                     Return to this Org
             </Button>
-                <Button icon="undo"
-                    type="danger"
-                    onClick={this.onClickCancelToBrowser.bind(this)}>
-                    Return to Orgs Browser
-            </Button>
+
+
                 <Button
                     shape="circle"
                     icon="info"
@@ -369,7 +389,6 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
     }
 
     // renderRelationText(relation: UserRelationToOrganization) {
-    //     console.log('relation', relation)
     //     switch (relation) {
     //         case (UserRelationToOrganization.NONE):
     //             return (

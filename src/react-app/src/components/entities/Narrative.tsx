@@ -1,18 +1,44 @@
 import * as React from 'react'
 import * as narrativeModel from '../../data/models/narrative'
 import { Tooltip, Icon } from 'antd';
+import './Narrative.css'
 
 export interface NarrativeProps {
     narrative: narrativeModel.Narrative
 }
 
-interface NarrativeState {
 
+enum View {
+    COMPACT = 0,
+    NORMAL
+}
+
+function reverseView(v: View) {
+    switch (v) {
+        case View.COMPACT:
+            return View.NORMAL
+        case View.NORMAL:
+            return View.COMPACT
+    }
+}
+
+interface NarrativeState {
+    view: View
 }
 
 export default class Narrative extends React.Component<NarrativeProps, NarrativeState> {
     constructor(props: NarrativeProps) {
         super(props)
+
+        this.state = {
+            view: View.COMPACT
+        }
+    }
+
+    onToggleView() {
+        this.setState({
+            view: reverseView(this.state.view)
+        })
     }
 
     renderPublicPermission(narrative: narrativeModel.AccessibleNarrative) {
@@ -60,6 +86,67 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
         )
     }
 
+    renderCompact(narrative: narrativeModel.AccessibleNarrative) {
+        return (
+            <React.Fragment>
+                <div className="iconCol">
+                    <Icon type="file" style={{ fontSize: '30px', width: '30px' }} />
+                </div>
+                <div className="mainCol">
+                    <div className="title">
+                        {narrative.title}
+                    </div>
+                </div>
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className="linkButton"
+                    ><Icon type="ellipsis" /></a>
+                </div>
+            </React.Fragment>
+        )
+    }
+
+    renderNormal(narrative: narrativeModel.AccessibleNarrative) {
+        // const narrative = this.props.narrative
+        return (
+            <React.Fragment>
+                <div className="iconCol">
+                    <Icon type="file" style={{ fontSize: '30px', width: '30px' }} />
+                </div>
+                <div className="mainCol">
+                    <div className="title">
+                        {narrative.title}
+                    </div>
+                    <div>
+                        {this.renderPublicPermission(narrative)}
+                    </div>
+                    <div>
+                        <span className="field-label">your permission</span>
+                        {this.renderUserPermission(narrative)}
+                    </div>
+                    <div>
+                        <span className="field-label">owner</span>{narrative.owner}
+                    </div>
+                    <div>
+                        <span className="field-label">last saved</span>{Intl.DateTimeFormat('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                        }).format(narrative.lastSavedAt)}
+                    </div>
+                    <div>
+                        <span className="field-label">by</span>{narrative.lastSavedBy}
+                    </div>
+                </div>
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className="linkButton"
+                    ><Icon type="ellipsis" /></a>
+                </div>
+            </React.Fragment>
+        )
+    }
+
     render() {
         const narrative = this.props.narrative
         if (narrative.access === narrativeModel.NarrativeAccess.NONE) {
@@ -69,32 +156,20 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                 </div>
             )
         }
-        return (
-            <div>
-                <div>
-                    {narrative.title}
-                </div>
-                <div>
-                    {this.renderPublicPermission(narrative)}
-                </div>
-                <div>
-                    <span className="field-label">your permission</span>
-                    {this.renderUserPermission(narrative)}
-                </div>
-                <div>
-                    <span className="field-label">owner</span>{narrative.owner}
-                </div>
-                <div>
-                    <span className="field-label">last saved</span>{Intl.DateTimeFormat('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                    }).format(narrative.lastSavedAt)}
-                </div>
-                <div>
-                    <span className="field-label">by</span>{narrative.lastSavedBy}
-                </div>
-            </div>
-        )
+        switch (this.state.view) {
+            case View.COMPACT:
+                return (
+                    <div className="Narrative View-COMPACT">
+                        {this.renderCompact(narrative)}
+                    </div>
+                )
+            case View.NORMAL:
+                return (
+                    <div className="Narrative View-NORMAL">
+                        {this.renderNormal(narrative)}
+                    </div>
+                )
+        }
+
     }
 }

@@ -90,15 +90,34 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
         return false
     }
 
+    renderOrgName(name: string) {
+        const maxLength = 25
+        if (name.length < 25) {
+            return name
+        }
+        return (
+            <span>
+                {name.slice(0, 25)}
+                …
+            </span>
+        )
+    }
+
     renderHeader() {
         const breadcrumbs = (
             <React.Fragment>
                 <span>
-                    <Icon type="tool" />
+                    <NavLink to={`/viewOrganization/${this.props.organization.id}`}>
+                        <span style={{ fontWeight: 'bold' }}>
+                            {this.renderOrgName(this.props.organization.name)}
+                        </span>
+                    </NavLink>
+
+                    <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
+
+                    <Icon type="team" />
                     {' '}
-                    Viewing Members for Org "
-                            {this.props.organization.name}
-                    "
+                    <span style={{ fontSize: '120%' }}>Viewing Org Members</span>
                 </span>
             </React.Fragment>
         )

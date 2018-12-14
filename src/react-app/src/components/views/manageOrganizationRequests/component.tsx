@@ -10,6 +10,7 @@ import OrganizationHeader from '../organizationHeader/loader'
 import Narrative from '../../entities/NarrativeContainer'
 import * as requestModel from '../../../data/models/requests'
 import * as orgModel from '../../../data/models/organization/model'
+import { NavLink } from 'react-router-dom';
 
 export interface ManageGroupRequestsProps {
     // organizationId: string,
@@ -72,6 +73,20 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
             )
         })
     }
+
+    renderOrgName(name: string) {
+        const maxLength = 25
+        if (name.length < 25) {
+            return name
+        }
+        return (
+            <span>
+                {name.slice(0, 25)}
+                …
+            </span>
+        )
+    }
+
     renderHeader() {
         let orgName: string
         // if (this.props.manageOrganizationRequestsView && this.props.manageOrganizationRequestsView.viewState) {
@@ -82,12 +97,18 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
         const breadcrumbs = (
             <React.Fragment>
                 <span>
+                    <NavLink to={`/viewOrganization/${this.props.viewModel.organization.id}`}>
+                        <span style={{ fontWeight: 'bold' }}>
+                            {this.renderOrgName(this.props.viewModel.organization.name)}
+                        </span>
+                    </NavLink>
+
+                    <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
+
                     <Icon type="tool" />
                     {' '}
-                    <span style={{ fontSize: '120%' }}>Managing Requests</span> for Org "
-                            {this.props.viewModel.organization.name}
-                    "
-                        </span>
+                    <span style={{ fontSize: '120%' }}>Managing Org Requests</span>
+                </span>
             </React.Fragment>
         )
         const buttons = (
@@ -291,7 +312,7 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                         <tr>
                             <th>invitation to</th>
                             <td className="requester">
-                                <User userId={request.user} avatarSize={50} />
+                                <User userId={request.user} avatarSize={30} />
                             </td>
                         </tr>
                         <tr>
@@ -409,13 +430,7 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
                         <tr>
                             <th>from</th>
                             <td className="requester">
-                                <User userId={request.requester} avatarSize={50} />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>workspace</th>
-                            <td className="workspace">
-                                {request.narrativeId}
+                                <User userId={request.requester} avatarSize={30} />
                             </td>
                         </tr>
                         <tr>

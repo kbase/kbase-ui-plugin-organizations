@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import OrganizationHeader from '../organizationHeader/loader';
-import { Redirect } from 'react-router-dom';
+import { Redirect, NavLink } from 'react-router-dom';
 import { Narrative, NarrativeState, SortDirection } from '../../../types';
 import Header from '../../Header';
 import { Icon, Button, Modal, Alert, Select } from 'antd';
@@ -93,16 +93,37 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         )
     }
 
+    renderOrgName(name: string) {
+        const maxLength = 25
+        if (name.length < 25) {
+            return name
+        }
+        return (
+            <span>
+                {name.slice(0, 25)}
+                …
+            </span>
+        )
+    }
+
     renderHeader() {
         let orgName: string
         const breadcrumbs = (
-            <span>
-                <Icon type="tool" />
-                {' '}
-                Managing your membership in the Organization "
-                            {this.props.organization.name}
-                "
-            </span>
+            <React.Fragment>
+                <span>
+                    <NavLink to={`/viewOrganization/${this.props.organization.id}`}>
+                        <span style={{ fontWeight: 'bold' }}>
+                            {this.renderOrgName(this.props.organization.name)}
+                        </span>
+                    </NavLink>
+
+                    <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
+
+                    <Icon type="plus" />
+                    {' '}
+                    <span style={{ fontSize: '120%' }}>Add Narrative to Org</span>
+                </span>
+            </React.Fragment>
         )
         const buttons = (
             <React.Fragment>

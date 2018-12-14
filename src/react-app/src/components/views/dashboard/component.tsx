@@ -114,10 +114,13 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     renderOrganizationsCard() {
-        const extra = [
-            <Button key="newOrgButton" onClick={this.onNavigateToNewOrg.bind(this)}><Icon type="plus" />{' '}New</Button>,
-            <Button key="browseButton" onClick={this.onNavigateToBrowser.bind(this)}>Browse All</Button>
-        ]
+        const extra = (
+            <div>
+                <Button key="newOrgButton" onClick={this.onNavigateToNewOrg.bind(this)}><Icon type="plus" />{' '}New</Button>
+                {' '}
+                <Button key="browseButton" onClick={this.onNavigateToBrowser.bind(this)}>Browse All</Button>
+            </div>
+        )
         return (
             <Card title="Your Organizations"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
@@ -172,7 +175,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                                 <div className="miniDetail">
                                     <Narrative workspaceId={parseInt(request.narrativeId, 10)} />
                                 </div>
-                                <div>with organization</div>
+
                             </div>
                         )
                 }
@@ -181,11 +184,11 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                     case requestModel.RequestResourceType.USER:
                         return (
                             <div>
-                                <div>sent to</div>
+
                                 <div className="miniDetail">
                                     <User userId={request.user} avatarSize={30} />
                                 </div>
-                                <div>to join organization</div>
+
                             </div>
                         )
                 }
@@ -233,7 +236,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                                 <div className="miniDetail">
                                     <Narrative workspaceId={parseInt(request.narrativeId, 10)} />
                                 </div>
-                                <div>with organization</div>
+                                <div className="cardSectionHeader">with organization</div>
                             </div>
                         )
                 }
@@ -266,7 +269,17 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         )
     }
 
+    isAdmin() {
+        return (this.props.viewModel.organizations.some(({ relation }) => {
+            return (relation.type === orgModel.UserRelationToOrganization.OWNER ||
+                relation.type === orgModel.UserRelationToOrganization.ADMIN)
+        }))
+    }
+
     renderPendingAdminTasksCard() {
+        if (!this.isAdmin()) {
+            return
+        }
         return (
             <Card title="Organization Requests"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
@@ -324,14 +337,18 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                                 <span className="field-label">expires</span>
                                 {' '}
                                 {formatters.niceElapsed(request.expireAt)}
-
                             </div>
                         </div>
                     </div>
                     <div className="requestBody">
                         <div className="requestType">{this.renderRequestSentType(request)}</div>
+
                         <div className="requestSubject">{this.renderRequestSentSubject(request)}</div>
-                        <OrganizationCompact organizationId={request.organizationId} />
+
+                        <div className="cardSectionHeader">with organization</div>
+                        <div className="miniDetail">
+                            <OrganizationCompact organizationId={request.organizationId} />
+                        </div>
                     </div>
                 </div>
             )
@@ -373,9 +390,11 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                     <div className="requestBody">
                         <div className="requestType">{this.renderRequestReceivedType(request)}</div>
                         <div className="requestSubject">{this.renderRequestReceivedSubject(request)}</div>
-                        <OrganizationCompact organizationId={request.organizationId} />
-                        <div>from</div>
-                        <div className="requester">{this.renderRequestRequester(request)}</div>
+                        <div className="miniDetail">
+                            <OrganizationCompact organizationId={request.organizationId} />
+                        </div>
+                        <div className="cardSectionHeader">from</div>
+                        <div className="requester miniDetail">{this.renderRequestRequester(request)}</div>
                     </div>
                 </div>
             )
@@ -416,7 +435,13 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                     <div className="requestBody">
                         <div className="requestType">{this.renderRequestReceivedType(request)}</div>
                         <div className="requestSubject">{this.renderRequestReceivedSubject(request)}</div>
-                        <OrganizationCompact organizationId={request.organizationId} />
+                        <div className="miniDetail">
+                            <OrganizationCompact organizationId={request.organizationId} />
+                        </div>
+                        <div className="cardSectionHeader">
+                            sent by
+                        </div>
+                        <User userId={request.requester} avatarSize={30} />
                     </div>
                 </div>
             )

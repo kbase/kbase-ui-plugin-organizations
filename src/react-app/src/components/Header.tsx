@@ -10,11 +10,11 @@ export interface HeaderProps {
 }
 
 class Header extends React.Component<HeaderProps, object> {
-
+    // <FaChevronRight style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
     buildSeparator() {
         if (this.props.breadcrumbs) {
             return (
-                <FaChevronRight style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
+                <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
             )
         }
     }
@@ -24,9 +24,9 @@ class Header extends React.Component<HeaderProps, object> {
             <div className="Header">
                 <div className="defaultCrumbs">
                     <NavLink to="/">
-                        <Icon type="dashboard" style={{ verticalAlign: 'middle' }} />
+                        <Icon type="team" style={{ verticalAlign: 'middle' }} />
                         {' '}
-                        <span data-test="orgs-label">Dashboard</span>
+                        <span data-test="orgs-label">Orgs</span>
                     </NavLink>
                     {this.buildSeparator()}
                     {/* {this.buildSeparator()}

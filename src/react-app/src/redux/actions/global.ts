@@ -76,7 +76,6 @@ export function accessNarrative(organizationId: orgModel.OrganizationID, workspa
             serviceWizardURL: config.services.ServiceWizard.url
         })
 
-        console.log('hmm')
         try {
             await orgClient.grantNarrativeAccess(organizationId, resourceId)
             const updatedNarrative = await narrativeClient.getNarrative(workspaceId)
@@ -87,10 +86,8 @@ export function accessNarrative(organizationId: orgModel.OrganizationID, workspa
                 }))
                 return
             }
-            console.log('done')
             dispatch(accessNarrativeSuccess(updatedNarrative))
         } catch (ex) {
-            console.log('error!', ex)
             dispatch(accessNarrativeError({
                 code: 'error',
                 message: ex.message

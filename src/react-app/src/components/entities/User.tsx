@@ -92,8 +92,8 @@ class User extends React.Component<UserProps, UserState> {
                 </div>
                 <div className="controlCol">
                     <a onClick={this.onToggleView.bind(this)}
-                        className="linkButton pressed"
-                        style={{ backgroundColor: "rgba(200, 200, 200, 0.5)" }} ><Icon type="ellipsis" /></a>
+                        className="linkButton"
+                    ><Icon type="ellipsis" /></a>
                 </div>
             </React.Fragment>
         )

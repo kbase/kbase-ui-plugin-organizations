@@ -34,7 +34,6 @@ export function unload(state: StoreState, action: actions.Unload): StoreState {
 }
 
 export function loadSuccess(state: StoreState, action: actions.LoadSuccess): StoreState {
-    console.log('load success ...', action)
     return {
         ...state,
         views: {

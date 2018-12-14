@@ -5,17 +5,42 @@ import * as userModel from '../../../data/models/user'
 import { NavLink } from 'react-router-dom';
 
 import './OrganizationCompact.css'
+import { Icon } from 'antd';
 
 export interface OrganizationProps {
     organization: organizationModel.Organization
 }
 
+enum View {
+    COMPACT = 0,
+    NORMAL
+}
 interface OrganizationState {
+    view: View
+}
+
+function reverseView(v: View) {
+    switch (v) {
+        case View.COMPACT:
+            return View.NORMAL
+        case View.NORMAL:
+            return View.COMPACT
+    }
 }
 
 export default class OrganizationCompact extends React.Component<OrganizationProps, OrganizationState> {
     constructor(props: OrganizationProps) {
         super(props)
+
+        this.state = {
+            view: View.COMPACT
+        }
+    }
+
+    onToggleView() {
+        this.setState({
+            view: reverseView(this.state.view)
+        })
     }
 
     getAvatarUrl(org: organizationModel.Organization) {
@@ -57,10 +82,10 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
         )
     }
 
-    render() {
+    renderNormal() {
         const org = this.props.organization
         return (
-            <div className="OrganizationBlock" key={org.id}>
+            <div className="OrganizationCompact" key={org.id}>
                 <div className="avatarCol">
                     <NavLink to={`/viewOrganization/${org.id}`}>
                         {this.renderAvatar(org)}
@@ -86,7 +111,55 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
                         }).format(org.createdAt)}</span>
                     </div>
                 </div>
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className="linkButton pressed"
+                        style={{ backgroundColor: "rgba(200, 200, 200, 0.5)" }} ><Icon type="ellipsis" /></a>
+                </div>
             </div>
         )
+    }
+
+    renderCompact() {
+        const org = this.props.organization
+        return (
+            <div className="OrganizationCompact" key={org.id}>
+                <div className="avatarCol">
+                    <NavLink to={`/viewOrganization/${org.id}`}>
+                        {this.renderAvatar(org)}
+                    </NavLink>
+                </div>
+                <div className="bodyCol">
+                    <div className="orgName">
+                        <NavLink to={`/viewOrganization/${org.id}`}>
+                            {org.name}
+                        </NavLink>
+                    </div>
+
+                </div>
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className="linkButton"
+                    ><Icon type="ellipsis" /></a>
+                </div>
+            </div>
+        )
+    }
+
+    render() {
+        switch (this.state.view) {
+            case View.COMPACT:
+                return (
+                    <div className="User View-COMPACT">
+                        {this.renderCompact()}
+                    </div>
+                )
+            case View.NORMAL:
+                return (
+                    <div className="User View-NORMAL">
+                        {this.renderNormal()}
+                    </div>
+                )
+        }
     }
 }

@@ -1,9 +1,8 @@
 .OrganizationCompact {
-    flex: 0 0 auto;
+    flex: 1 1 0px;
     /* border: 1px silver dashed; */
     /* border-bottom: 1px rgba(200, 200, 200, 0.8) solid; */
-    padding: 4px;
-    margin: 4px 0 20px;
+    /* padding: 4px; */
     display: flex;
     flex-direction: row;
 }
@@ -18,12 +17,16 @@
 
 .OrganizationCompact>.bodyCol {
     flex: 1 1 0px;
-    margin-left: 10px;
+    /* margin-left: 10px; */
+}
+
+.OrganizationCompact>.controlCol {
+    flex: 0 0 auto;
 }
 
 .OrganizationCompact .orgName {
     font-weight: bold;
-    font-size: 120%;
+    /* font-size: 120%; */
     cursor: pointer;
 }
 

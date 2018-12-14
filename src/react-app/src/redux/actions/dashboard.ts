@@ -161,9 +161,6 @@ export function load() {
                     return organization.id
                 })
 
-            console.log('admin orgs', adminOrgIds)
-
-
             const pendingGroupRequests = await requestModelClient.getPendingOrganizationRequests(adminOrgIds)
 
             dispatch(loadSuccess(orgs, requests, invitations, pendingGroupRequests))
@@ -215,7 +212,6 @@ export function load() {
         //         model.getUserInvitations()
         //     ])
 
-        //     console.log('user requests', orgs, requests, invitations)
         //     // const orgs = await model.ownOrgs(username)
         //     dispatch(loadSuccess(orgs.organizations, requests, invitations))
         // } catch (ex) {

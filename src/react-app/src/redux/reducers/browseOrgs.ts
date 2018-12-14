@@ -267,7 +267,6 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
 
     switch (action.type) {
         case ActionFlag.BROWSE_ORGS_LOAD_SUCCESS:
-            console.log('... and here...')
             return loadSuccess(state, action as actions.LoadSuccess)
         case ActionFlag.BROWSE_ORGS_SEARCH:
             return searchOrgs(state, action as actions.SearchOrgs)

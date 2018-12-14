@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Redirect } from 'react-router-dom';
+import { Redirect, NavLink } from 'react-router-dom';
 import marked from 'marked';
 import { Button, Icon, Modal } from 'antd';
 import md5 from 'md5'
@@ -311,18 +311,35 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
+    renderOrgName(name: string) {
+        const maxLength = 25
+        if (name.length < 25) {
+            return name
+        }
+        return (
+            <span>
+                {name.slice(0, 25)}
+                …
+            </span>
+        )
+    }
+
     renderHeader() {
-        const orgName = this.props.editedOrganization.name.value || (<span style={{ fontStyle: 'italic', color: 'gray' }}>org name will appear here when you edit the name field</span>)
         const breadcrumbs = (
             <React.Fragment>
                 <span>
-                    {/* <FaPlusCircle style={{ verticalAlign: 'middle' }} /> */}
-                    <Icon type="edit" />
-                    {' '}
-                    Editing Org "
-                            {orgName}
-                    "
+                    <NavLink to={`/viewOrganization/${this.props.organization.id}`}>
+                        <span style={{ fontWeight: 'bold' }}>
+                            {this.renderOrgName(this.props.editedOrganization.name.value)}
                         </span>
+                    </NavLink>
+
+                    <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
+
+                    <Icon type="tool" />
+                    {' '}
+                    <span style={{ fontSize: '120%' }}>Managing Org Requests</span>
+                </span>
             </React.Fragment>
         )
         const buttons = (

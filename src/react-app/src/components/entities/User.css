@@ -25,15 +25,3 @@
 .User .infoCol .location {}
 
 .User .infoCol .organization {}
-
-.linkButton {
-    padding: 4px;
-}
-
-.linkButton:hover {
-    background-color: rgba(200, 200, 200, 0.5);
-}
-
-.linkButton.pressed {
-    background-color: rgba(200, 200, 200, 0.3);
-}

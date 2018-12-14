@@ -91,3 +91,10 @@ a:hover {
 .linkButton.pressed {
     background-color: rgba(200, 200, 200, 0.3);
 }
+
+.cardSectionHeader {
+    margin: 8px 0 4px 0;
+    /* padding: 3px 3px 3px 0; */
+    font-weight: bold;
+    color: rgba(150, 150, 150, 1);
+}

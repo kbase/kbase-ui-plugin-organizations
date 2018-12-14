@@ -78,7 +78,6 @@ export function load(organizationId: string) {
             workspaceServiceURL: config.services.Workspace.url
         })
 
-        console.log('loading?', organizationId)
         try {
             const { organization, relation } = await uberClient.getOrganizationForUser(organizationId)
             dispatch(loadSuccess(organization, relation))
