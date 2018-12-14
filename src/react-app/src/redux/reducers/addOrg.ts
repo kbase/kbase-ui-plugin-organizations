@@ -8,7 +8,8 @@ import {
     UpdateGravatarHashError, UpdateIdSuccess, UpdateIdError, UpdateDescriptionSuccess,
     UpdateDescriptionError,
     LoadError,
-    UpdateIdPass
+    UpdateIdPass,
+    UpdateIsPrivateSuccess
 } from '../actions/addOrg'
 
 // ADD ORG
@@ -458,6 +459,38 @@ export function updateDescriptionError(state: StoreState, action: UpdateDescript
     }
 }
 
+export function updateIsPrivateSuccess(state: StoreState, action: UpdateIsPrivateSuccess): StoreState {
+    if (!state.views.addOrgView.viewModel) {
+        console.warn('attempting updateIdSuccess without view model')
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        isPrivate: {
+                            value: action.isPrivate,
+                            validationState: ValidationState.VALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: {
+                                type: UIErrorType.NONE
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 export function reducer(state: StoreState, action: Action): StoreState | null {
     // NB using discriminant union nature of the ActionX types to narrow
     // the type.
@@ -500,6 +533,9 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
             return updateDescriptionSuccess(state, action as UpdateDescriptionSuccess)
         case ActionFlag.ADD_ORG_UPDATE_DESCRIPTION_ERROR:
             return updateDescriptionError(state, action as UpdateDescriptionError)
+
+        case ActionFlag.ADD_ORG_UPDATE_IS_PRIVATE_SUCCESS:
+            return updateIsPrivateSuccess(state, action as UpdateIsPrivateSuccess)
 
         case ActionFlag.ADD_ORG_EVALUATE_OK:
             return addOrgEvaluateOk(state, action as AddOrgEvaluateOK)

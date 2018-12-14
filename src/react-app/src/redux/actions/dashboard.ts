@@ -171,7 +171,6 @@ export function load() {
                 feedsServiceURL: config.services.Feeds.url
             })
             const notifications = await feedsClient.getNotifications()
-            console.log('notifications?', notifications)
 
             dispatch(loadSuccess(orgs, requests, invitations, pendingGroupRequests))
         } catch (ex) {

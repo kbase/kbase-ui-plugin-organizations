@@ -22,7 +22,7 @@ class Loader extends React.Component<Props, State> {
     renderLoading() {
         return (
             <div>
-                Loading Your Narratives...
+                Loading view...
             </div>
         )
     }
@@ -39,7 +39,6 @@ class Loader extends React.Component<Props, State> {
     }
 
     render() {
-
         switch (this.props.view.loadingState) {
             case ComponentLoadingState.NONE:
                 this.props.onLoad(this.props.organizationId)

@@ -32,8 +32,14 @@ export interface Notification {
 }
 
 export interface GetNotificationsResult {
-    group: Array<Notification>
-    user: Array<Notification>
+    group: {
+        feed: Array<Notification>
+        unseen: number
+    }
+    user: {
+        feed: Array<Notification>
+        unseen: number
+    }
 }
 
 export interface FeedsClientParams {

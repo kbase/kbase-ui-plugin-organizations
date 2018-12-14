@@ -1,15 +1,15 @@
 import * as React from 'react'
 import { Redirect } from 'react-router-dom';
 import marked from 'marked';
-import { Button, Icon, Modal, Input } from 'antd';
+import { Button, Icon, Modal, Input, Checkbox } from 'antd';
 import md5 from 'md5'
 
 import { EditableOrganization, SaveState, ValidationState, EditState, AppError } from '../../../types';
 
 import './component.css'
 
-
 import Header from '../../Header';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 export interface NewOrganizationProps {
     editState: EditState,
@@ -22,6 +22,7 @@ export interface NewOrganizationProps {
     onUpdateGravatarHash: (gravatarHash: string) => void;
     onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
+    onUpdateIsPrivate: (isPrivate: boolean) => void
 }
 
 
@@ -177,8 +178,12 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
     }
 
     onIdChange(e: React.ChangeEvent<HTMLInputElement>) {
-        e.persist();
-        this.props.onUpdateId(e.target.value);
+        e.persist()
+        this.props.onUpdateId(e.target.value)
+    }
+
+    onIsPrivateChange(e: CheckboxChangeEvent) {
+        this.props.onUpdateIsPrivate(e.target.checked)
     }
 
     canSave() {
@@ -207,6 +212,15 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                         <Input value={this.props.newOrganization.name.value || ''}
                             onChange={this.onNameChange.bind(this)} />
                         {this.props.newOrganization.name.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.name.error.message}</span>) : ''}
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col1 field-label">is private?</div>
+                    <div className="col2">
+                        <Checkbox
+                            checked={this.props.newOrganization.isPrivate.value}
+                            onChange={this.onIsPrivateChange.bind(this)} />
+                        {this.props.newOrganization.id.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.id.error.message}</span>) : ''}
                     </div>
                 </div>
                 <div className="row gravatarHash">

@@ -5,7 +5,7 @@
 }
 
 .ManageMembership .body {
-    flex: 1 1 0px;
+    flex: 0 0 auto;
     display: flex;
     flex-direction: row;
 }
@@ -15,6 +15,7 @@
     display: flex;
     flex-direction: column;
     border: 1px red solid;
+    margin-right: 5px;
 }
 
 .ManageMembership .body .col2 {
@@ -22,4 +23,25 @@
     display: flex;
     flex-direction: column;
     border: 1px red solid;
+    margin-left: 5px;
+}
+
+.ManageMembership .editorTable {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ManageMembership .editorTable-row {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.ManageMembership .editorTable .editorTable-row .editorTable-labelCol {
+    flex: 0 0 10em;
+}
+
+.ManageMembership .editorTable .editorTable-row .editorTable-controlCol {
+    flex: 1 1 0px;
 }

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { StoreState, EditState, SaveState, ValidationState, EditableOrganization, AppError } from '../../../types';
 import {
-    addOrg, updateName, updateGravatarHash, updateId, updateDescription
+    addOrg, updateName, updateGravatarHash, updateId, updateDescription, updateIsPrivate
 } from '../../../redux/actions/addOrg';
 
 import Component from './component';
@@ -20,11 +20,12 @@ export interface StateProps {
 }
 
 export interface DispatchProps {
-    onSave: () => void,
-    onUpdateName: (name: string) => void,
-    onUpdateGravatarHash: (gravatarHash: string) => void,
-    onUpdateId: (id: string) => void,
+    onSave: () => void
+    onUpdateName: (name: string) => void
+    onUpdateGravatarHash: (gravatarHash: string) => void
+    onUpdateId: (id: string) => void
     onUpdateDescription: (description: string) => void
+    onUpdateIsPrivate: (isPrivate: boolean) => void
 }
 
 export function mapStateToProps(state: StoreState): StateProps {
@@ -64,6 +65,9 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         },
         onUpdateDescription: (description) => {
             dispatch(updateDescription(description) as any)
+        },
+        onUpdateIsPrivate: (isPrivate: boolean) => {
+            dispatch(updateIsPrivate(isPrivate) as any)
         }
     }
 }

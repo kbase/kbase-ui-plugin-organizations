@@ -2,7 +2,6 @@ import {
     StoreState, SortDirection, AuthState, AppState,
     EditState, SaveState, ValidationState, BrowseOrgsState, ComponentLoadingState
 } from "../types";
-import { StaticData } from '../data/models/organization/staticData'
 
 // rawOrganizations: [],
 //                         organizations: [],

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Header from '../../Header';
-import { Icon, Button, Modal } from 'antd';
-import { Redirect } from 'react-router-dom';
+import { Icon, Button, Modal, Input } from 'antd';
+import { Redirect, NavLink } from 'react-router-dom';
 import './component.css'
 import OrganizationHeader from '../organizationHeader/loader';
 import * as orgModel from '../../../data/models/organization/model'
@@ -48,15 +48,35 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         })
     }
 
+    renderOrgName(name: string) {
+        const maxLength = 25
+        if (name.length < 25) {
+            return name
+        }
+        return (
+            <span>
+                {name.slice(0, 25)}
+                …
+            </span>
+        )
+    }
+
     renderHeader() {
-        let orgName: string
-        const crumbs = (
+        const breadcrumbs = (
             <React.Fragment>
-                <Icon type="tool" />
-                {' '}
-                Managing your membership in the Organization "
-                            {this.props.organization.name}
-                "
+                <span>
+                    <NavLink to={`/viewOrganization/${this.props.organization.id}`}>
+                        <span style={{ fontWeight: 'bold' }}>
+                            {this.renderOrgName(this.props.organization.name)}
+                        </span>
+                    </NavLink>
+
+                    <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
+
+                    <Icon type="user" />
+                    {' '}
+                    <span style={{ fontSize: '120%' }}>Manage your membership</span>
+                </span>
             </React.Fragment>
         )
         const buttons = (
@@ -65,12 +85,7 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                     type="danger"
                     onClick={this.doCancelToViewer.bind(this)}>
                     Return to this Org
-                        </Button>
-                <Button icon="undo"
-                    type="danger"
-                    onClick={this.doCancelToBrowser.bind(this)}>
-                    Return to Orgs Browser
-                        </Button>
+                </Button>
                 <Button
                     shape="circle"
                     icon="info"
@@ -79,7 +94,7 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
             </React.Fragment>
         )
         return (
-            <Header breadcrumbs={crumbs} buttons={buttons} />
+            <Header breadcrumbs={breadcrumbs} buttons={buttons} />
         )
     }
 
@@ -107,10 +122,23 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
             <div className="ManageMembership">
                 {this.renderHeader()}
                 {this.renderOrgHeader()}
+                <h3>
+                    Edit Organization Profile
+                </h3>
                 <div className="body">
                     <div className="col1">
-                        <div>
-                            editing area here
+                        <div className="editorTable">
+                            <div className="editorTable-row">
+                                <div className="editorTable-labelCol">
+                                    <span className="field-label">
+                                        title
+                                    </span>
+                                </div>
+                                <div className="editorTable-controlCol">
+                                    <Input />
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                     <div className="col2">
@@ -119,6 +147,18 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                         </div>
                     </div>
                 </div>
+                <h3>
+                    User Profile
+                </h3>
+                <p>
+                    Your user profile is ...
+                </p>
+                <h3>
+                    Leave Org
+                </h3>
+                <Button>
+                    Leave This Org
+                </Button>
             </div>
         )
     }

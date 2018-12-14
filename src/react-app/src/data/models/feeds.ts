@@ -61,7 +61,7 @@ export class FeedsClient {
     async getNotifications(): Promise<Array<Notification>> {
         const notifications = await this.feedsClient.getNotifications()
 
-        return notifications.user.map((notification) => {
+        return notifications.user.feed.map((notification) => {
             const { id, actor, verb, object, target, source, level, seen,
                 created, expires, external_key, context } = notification
             return {

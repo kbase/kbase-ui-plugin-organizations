@@ -109,6 +109,8 @@ export interface AppInfo {
 export interface Organization {
     id: string
     name: string
+    isPrivate: boolean
+    isMember: boolean
     gravatarHash: string | null
     description: string
     owner: Member
@@ -225,6 +227,8 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: usernam
     return {
         id: group.id,
         name: group.name,
+        isPrivate: group.private,
+        isMember: group.ismember,
         gravatarHash: group.custom.gravatarhash || null,
         description: group.custom.description,
         owner: owner,
@@ -506,7 +510,9 @@ export class OrganizationModel {
         if ((newOrg.id.error && newOrg.id.error.type === UIErrorType.ERROR) ||
             (newOrg.name.error && newOrg.name.error.type === UIErrorType.ERROR) ||
             (newOrg.gravatarHash.error && newOrg.gravatarHash.error.type === UIErrorType.ERROR) ||
-            (newOrg.description.error && newOrg.description.error.type === UIErrorType.ERROR)) {
+            (newOrg.description.error && newOrg.description.error.type === UIErrorType.ERROR) ||
+            (newOrg.isPrivate.error && newOrg.isPrivate.error.type === UIErrorType.ERROR)
+        ) {
             return Promise.reject(new Error('One or more fields are invalid'))
         }
 
@@ -514,7 +520,8 @@ export class OrganizationModel {
             id: newOrg.id.value,
             name: newOrg.name.value,
             gravatarhash: newOrg.gravatarHash.value,
-            description: newOrg.description.value
+            description: newOrg.description.value,
+            isPrivate: newOrg.isPrivate.value
         })
             .then((group) => {
                 return groupToOrganization(group, username)

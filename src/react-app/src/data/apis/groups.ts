@@ -44,6 +44,8 @@ export interface AppInfo {
 
 export interface Group {
     id: string
+    private: boolean
+    ismember: boolean
     name: string
     owner: Member
     admins: Array<Member>
@@ -65,6 +67,7 @@ export interface NewGroup {
     name: string
     gravatarhash: string | null
     description: string
+    isPrivate: boolean
 }
 
 export interface GroupUpdate {
@@ -425,6 +428,7 @@ export class GroupsClient {
         // mandatory fields.
         const payload: any = {
             name: newGroup.name,
+            private: newGroup.isPrivate,
             custom: {
                 gravatarhash: newGroup.gravatarhash
             }

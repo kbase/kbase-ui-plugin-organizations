@@ -60,6 +60,13 @@ export interface EditableOrganization {
         validatedAt: Date | null
         error: UIError
     }
+    isPrivate: {
+        value: boolean
+        editState: EditState
+        validationState: ValidationState
+        validatedAt: Date | null
+        error: UIError
+    }
 }
 
 export interface User {

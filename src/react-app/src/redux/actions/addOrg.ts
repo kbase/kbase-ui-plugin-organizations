@@ -142,6 +142,23 @@ export interface UpdateDescriptionError extends Action {
     error: UIError
 }
 
+// Update is private field
+
+export interface UpdateIsPrivate extends Action<ActionFlag.ADD_ORG_UPDATE_IS_PRIVATE> {
+    type: ActionFlag.ADD_ORG_UPDATE_IS_PRIVATE
+    isPrivate: boolean
+}
+
+export interface UpdateIsPrivateSuccess extends Action<ActionFlag.ADD_ORG_UPDATE_IS_PRIVATE_SUCCESS> {
+    type: ActionFlag.ADD_ORG_UPDATE_IS_PRIVATE_SUCCESS,
+    isPrivate: boolean
+}
+
+export interface UpdateIsPrivateError extends Action<ActionFlag.ADD_ORG_UPDATE_IS_PRIVATE_ERROR> {
+    type: ActionFlag.ADD_ORG_UPDATE_IS_PRIVATE_ERROR,
+    error: UIError
+}
+
 
 // ACTION CREATORS
 
@@ -323,6 +340,15 @@ export function load() {
                 error: {
                     type: UIErrorType.NONE
                 }
+            },
+            isPrivate: {
+                value: false,
+                editState: EditState.NONE,
+                validationState: ValidationState.NONE,
+                validatedAt: null,
+                error: {
+                    type: UIErrorType.NONE
+                }
             }
         }
         dispatch(loadSuccess(newOrg))
@@ -434,6 +460,11 @@ export function addOrgEvaluate() {
             return
         }
 
+        if (newOrganization.isPrivate.validationState !== ValidationState.VALID) {
+            dispatch(AddOrgEvaluateErrors())
+            return
+        }
+
         dispatch(addOrgEvaluateOk())
     }
 }
@@ -470,6 +501,18 @@ export function updateGravatarHash(name: string) {
         } else {
             dispatch(updateGravatarHashSuccess(validateGravatarHash))
         }
+        dispatch(addOrgEvaluate())
+    }
+}
+
+export function updateIsPrivate(isPrivate: boolean) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+        // no validation for now ... what is there to validate?
+
+        dispatch({
+            type: ActionFlag.ADD_ORG_UPDATE_IS_PRIVATE_SUCCESS,
+            isPrivate
+        })
         dispatch(addOrgEvaluate())
     }
 }

@@ -349,6 +349,16 @@ export function load(organizationId: string) {
                             type: UIErrorType.NONE,
                             message: ''
                         }
+                    },
+                    isPrivate: {
+                        value: org.isPrivate,
+                        validationState: ValidationState.VALID,
+                        editState: EditState.NONE,
+                        validatedAt: null,
+                        error: {
+                            type: UIErrorType.NONE,
+                            message: ''
+                        }
                     }
                 }
                 dispatch(loadSuccess(editableOrg, org))
