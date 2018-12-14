@@ -3,6 +3,7 @@ import './component.css';
 import { NavLink } from 'react-router-dom';
 import { Alert } from 'antd';
 import * as orgModel from '../../data/models/organization/model'
+import Member from '../entities/MemberContainer';
 
 // TODO: need more ergonomic way to resolve the common issue of data types interfering with 
 // component types.
@@ -219,6 +220,7 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
                         <span className="field-label">owner</span>
                         {/* TODO: render as Member or Owner component */}
                         <span className="field-value">
+                            <Member member={org.owner} avatarSize={30} />
                             {/* <a href={"/#people/" + org.owner.username} target="_blank">{org.owner.username} ❨{org.owner.username}❩</a> */}
                         </span>
                     </div>
@@ -231,13 +233,12 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
                         }).format(org.createdAt)}</span>
                     </div>
 
-                    <div className="relation">
-                        {/* <span className="field-label">you</span> */}
+                    {/* <div className="relation">
                         {this.renderRelation(org)}
                     </div>
-                    {this.renderRelationInfo(org)}
+                    {this.renderRelationInfo(org)} */}
 
-                    {this.renderAdminInfo(org)}
+                    {/* {this.renderAdminInfo(org)} */}
                 </div>
             </div>
         )

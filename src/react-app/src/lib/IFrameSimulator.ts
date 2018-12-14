@@ -3,13 +3,14 @@ import { Channel } from './windowChannel'
 import { runInThisContext } from 'vm';
 
 export interface IFrameParams {
-    channelId: string,
-    frameId: string,
+    channelId: string
+    frameId: string
     params: {
-        groupsServiceURL: string,
-        userProfileServiceURL: string,
+        groupsServiceURL: string
+        userProfileServiceURL: string
         workspaceServiceURL: string
         serviceWizardURL: string
+        feedsServiceURL: string
     },
     parentHost: string
 }
@@ -53,7 +54,8 @@ class IFrameSimulator {
                 groupsServiceURL: 'services/groups',
                 userProfileServiceURL: 'services/user_profile/rpc',
                 workspaceServiceURL: 'services/ws',
-                serviceWizardURL: 'services/service_wizard'
+                serviceWizardURL: 'services/service_wizard',
+                feedsServiceURL: 'services/feeds'
             },
             parentHost: document.location!.origin
         }

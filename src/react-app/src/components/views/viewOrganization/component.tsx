@@ -339,12 +339,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderMembers() {
-        // if (!this.isMember()) {
-        //     return (
-        //         <i>Sorry, group membership restricted to members only</i>
-        //     )
-        // }
-
         let members: JSX.Element | Array<JSX.Element>
         if (this.props.organization.members.length === 0) {
             members = (
@@ -355,20 +349,17 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         } else {
             members = this.props.organization.members.map((member) => {
                 return (
-
-                    <React.Fragment key={member.username}>
-                        <Member member={member} avatarSize={50} />
-                    </React.Fragment>
+                    <div className="row" key={member.username}>
+                        <div className="col0">
+                            <Member member={member} avatarSize={50} />
+                        </div>
+                    </div>
                 )
             })
         }
         return (
-            <div className="table infoTable">
-                <div className="row">
-                    <div className="col0">
-                        {members}
-                    </div>
-                </div>
+            <div className="infoTable">
+                {members}
             </div>
         )
     }
@@ -590,7 +581,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     renderUserRelationship() {
         // apparently TS is not smart enough to know this from the conditional branch in render()!
         return (
-            <form className="table infoTable">
+            <form className="infoTable">
                 {/* <div className="row">
                     <div className="col1">
                         <span className="label">your relation</span>

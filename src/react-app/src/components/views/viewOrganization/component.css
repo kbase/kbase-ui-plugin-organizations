@@ -73,23 +73,14 @@
     margin-left: 10px;
 }
 
-.ViewOrganization form.table {
+.ViewOrganization .infoTable {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
 }
 
-.ViewOrganization .table>.row {
-    flex: 0 0 auto;
-    min-height: 30px;
-    display: flex;
-    flex-direction: row;
-    /* height: 30px; */
-    margin-bottom: 8px;
-}
-
 .ViewOrganization .infoTable>.row {
-    flex: 0 0 auto;
+    flex: 1 1 0px;
     min-height: 20px;
     display: flex;
     flex-direction: row;

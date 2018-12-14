@@ -1,4 +1,5 @@
 .Member {
+    flex: 1 1 0px;
     display: flex;
     flex-direction: row;
     margin-bottom: 20px;
@@ -17,6 +18,10 @@
 .Member .infoCol .name {
     font-size: 100%;
     font-weight: bold;
+}
+
+.Member .controlCol {
+    flex: 0 0 auto;
 }
 
 .Member .infoCol .location {}

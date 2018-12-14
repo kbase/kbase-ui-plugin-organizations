@@ -34,6 +34,14 @@ export class StateInstances {
                     byId: new Map()
                 }
             },
+            db: {
+                notifications: {
+                    byId: new Map(),
+                    collections: {
+                        byGroup: new Map()
+                    }
+                }
+            },
             views: {
                 browseOrgsView: {
                     loadingState: ComponentLoadingState.NONE,
@@ -126,6 +134,9 @@ export class StateInstances {
                             url: ''
                         },
                         ServiceWizard: {
+                            url: ''
+                        },
+                        Feeds: {
                             url: ''
                         }
                     }

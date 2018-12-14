@@ -99,8 +99,10 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                 </div>
                 <div className="controlCol">
                     <a onClick={this.onToggleView.bind(this)}
-                        className="linkButton"
-                    ><Icon type="ellipsis" /></a>
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
                 </div>
             </React.Fragment>
         )
@@ -140,8 +142,10 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                 </div>
                 <div className="controlCol">
                     <a onClick={this.onToggleView.bind(this)}
-                        className="linkButton"
-                    ><Icon type="ellipsis" /></a>
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
                 </div>
             </React.Fragment>
         )

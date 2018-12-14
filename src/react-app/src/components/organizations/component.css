@@ -35,6 +35,16 @@
     cursor: pointer;
 }
 
+.Organizations .orgOwner {}
+
+.Organizations .orgOwner .field-title {
+    display: inline-block;
+}
+
+.Organizations .orgOwner .field-value {
+    display: inline-block;
+}
+
 .Organizations .Organizations-info-table {
     width: 100%
 }

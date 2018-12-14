@@ -11,6 +11,7 @@ import OrganizationCompact from './OrganizationCompactContainer'
 import * as formatters from '../../../data/formatters'
 import Narrative from '../../entities/NarrativeContainer';
 import User from '../../entities/UserContainer';
+import Notifications from '../../notifications/storeAdapter'
 
 enum NavigateTo {
     NONE = 0,
@@ -291,23 +292,8 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
     renderPendingNotifications() {
         return (
-            <div className="message">
-                not yet implemented
-            </div>
+            <Notifications />
         )
-        // const notifications = this.props.viewModel.notifications
-        // if (notifications.length === 0) {
-        //     return (
-        //         <div className="message">
-        //             No pending notifications
-        //         </div>
-        //     )
-        // }
-        // return (
-        //     <div>
-        //         notifications here
-        //     </div>
-        // )
     }
 
     renderPendingRequestsSent() {

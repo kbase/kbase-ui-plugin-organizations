@@ -266,8 +266,8 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     <Select.Option value="memberOf" key="memberOf">You are a member of</Select.Option>
                     <Select.Option value="owned" key="owned">Owned by you</Select.Option>
                     <Select.Option value="notOwned" key="notOwned">Not owned by you</Select.Option>
-                    <Select.Option value="pending" key="pending">Pending request or invitation</Select.Option>
-                    <Select.Option value="groupPending" key="groupPending">Pending group requests</Select.Option>
+                    {/* <Select.Option value="pending" key="pending">Pending request or invitation</Select.Option>
+                    <Select.Option value="groupPending" key="groupPending">Pending group requests</Select.Option> */}
                 </Select>
             </div>
         )

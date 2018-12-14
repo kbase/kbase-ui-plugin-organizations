@@ -5,6 +5,7 @@ import * as userModel from "../data/models/user"
 import * as requestModel from '../data/models/requests'
 import * as narrativeModel from '../data/models/narrative'
 import * as uberModel from '../data/models/uber'
+import * as feedsModel from '../data/models/feeds'
 
 /* Types from the organization service (approximately) */
 
@@ -180,57 +181,6 @@ export enum RequestStatus {
 
 export type Username = string
 
-// export interface GroupRequest {
-//     id: string
-//     organizationId: string
-//     // organization: orgModel.Organization
-//     requester: User
-//     type: RequestType
-//     status: RequestStatus
-//     resourceType: RequestResourceType
-//     // subjectUser: User | null,
-//     // subjectWorkspaceId: number | null,
-//     createdAt: Date
-//     expireAt: Date
-//     modifiedAt: Date
-// }
-
-// export interface UserRequest extends GroupRequest {
-//     resourceType: RequestResourceType.USER
-//     type: RequestType.REQUEST
-//     user: User
-// }
-
-// export interface UserInvitation extends GroupRequest {
-//     resourceType: RequestResourceType.USER
-//     type: RequestType.INVITATION
-//     user: User
-// }
-
-// export interface WorkspaceRequest extends GroupRequest {
-//     resourceType: RequestResourceType.WORKSPACE
-//     type: RequestType.REQUEST
-//     workspace: string,
-//     narrative: NarrativeResource | null
-// }
-
-// export interface WorkspaceInvitation extends GroupRequest {
-//     resourceType: RequestResourceType.WORKSPACE
-//     type: RequestType.INVITATION
-//     workspace: string
-// }
-
-// export interface AppRequest extends GroupRequest {
-//     resourceType: RequestResourceType.APP
-//     type: RequestType.REQUEST
-//     app: string
-// }
-
-// export interface AppInvitation extends GroupRequest {
-//     resourceType: RequestResourceType.APP
-//     type: RequestType.INVITATION
-//     app: string
-// }
 
 // export type Request = UserRequest | UserInvitation | WorkspaceRequest | WorkspaceInvitation | AppRequest | AppInvitation
 
@@ -307,12 +257,6 @@ export interface Authorization {
     authorization: UserAuthorization
 }
 
-// export enum Filter {
-//     All = 1,
-//     Yours
-// }
-
-
 export enum EditOrgState {
     NONE = 0,
     FETCHING,
@@ -323,18 +267,6 @@ export enum EditOrgState {
     SAVED,
     ERROR
 }
-
-// export enum AddOrgState {
-//     NONE = 0,
-//     READY,
-//     UNEDITED_OK,
-//     UNEDITED_
-//     EDITED_OK,
-//     EDITED_ERRORS,
-//     SAVING,
-//     SAVED,
-//     ERROR
-// }
 
 export enum SyncState {
     NONE = 'NONE',
@@ -664,6 +596,18 @@ export interface StoreState {
         narratives: {
             byId: Map<narrativeModel.WorkspaceID, narrativeModel.Narrative>
         }
+        // notifications: {
+        //     byId: <Map<
+        // }
+    }
+
+    db: {
+        notifications: {
+            byId: Map<feedsModel.NotificationID, feedsModel.Notification>
+            collections: {
+                byGroup: Map<orgModel.OrganizationID, Array<feedsModel.NotificationID>>
+            }
+        }
     }
 
 
@@ -739,14 +683,17 @@ export interface AppConfig {
     services: {
         Groups: {
             url: string
-        },
+        }
         UserProfile: {
             url: string
-        },
+        }
         Workspace: {
             url: string
-        },
+        }
         ServiceWizard: {
+            url: string
+        }
+        Feeds: {
             url: string
         }
     }

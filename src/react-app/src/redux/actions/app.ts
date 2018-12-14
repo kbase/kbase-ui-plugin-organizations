@@ -61,6 +61,9 @@ export function appStart() {
                     },
                     ServiceWizard: {
                         url: iframeParams.params.serviceWizardURL
+                    },
+                    Feeds: {
+                        url: iframeParams.params.feedsServiceURL
                     }
                 }
             }))
@@ -80,6 +83,9 @@ export function appStart() {
                     },
                     ServiceWizard: {
                         url: fakeIframeParams.params.serviceWizardURL
+                    },
+                    Feeds: {
+                        url: fakeIframeParams.params.feedsServiceURL
                     }
                 }
             }))

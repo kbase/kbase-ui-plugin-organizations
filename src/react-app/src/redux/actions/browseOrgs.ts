@@ -8,6 +8,7 @@ import {
 } from '../../types'
 
 import * as orgModel from '../../data/models/organization/model'
+import * as uberModel from '../../data/models/uber'
 
 
 export interface Load extends Action<ActionFlag.BROWSE_ORGS_LOAD> {

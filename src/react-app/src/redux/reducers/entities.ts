@@ -7,7 +7,18 @@ function userLoaderSuccess(state: StoreState, action: actions.UserLoaderSuccess)
     const users = state.entities.users
     // mutation ... horrible ;)
     users.byId.set(action.user.username, action.user)
-    return state
+    // return state
+
+    return {
+        ...state,
+        entities: {
+            ...state.entities,
+            users: {
+                ...state.entities.users,
+                byId: new Map(users.byId)
+            }
+        }
+    }
 }
 
 function organizationLoaderSuccess(state: StoreState, action: actions.OrganizationLoaderSuccess) {

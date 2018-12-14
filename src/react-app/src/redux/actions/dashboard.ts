@@ -3,10 +3,12 @@ import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
 import { AppError, StoreState, MemberType } from '../../types'
-import * as organizationsModel from '../../data/models/organization/model'
+import * as orgsModel from '../../data/models/organization/model'
 import * as userModel from '../../data/models/user'
 import * as requestModel from '../../data/models/requests'
 import * as uberModel from '../../data/models/uber'
+// temp
+import { FeedsClient } from '../../data/models/feeds'
 
 export interface DashboardAction extends Action {
 
@@ -162,6 +164,14 @@ export function load() {
                 })
 
             const pendingGroupRequests = await requestModelClient.getPendingOrganizationRequests(adminOrgIds)
+
+            // now notifications???
+            const feedsClient = new FeedsClient({
+                token,
+                feedsServiceURL: config.services.Feeds.url
+            })
+            const notifications = await feedsClient.getNotifications()
+            console.log('notifications?', notifications)
 
             dispatch(loadSuccess(orgs, requests, invitations, pendingGroupRequests))
         } catch (ex) {

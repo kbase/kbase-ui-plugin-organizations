@@ -113,8 +113,10 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
                 </div>
                 <div className="controlCol">
                     <a onClick={this.onToggleView.bind(this)}
-                        className="linkButton pressed"
-                        style={{ backgroundColor: "rgba(200, 200, 200, 0.5)" }} ><Icon type="ellipsis" /></a>
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
                 </div>
             </div>
         )
@@ -139,8 +141,10 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
                 </div>
                 <div className="controlCol">
                     <a onClick={this.onToggleView.bind(this)}
-                        className="linkButton"
-                    ><Icon type="ellipsis" /></a>
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
                 </div>
             </div>
         )
