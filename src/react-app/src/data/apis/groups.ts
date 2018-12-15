@@ -74,6 +74,7 @@ export interface GroupUpdate {
     name: string
     gravatarhash: string | null
     description: string
+    private: boolean
 }
 
 export interface Request {
@@ -447,7 +448,8 @@ export class GroupsClient {
             name: groupUpdate.name,
             custom: {
                 gravatarhash: groupUpdate.gravatarhash
-            }
+            },
+            private: groupUpdate.private
         }
         // TODO: remove this when we have descriptions restored to the
         // groups service.

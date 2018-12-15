@@ -220,7 +220,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                         <Checkbox
                             checked={this.props.newOrganization.isPrivate.value}
                             onChange={this.onIsPrivateChange.bind(this)} />
-                        {this.props.newOrganization.id.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.id.error.message}</span>) : ''}
+                        {this.props.newOrganization.isPrivate.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.id.error.message}</span>) : ''}
                     </div>
                 </div>
                 <div className="row gravatarHash">

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Redirect, NavLink } from 'react-router-dom';
 import marked from 'marked';
-import { Button, Icon, Modal } from 'antd';
+import { Button, Icon, Modal, Checkbox } from 'antd';
 import md5 from 'md5'
 
 import { EditableOrganization, SaveState, ValidationState, EditState } from '../../../types';
@@ -11,6 +11,7 @@ import './component.css'
 import Header from '../../Header';
 import OrganizationHeader from '../organizationHeader/loader';
 import * as orgModel from '../../../data/models/organization/model'
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 export interface EditOrganizationProps {
     editState: EditState
@@ -23,6 +24,7 @@ export interface EditOrganizationProps {
     onUpdateGravatarHash: (gravatarHash: string) => void
     // onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
+    onUpdateIsPrivate: (isPrivate: boolean) => void
 }
 
 enum NavigateTo {
@@ -165,6 +167,10 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         console.warn('no updating id, naughty!')
     }
 
+    onIsPrivateChange(e: CheckboxChangeEvent) {
+        this.props.onUpdateIsPrivate(e.target.checked)
+    }
+
     canSave() {
         return (
             this.props.editState === EditState.EDITED &&
@@ -192,6 +198,15 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                         <input value={this.props.editedOrganization.name.value || ''}
                             onChange={this.onNameChange.bind(this)} />
                         {this.props.editedOrganization.name.error ? (<span style={{ color: 'red' }}>{this.props.editedOrganization.name.error.message}</span>) : ''}
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col1 field-label">is private?</div>
+                    <div className="col2">
+                        <Checkbox
+                            checked={this.props.editedOrganization.isPrivate.value}
+                            onChange={this.onIsPrivateChange.bind(this)} />
+                        {this.props.editedOrganization.isPrivate.error ? (<span style={{ color: 'red' }}>{this.props.editedOrganization.isPrivate.error.message}</span>) : ''}
                     </div>
                 </div>
                 <div className="row gravatarHash">
@@ -458,6 +473,8 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         if (this.state.cancelToViewer) {
             return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
         }
+
+        console.log('edit org', this.props.editedOrganization, this.props.organization)
 
         // // TODO: this is just a prop for today.
         // if (this.props.saveState === SaveState.SAVED) {

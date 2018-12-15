@@ -13,11 +13,7 @@ import * as feedsModel from '../data/models/feeds'
     Organization
 */
 
-export interface OrganizationUpdate {
-    name: string
-    gravatarHash: string | null
-    description: string
-}
+
 
 export enum UIErrorType {
     NONE = 0,

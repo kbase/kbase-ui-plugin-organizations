@@ -12,6 +12,7 @@ import {
 import EditOrganization from './component';
 
 import * as orgModel from '../../../data/models/organization/model'
+import { updateIsPrivate } from '../../../redux/actions/editOrg';
 
 interface OwnProps {
 }
@@ -25,11 +26,12 @@ export interface StateProps {
 }
 
 export interface DispatchProps {
-    onEditOrgSave: () => void,
-    onUpdateName: (name: string) => void,
-    onUpdateGravatarHash: (gravatarHash: string) => void,
+    onEditOrgSave: () => void
+    onUpdateName: (name: string) => void
+    onUpdateGravatarHash: (gravatarHash: string) => void
     // onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
+    onUpdateIsPrivate: (isPrivate: boolean) => void
 }
 
 export function mapStateToProps(state: StoreState): StateProps {
@@ -69,6 +71,9 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         // },
         onUpdateDescription: (description) => {
             dispatch(editOrgUpdateDescription(description) as any)
+        },
+        onUpdateIsPrivate: (isPrivate: boolean) => {
+            dispatch(updateIsPrivate(isPrivate) as any)
         }
     }
 }

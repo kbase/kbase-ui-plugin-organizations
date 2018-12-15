@@ -1,10 +1,16 @@
 import * as groupsApi from '../../apis/groups'
-import { SortDirection, EditableOrganization, UIErrorType, OrganizationUpdate, UIError } from '../../../types';
+import { SortDirection, EditableOrganization, UIErrorType, UIError } from '../../../types';
 import * as requestModel from '../requests'
 import * as userModel from '../user';
 import Validation from './validation'
 
 
+export interface OrganizationUpdate {
+    name: string
+    gravatarHash: string | null
+    description: string
+    isPrivate: boolean
+}
 
 export interface User {
     username: string
@@ -552,7 +558,8 @@ export class OrganizationModel {
         return groupsClient.updateGroup(id, {
             name: orgUpdate.name,
             gravatarhash: orgUpdate.gravatarHash,
-            description: orgUpdate.description
+            description: orgUpdate.description,
+            private: orgUpdate.isPrivate
         })
     }
 

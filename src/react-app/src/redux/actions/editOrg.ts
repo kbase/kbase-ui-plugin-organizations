@@ -138,6 +138,21 @@ export interface EditOrgUpdateDescriptionError extends Action {
     error: UIError
 }
 
+export interface UpdateIsPrivate extends Action<ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE> {
+    type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE
+    isPrivate: boolean
+}
+
+export interface UpdateIsPrivateSuccess extends Action<ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_SUCCESS> {
+    type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_SUCCESS,
+    isPrivate: boolean
+}
+
+export interface UpdateIsPrivateError extends Action<ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_ERROR> {
+    type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_ERROR,
+    erro: UIError
+}
+
 
 // ACTION CREATORS
 
@@ -408,7 +423,8 @@ export function editOrgSave() {
         const update = {
             name: editedOrganization.name.value,
             gravatarHash: editedOrganization.gravatarHash.value,
-            description: editedOrganization.description.value
+            description: editedOrganization.description.value,
+            isPrivate: editedOrganization.isPrivate.value
         }
 
         orgClient.updateOrg(organization.id, update)
@@ -519,3 +535,14 @@ export function editOrgUpdateDescription(description: string) {
         dispatch(editOrgEvaluate())
     }
 }
+
+export function updateIsPrivate(isPrivate: boolean) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+        // No validation for now.
+        dispatch({
+            type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_SUCCESS,
+            isPrivate: isPrivate
+        })
+        dispatch(editOrgEvaluate())
+    }
+} 

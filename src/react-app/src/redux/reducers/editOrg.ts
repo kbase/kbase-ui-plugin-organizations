@@ -8,7 +8,7 @@ import {
     EditOrgUpdateNameSuccess, EditOrgUpdateNameError,
     // EditOrgUpdateIdSuccess, EditOrgUpdateIdError,
     EditOrgUpdateDescriptionSuccess, EditOrgUpdateDescriptionError,
-    EditOrgUpdateGravatarHashError, EditOrgUpdateGravatarHashSuccess
+    EditOrgUpdateGravatarHashError, EditOrgUpdateGravatarHashSuccess, UpdateIsPrivateSuccess
 } from '../actions/editOrg'
 import { StateInstances } from '../state';
 
@@ -405,6 +405,38 @@ export function editOrgUpdateDescriptionError(state: StoreState, action: EditOrg
     }
 }
 
+export function updateIsPrivateSuccess(state: StoreState, action: UpdateIsPrivateSuccess) {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    editedOrganization: {
+                        ...state.views.editOrgView.viewModel.editedOrganization,
+                        isPrivate: {
+                            value: action.isPrivate,
+                            validationState: ValidationState.VALID,
+                            editState: EditState.EDITED,
+                            validatedAt: new Date(),
+                            error: {
+                                type: UIErrorType.NONE
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 export function reducer(state: StoreState, action: Action): StoreState | null {
     // NB using discriminant union nature of the ActionX types to narrow
     // the type.
@@ -432,6 +464,9 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
             return editOrgUpdateGravatarHashSuccess(state, action as EditOrgUpdateGravatarHashSuccess)
         case ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_ERROR:
             return editOrgUpdateGravatarHashError(state, action as EditOrgUpdateGravatarHashError)
+
+        case ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_SUCCESS:
+            return updateIsPrivateSuccess(state, action as UpdateIsPrivateSuccess)
 
         // case ActionFlag.EDIT_ORG_UPDATE_ID_SUCCESS:
         //     return editOrgUpdateIdSuccess(state, action as EditOrgUpdateIdSuccess)
