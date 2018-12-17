@@ -21,6 +21,8 @@ interface StateProps {
     relation: orgModel.Relation
     groupRequests: Array<requestModel.Request> | null
     groupInvitations: Array<requestModel.Request> | null
+    requestOutbox: Array<requestModel.Request>
+    requestInbox: Array<requestModel.Request>
 }
 
 // the interface for mapDispatchToProps
@@ -49,14 +51,14 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
         views: {
             viewOrgView: {
                 viewModel: {
-                    organization, relation, groupRequests, groupInvitations
+                    organization, relation, groupRequests, groupInvitations, requestInbox, requestOutbox
                 }
             }
         }
     } = state
     // TODO: of course this really needs to be an async fetch of the org info!
     return {
-        organization, relation, groupRequests, groupInvitations
+        organization, relation, groupRequests, groupInvitations, requestInbox, requestOutbox
     }
 }
 

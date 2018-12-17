@@ -5,6 +5,7 @@ import * as uberModel from '../../../data/models/uber'
 import { NavLink } from 'react-router-dom';
 import { Tooltip, Icon } from 'antd';
 import UserComponent from '../../entities/UserContainer'
+import UserLoader from '../../entities/UserLoader'
 
 import './Organization.css'
 
@@ -175,6 +176,35 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
         )
     }
 
+    renderPrivate() {
+        const org = this.props.organization
+        if (org.organization.isPrivate) {
+            return (
+                <span>
+                    <Icon type="lock" />{' '}private
+                </span>
+            )
+        }
+        return (
+            <span>
+                <Icon type="global" />{' '}public
+            </span>
+        )
+    }
+
+    renderMemberCompact(member: organizationModel.Member) {
+        // Look! Render props!
+        return (
+            <UserLoader userId={member.username} render={(user) => {
+                return (
+                    <a href={"/#people/" + member.username} target="_blank">
+                        {user.realname} ❨{member.username}❩
+                    </a>
+                )
+            }} />
+        )
+    }
+
     render() {
         const org = this.props.organization.organization
         return (
@@ -191,6 +221,9 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
                         </NavLink>
                     </div>
                     <div>
+                        {this.renderPrivate()}
+                    </div>
+                    <div>
                         {this.renderRelation()}
                     </div>
                     <div>
@@ -201,7 +234,7 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
                     </div>
                     <div className="orgOwner">
                         <span className="field-label">owner</span>
-                        <span className="field-value"><a href={"/#people/" + org.owner.username} target="_blank">{org.owner.username} ❨{org.owner.username}❩</a></span>
+                        <span className="field-value">{this.renderMemberCompact(org.owner)}</span>
                     </div>
                     <div className="orgCreated">
                         <span className="field-label">established</span>

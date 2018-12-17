@@ -558,6 +558,8 @@ export interface ViewOrgViewModel {
     relation: orgModel.Relation
     groupRequests: Array<requestModel.Request> | null
     groupInvitations: Array<requestModel.Request> | null
+    requestOutbox: Array<requestModel.Request>
+    requestInbox: Array<requestModel.Request>
 }
 
 export interface ViewOrgView {

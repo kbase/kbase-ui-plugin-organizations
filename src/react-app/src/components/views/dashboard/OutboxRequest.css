@@ -1,0 +1,44 @@
+.OutboxRequest {
+    border: 1px silver solid;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    background-color: rgba(200, 200, 200, 0.3)
+}
+
+.OutboxRequest:hover {
+    background-color: rgba(200, 200, 200, 0.8)
+}
+
+.OutboxRequest .requestHeader {
+    border-bottom: 1px silver solid;
+    padding: 4px;
+}
+
+.OutboxRequest .requestHeader .requestHeaderRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.OutboxRequest .requestHeader .requestHeaderType {
+    flex: 1 1 0px;
+    font-weight: bold;
+}
+
+.OutboxRequest .requestHeader .requestHeaderCreatedAt {
+    flex: 1 1 0px;
+    text-align: left;
+}
+
+.OutboxRequest .requestHeader .requestHeaderExpireAt {
+    flex: 1 1 0px;
+    text-align: right;
+}
+
+.OutboxRequest .requestBody {
+    padding: 4px;
+}
+
+.OutboxRequest .requestType {
+    flex: 1 1 0px;
+    font-weight: bold;
+}

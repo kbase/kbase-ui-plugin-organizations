@@ -7,11 +7,11 @@ import { DashboardViewModel } from '../../../types';
 import * as orgModel from '../../../data/models/organization/model'
 import * as requestModel from '../../../data/models/requests'
 import Organization from './Organization';
-import OrganizationCompact from './OrganizationCompactContainer'
-import * as formatters from '../../../data/formatters'
-import Narrative from '../../entities/NarrativeContainer';
 import User from '../../entities/UserContainer';
 import Notifications from '../../notifications/storeAdapter'
+import InboxRequest from './InboxRequest'
+import OutboxRequest from './OutboxRequest'
+import * as userModel from '../../../data/models/user'
 
 enum NavigateTo {
     NONE = 0,
@@ -21,6 +21,7 @@ enum NavigateTo {
 
 export interface DashboardProps {
     viewModel: DashboardViewModel
+    currentUser: userModel.Username
 }
 
 interface DashboardState {
@@ -141,118 +142,15 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
             </Card>
         )
     }
-
-    renderRequestSentType(request: requestModel.Request) {
-        switch (request.type) {
-            case requestModel.RequestType.REQUEST:
-                switch (request.resourceType) {
-                    case requestModel.RequestResourceType.APP:
-                        return 'REQUEST to associate App'
-                    case requestModel.RequestResourceType.USER:
-                        return 'REQUEST to join Organization'
-                    case requestModel.RequestResourceType.WORKSPACE:
-                        return 'REQUEST to associate Narrative'
-                }
-            case requestModel.RequestType.INVITATION:
-                switch (request.resourceType) {
-                    case requestModel.RequestResourceType.USER:
-                        return 'INVITATION to join Organization'
-                }
-        }
-        return 'unknown request'
-    }
-
-    renderRequestSentSubject(request: requestModel.Request) {
-        switch (request.type) {
-            case requestModel.RequestType.REQUEST:
-                switch (request.resourceType) {
-                    case requestModel.RequestResourceType.APP:
-                        return 'SHOW APP'
-                    case requestModel.RequestResourceType.USER:
-                        return ''
-                    case requestModel.RequestResourceType.WORKSPACE:
-                        return (
-                            <div>
-                                <div className="miniDetail">
-                                    <Narrative workspaceId={parseInt(request.narrativeId, 10)} />
-                                </div>
-
-                            </div>
-                        )
-                }
-            case requestModel.RequestType.INVITATION:
-                switch (request.resourceType) {
-                    case requestModel.RequestResourceType.USER:
-                        return (
-                            <div>
-
-                                <div className="miniDetail">
-                                    <User userId={request.user} avatarSize={30} />
-                                </div>
-
-                            </div>
-                        )
-                }
-        }
-        return 'unknown request'
-    }
-
     renderRequestRequester(request: requestModel.Request) {
         return (
             <User userId={request.requester} avatarSize={30} />
         )
     }
 
-    renderRequestReceivedType(request: requestModel.Request) {
-        switch (request.type) {
-            case requestModel.RequestType.REQUEST:
-                switch (request.resourceType) {
-                    case requestModel.RequestResourceType.APP:
-                        return 'REQUEST to associate App'
-                    case requestModel.RequestResourceType.USER:
-                        return 'REQUEST to join Organization'
-                    case requestModel.RequestResourceType.WORKSPACE:
-                        return 'REQUEST to associate Narrative'
-                }
-            case requestModel.RequestType.INVITATION:
-                switch (request.resourceType) {
-                    case requestModel.RequestResourceType.USER:
-                        return 'INVITATION to join Organization'
-                }
-        }
-        return 'unknown request'
-    }
-
-    renderRequestReceivedSubject(request: requestModel.Request) {
-        switch (request.type) {
-            case requestModel.RequestType.REQUEST:
-                switch (request.resourceType) {
-                    case requestModel.RequestResourceType.APP:
-                        return 'SHOW APP'
-                    case requestModel.RequestResourceType.USER:
-                        return ''
-                    case requestModel.RequestResourceType.WORKSPACE:
-                        return (
-                            <div>
-                                <div className="miniDetail">
-                                    <Narrative workspaceId={parseInt(request.narrativeId, 10)} />
-                                </div>
-                                <div className="cardSectionHeader">with organization</div>
-                            </div>
-                        )
-                }
-            case requestModel.RequestType.INVITATION:
-                switch (request.resourceType) {
-                    case requestModel.RequestResourceType.USER:
-                        return ''
-                }
-        }
-        return 'unknown request'
-    }
-
     renderPendingRequestsSentCard() {
         return (
-            <Card title="Requests From You"
+            <Card title="Outbox"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 className="slimCard pendingRequestsCard">
                 {this.renderPendingRequestsSent()}
@@ -262,7 +160,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
     renderPendingRequestsReceivedCard() {
         return (
-            <Card title="Invitations To You"
+            <Card title="Inbox"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 className="slimCard pendingInvitationsCard">
                 {this.renderPendingRequestsReceived()}
@@ -282,7 +180,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
             return
         }
         return (
-            <Card title="Organization Requests"
+            <Card title="Organization Inbox"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 className="slimCard pendingAdminTasksCard">
                 {this.renderPendingAdminRequests()}
@@ -305,37 +203,10 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 </div>
             )
         }
-        return this.props.viewModel.pendingRequests.map((request) => {
+        return this.props.viewModel.pendingRequests.map((request, index) => {
             return (
-                <div key={request.id} className="aRequest request">
-                    <div className="requestHeader">
-                        <div className="requestHeaderRow">
-                            <div className="requestHeaderCreatedAt">
-                                {/* <span className="field-label">created</span>
-                                {' '} */}
-                                {Intl.DateTimeFormat('en-US', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    year: 'numeric'
-                                }).format(request.createdAt)}
-                            </div>
-                            <div className="requestHeaderExpireAt">
-                                <span className="field-label">expires</span>
-                                {' '}
-                                {formatters.niceElapsed(request.expireAt)}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="requestBody">
-                        <div className="requestType">{this.renderRequestSentType(request)}</div>
-
-                        <div className="requestSubject">{this.renderRequestSentSubject(request)}</div>
-
-                        <div className="cardSectionHeader">with organization</div>
-                        <div className="miniDetail">
-                            <OrganizationCompact organizationId={request.organizationId} />
-                        </div>
-                    </div>
+                <div key={index}>
+                    <OutboxRequest request={request} />
                 </div>
             )
         })
@@ -351,38 +222,11 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
             )
         }
 
-        return requests.map((request) => {
+        return requests.map((request, index) => {
             return (
-                <div key={request.id} className="aRequest invitation">
-                    <div className="requestHeader">
-                        <div className="requestHeaderRow">
-                            <div className="requestHeaderCreatedAt">
-                                {/* <span className="field-label">created</span>
-                            {' '} */}
-                                {Intl.DateTimeFormat('en-US', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    year: 'numeric'
-                                }).format(request.createdAt)}
-                            </div>
-                            <div className="requestHeaderExpireAt">
-                                <span className="field-label">expires</span>
-                                {' '}
-                                {formatters.niceElapsed(request.expireAt)}
-
-                            </div>
-                        </div>
-                    </div>
-                    <div className="requestBody">
-                        <div className="requestType">{this.renderRequestReceivedType(request)}</div>
-                        <div className="requestSubject">{this.renderRequestReceivedSubject(request)}</div>
-                        <div className="miniDetail">
-                            <OrganizationCompact organizationId={request.organizationId} />
-                        </div>
-                        <div className="cardSectionHeader">from</div>
-                        <div className="requester miniDetail">{this.renderRequestRequester(request)}</div>
-                    </div>
-                </div>
+                <React.Fragment key={index}>
+                    <InboxRequest request={request} />
+                </React.Fragment>
             )
         })
     }
@@ -398,38 +242,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         }
         return this.props.viewModel.pendingInvitations.map((request) => {
             return (
-                <div key={request.id} className="aRequest invitation">
-                    <div className="requestHeader">
-                        <div className="requestHeaderRow">
-                            <div className="requestHeaderCreatedAt">
-                                {/* <span className="field-label">created</span>
-                            {' '} */}
-                                {Intl.DateTimeFormat('en-US', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    year: 'numeric'
-                                }).format(request.createdAt)}
-                            </div>
-                            <div className="requestHeaderExpireAt">
-                                <span className="field-label">expires</span>
-                                {' '}
-                                {formatters.niceElapsed(request.expireAt)}
-
-                            </div>
-                        </div>
-                    </div>
-                    <div className="requestBody">
-                        <div className="requestType">{this.renderRequestReceivedType(request)}</div>
-                        <div className="requestSubject">{this.renderRequestReceivedSubject(request)}</div>
-                        <div className="miniDetail">
-                            <OrganizationCompact organizationId={request.organizationId} />
-                        </div>
-                        <div className="cardSectionHeader">
-                            sent by
-                        </div>
-                        <User userId={request.requester} avatarSize={30} />
-                    </div>
-                </div>
+                <InboxRequest request={request} />
             )
         })
     }
@@ -458,12 +271,11 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
                         {this.renderNotificationsCard()}
 
-                        {this.renderPendingRequestsSentCard()}
-
                         {this.renderPendingRequestsReceivedCard()}
 
-                        {this.renderPendingAdminTasksCard()}
+                        {this.renderPendingRequestsSentCard()}
 
+                        {this.renderPendingAdminTasksCard()}
                     </div>
                 </div>
 

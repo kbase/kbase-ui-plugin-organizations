@@ -12,6 +12,8 @@ import OrganizationHeader from '../organizationHeader/loader'
 import * as orgModel from '../../../data/models/organization/model'
 import * as requestModel from '../../../data/models/requests';
 import OrganizationNarrative from '../../OrganizationNarrative'
+import InboxRequest from '../dashboard/InboxRequest'
+import OutboxRequest from '../dashboard/OutboxRequest'
 
 enum NavigateTo {
     NONE = 0,
@@ -31,6 +33,8 @@ export interface ViewOrganizationProps {
     relation: orgModel.Relation
     groupRequests: Array<requestModel.Request> | null
     groupInvitations: Array<requestModel.Request> | null
+    requestOutbox: Array<requestModel.Request>
+    requestInbox: Array<requestModel.Request>
     onViewOrg: (id: string) => void
     onJoinOrg: () => void
     onCancelJoinRequest: (requestId: string) => void
@@ -339,6 +343,13 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderMembers() {
+        if (!this.isMember()) {
+            return (
+                <p className="message">
+                    Sorry, group membership restricted to members only
+                </p>
+            )
+        }
         let members: JSX.Element | Array<JSX.Element>
         if (this.props.organization.members.length === 0) {
             members = (
@@ -719,6 +730,68 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
+    renderInboxCard() {
+        const extras: Array<JSX.Element> = []
+        const count = this.props.requestInbox.length
+        const title = (
+            <span>
+                <Icon type="team" />
+                inbox
+                {' '}
+                <span className="titleCount">
+                    ({count})
+                </span>
+            </span>
+        )
+        const inbox = this.props.requestInbox.map((request) => {
+            return (
+                <React.Fragment key={request.id}>
+                    <InboxRequest request={request} />
+                </React.Fragment>
+            )
+        })
+        return (
+            <Card className="slimCard outboxCard"
+                headStyle={{ backgroundColor: 'gray', color: 'white' }}
+                title={title}
+                extra={extras}>
+                {inbox}
+            </Card>
+        )
+
+    }
+
+    renderOutboxCard() {
+        const extras: Array<JSX.Element> = []
+        const count = this.props.requestOutbox.length
+        const title = (
+            <span>
+                <Icon type="team" />
+                outbox
+                {' '}
+                <span className="titleCount">
+                    ({count})
+                </span>
+            </span>
+        )
+        const outbox = this.props.requestOutbox.map((request) => {
+            return (
+                <React.Fragment key={request.id}>
+                    <OutboxRequest request={request} />
+                </React.Fragment>
+            )
+        })
+        return (
+            <Card className="slimCard outboxCard"
+                headStyle={{ backgroundColor: 'gray', color: 'white' }}
+                title={title}
+                extra={extras}>
+                {outbox}
+            </Card>
+        )
+
+    }
+
 
     renderNarrativeMenu(narrative: orgModel.NarrativeResource) {
         const relation = this.props.relation
@@ -902,7 +975,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                             <div className="infoBox">
                                 {this.renderInfo()}
                             </div>
+                            {this.renderInboxCard()}
+                            {this.renderOutboxCard()}
                             {this.renderMembersCard()}
+
                         </div>
                     </div>
                     {accessModal}

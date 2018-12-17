@@ -38,78 +38,78 @@ export function withUser(userId: string {
     const ReduxWrapped = connect<StateProps, DispatchProps, OwnProps, StoreState>(mapStateToProps, mapDispatchToProps)(Loader)
 
 
-import * as React from 'react'
-import User from './User'
+// import * as React from 'react'
+// import User from './User'
 
-/// from https://medium.com/@jrwebdev/react-higher-order-component-patterns-in-typescript-42278f7590fb
-type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
-type Subtract<T, K> = Omit<T, keyof K>
+// /// from https://medium.com/@jrwebdev/react-higher-order-component-patterns-in-typescript-42278f7590fb
+// type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
+// type Subtract<T, K> = Omit<T, keyof K>
 
-interface InjectedProps {
-    user: userModel.User | undefined
-}
-
-interface MakeUserProps {
-    children(props: InjectedProps): JSX.Element
-}
-
-interface MakeUserState {
-
-}
-
-class MakeUser extends React.Component<MakeUserProps, MakeUserState> {
-    state: MakeUserState = {}
-
-    render() {
-        return this.props.children({
-            user: this.
-        })
-    }
-}
-
-
-// const withUser = <SomeProps extends InjectedProps>(
-//     UnwrappedComponent: React.ComponentType<SomeProps>
-//     )  => {
-//     class WithUser extends React.Component<Subtract<SomeProps, InjectedProps>, InjectedState> {
-//         state: InjectedState = {}
-
-//         render() {
-//             return (
-//                 <UnwrappedComponent 
-//                     {...this.props}
-//                     user={this.props.user} />
-//             )
-//         }
-//     }
-
-//     return WithUser
+// interface InjectedProps {
+//     user: userModel.User | undefined
 // }
 
+// interface MakeUserProps {
+//     children(props: InjectedProps): JSX.Element
+// }
 
-// class Loader extends React.Component<LoaderProps, LoaderState> {
-//         state: InjectedState = {}
+// interface MakeUserState {
 
-//         render() {
+// }
 
-//         }
-
+// class MakeUser extends React.Component<MakeUserProps, MakeUserState> {
+//     state: MakeUserState = {}
 
 //     render() {
-//         if (this.props.user) {
-//             return (
-//                 <User user={this.props.user} avatarSize={this.props.avatarSize} />
-//             )
-//         } else {
-//             this.props.onLoad(this.props.userId)
-//             return (
-//                 <div>
-//                     Loading user...
-//                 </div>
-//             )
-//         }
+//         return this.props.children({
+//             user: this.
+//         })
 //     }
 // }
 
-// export interface Injected
+
+// // const withUser = <SomeProps extends InjectedProps>(
+// //     UnwrappedComponent: React.ComponentType<SomeProps>
+// //     )  => {
+// //     class WithUser extends React.Component<Subtract<SomeProps, InjectedProps>, InjectedState> {
+// //         state: InjectedState = {}
+
+// //         render() {
+// //             return (
+// //                 <UnwrappedComponent 
+// //                     {...this.props}
+// //                     user={this.props.user} />
+// //             )
+// //         }
+// //     }
+
+// //     return WithUser
+// // }
+
+
+// // class Loader extends React.Component<LoaderProps, LoaderState> {
+// //         state: InjectedState = {}
+
+// //         render() {
+
+// //         }
+
+
+// //     render() {
+// //         if (this.props.user) {
+// //             return (
+// //                 <User user={this.props.user} avatarSize={this.props.avatarSize} />
+// //             )
+// //         } else {
+// //             this.props.onLoad(this.props.userId)
+// //             return (
+// //                 <div>
+// //                     Loading user...
+// //                 </div>
+// //             )
+// //         }
+// //     }
+// // }
+
+// // export interface Injected
 

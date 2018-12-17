@@ -187,13 +187,13 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
 
     renderMembers() {
         let members
-        // if (!this.isMember()) {
-        //     return (
-        //         <p className="message">
-        //             Sorry, group membership restricted to members only
-        //         </p>
-        //     )
-        // }
+        if (!this.isMember()) {
+            return (
+                <p className="message">
+                    Sorry, group membership restricted to members only
+                </p>
+            )
+        }
         if (this.props.organization.members.length === 0) {
             members = (
                 <p className="message">

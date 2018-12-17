@@ -52,6 +52,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
     getUserRelation(): orgModel.UserOrgRelation {
         const currentUsername = this.props.currentUsername
         const org = this.props.organization
+        console.log('getting relation', currentUsername)
         if (currentUsername === org.owner.username) {
             return {
                 type: orgModel.UserRelationToOrganization.OWNER
@@ -91,8 +92,8 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                 } as orgModel.MembershipInvitationPendingRelation
             } else {
                 return {
-                    type: orgModel.UserRelationToOrganization.NONE
-                } as orgModel.NoRelation
+                    type: orgModel.UserRelationToOrganization.VIEW
+                } as orgModel.ViewRelation
             }
         }
     }

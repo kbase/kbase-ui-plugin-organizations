@@ -29,7 +29,9 @@ export function loadSuccess(state: types.StoreState, action: actions.LoadSuccess
                     organization: action.organization,
                     relation: action.relation,
                     groupRequests: action.groupRequests,
-                    groupInvitations: action.groupInvitations
+                    groupInvitations: action.groupInvitations,
+                    requestInbox: action.requestInbox,
+                    requestOutbox: action.requestOutbox
                 }
             }
         }

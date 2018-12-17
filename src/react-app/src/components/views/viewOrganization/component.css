@@ -255,3 +255,8 @@
 .ViewOrganization .titleCount {
     color: rgba(200, 200, 200, 1);
 }
+
+.ViewOrganization .message {
+    text-align: center;
+    font-style: italic;
+}

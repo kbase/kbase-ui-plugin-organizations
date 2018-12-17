@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import Dashboard from './component'
 import { StoreState, DashboardViewModel } from '../../../types';
 import * as actions from '../../../redux/actions/dashboard';
+import * as userModel from '../../../data/models/user'
+
 
 export interface OwnProps {
 
@@ -11,6 +13,7 @@ export interface OwnProps {
 
 interface StateProps {
     viewModel: DashboardViewModel
+    currentUser: userModel.Username
 }
 
 interface DispatchProps {
@@ -19,11 +22,13 @@ interface DispatchProps {
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
     const view = state.views.dashboardView
+    const currentUser = state.auth.authorization.username
     if (view.viewModel === null) {
         throw new Error('view model is null!')
     }
     return {
-        viewModel: view.viewModel
+        viewModel: view.viewModel,
+        currentUser
     }
 }
 

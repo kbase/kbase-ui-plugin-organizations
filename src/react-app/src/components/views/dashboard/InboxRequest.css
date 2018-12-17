@@ -1,0 +1,45 @@
+.InboxRequest {
+    border: 1px silver solid;
+    border-radius: 4px;
+    /* padding: 4px; */
+    margin-bottom: 4px;
+    background-color: rgba(200, 200, 200, 0.3)
+}
+
+.InboxRequest:hover {
+    background-color: rgba(200, 200, 200, 0.8)
+}
+
+.InboxRequest .requestHeader {
+    border-bottom: 1px silver solid;
+    padding: 4px;
+}
+
+.InboxRequest .requestHeader .requestHeaderRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.InboxRequest .requestHeader .requestHeaderType {
+    flex: 1 1 0px;
+    font-weight: bold;
+}
+
+.InboxRequest .requestHeader .requestHeaderCreatedAt {
+    flex: 1 1 0px;
+    text-align: left;
+}
+
+.InboxRequest .requestHeader .requestHeaderExpireAt {
+    flex: 1 1 0px;
+    text-align: right;
+}
+
+.InboxRequest .requestBody {
+    padding: 4px;
+}
+
+.InboxRequest .requestType {
+    flex: 1 1 0px;
+    font-weight: bold;
+}

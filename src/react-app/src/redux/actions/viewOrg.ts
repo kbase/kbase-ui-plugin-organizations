@@ -29,6 +29,8 @@ export interface LoadSuccess extends Action {
     relation: orgModel.Relation
     groupRequests: Array<requestModel.Request> | null
     groupInvitations: Array<requestModel.Request> | null
+    requestInbox: Array<requestModel.Request>
+    requestOutbox: Array<requestModel.Request>
 }
 
 export interface LoadError extends Action {
@@ -329,10 +331,13 @@ export function loadSuccess(
     organization: orgModel.Organization,
     relation: orgModel.Relation,
     groupRequests: Array<requestModel.Request> | null,
-    groupInvitations: Array<requestModel.Request> | null): LoadSuccess {
+    groupInvitations: Array<requestModel.Request> | null,
+    requestInbox: Array<requestModel.Request>,
+    requestOutbox: Array<requestModel.Request>): LoadSuccess {
     return {
         type: ActionFlag.VIEW_ORG_LOAD_SUCCESS,
-        organization, relation, groupRequests, groupInvitations
+        organization, relation, groupRequests, groupInvitations,
+        requestInbox, requestOutbox
     }
 }
 
@@ -459,18 +464,27 @@ export function load(organizationId: string) {
 
         try {
             const { organization, relation } = await uberClient.getOrganizationForUser(organizationId)
-            let requests: Array<requestModel.Request> | null
-            let invitations: Array<requestModel.Request> | null
+            let orgRequests: Array<requestModel.Request> | null
+            let orgInvitations: Array<requestModel.Request> | null
             if (relation.type === orgModel.UserRelationToOrganization.OWNER ||
                 relation.type === orgModel.UserRelationToOrganization.ADMIN) {
-                requests = await requestClient.getPendingOrganizationRequestsForOrg(organizationId)
-                invitations = await requestClient.getOrganizationInvitationsForOrg(organizationId)
+                orgRequests = await requestClient.getPendingOrganizationRequestsForOrg(organizationId)
+                orgInvitations = await requestClient.getOrganizationInvitationsForOrg(organizationId)
             } else {
-                requests = null
-                invitations = null
+                orgRequests = null
+                orgInvitations = null
             }
 
-            dispatch(loadSuccess(organization, relation, requests, invitations))
+            let requestInbox: Array<requestModel.Request>
+            let requestOutbox: Array<requestModel.Request>
+            // if (relation.type === orgModel.UserRelationToOrganization.OWNER ||
+            //     relation.type === orgModel.UserRelationToOrganization.ADMIN ||
+            //     relation.type === orgModel.UserRelationToOrganization.MEMBER) {
+            requestInbox = await requestClient.getRequestInboxForOrg(organizationId)
+            requestOutbox = await requestClient.getRequestOutboxForOrg(organizationId)
+            // }
+
+            dispatch(loadSuccess(organization, relation, orgRequests, orgInvitations, requestInbox, requestOutbox))
         } catch (ex) {
             dispatch(loadError({
                 code: ex.name,
