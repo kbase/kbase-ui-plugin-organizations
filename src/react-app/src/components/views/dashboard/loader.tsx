@@ -87,7 +87,7 @@ function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
     }
 }
 
-function mapDispatchToProps(dispatch: Dispatch<actions.DashboardAction>): DispatchProps {
+function mapDispatchToProps(dispatch: Dispatch<actions.DashboardAction<any>>): DispatchProps {
     return {
         onLoad: () => {
             dispatch(actions.load() as any)

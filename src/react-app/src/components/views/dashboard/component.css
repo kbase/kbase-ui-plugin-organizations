@@ -44,10 +44,9 @@
     text-align: center;
 }
 
-.Dashboard .aRequest {
+/* .Dashboard .aRequest {
     border: 1px silver solid;
     border-radius: 4px;
-    /* padding: 4px; */
     margin-bottom: 4px;
     background-color: rgba(200, 200, 200, 0.3)
 }
@@ -83,14 +82,14 @@
 
 .Dashboard .requestBody {
     padding: 4px;
-}
+} */
 
-.Dashboard .requestType {
+/* .Dashboard .requestType {
     flex: 1 1 0px;
     font-weight: bold;
-}
+} */
 
-.Dashboard .miniDetail {
+/* .Dashboard .miniDetail {
     border: 1px rgba(200, 200, 200, 0.5) solid;
     padding: 4px
-}
+} */

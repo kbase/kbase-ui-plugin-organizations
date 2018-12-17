@@ -450,9 +450,21 @@ export function addOrgEvaluate() {
             return
         }
 
-        if (newOrganization.gravatarHash.validationState !== ValidationState.VALID) {
-            dispatch(AddOrgEvaluateErrors())
-            return
+        // TODO: quick hack to allow unmodified fields to evaluate to true.
+
+        if (newOrganization.gravatarHash.validationState === ValidationState.NONE) {
+            if (newOrganization.gravatarHash.value) {
+                const [validGravatarHash, error] = Validation.validateOrgGravatarHash(name)
+                if (error) {
+                    dispatch(AddOrgEvaluateErrors())
+                    return
+                }
+            }
+        } else {
+            if (newOrganization.gravatarHash.validationState !== ValidationState.VALID) {
+                dispatch(AddOrgEvaluateErrors())
+                return
+            }
         }
 
         if (newOrganization.description.validationState !== ValidationState.VALID) {
@@ -460,10 +472,11 @@ export function addOrgEvaluate() {
             return
         }
 
-        if (newOrganization.isPrivate.validationState !== ValidationState.VALID) {
-            dispatch(AddOrgEvaluateErrors())
-            return
-        }
+        // TODO: just remove this; there is no validation task for isPrivate atm.
+        // if (newOrganization.isPrivate.validationState !== ValidationState.VALID) {
+        //     dispatch(AddOrgEvaluateErrors())
+        //     return
+        // }
 
         dispatch(addOrgEvaluateOk())
     }

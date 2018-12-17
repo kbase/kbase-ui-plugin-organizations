@@ -5,6 +5,7 @@ import Dashboard from './component'
 import { StoreState, DashboardViewModel } from '../../../types';
 import * as actions from '../../../redux/actions/dashboard';
 import * as userModel from '../../../data/models/user'
+import * as requestModel from '../../../data/models/requests'
 
 
 export interface OwnProps {
@@ -17,7 +18,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-
+    onCancelOutboxRequest: (request: requestModel.Request) => void
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
@@ -32,9 +33,11 @@ function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
     }
 }
 
-function mapDispatchToProps(dispatch: Dispatch<actions.DashboardAction>): DispatchProps {
+function mapDispatchToProps(dispatch: Dispatch<actions.DashboardAction<any>>): DispatchProps {
     return {
+        onCancelOutboxRequest: (request: requestModel.Request) => {
 
+        }
     }
 }
 

@@ -43,3 +43,8 @@
     flex: 1 1 0px;
     font-weight: bold;
 }
+
+.InboxRequest .miniDetail {
+    /* border: 1px rgba(200, 200, 200, 0.5) solid; */
+    /* padding: 4px; */
+}

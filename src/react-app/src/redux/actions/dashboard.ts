@@ -2,7 +2,7 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
-import { AppError, StoreState, MemberType } from '../../types'
+import { AppError, StoreState, MemberType, ViewOrgState } from '../../types'
 import * as orgsModel from '../../data/models/organization/model'
 import * as userModel from '../../data/models/user'
 import * as requestModel from '../../data/models/requests'
@@ -10,19 +10,19 @@ import * as uberModel from '../../data/models/uber'
 // temp
 import { FeedsClient } from '../../data/models/feeds'
 
-export interface DashboardAction extends Action {
+export interface DashboardAction<T> extends Action<T> {
 
 }
 
-export interface Load extends DashboardAction {
+export interface Load extends DashboardAction<ActionFlag.DASHBOARD_LOAD> {
     type: ActionFlag.DASHBOARD_LOAD
 }
 
-export interface LoadStart extends DashboardAction {
+export interface LoadStart extends DashboardAction<ActionFlag.DASHBOARD_LOAD_START> {
     type: ActionFlag.DASHBOARD_LOAD_START
 }
 
-export interface LoadSuccess extends DashboardAction {
+export interface LoadSuccess extends DashboardAction<ActionFlag.DASHBOARD_LOAD_SUCCESS> {
     type: ActionFlag.DASHBOARD_LOAD_SUCCESS
     organizations: Array<uberModel.UberOrganization>
     // users: Map<userModel.Username, userModel.User>
@@ -31,12 +31,12 @@ export interface LoadSuccess extends DashboardAction {
     pendingGroupRequests: Array<requestModel.Request>
 }
 
-export interface LoadError extends DashboardAction {
+export interface LoadError extends DashboardAction<ActionFlag.DASHBOARD_LOAD_ERROR> {
     type: ActionFlag.DASHBOARD_LOAD_ERROR
     error: AppError
 }
 
-export interface Unload extends DashboardAction {
+export interface Unload extends DashboardAction<ActionFlag.DASHBOARD_UNLOAD> {
     type: ActionFlag.DASHBOARD_UNLOAD
 }
 
@@ -80,7 +80,7 @@ export function unload(): Unload {
 // Thunks
 
 export function load() {
-    return async (dispatch: ThunkDispatch<StoreState, void, DashboardAction>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, DashboardAction<any>>, getState: () => StoreState) => {
         dispatch(loadStart())
 
         const {
@@ -232,3 +232,79 @@ export function load() {
     }
 }
 
+
+// Requests
+
+export interface CancelOutboxRequest extends DashboardAction<ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST> {
+    type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST
+    request: requestModel.Request
+}
+
+interface CancelOutboxRequestStart extends DashboardAction<ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_START> {
+    type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_START
+}
+
+export interface CancelOutboxRequestSuccess extends DashboardAction<ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_SUCCESS> {
+    type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_SUCCESS,
+    requests: Array<requestModel.Request>
+}
+
+interface CancelOutboxRequestError extends DashboardAction<ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_ERROR> {
+    type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_ERROR,
+    error: AppError
+}
+
+export function cancelOutboxRequest(request: requestModel.Request) {
+    return async (dispatch: ThunkDispatch<StoreState, void, DashboardAction<any>>, getState: () => StoreState) => {
+        const state = getState()
+
+        if (!state.views.dashboardView.viewModel) {
+            dispatch({
+                type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_ERROR,
+                error: {
+                    code: 'error',
+                    message: 'No dashboard view model'
+                }
+            })
+        }
+
+        dispatch({
+            type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_START
+        })
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config }
+        } = state
+
+        // do the cancelation
+        const requestClient = new requestModel.RequestsModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+        try {
+            const newRequest = await requestClient.cancelRequest(request.id)
+
+            // refetch the inbox
+            const outbox = await requestClient.getUserRequests()
+
+            dispatch({
+                type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_SUCCESS,
+                requests: outbox
+            })
+
+            // send the inbox in the success
+        } catch (ex) {
+            dispatch({
+                type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_ERROR,
+                error: {
+                    code: ex.name,
+                    message: ex.message
+                }
+            })
+        }
+
+
+        // or error
+    }
+}
