@@ -9,6 +9,7 @@ import * as userModel from '../../../data/models/user'
 
 import './component.css'
 import OrgAvatar from '../../OrgAvatar';
+import Owner from '../../entities/OwnerContainer';
 
 
 export interface OrganizationHeaderProps {
@@ -382,7 +383,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
     renderOrgInfo() {
         const org = this.props.organization
         return (
-            <div>
+            <React.Fragment>
                 <div className="name">
                     {org.name}
                 </div>
@@ -391,12 +392,16 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                     <span className="permalinkBase">https://narrative.kbase.us#orgs/</span>{org.id}
                 </div> */}
                 <div className="owner">
+                    <Owner member={org.owner} avatarSize={20} />
+                </div>
+
+                {/* <div className="owner">
                     <span className="field-label">owner</span>
                     <a href={"#people/" + org.owner.username} target="_blank">{org.owner.username}</a>
                     {' '}
                     ❨{org.owner.username}❩
-                                </div>
-            </div>
+                                </div> */}
+            </React.Fragment>
         )
     }
 

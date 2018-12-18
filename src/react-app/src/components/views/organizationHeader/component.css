@@ -30,7 +30,7 @@
     flex: 1 1 0px;
 }
 
-.OrganizationHeader .orgInfo .name {
+.OrganizationHeader .orgInfo>.name {
     font-weight: bold;
     font-size: 150%;
 }

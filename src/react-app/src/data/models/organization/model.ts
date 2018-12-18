@@ -4,6 +4,8 @@ import * as requestModel from '../requests'
 import * as userModel from '../user';
 import Validation from './validation'
 
+// import Member from '../../../components/entities/Member';
+
 
 export interface OrganizationUpdate {
     name: string
@@ -362,13 +364,25 @@ function applyFilter(organizations: Array<Organization>, filter: string, usernam
         case 'all':
             return organizations
         case 'notMemberOf':
+            console.log('not member of?', organizations, username)
             return organizations.filter((org) => {
-                return !org.isMember
+                // return !org.isMember
+                if (org.members.findIndex((member) => (member.username === username)) >= 0) {
+                    return false
+                }
+                if (org.owner.username === username) {
+                    return false
+                }
+                return true
             })
         case 'memberOf':
             return organizations.filter((org) => {
-                return org.isMember
-                // (org.members.findIndex((member) => (member.username === username)) >= 0)
+                // return org.isMember
+                if ((org.members.findIndex((member) => (member.username === username)) >= 0) ||
+                    (org.owner.username === username)) {
+                    return true
+                }
+                return false
             })
         case 'owned':
             return organizations.filter((org) => (org.owner.username === username))

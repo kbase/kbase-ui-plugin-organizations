@@ -3,7 +3,7 @@ import './component.css';
 import { NavLink } from 'react-router-dom';
 import { Alert } from 'antd';
 import * as orgModel from '../../data/models/organization/model'
-import Member from '../entities/MemberContainer';
+import Owner from '../entities/OwnerContainer';
 import OrgAvatar from '../OrgAvatar';
 
 // TODO: need more ergonomic way to resolve the common issue of data types interfering with 
@@ -188,33 +188,41 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
 
     renderOrg(org: orgModel.Organization, index: Number) {
         return (
-            <div className="row organization" key={String(index)}>
+            <div className="row organizationCard" key={String(index)}>
                 <div className="col2">
                     <NavLink to={`/viewOrganization/${org.id}`}>
                         {this.renderOrgAvatar(org)}
                     </NavLink>
                 </div>
                 <div className="col1">
-                    <div className="orgName">
-                        <NavLink to={`/viewOrganization/${org.id}`}>
-                            {org.name}
-                        </NavLink>
-                    </div>
-                    <div className="orgOwner">
-                        <span className="field-label">owner</span>
-                        {/* TODO: render as Member or Owner component */}
-                        <span className="field-value">
-                            <Member member={org.owner} avatarSize={30} />
-                            {/* <a href={"/#people/" + org.owner.username} target="_blank">{org.owner.username} ❨{org.owner.username}❩</a> */}
-                        </span>
-                    </div>
-                    <div className="orgCreated">
-                        <span className="field-label">established</span>
-                        <span className="field-value">{Intl.DateTimeFormat('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(org.createdAt)}</span>
+                    <div className="infoTable">
+                        <div className="orgName infoTableRow">
+                            <NavLink to={`/viewOrganization/${org.id}`}>
+                                {org.name}
+                            </NavLink>
+                        </div>
+                        <div className="orgOwner infoTableRow">
+                            <div className="infoTableCol1">
+                                <span className="field-label">owner</span>
+                            </div>
+                            <div className="infoTableCol2">
+                                {/* TODO: render as Member or Owner component */}
+                                <Owner member={org.owner} avatarSize={30} />
+                                {/* <a href={"/#people/" + org.owner.username} target="_blank">{org.owner.username} ❨{org.owner.username}❩</a> */}
+                            </div>
+                        </div>
+                        <div className="orgCreated infoTableRow">
+                            <div className="infoTableCol1">
+                                <span className="field-label">established</span>
+                            </div>
+                            <div className="infoTableCol2">
+                                <span className="field-value">{Intl.DateTimeFormat('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                }).format(org.createdAt)}</span>
+                            </div>
+                        </div>
                     </div>
 
                     {/* <div className="relation">
