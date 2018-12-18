@@ -10,6 +10,7 @@ import './component.css'
 
 import Header from '../../Header';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import OrgAvatar from '../../OrgAvatar';
 
 export interface NewOrganizationProps {
     editState: EditState,
@@ -19,7 +20,7 @@ export interface NewOrganizationProps {
     newOrganization: EditableOrganization,
     onSave: () => void,
     onUpdateName: (name: string) => void,
-    onUpdateGravatarHash: (gravatarHash: string) => void;
+    onUpdateGravatarHash: (gravatarHash: string | null) => void;
     onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
@@ -118,13 +119,14 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
     }
 
     onGravatarEmailSync() {
-        let email;
-        if (this.gravatarEmail.current) {
-            email = this.gravatarEmail.current.value
+        let email
+        let hashed
+        if (this.gravatarEmail.current && this.gravatarEmail.current.value) {
+            email = this.gravatarEmail.current.value.toLowerCase()
+            hashed = md5(email)
         } else {
-            email = 'n/a'
+            hashed = null
         }
-        const hashed = md5(email)
         this.props.onUpdateGravatarHash(hashed);
     }
 
@@ -278,26 +280,24 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
-    getOrgAvatarUrl(org: EditableOrganization) {
-        // const defaultImages = [
-        //     'orgs-64.png',
-        //     'unicorn-64.png'
-        // ]
-        // if (!org.gravatarHash.value) {
-        //     return defaultImages[Math.floor(Math.random() * 2)]
-        // }
-        if (!org.gravatarHash.value) {
-            return 'unicorn-64.png'
-        }
-        const gravatarDefault = 'identicon';
-
-        return 'https://www.gravatar.com/avatar/' + org.gravatarHash.value + '?s=64&amp;r=pg&d=' + gravatarDefault;
-    }
-
     renderOrgAvatar(org: EditableOrganization) {
         return (
-            <img style={{ width: 64, height: 64 }}
-                src={this.getOrgAvatarUrl(org)} />
+            <OrgAvatar gravatarHash={org.gravatarHash.value} size={64} organizationName={org.name.value} />
+        )
+    }
+
+    renderIsPrivate(isPrivate: boolean) {
+        if (isPrivate) {
+            return (
+                <span>
+                    <Icon type="lock" />{' '}Private
+                </span>
+            )
+        }
+        return (
+            <span>
+                <Icon type="global" />{' '}Public
+            </span>
         )
     }
 
@@ -307,6 +307,13 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="col2">
                     <div className="name">
                         {this.props.newOrganization.name.value || ''}
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col2">
+                    <div className="name">
+                        {this.renderIsPrivate(this.props.newOrganization.isPrivate.value)}
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { Alert } from 'antd';
 import * as orgModel from '../../data/models/organization/model'
 import Member from '../entities/MemberContainer';
+import OrgAvatar from '../OrgAvatar';
 
 // TODO: need more ergonomic way to resolve the common issue of data types interfering with 
 // component types.
@@ -26,26 +27,9 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
         }
     }
 
-    getAvatarUrl(org: orgModel.Organization) {
-        // const defaultImages = [
-        //     'orgs-64.png',
-        //     'unicorn-64.png'
-        // ]
-        // if (!org.gravatarHash) {
-        //     return defaultImages[Math.floor(Math.random() * 2)]
-        // }
-        if (!org.gravatarHash) {
-            return 'unicorn-64.png'
-        }
-        const gravatarDefault = 'identicon';
-
-        return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
-    }
-
-    renderAvatar(org: orgModel.Organization) {
+    renderOrgAvatar(org: orgModel.Organization) {
         return (
-            <img style={{ width: 64, height: 64 }}
-                src={this.getAvatarUrl(org)} />
+            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} />
         )
     }
 
@@ -207,7 +191,7 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
             <div className="row organization" key={String(index)}>
                 <div className="col2">
                     <NavLink to={`/viewOrganization/${org.id}`}>
-                        {this.renderAvatar(org)}
+                        {this.renderOrgAvatar(org)}
                     </NavLink>
                 </div>
                 <div className="col1">

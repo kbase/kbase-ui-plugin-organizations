@@ -8,6 +8,7 @@ import * as requestModel from '../../../data/models/requests'
 import * as userModel from '../../../data/models/user'
 
 import './component.css'
+import OrgAvatar from '../../OrgAvatar';
 
 
 export interface OrganizationHeaderProps {
@@ -52,7 +53,6 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
     getUserRelation(): orgModel.UserOrgRelation {
         const currentUsername = this.props.currentUsername
         const org = this.props.organization
-        console.log('getting relation', currentUsername)
         if (currentUsername === org.owner.username) {
             return {
                 type: orgModel.UserRelationToOrganization.OWNER
@@ -173,30 +173,12 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
     }
 
 
-    getOrgAvatarUrl(org: orgModel.Organization) {
-        // const defaultImages = [
-        //     'orgs-64.png',
-        //     'unicorn-64.png'
-        // ]
-        // if (!org.gravatarHash) {
-        //     return defaultImages[Math.floor(Math.random() * 2)]
-        // }
-        if (!org.gravatarHash) {
-            return 'unicorn-64.png'
-        }
-        const gravatarDefault = 'identicon';
-
-        return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
-    }
-
     renderOrgAvatar(org: orgModel.Organization) {
         return (
-            <img style={{ width: 64, height: 64 }}
-                onClick={this.onNavigateToViewOrganization.bind(this)}
-                className="avatarImage"
-                src={this.getOrgAvatarUrl(this.props.organization)} />
+            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} />
         )
     }
+
 
     renderRelation() {
         const org = this.props.organization

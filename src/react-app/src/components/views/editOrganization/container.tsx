@@ -28,7 +28,7 @@ export interface StateProps {
 export interface DispatchProps {
     onEditOrgSave: () => void
     onUpdateName: (name: string) => void
-    onUpdateGravatarHash: (gravatarHash: string) => void
+    onUpdateGravatarHash: (gravatarHash: string | null) => void
     // onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
@@ -63,7 +63,7 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         onUpdateName: (name: string) => {
             dispatch(editOrgUpdateName(name) as any)
         },
-        onUpdateGravatarHash: (gravatarHash: string) => {
+        onUpdateGravatarHash: (gravatarHash: string | null) => {
             dispatch(editOrgUpdateGravatarHash(gravatarHash) as any)
         },
         // onUpdateId: (id) => {

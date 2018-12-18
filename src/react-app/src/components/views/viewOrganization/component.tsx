@@ -14,6 +14,7 @@ import * as requestModel from '../../../data/models/requests';
 import OrganizationNarrative from '../../OrganizationNarrative'
 import InboxRequest from '../dashboard/InboxRequestContainer'
 import OutboxRequest from '../dashboard/OutboxRequestContainer'
+import OrgAvatar from '../../OrgAvatar';
 
 enum NavigateTo {
     NONE = 0,
@@ -250,29 +251,12 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         // )
     }
 
-    getOrgAvatarUrl(org: orgModel.Organization) {
-        // const defaultImages = [
-        //     'orgs-64.png',
-        //     'unicorn-64.png'
-        // ]
-        // if (!org.gravatarHash) {
-        //     return defaultImages[Math.floor(Math.random() * 2)]
-        // }
-        if (!org.gravatarHash) {
-            return 'unicorn-64.png'
-        }
-        const gravatarDefault = 'identicon';
-
-        return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
-    }
 
     renderOrgAvatar(org: orgModel.Organization) {
         return (
-            <img style={{ width: 64, height: 64 }}
-                src={this.getOrgAvatarUrl(org)} />
+            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} />
         )
     }
-
 
     renderRelation(relation: orgModel.Relation) {
         switch (relation.type) {

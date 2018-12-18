@@ -361,10 +361,15 @@ function applyFilter(organizations: Array<Organization>, filter: string, usernam
     switch (filter) {
         case 'all':
             return organizations
+        case 'notMemberOf':
+            return organizations.filter((org) => {
+                return !org.isMember
+            })
         case 'memberOf':
-            return organizations.filter((org) => (
-                (org.members.findIndex((member) => (member.username === username)) >= 0)
-            ))
+            return organizations.filter((org) => {
+                return org.isMember
+                // (org.members.findIndex((member) => (member.username === username)) >= 0)
+            })
         case 'owned':
             return organizations.filter((org) => (org.owner.username === username))
         case 'notOwned':

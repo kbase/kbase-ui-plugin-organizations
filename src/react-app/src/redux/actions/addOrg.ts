@@ -92,12 +92,12 @@ export interface UpdateGravatarHash extends Action {
 
 export interface UpdateGravatarHashSuccess {
     type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
-    gravatarHash: string
+    gravatarHash: string | null
 }
 
 export interface UpdateGravatarHashError extends Action {
     type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_ERROR,
-    gravatarHash: string,
+    gravatarHash: string | null,
     error: UIError
 }
 
@@ -257,14 +257,14 @@ export function updateIdPass(id: string): UpdateIdPass {
 
 // Update Gravatar Hash
 
-export function updateGravatarHashSuccess(gravatarHash: string): UpdateGravatarHashSuccess {
+export function updateGravatarHashSuccess(gravatarHash: string | null): UpdateGravatarHashSuccess {
     return {
         type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
         gravatarHash: gravatarHash
     }
 }
 
-export function updateGravatarHashError(gravatarHash: string, error: UIError): UpdateGravatarHashError {
+export function updateGravatarHashError(gravatarHash: string | null, error: UIError): UpdateGravatarHashError {
     return {
         type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_ERROR,
         gravatarHash: gravatarHash,
@@ -505,14 +505,14 @@ export function updateName(name: string) {
     }
 }
 
-export function updateGravatarHash(name: string) {
+export function updateGravatarHash(name: string | null) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
-        const [validateGravatarHash, error] = Validation.validateOrgGravatarHash(name)
+        const [validatedGravatarHash, error] = Validation.validateOrgGravatarHash(name)
 
         if (error.type === UIErrorType.ERROR) {
-            dispatch(updateGravatarHashError(validateGravatarHash, error))
+            dispatch(updateGravatarHashError(validatedGravatarHash, error))
         } else {
-            dispatch(updateGravatarHashSuccess(validateGravatarHash))
+            dispatch(updateGravatarHashSuccess(validatedGravatarHash))
         }
         dispatch(addOrgEvaluate())
     }

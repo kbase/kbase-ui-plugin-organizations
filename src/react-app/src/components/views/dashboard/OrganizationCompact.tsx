@@ -1,14 +1,15 @@
 import * as React from 'react'
 
-import * as organizationModel from '../../../data/models/organization/model'
+import * as orgModel from '../../../data/models/organization/model'
 import * as userModel from '../../../data/models/user'
 import { NavLink } from 'react-router-dom';
 
 import './OrganizationCompact.css'
 import { Icon } from 'antd';
+import OrgAvatar from '../../OrgAvatar';
 
 export interface OrganizationProps {
-    organization: organizationModel.Organization
+    organization: orgModel.Organization
 }
 
 enum View {
@@ -43,26 +44,9 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
         })
     }
 
-    getAvatarUrl(org: organizationModel.Organization) {
-        // const defaultImages = [
-        //     'orgs-64.png',
-        //     'unicorn-64.png'
-        // ]
-        // if (!org.gravatarHash) {
-        //     return defaultImages[Math.floor(Math.random() * 2)]
-        // }
-        if (!org.gravatarHash) {
-            return 'unicorn-64.png'
-        }
-        const gravatarDefault = 'identicon';
-
-        return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
-    }
-
-    renderAvatar(org: organizationModel.Organization) {
+    renderAvatar(org: orgModel.Organization) {
         return (
-            <img style={{ width: 30, height: 30 }}
-                src={this.getAvatarUrl(org)} />
+            <OrgAvatar gravatarHash={org.gravatarHash} size={32} organizationName={org.name} />
         )
     }
 
@@ -74,7 +58,7 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
         return singular
     }
 
-    renderMemberCount(org: organizationModel.Organization) {
+    renderMemberCount(org: orgModel.Organization) {
         return (
             <div className="memberCount">
                 {org.members.length > 0 ? org.members.length : 'no'} {this.pluralize(org.members.length, 'member', 'members')}

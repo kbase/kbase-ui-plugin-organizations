@@ -77,7 +77,13 @@ export default class Validation {
             }]
     }
 
-    static validateOrgGravatarHash(gravatarHash: string): [string, UIError] {
+    static validateOrgGravatarHash(gravatarHash: string | null): [string | null, UIError] {
+        if (!gravatarHash) {
+            return [
+                null, {
+                    type: UIErrorType.NONE
+                }]
+        }
         if (gravatarHash.length === 0) {
             return [
                 gravatarHash, {
@@ -91,6 +97,23 @@ export default class Validation {
                     message: 'Organization gravatar hash may not be longer than 32 characters'
                 }]
         }
+        if (gravatarHash.length < 32) {
+            return [
+                gravatarHash, {
+                    type: UIErrorType.ERROR,
+                    message: 'Organization gravatar hash may not be shorter than 32 characters'
+                }]
+        }
+        const acceptedChars = /^[a-f0-9]+$/
+        if (!acceptedChars.test(gravatarHash)) {
+            return [
+                gravatarHash, {
+                    type: UIErrorType.ERROR,
+                    message: 'Organization gravatar hash must consist only of the lower case hexadecimal characters a-f and 0-9'
+                }
+            ]
+        }
+
         return [
             gravatarHash, {
                 type: UIErrorType.NONE

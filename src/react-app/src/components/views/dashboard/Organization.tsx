@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import * as organizationModel from '../../../data/models/organization/model'
+import * as orgModel from '../../../data/models/organization/model'
 import * as uberModel from '../../../data/models/uber'
 import { NavLink } from 'react-router-dom';
 import { Tooltip, Icon } from 'antd';
@@ -8,6 +8,7 @@ import UserComponent from '../../entities/UserContainer'
 import UserLoader from '../../entities/UserLoader'
 
 import './Organization.css'
+import OrgAvatar from '../../OrgAvatar';
 
 export interface OrganizationProps {
     organization: uberModel.UberOrganization
@@ -22,36 +23,19 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
         super(props)
     }
 
-    getAvatarUrl(org: organizationModel.Organization) {
-        // const defaultImages = [
-        //     'orgs-64.png',
-        //     'unicorn-64.png'
-        // ]
-        // if (!org.gravatarHash) {
-        //     return defaultImages[Math.floor(Math.random() * 2)]
-        // }
-        if (!org.gravatarHash) {
-            return 'unicorn-64.png'
-        }
-        const gravatarDefault = 'identicon';
-
-        return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
-    }
-
-    renderAvatar(org: organizationModel.Organization) {
+    renderAvatar(org: orgModel.Organization) {
         return (
-            <img style={{ width: 64, height: 64 }}
-                src={this.getAvatarUrl(org)} />
+            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} />
         )
     }
 
     renderRelation() {
         switch (this.props.organization.relation.type) {
-            case (organizationModel.UserRelationToOrganization.NONE):
+            case (orgModel.UserRelationToOrganization.NONE):
                 return (
                     <span><Icon type="stop" />None</span>
                 )
-            case (organizationModel.UserRelationToOrganization.VIEW):
+            case (orgModel.UserRelationToOrganization.VIEW):
                 return (
                     <Tooltip
                         placement="bottomRight"
@@ -61,15 +45,15 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
                         <span><Icon type="stop" /> You are not a member - view group to join</span>
                     </Tooltip>
                 )
-            case (organizationModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
+            case (orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
                 return (<span><Icon type="user" style={{ color: 'orange' }} /> Your membership <b>request</b> is pending</span>)
-            case (organizationModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
+            case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
                 return (<span><Icon type="user" style={{ color: 'blue' }} /> You have been <b>invited</b> to join</span>)
-            case (organizationModel.UserRelationToOrganization.MEMBER):
+            case (orgModel.UserRelationToOrganization.MEMBER):
                 return (<span><Icon type="user" /> You are a <b>member</b> of this organization</span>)
-            case (organizationModel.UserRelationToOrganization.ADMIN):
+            case (orgModel.UserRelationToOrganization.ADMIN):
                 return (<span><Icon type="unlock" />Admin</span>)
-            case (organizationModel.UserRelationToOrganization.OWNER):
+            case (orgModel.UserRelationToOrganization.OWNER):
                 return (
                     <Tooltip
                         placement="bottomRight"
@@ -100,45 +84,45 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
 
     renderRelationInfo() {
         switch (this.props.organization.relation.type) {
-            case organizationModel.UserRelationToOrganization.NONE:
+            case orgModel.UserRelationToOrganization.NONE:
                 return (
                     <div>
                         Only members may view membership information
                     </div>
                 )
                 break
-            case organizationModel.UserRelationToOrganization.VIEW:
+            case orgModel.UserRelationToOrganization.VIEW:
                 return (
                     <div>Only members may view membership information</div>
                 )
                 break
-            case organizationModel.UserRelationToOrganization.MEMBER:
+            case orgModel.UserRelationToOrganization.MEMBER:
                 return (
                     <div>
                         {this.renderMemberCount()}
                     </div>
                 )
                 break
-            case organizationModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING:
+            case orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING:
                 return (
                     <div>Only members may view membership information</div>
                 )
                 break
-            case organizationModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING:
+            case orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING:
                 return (
                     <div>
                         Only members may view membership information
                     </div>
                 )
                 break
-            case organizationModel.UserRelationToOrganization.ADMIN:
+            case orgModel.UserRelationToOrganization.ADMIN:
                 return (
                     <div>
                         {this.renderMemberCount()}
                     </div>
                 )
                 break
-            case organizationModel.UserRelationToOrganization.OWNER:
+            case orgModel.UserRelationToOrganization.OWNER:
                 return (
                     <div>
                         {this.renderMemberCount()}
@@ -149,8 +133,8 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
     }
 
     renderAdminInfo() {
-        if (!(this.props.organization.relation.type === organizationModel.UserRelationToOrganization.OWNER ||
-            this.props.organization.relation.type === organizationModel.UserRelationToOrganization.ADMIN)) {
+        if (!(this.props.organization.relation.type === orgModel.UserRelationToOrganization.OWNER ||
+            this.props.organization.relation.type === orgModel.UserRelationToOrganization.ADMIN)) {
             return
         }
         const requests = this.props.organization.groupRequests
@@ -192,7 +176,7 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
         )
     }
 
-    renderMemberCompact(member: organizationModel.Member) {
+    renderMemberCompact(member: orgModel.Member) {
         // Look! Render props!
         return (
             <UserLoader userId={member.username} render={(user) => {

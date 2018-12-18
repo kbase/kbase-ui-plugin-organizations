@@ -69,7 +69,6 @@ function unload(state: StoreState, action: Unload): StoreState {
 }
 
 function cancelOutboxRequest(state: StoreState, action: CancelOutboxRequestSuccess): StoreState {
-    console.log('outbox request successfully canceled', action, state)
     if (!state.views.dashboardView.viewModel) {
         throw new Error('view model mysteriously missing in dashboard')
     }

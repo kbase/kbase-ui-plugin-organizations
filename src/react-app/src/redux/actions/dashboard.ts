@@ -290,8 +290,6 @@ export function cancelOutboxRequest(request: requestModel.Request) {
             // refetch the inbox
             const outbox = await requestClient.getOutboundRequests()
 
-            console.log('outbox!', outbox)
-
             dispatch({
                 type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_SUCCESS,
                 requests: outbox

@@ -264,6 +264,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     dropdownMatchSelectWidth={true}>
                     <Select.Option value="all" key="all">All</Select.Option>
                     <Select.Option value="memberOf" key="memberOf">You are a member of</Select.Option>
+                    <Select.Option value="notMemberOf" key="memberOf">You are not a member of</Select.Option>
                     <Select.Option value="owned" key="owned">Owned by you</Select.Option>
                     <Select.Option value="notOwned" key="notOwned">Not owned by you</Select.Option>
                     {/* <Select.Option value="pending" key="pending">Pending request or invitation</Select.Option>

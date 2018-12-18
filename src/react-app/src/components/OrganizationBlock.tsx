@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom';
 import { Tooltip, Icon } from 'antd';
 
 import './OrganizationBlock.css'
+import OrgAvatar from './OrgAvatar';
 
 export interface OrganizationBlockProps {
     organization: orgModel.Organization
@@ -21,26 +22,9 @@ export default class OrganizationBlock extends React.Component<OrganizationBlock
         super(props)
     }
 
-    getAvatarUrl(org: orgModel.Organization) {
-        // const defaultImages = [
-        //     'orgs-64.png',
-        //     'unicorn-64.png'
-        // ]
-        // if (!org.gravatarHash) {
-        //     return defaultImages[Math.floor(Math.random() * 2)]
-        // }
-        if (!org.gravatarHash) {
-            return 'unicorn-64.png'
-        }
-        const gravatarDefault = 'identicon';
-
-        return 'https://www.gravatar.com/avatar/' + org.gravatarHash + '?s=64&amp;r=pg&d=' + gravatarDefault;
-    }
-
-    renderAvatar(org: orgModel.Organization) {
+    renderOrgAvatar(org: orgModel.Organization) {
         return (
-            <img style={{ width: 64, height: 64 }}
-                src={this.getAvatarUrl(org)} />
+            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} />
         )
     }
 
@@ -181,7 +165,7 @@ export default class OrganizationBlock extends React.Component<OrganizationBlock
             <div className="OrganizationBlock" key={org.id}>
                 <div className="avatarCol">
                     <NavLink to={`/viewOrganization/${org.id}`}>
-                        {this.renderAvatar(org)}
+                        {this.renderOrgAvatar(org)}
                     </NavLink>
                 </div>
                 <div className="bodyCol">

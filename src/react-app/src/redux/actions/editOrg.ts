@@ -88,17 +88,17 @@ export interface EditOrgUpdateNameError extends Action {
 
 export interface EditOrgUpdateGravatarHash extends Action {
     type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH,
-    name: string
+    name: string | null
 }
 
 export interface EditOrgUpdateGravatarHashSuccess {
     type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
-    gravatarHash: string
+    gravatarHash: string | null
 }
 
 export interface EditOrgUpdateGravatarHashError extends Action {
     type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_ERROR,
-    gravatarHash: string,
+    gravatarHash: string | null,
     error: UIError
 }
 
@@ -257,14 +257,14 @@ export function editOrgUpdateNameError(name: string, error: UIError): EditOrgUpd
 
 // Update Gravatar Hash
 
-export function editOrgUpdateGravatarHashSuccess(gravatarHash: string): EditOrgUpdateGravatarHashSuccess {
+export function editOrgUpdateGravatarHashSuccess(gravatarHash: string | null): EditOrgUpdateGravatarHashSuccess {
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
         gravatarHash: gravatarHash
     }
 }
 
-export function editOrgUpdateGravatarHashError(gravatarHash: string, error: UIError): EditOrgUpdateGravatarHashError {
+export function editOrgUpdateGravatarHashError(gravatarHash: string | null, error: UIError): EditOrgUpdateGravatarHashError {
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_ERROR,
         gravatarHash: gravatarHash,
@@ -500,7 +500,7 @@ export function editOrgUpdateName(name: string) {
     }
 }
 
-export function editOrgUpdateGravatarHash(name: string) {
+export function editOrgUpdateGravatarHash(name: string | null) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
         const [validateGravatarHash, error] = Validation.validateOrgGravatarHash(name)
 
