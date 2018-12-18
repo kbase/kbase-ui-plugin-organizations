@@ -282,7 +282,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
     renderOrgAvatar(org: EditableOrganization) {
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash.value} size={64} organizationName={org.name.value} />
+            <OrgAvatar gravatarHash={org.gravatarHash.value} size={64} organizationName={org.name.value} organizationId={org.id.value} />
         )
     }
 

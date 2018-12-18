@@ -263,9 +263,10 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-    renderOrgAvatar(org: EditableOrganization) {
+    renderOrgAvatar(editedOrg: EditableOrganization) {
+        const org = this.props.organization
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash.value} size={64} organizationName={org.name.value} />
+            <OrgAvatar gravatarHash={editedOrg.gravatarHash.value} size={64} organizationName={editedOrg.name.value} organizationId={org.id} />
         )
     }
 

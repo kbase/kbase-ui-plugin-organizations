@@ -1,16 +1,16 @@
 {
   "main.css": "./static/css/main.d53b6fb0.chunk.css",
-  "main.js": "./static/js/main.59b071d6.chunk.js",
-  "main.js.map": "./static/js/main.59b071d6.chunk.js.map",
+  "main.js": "./static/js/main.42969c87.chunk.js",
+  "main.js.map": "./static/js/main.42969c87.chunk.js.map",
   "static/css/1.3dc99e65.chunk.css": "./static/css/1.3dc99e65.chunk.css",
-  "static/js/1.1b733ae8.chunk.js": "./static/js/1.1b733ae8.chunk.js",
-  "static/js/1.1b733ae8.chunk.js.map": "./static/js/1.1b733ae8.chunk.js.map",
+  "static/js/1.3c8a834b.chunk.js": "./static/js/1.3c8a834b.chunk.js",
+  "static/js/1.3c8a834b.chunk.js.map": "./static/js/1.3c8a834b.chunk.js.map",
   "runtime~main.js": "./static/js/runtime~main.4a686d48.js",
   "runtime~main.js.map": "./static/js/runtime~main.4a686d48.js.map",
-  "static/media/index.css": "./static/media/oxygen-latin-300.58a4de4f.woff2",
-  "static/css/main.d53b6fb0.chunk.css.map": "./static/css/main.d53b6fb0.chunk.css.map",
+  "static/media/index.css": "./static/media/oxygen-latin-300.7860a32e.woff",
   "static/css/1.3dc99e65.chunk.css.map": "./static/css/1.3dc99e65.chunk.css.map",
+  "static/css/main.d53b6fb0.chunk.css.map": "./static/css/main.d53b6fb0.chunk.css.map",
   "index.html": "./index.html",
-  "precache-manifest.51bb9fb55920ae387d260c7c70ae3f83.js": "./precache-manifest.51bb9fb55920ae387d260c7c70ae3f83.js",
+  "precache-manifest.c396f6f40a13af99fd4d5873360fd74d.js": "./precache-manifest.c396f6f40a13af99fd4d5873360fd74d.js",
   "service-worker.js": "./service-worker.js"
 }

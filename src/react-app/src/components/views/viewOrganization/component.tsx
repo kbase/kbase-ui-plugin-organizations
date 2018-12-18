@@ -254,7 +254,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
     renderOrgAvatar(org: orgModel.Organization) {
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} />
+            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} organizationId={org.id} />
         )
     }
 
@@ -330,7 +330,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         if (!this.isMember()) {
             return (
                 <p className="message">
-                    Sorry, group membership restricted to members only
+                    Sorry, organization membership restricted to members only
                 </p>
             )
         }

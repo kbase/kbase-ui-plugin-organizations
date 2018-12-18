@@ -46,7 +46,7 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
 
     renderAvatar(org: orgModel.Organization) {
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash} size={32} organizationName={org.name} />
+            <OrgAvatar gravatarHash={org.gravatarHash} size={32} organizationName={org.name} organizationId={org.id} />
         )
     }
 

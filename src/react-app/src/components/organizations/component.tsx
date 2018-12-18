@@ -29,7 +29,7 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
 
     renderOrgAvatar(org: orgModel.Organization) {
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} />
+            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} organizationId={org.id} />
         )
     }
 
@@ -54,7 +54,7 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
     //                     mouseEnterDelay={0.5}
     //                     title="You are not a member of this org, but you may access it; you may request membership"
     //                 >
-    //                     <span><Icon type="stop" /> You are not a member - view group to join</span>
+    //                     <span><Icon type="stop" /> You are not a member - view organization to join</span>
     //                 </Tooltip>
     //             )
     //         case (types.UserRelationToOrganization.MEMBER_REQUEST_PENDING):

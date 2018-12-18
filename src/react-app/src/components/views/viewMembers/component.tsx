@@ -190,7 +190,7 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
         if (!this.isMember()) {
             return (
                 <p className="message">
-                    Sorry, group membership restricted to members only
+                    Sorry, organization membership restricted to members only
                 </p>
             )
         }
@@ -229,7 +229,7 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
 
     //     if (!this.isAdmin()) {
     //         return (
-    //             <Alert type="info" showIcon message="Sorry, pending group membership restricted to admin members only" />
+    //             <Alert type="info" showIcon message="Sorry, pending organization membership restricted to admin members only" />
     //         )
     //     }
     //     const pendingRequests = this.props.organization.adminRequests.filter((request) => {

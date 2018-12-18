@@ -176,7 +176,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
 
     renderOrgAvatar(org: orgModel.Organization) {
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} />
+            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} organizationId={org.id} />
         )
     }
 
@@ -309,7 +309,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                             <Tooltip
                                 placement="bottomRight"
                                 mouseEnterDelay={0.5}
-                                title="You are and Administrator for this group"
+                                title="You are an Administrator for this organization"
                             >
                                 <div><Icon type="unlock" />You are a <b>administrator</b> of this Organization</div>
                             </Tooltip>
@@ -354,7 +354,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                             <Tooltip
                                 placement="bottomRight"
                                 mouseEnterDelay={0.5}
-                                title="You own this group"
+                                title="You own this organization"
                             >
                                 <div>
                                     <Icon type="crown" style={{ color: 'gold' }} />
