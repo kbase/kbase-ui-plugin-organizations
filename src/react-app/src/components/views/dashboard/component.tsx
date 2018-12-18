@@ -9,8 +9,8 @@ import * as requestModel from '../../../data/models/requests'
 import Organization from './Organization';
 import User from '../../entities/UserContainer';
 import Notifications from '../../notifications/storeAdapter'
-import InboxRequest from './InboxRequest'
-import OutboxRequest from './OutboxRequest'
+import InboxRequest from './InboxRequestContainer'
+import OutboxRequest from './OutboxRequestContainer'
 import * as userModel from '../../../data/models/user'
 
 enum NavigateTo {
@@ -195,7 +195,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     renderPendingRequestsSent() {
-        const requests = this.props.viewModel.pendingRequests
+        const requests = this.props.viewModel.requestOutbox
         if (requests.length === 0) {
             return (
                 <div className="message">
@@ -203,7 +203,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 </div>
             )
         }
-        return this.props.viewModel.pendingRequests.map((request, index) => {
+        return this.props.viewModel.requestOutbox.map((request, index) => {
             return (
                 <div key={index}>
                     <OutboxRequest request={request} />
@@ -232,7 +232,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     renderPendingRequestsReceived() {
-        const requests = this.props.viewModel.pendingInvitations
+        const requests = this.props.viewModel.requestInbox
         if (requests.length === 0) {
             return (
                 <div className="message">
@@ -240,9 +240,11 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 </div>
             )
         }
-        return this.props.viewModel.pendingInvitations.map((request) => {
+        return this.props.viewModel.requestInbox.map((request) => {
             return (
-                <InboxRequest request={request} />
+                <React.Fragment key={request.id}>
+                    <InboxRequest request={request} />
+                </React.Fragment>
             )
         })
     }

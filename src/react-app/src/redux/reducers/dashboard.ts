@@ -2,7 +2,7 @@ import { Action } from 'redux'
 
 import { ActionFlag } from '../actions'
 
-import { LoadStart, LoadSuccess, LoadError, DashboardAction, Unload, CancelOutboxRequest, CancelOutboxRequestSuccess } from '../actions/dashboard'
+import { LoadStart, LoadSuccess, LoadError, DashboardAction, Unload, CancelOutboxRequest, CancelOutboxRequestSuccess, AcceptInboxRequestSuccess, RejectInboxRequestSuccess } from '../actions/dashboard'
 import { StoreState, ComponentLoadingState } from '../../types';
 
 function loadStart(state: StoreState, action: LoadStart): StoreState {
@@ -31,8 +31,8 @@ function loadSuccess(state: StoreState, action: LoadSuccess): StoreState {
                     organizations: action.organizations,
                     // users: action.users,
                     notifications: [],
-                    pendingRequests: action.requests,
-                    pendingInvitations: action.invitations,
+                    requestInbox: action.requestInbox,
+                    requestOutbox: action.requestOutbox,
                     pendingAdminRequests: action.pendingGroupRequests
                 }
             }
@@ -68,16 +68,62 @@ function unload(state: StoreState, action: Unload): StoreState {
     }
 }
 
-function cancelOutboxRequest(state: StoreState, action: CancelOutboxRequestSuccess) {
+function cancelOutboxRequest(state: StoreState, action: CancelOutboxRequestSuccess): StoreState {
+    console.log('outbox request successfully canceled', action, state)
+    if (!state.views.dashboardView.viewModel) {
+        throw new Error('view model mysteriously missing in dashboard')
+    }
     return {
         ...state,
-        view: {
+        views: {
             ...state.views,
             dashboardView: {
                 ...state.views.dashboardView,
                 viewModel: {
                     ...state.views.dashboardView.viewModel,
-                    pendingRequests: action.requests
+                    // TODO: rename to requestOutbox, requestInbox
+                    requestOutbox: action.requests
+                }
+            }
+        }
+    }
+}
+
+function acceptInboxRequest(state: StoreState, action: AcceptInboxRequestSuccess): StoreState {
+    if (!state.views.dashboardView.viewModel) {
+        throw new Error('view model mysteriously missing in dashboard')
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            dashboardView: {
+                ...state.views.dashboardView,
+                viewModel: {
+                    ...state.views.dashboardView.viewModel,
+                    // TODO: rename to requestOutbox, requestInbox
+                    requestInbox: action.requests,
+                    organizations: action.organizations
+                }
+            }
+        }
+    }
+}
+
+function rejectInboxRequest(state: StoreState, action: RejectInboxRequestSuccess): StoreState {
+    if (!state.views.dashboardView.viewModel) {
+        throw new Error('view model mysteriously missing in dashboard')
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            dashboardView: {
+                ...state.views.dashboardView,
+                viewModel: {
+                    ...state.views.dashboardView.viewModel,
+                    // TODO: rename to requestOutbox, requestInbox
+                    requestInbox: action.requests
                 }
             }
         }
@@ -96,6 +142,10 @@ export default function reducer(state: StoreState, action: DashboardAction<any>)
             return unload(state, action as Unload)
         case ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_SUCCESS:
             return cancelOutboxRequest(state, action as CancelOutboxRequestSuccess)
+        case ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_SUCCESS:
+            return acceptInboxRequest(state, action as AcceptInboxRequestSuccess)
+        case ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST_SUCCESS:
+            return rejectInboxRequest(state, action as RejectInboxRequestSuccess)
         default:
             return null
     }

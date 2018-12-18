@@ -26,8 +26,8 @@ export interface LoadSuccess extends DashboardAction<ActionFlag.DASHBOARD_LOAD_S
     type: ActionFlag.DASHBOARD_LOAD_SUCCESS
     organizations: Array<uberModel.UberOrganization>
     // users: Map<userModel.Username, userModel.User>
-    requests: Array<requestModel.Request>
-    invitations: Array<requestModel.Request>
+    requestInbox: Array<requestModel.Request>
+    requestOutbox: Array<requestModel.Request>
     pendingGroupRequests: Array<requestModel.Request>
 }
 
@@ -51,15 +51,15 @@ export function loadStart(): LoadStart {
 export function loadSuccess(
     organizations: Array<uberModel.UberOrganization>,
     // users: Map<userModel.Username, userModel.User>,
-    requests: Array<requestModel.Request>,
-    invitations: Array<requestModel.Request>,
+    requestInbox: Array<requestModel.Request>,
+    requestOutbox: Array<requestModel.Request>,
     pendingGroupRequests: Array<requestModel.Request>): LoadSuccess {
     return {
         type: ActionFlag.DASHBOARD_LOAD_SUCCESS,
         organizations: organizations,
         // users: users,
-        requests: requests,
-        invitations: invitations,
+        requestInbox,
+        requestOutbox,
         pendingGroupRequests: pendingGroupRequests
     }
 }
@@ -142,9 +142,9 @@ export function load() {
 
             // const users = await userModelClient.getUsers(Array.from(allUsers.keys()))
 
-            const requests = await requestModelClient.getUserRequests()
+            const requestOutbox = await requestModelClient.getOutboundRequests()
 
-            const invitations = await requestModelClient.getUserInvitations()
+            const requestInbox = await requestModelClient.getInboundRequests()
 
             const adminOrgIds = orgs
                 .filter(({ organization }) => {
@@ -172,7 +172,7 @@ export function load() {
             })
             const notifications = await feedsClient.getNotifications()
 
-            dispatch(loadSuccess(orgs, requests, invitations, pendingGroupRequests))
+            dispatch(loadSuccess(orgs, requestInbox, requestOutbox, pendingGroupRequests))
         } catch (ex) {
             dispatch(loadError({
                 code: 'error',
@@ -235,6 +235,8 @@ export function load() {
 
 // Requests
 
+// Cancel outbox request
+
 export interface CancelOutboxRequest extends DashboardAction<ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST> {
     type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST
     request: requestModel.Request
@@ -286,7 +288,9 @@ export function cancelOutboxRequest(request: requestModel.Request) {
             const newRequest = await requestClient.cancelRequest(request.id)
 
             // refetch the inbox
-            const outbox = await requestClient.getUserRequests()
+            const outbox = await requestClient.getOutboundRequests()
+
+            console.log('outbox!', outbox)
 
             dispatch({
                 type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_SUCCESS,
@@ -297,6 +301,174 @@ export function cancelOutboxRequest(request: requestModel.Request) {
         } catch (ex) {
             dispatch({
                 type: ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_ERROR,
+                error: {
+                    code: ex.name,
+                    message: ex.message
+                }
+            })
+        }
+
+
+        // or error
+    }
+}
+
+// Accept inbound request
+
+export interface AcceptInboxRequest extends DashboardAction<ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST> {
+    type: ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST
+    request: requestModel.Request
+}
+
+interface AcceptInboxRequestStart extends DashboardAction<ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_START> {
+    type: ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_START
+}
+
+export interface AcceptInboxRequestSuccess extends DashboardAction<ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_SUCCESS> {
+    type: ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_SUCCESS,
+    requests: Array<requestModel.Request>
+    organizations: Array<uberModel.UberOrganization>
+}
+
+interface AcceptInboxRequestError extends DashboardAction<ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_ERROR> {
+    type: ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_ERROR,
+    error: AppError
+}
+
+export function acceptInboxRequest(request: requestModel.Request) {
+    return async (dispatch: ThunkDispatch<StoreState, void, DashboardAction<any>>, getState: () => StoreState) => {
+        const state = getState()
+
+        if (!state.views.dashboardView.viewModel) {
+            dispatch({
+                type: ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_ERROR,
+                error: {
+                    code: 'error',
+                    message: 'No dashboard view model'
+                }
+            })
+        }
+
+        dispatch({
+            type: ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_START
+        })
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config }
+        } = state
+
+        // do the cancelation
+        const requestClient = new requestModel.RequestsModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+
+        const uberClient = new uberModel.UberModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url,
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
+        })
+
+
+        try {
+            const newRequest = await requestClient.acceptRequest(request.id)
+
+            // refetch the inbox
+            const outbox = await requestClient.getInboundRequests()
+
+            const orgs = await uberClient.getOrganizationsForUser()
+
+            dispatch({
+                type: ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_SUCCESS,
+                requests: outbox,
+                organizations: orgs
+            })
+
+            // send the inbox in the success
+        } catch (ex) {
+            dispatch({
+                type: ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_ERROR,
+                error: {
+                    code: ex.name,
+                    message: ex.message
+                }
+            })
+        }
+
+
+        // or error
+    }
+}
+
+
+// Reject inbound request
+
+export interface RejectInboxRequest extends DashboardAction<ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST> {
+    type: ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST
+    request: requestModel.Request
+}
+
+interface RejectInboxRequestStart extends DashboardAction<ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST_START> {
+    type: ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST_START
+}
+
+export interface RejectInboxRequestSuccess extends DashboardAction<ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST_SUCCESS> {
+    type: ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST_SUCCESS
+    requests: Array<requestModel.Request>
+}
+
+interface RejectInboxRequestError extends DashboardAction<ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST_ERROR> {
+    type: ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST_ERROR,
+    error: AppError
+}
+
+export function rejectInboxRequest(request: requestModel.Request) {
+    return async (dispatch: ThunkDispatch<StoreState, void, DashboardAction<any>>, getState: () => StoreState) => {
+        const state = getState()
+
+        if (!state.views.dashboardView.viewModel) {
+            dispatch({
+                type: ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST_ERROR,
+                error: {
+                    code: 'error',
+                    message: 'No dashboard view model'
+                }
+            })
+        }
+
+        dispatch({
+            type: ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST_START
+        })
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config }
+        } = state
+
+        // do the cancelation
+        const requestClient = new requestModel.RequestsModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+
+        try {
+            const newRequest = await requestClient.denyRequest(request.id)
+
+            // refetch the inbox
+            const outbox = await requestClient.getInboundRequests()
+
+            dispatch({
+                type: ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST_SUCCESS,
+                requests: outbox
+            })
+
+            // send the inbox in the success
+        } catch (ex) {
+            dispatch({
+                type: ActionFlag.DASHBOARD_REJECT_INBOX_REQUEST_ERROR,
                 error: {
                     code: ex.name,
                     message: ex.message

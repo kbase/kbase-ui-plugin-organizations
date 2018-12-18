@@ -12,8 +12,8 @@ import OrganizationHeader from '../organizationHeader/loader'
 import * as orgModel from '../../../data/models/organization/model'
 import * as requestModel from '../../../data/models/requests';
 import OrganizationNarrative from '../../OrganizationNarrative'
-import InboxRequest from '../dashboard/InboxRequest'
-import OutboxRequest from '../dashboard/OutboxRequest'
+import InboxRequest from '../dashboard/InboxRequestContainer'
+import OutboxRequest from '../dashboard/OutboxRequestContainer'
 
 enum NavigateTo {
     NONE = 0,

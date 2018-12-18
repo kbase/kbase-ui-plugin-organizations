@@ -10,6 +10,8 @@ import './InboxRequest.css'
 
 export interface RequestProps {
     request: requestModel.Request
+    onAcceptInboxRequest: (request: requestModel.Request) => void
+    onRejectInboxRequest: (request: requestModel.Request) => void
 }
 
 interface RequestState {
@@ -21,52 +23,13 @@ export default class Request extends React.Component<RequestProps, RequestState>
         super(props)
     }
 
-    // renderRequestSentType(request: requestModel.Request) {
-    //     switch (request.type) {
-    //         case requestModel.RequestType.REQUEST:
-    //             switch (request.resourceType) {
-    //                 case requestModel.RequestResourceType.APP:
-    //                     return 'REQUEST to associate App'
-    //                 case requestModel.RequestResourceType.USER:
-    //                     return 'REQUEST to join Organization'
-    //                 case requestModel.RequestResourceType.WORKSPACE:
-    //                     return 'REQUEST to associate Narrative'
-    //             }
-    //         case requestModel.RequestType.INVITATION:
-    //             switch (request.resourceType) {
-    //                 case requestModel.RequestResourceType.USER:
-    //                     return 'INVITATION to join Organization'
-    //             }
-    //     }
-    //     return 'unknown request'
-    // }
-
-    onCancelRequest() {
-
-    }
-
-    onVisitOrg() {
-
-    }
-
-    onAcceptInvitation() {
-
-    }
-
-    onRejectInvitation() {
-
-    }
-
-
     onAcceptRequest() {
-
+        this.props.onAcceptInboxRequest(this.props.request)
     }
 
     onRejectRequest() {
-
+        this.props.onRejectInboxRequest(this.props.request)
     }
-
-
 
     renderRequestSentSubject(request: requestModel.Request) {
         switch (request.type) {
@@ -228,7 +191,6 @@ export default class Request extends React.Component<RequestProps, RequestState>
                 </Button.Group>
             </div>
         )
-
     }
 
     renderUserInvitation(request: requestModel.UserInvitation) {
@@ -247,7 +209,7 @@ export default class Request extends React.Component<RequestProps, RequestState>
                 </div>
 
                 <div className="cardSectionHeader">
-                    sent by
+                    from
                 </div>
                 <User userId={request.requester} avatarSize={30} />
 

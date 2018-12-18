@@ -514,8 +514,8 @@ export interface Notification {
 export interface DashboardViewModel {
     organizations: Array<uberModel.UberOrganization>
     // users: Map<userModel.Username, userModel.User>
-    pendingRequests: Array<requestModel.Request>
-    pendingInvitations: Array<requestModel.Request>
+    requestInbox: Array<requestModel.Request>
+    requestOutbox: Array<requestModel.Request>
     pendingAdminRequests: Array<requestModel.Request>
     notifications: Array<Notification>
 }

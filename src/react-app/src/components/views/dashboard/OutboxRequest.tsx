@@ -10,6 +10,7 @@ import './OutboxRequest.css'
 
 export interface RequestProps {
     request: requestModel.Request
+    onCancelOutboxRequest: (request: requestModel.Request) => void
 }
 
 interface RequestState {
@@ -42,28 +43,24 @@ export default class Request extends React.Component<RequestProps, RequestState>
     // }
 
     onCancelRequest() {
-
-    }
-
-    onVisitOrg() {
-
+        this.props.onCancelOutboxRequest(this.props.request)
     }
 
     onAcceptInvitation() {
-
+        alert('Hold your socks, not yet implemented')
     }
 
     onRejectInvitation() {
-
+        alert('Hold your socks, not yet implemented')
     }
 
 
     onAcceptRequest() {
-
+        alert('Hold your socks, not yet implemented')
     }
 
     onRejectRequest() {
-
+        alert('Hold your socks, not yet implemented')
     }
 
 

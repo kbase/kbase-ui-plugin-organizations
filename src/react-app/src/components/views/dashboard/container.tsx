@@ -36,7 +36,7 @@ function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
 function mapDispatchToProps(dispatch: Dispatch<actions.DashboardAction<any>>): DispatchProps {
     return {
         onCancelOutboxRequest: (request: requestModel.Request) => {
-
+            dispatch(actions.cancelOutboxRequest(request) as any)
         }
     }
 }

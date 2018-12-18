@@ -234,7 +234,7 @@ export class RequestsModel {
         return request
     }
 
-    async getUserRequests(): Promise<Array<Request>> {
+    async getOutboundRequests(): Promise<Array<Request>> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
@@ -378,7 +378,7 @@ export class RequestsModel {
         })
     }
 
-    async getUserInvitations(): Promise<Array<Request>> {
+    async getInboundRequests(): Promise<Array<Request>> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token

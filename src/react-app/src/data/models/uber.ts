@@ -84,11 +84,11 @@ export class UberModel {
 
         const orgs = await orgClient.getOwnOrgs()
 
-        const requests = await requestClient.getUserRequests()
-        const invitations = await requestClient.getUserInvitations()
+        const requestOutbox = await requestClient.getOutboundRequests()
+        const requestInbox = await requestClient.getInboundRequests()
 
         return await Promise.all(orgs.map(async (organization) => {
-            const request = requests.find((request) => {
+            const request = requestOutbox.find((request) => {
                 if (request.organizationId === organization.id) {
                     if (request.type === RequestType.REQUEST &&
                         request.resourceType === requestModel.RequestResourceType.USER) {
@@ -98,7 +98,7 @@ export class UberModel {
                 return false
             }) as requestModel.UserRequest
 
-            const invitation = invitations.find((request) => {
+            const invitation = requestInbox.find((request) => {
                 if (request.organizationId === organization.id) {
                     if (request.type === RequestType.INVITATION &&
                         request.resourceType === requestModel.RequestResourceType.USER) {
