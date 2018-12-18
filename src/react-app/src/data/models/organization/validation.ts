@@ -41,12 +41,12 @@ export default class Validation {
         }
 
         // May only consist if lower case alphanumeric
-        const alphaRe = /^[a-z0-9]+$/
+        const alphaRe = /^[a-z0-9-]+$/
         if (!id.match(alphaRe)) {
             return [
                 id, {
                     type: UIErrorType.ERROR,
-                    message: 'Organization id may only contain alphanumeric (a-z, 0-9)'
+                    message: 'Organization ID may only contain lower case letters (a-z), numeric digits (0-9) and the dash "-"'
                 }
             ]
         }
