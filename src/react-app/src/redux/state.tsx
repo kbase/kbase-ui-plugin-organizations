@@ -137,6 +137,9 @@ export class StateInstances {
                         },
                         Feeds: {
                             url: ''
+                        },
+                        Auth: {
+                            url: ''
                         }
                     }
                 }

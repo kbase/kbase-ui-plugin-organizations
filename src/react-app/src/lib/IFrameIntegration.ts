@@ -7,6 +7,7 @@ export interface IFrameParams {
         workspaceServiceURL: string
         serviceWizardURL: string
         feedsServiceURL: string
+        authServiceURL: string
     },
     parentHost: string
 }

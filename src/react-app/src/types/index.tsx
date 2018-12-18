@@ -701,6 +701,9 @@ export interface AppConfig {
         Feeds: {
             url: string
         }
+        Auth: {
+            url: string
+        }
     }
 }
 

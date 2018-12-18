@@ -90,6 +90,16 @@ export function checkAuth() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(authCheckStart())
 
+        const {
+            app: {
+                config: {
+                    services: {
+                        Auth: { url }
+                    }
+                }
+            }
+        } = getState()
+
         // TODO: get the auth from the kbase-ui integration api, perhaps a postmessage call
 
         const token = Cookies.get('kbase_session')
@@ -97,7 +107,8 @@ export function checkAuth() {
             dispatch(authUnauthorized())
             return
         }
-        const auth = new AuthClient({ url: '/services/auth' })
+
+        const auth = new AuthClient({ url: url })
         Promise.all([
             auth.getTokenInfo(token),
             auth.getMe(token)
@@ -128,11 +139,22 @@ export function authRemoveAuthorization() {
 
 export function authAddAuthorization(token: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+
+        const {
+            app: {
+                config: {
+                    services: {
+                        Auth: { url }
+                    }
+                }
+            }
+        } = getState()
+
         // add cookie
         Cookies.set('kbase_session', token)
 
         // TODO: get auth info
-        const auth = new AuthClient({ url: '/services/auth' })
+        const auth = new AuthClient({ url: url })
         Promise.all([
             auth.getTokenInfo(token),
             auth.getMe(token)

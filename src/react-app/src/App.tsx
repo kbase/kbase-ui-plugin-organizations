@@ -57,8 +57,9 @@ class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <Auth hosted={hosted}>
-          <KBaseIntegration>
+
+        <KBaseIntegration>
+          <Auth hosted={hosted}>
             <HashRouter basename="/orgs/">
               <div className="App scrollable-flex-column">
                 <div className="App-body scrollable-flex-column">
@@ -80,8 +81,9 @@ class App extends Component {
                 </div>
               </div>
             </HashRouter>
-          </KBaseIntegration>
-        </Auth>
+          </Auth>
+        </KBaseIntegration>
+
       </Provider>
     )
   }

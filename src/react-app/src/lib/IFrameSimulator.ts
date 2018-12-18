@@ -11,6 +11,7 @@ export interface IFrameParams {
         workspaceServiceURL: string
         serviceWizardURL: string
         feedsServiceURL: string
+        authServiceURL: string
     },
     parentHost: string
 }
@@ -55,7 +56,8 @@ class IFrameSimulator {
                 userProfileServiceURL: 'services/user_profile/rpc',
                 workspaceServiceURL: 'services/ws',
                 serviceWizardURL: 'services/service_wizard',
-                feedsServiceURL: 'services/feeds'
+                feedsServiceURL: 'services/feeds',
+                authServiceURL: 'services/auth'
             },
             parentHost: document.location!.origin
         }

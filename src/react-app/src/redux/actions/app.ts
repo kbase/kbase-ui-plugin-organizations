@@ -64,6 +64,9 @@ export function appStart() {
                     },
                     Feeds: {
                         url: iframeParams.params.feedsServiceURL
+                    },
+                    Auth: {
+                        url: iframeParams.params.authServiceURL
                     }
                 }
             }))
@@ -86,6 +89,9 @@ export function appStart() {
                     },
                     Feeds: {
                         url: fakeIframeParams.params.feedsServiceURL
+                    },
+                    Auth: {
+                        url: fakeIframeParams.params.authServiceURL
                     }
                 }
             }))

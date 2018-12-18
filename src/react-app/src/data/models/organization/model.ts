@@ -364,7 +364,6 @@ function applyFilter(organizations: Array<Organization>, filter: string, usernam
         case 'all':
             return organizations
         case 'notMemberOf':
-            console.log('not member of?', organizations, username)
             return organizations.filter((org) => {
                 // return !org.isMember
                 if (org.members.findIndex((member) => (member.username === username)) >= 0) {

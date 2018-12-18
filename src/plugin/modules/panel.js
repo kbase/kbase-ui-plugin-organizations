@@ -39,7 +39,8 @@ define([
                     userProfileServiceURL: this.runtime.config('services.UserProfile.url'),
                     workspaceServiceURL: this.runtime.config('services.Workspace.url'),
                     serviceWizardURL: this.runtime.config('services.ServiceWizard.url'),
-                    feedsServiceURL: this.runtime.config('services.Feeds.url')
+                    feedsServiceURL: this.runtime.config('services.Feeds.url'),
+                    authServiceURL: this.runtime.config('services.auth2.url')
                 }
             });
 
