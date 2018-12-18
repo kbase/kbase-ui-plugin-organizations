@@ -40,13 +40,13 @@ export default class Validation {
                 }]
         }
 
-        // May not contain non-alphanumeric and underscore
-        const alphaRe = /^[a-zA-Z0-9_]+$/
+        // May only consist if lower case alphanumeric
+        const alphaRe = /^[a-z0-9]+$/
         if (!id.match(alphaRe)) {
             return [
                 id, {
                     type: UIErrorType.ERROR,
-                    message: 'Organization id may only contain alphanumeric (a-z, A-Z, 0-9) and underscore (_)'
+                    message: 'Organization id may only contain alphanumeric (a-z, 0-9)'
                 }
             ]
         }

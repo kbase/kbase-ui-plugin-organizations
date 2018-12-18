@@ -126,9 +126,12 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <Card title="Your Organizations"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                className="slimCard yourOrgsCard"
+                bodyStyle={{ minHeight: '0', flex: '1 1 0px', display: 'flex', flexDirection: 'column' }}
+                className="slimCard yourOrgsCard scrollable-flex-column"
                 extra={extra}>
-                {this.renderOrganizations()}
+                <div className="scrollable-flex-column" style={{ overflow: 'auto' }}>
+                    {this.renderOrganizations()}
+                </div>
             </Card>
         )
     }
@@ -266,7 +269,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
             <div className="Dashboard scrollable-flex-column">
                 {this.renderHeader()}
                 <div className="body scrollable-flex-column">
-                    <div className="col1">
+                    <div className="col1 scrollable-flex-column">
                         {this.renderOrganizationsCard()}
                     </div>
                     <div className="col2">
