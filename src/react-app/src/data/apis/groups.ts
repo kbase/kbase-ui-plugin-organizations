@@ -25,9 +25,9 @@ export type Username = string;
 export interface Member {
     name: Username,
     joined: number,
-    // TODO: this needs to match the config of the groups service.
-    // ARGH: why do we need custom fields????????
-    custom: {}
+    custom: {
+        title: string
+    }
 }
 
 export interface WorkspaceInfo {

@@ -1,7 +1,6 @@
 import * as React from 'react'
 
 import * as orgModel from '../../../data/models/organization/model'
-import * as userModel from '../../../data/models/user'
 import { NavLink } from 'react-router-dom';
 
 import './OrganizationCompact.css'
@@ -70,6 +69,13 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
         const org = this.props.organization
         return (
             <div className="OrganizationCompact" key={org.id}>
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
+                </div>
                 <div className="avatarCol">
                     <NavLink to={`/viewOrganization/${org.id}`}>
                         {this.renderAvatar(org)}
@@ -95,13 +101,7 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
                         }).format(org.createdAt)}</span>
                     </div>
                 </div>
-                <div className="controlCol">
-                    <a onClick={this.onToggleView.bind(this)}
-                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
-                    >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
-                    </a>
-                </div>
+
             </div>
         )
     }
@@ -110,6 +110,13 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
         const org = this.props.organization
         return (
             <div className="OrganizationCompact" key={org.id}>
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
+                </div>
                 <div className="avatarCol">
                     <NavLink to={`/viewOrganization/${org.id}`}>
                         {this.renderAvatar(org)}
@@ -123,13 +130,7 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
                     </div>
 
                 </div>
-                <div className="controlCol">
-                    <a onClick={this.onToggleView.bind(this)}
-                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
-                    >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
-                    </a>
-                </div>
+
             </div>
         )
     }

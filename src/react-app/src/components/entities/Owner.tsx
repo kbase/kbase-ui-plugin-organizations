@@ -73,6 +73,13 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
     renderCompact() {
         return (
             <div className="Owner View-COMPACT" >
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
+                </div>
                 <div className="avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
@@ -84,13 +91,7 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                     </div>
 
                 </div>
-                <div className="controlCol">
-                    <a onClick={this.onToggleView.bind(this)}
-                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
-                    >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
-                    </a>
-                </div>
+
             </div>
         )
     }
@@ -98,6 +99,13 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
     renderNormal() {
         return (
             <div className="Owner View-NORMAL" >
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
+                </div>
                 <div className="avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
@@ -127,13 +135,7 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                         {[this.props.user.city, this.props.user.state, this.props.user.country].filter(x => x).join(', ') || <i>no location information in user profile</i>}
                     </div>
                 </div>
-                <div className="controlCol">
-                    <a onClick={this.onToggleView.bind(this)}
-                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
-                    >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
-                    </a>
-                </div>
+
             </div>
         )
     }

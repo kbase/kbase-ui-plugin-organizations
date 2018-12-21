@@ -22,7 +22,7 @@ class Loader extends React.Component<Props, State> {
     renderLoading() {
         return (
             <div>
-                Loading view...
+                Loading membership editor...
             </div>
         )
     }

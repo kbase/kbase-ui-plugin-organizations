@@ -54,6 +54,13 @@ class User extends React.Component<UserProps, UserState> {
     renderCompact() {
         return (
             <React.Fragment>
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
+                </div>
                 <div className="avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
@@ -64,13 +71,7 @@ class User extends React.Component<UserProps, UserState> {
                         ❨{this.props.user.username}❩
                     </div>
                 </div>
-                <div className="controlCol">
-                    <a onClick={this.onToggleView.bind(this)}
-                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
-                    >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
-                    </a>
-                </div>
+
             </React.Fragment>
         )
     }
@@ -78,6 +79,13 @@ class User extends React.Component<UserProps, UserState> {
     renderNormal() {
         return (
             <React.Fragment>
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
+                </div>
                 <div className="avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
@@ -94,13 +102,7 @@ class User extends React.Component<UserProps, UserState> {
                         {[this.props.user.city, this.props.user.state, this.props.user.country].filter(x => x).join(', ') || <i>no location information in user profile</i>}
                     </div>
                 </div>
-                <div className="controlCol">
-                    <a onClick={this.onToggleView.bind(this)}
-                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
-                    >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
-                    </a>
-                </div>
+
             </React.Fragment>
         )
     }

@@ -30,7 +30,7 @@ function loadSuccess(state: StoreState, action: LoadSuccess): StoreState {
                 viewModel: {
                     organizations: action.organizations,
                     // users: action.users,
-                    notifications: [],
+                    // notifications: [],
                     requestInbox: action.requestInbox,
                     requestOutbox: action.requestOutbox,
                     pendingAdminRequests: action.pendingGroupRequests

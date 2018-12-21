@@ -89,6 +89,13 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
     renderCompact(narrative: narrativeModel.AccessibleNarrative) {
         return (
             <React.Fragment>
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
+                </div>
                 <div className="iconCol">
                     <Icon type="file" style={{ fontSize: '30px', width: '30px' }} />
                 </div>
@@ -97,13 +104,7 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                         {narrative.title}
                     </div>
                 </div>
-                <div className="controlCol">
-                    <a onClick={this.onToggleView.bind(this)}
-                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
-                    >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
-                    </a>
-                </div>
+
             </React.Fragment>
         )
     }
@@ -112,6 +113,13 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
         // const narrative = this.props.narrative
         return (
             <React.Fragment>
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
+                </div>
                 <div className="iconCol">
                     <Icon type="file" style={{ fontSize: '30px', width: '30px' }} />
                 </div>
@@ -140,13 +148,7 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                         <span className="field-label">by</span>{narrative.lastSavedBy}
                     </div>
                 </div>
-                <div className="controlCol">
-                    <a onClick={this.onToggleView.bind(this)}
-                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
-                    >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
-                    </a>
-                </div>
+
             </React.Fragment>
         )
     }

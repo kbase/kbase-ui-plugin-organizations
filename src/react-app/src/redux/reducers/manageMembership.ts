@@ -26,7 +26,8 @@ export function loadSuccess(state: types.StoreState, action: actions.LoadSuccess
                 loadingState: types.ComponentLoadingState.SUCCESS,
                 error: null,
                 viewModel: {
-                    organization: action.organization
+                    organization: action.organization,
+                    editableMemberProfile: action.editableMemberProfile
                 }
             }
         }

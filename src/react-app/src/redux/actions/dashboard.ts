@@ -165,13 +165,6 @@ export function load() {
 
             const pendingGroupRequests = await requestModelClient.getPendingOrganizationRequests(adminOrgIds)
 
-            // now notifications???
-            const feedsClient = new FeedsClient({
-                token,
-                feedsServiceURL: config.services.Feeds.url
-            })
-            const notifications = await feedsClient.getNotifications()
-
             dispatch(loadSuccess(orgs, requestInbox, requestOutbox, pendingGroupRequests))
         } catch (ex) {
             dispatch(loadError({

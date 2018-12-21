@@ -331,9 +331,9 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
             case (orgModel.UserRelationToOrganization.OWNER):
                 const ownerMenu = (
                     <Menu onClick={this.onMenuClick.bind(this)}>
-                        <Menu.Item key="manageMyMembership">
+                        {/* <Menu.Item key="manageMyMembership">
                             Manage My Membership
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item key="viewMembers" >
                             Members
                         </Menu.Item>

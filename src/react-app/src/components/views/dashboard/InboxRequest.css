@@ -1,5 +1,5 @@
 .InboxRequest {
-    border: 1px silver solid;
+    border: 1px rgba(200, 200, 200, 0.5) solid;
     border-radius: 4px;
     /* padding: 4px; */
     margin-bottom: 4px;
@@ -11,7 +11,7 @@
 }
 
 .InboxRequest .requestHeader {
-    border-bottom: 1px silver solid;
+    border-bottom: 1px rgba(200, 200, 200, 0.5) solid;
     padding: 4px;
 }
 

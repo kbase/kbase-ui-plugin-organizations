@@ -727,15 +727,25 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </span>
             </span>
         )
-        const inbox = this.props.requestInbox.map((request) => {
-            return (
-                <React.Fragment key={request.id}>
-                    <InboxRequest request={request} />
-                </React.Fragment>
+        let inbox
+        if (this.props.requestInbox.length === 0) {
+            inbox = (
+                <div className="message">
+                    No pending organization requests for you
+                </div>
             )
-        })
+        } else {
+            inbox = this.props.requestInbox.map((request) => {
+                return (
+                    <React.Fragment key={request.id}>
+                        <InboxRequest request={request} />
+                    </React.Fragment>
+                )
+            })
+        }
         return (
             <Card className="slimCard outboxCard"
+                style={{ marginBottom: '10px' }}
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 title={title}
                 extra={extras}>
@@ -758,15 +768,25 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </span>
             </span>
         )
-        const outbox = this.props.requestOutbox.map((request) => {
-            return (
-                <React.Fragment key={request.id}>
-                    <OutboxRequest request={request} />
-                </React.Fragment>
+        let outbox
+        if (this.props.requestOutbox.length === 0) {
+            outbox = (
+                <div className="message">
+                    No pending organization requests from you
+                </div>
             )
-        })
+        } else {
+            outbox = this.props.requestOutbox.map((request) => {
+                return (
+                    <React.Fragment key={request.id}>
+                        <OutboxRequest request={request} />
+                    </React.Fragment>
+                )
+            })
+        }
         return (
             <Card className="slimCard outboxCard"
+                style={{ marginBottom: '10px' }}
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 title={title}
                 extra={extras}>

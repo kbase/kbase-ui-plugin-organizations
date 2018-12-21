@@ -35,10 +35,11 @@ export class StateInstances {
             },
             db: {
                 notifications: {
+                    all: [],
                     byId: new Map(),
-                    collections: {
-                        byGroup: new Map()
-                    }
+                    // collections: {
+                    //     byGroup: new Map()
+                    // }
                 }
             },
             views: {

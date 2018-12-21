@@ -1,5 +1,5 @@
 import * as groupsApi from '../../apis/groups'
-import { SortDirection, EditableOrganization, UIErrorType, UIError } from '../../../types';
+import { SortDirection, EditableOrganization, UIErrorType, UIError, EditState, ValidationState, EditableString } from '../../../types';
 import * as requestModel from '../requests'
 import * as userModel from '../user';
 import Validation from './validation'
@@ -36,8 +36,12 @@ export interface Member {
     username: groupsApi.Username,
     joinedAt: Date
     type: MemberType
+    title: string
 }
 
+export interface EditableMemberProfile {
+    title: EditableString
+}
 export enum UserRelationToOrganization {
     NONE = 0,
     VIEW,
@@ -199,10 +203,11 @@ function groupPermissionToWorkspacePermission(groupsPermission: string): UserWor
 
 export function groupToOrganization(group: groupsApi.Group, currentUser: username): Organization {
 
-    const owner = {
+    const owner: Member = {
         username: group.owner.name,
         joinedAt: new Date(group.owner.joined),
-        type: MemberType.OWNER
+        type: MemberType.OWNER,
+        title: 'Owner'
     }
 
     // We join admins and members, since they are all members, just different privileges in the org
@@ -212,13 +217,15 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: usernam
         return {
             username: admin.name,
             joinedAt: new Date(admin.joined),
-            type: MemberType.ADMIN
+            type: MemberType.ADMIN,
+            title: admin.custom.title
         }
     })).concat(group.members.map((member) => {
         return {
             username: member.name,
             joinedAt: new Date(member.joined),
-            type: MemberType.MEMBER
+            type: MemberType.MEMBER,
+            title: member.custom.title
         }
     }))
 

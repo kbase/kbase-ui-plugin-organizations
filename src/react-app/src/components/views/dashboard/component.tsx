@@ -140,6 +140,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <Card title="Notifications"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
+                bodyStyle={{ maxHeight: '30em', display: 'flex', flexDirection: 'column' }}
                 className="slimCard notificationsCard">
                 {this.renderPendingNotifications()}
             </Card>
@@ -272,7 +273,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                     <div className="col1 scrollable-flex-column">
                         {this.renderOrganizationsCard()}
                     </div>
-                    <div className="col2">
+                    <div className="col2 scrollable-flex-column">
 
                         {this.renderNotificationsCard()}
 

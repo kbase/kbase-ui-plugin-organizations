@@ -27,42 +27,36 @@ export interface UIError {
     message?: string
 }
 
+export interface EditableString {
+    value: string
+    editState: EditState
+    validationState: ValidationState
+    validatedAt: Date | null
+    error: UIError
+}
+
+export interface EditableNullableString {
+    value: string | null
+    editState: EditState
+    validationState: ValidationState
+    validatedAt: Date | null
+    error: UIError
+}
+
+export interface EditableBoolean {
+    value: boolean
+    editState: EditState
+    validationState: ValidationState
+    validatedAt: Date | null
+    error: UIError
+}
+
 export interface EditableOrganization {
-    id: {
-        value: string
-        editState: EditState
-        validationState: ValidationState
-        validatedAt: Date | null
-        error: UIError
-    }
-    name: {
-        value: string
-        editState: EditState
-        validationState: ValidationState
-        validatedAt: Date | null
-        error: UIError
-    }
-    gravatarHash: {
-        value: string | null
-        editState: EditState
-        validationState: ValidationState
-        validatedAt: Date | null
-        error: UIError
-    }
-    description: {
-        value: string
-        editState: EditState
-        validationState: ValidationState
-        validatedAt: Date | null
-        error: UIError
-    }
-    isPrivate: {
-        value: boolean
-        editState: EditState
-        validationState: ValidationState
-        validatedAt: Date | null
-        error: UIError
-    }
+    id: EditableString
+    name: EditableString
+    gravatarHash: EditableNullableString
+    description: EditableString
+    isPrivate: EditableBoolean
 }
 
 export interface User {
@@ -427,6 +421,7 @@ export interface InviteUserView {
 
 export interface ManageMembershipViewModel {
     organization: orgModel.Organization
+    editableMemberProfile: orgModel.EditableMemberProfile
 }
 
 export interface ManageMembershipView {
@@ -517,7 +512,7 @@ export interface DashboardViewModel {
     requestInbox: Array<requestModel.Request>
     requestOutbox: Array<requestModel.Request>
     pendingAdminRequests: Array<requestModel.Request>
-    notifications: Array<Notification>
+    // notifications: Array<Notification>
 }
 
 export interface DashboardView {
@@ -608,10 +603,11 @@ export interface StoreState {
 
     db: {
         notifications: {
-            byId: Map<feedsModel.NotificationID, feedsModel.Notification>
-            collections: {
-                byGroup: Map<orgModel.OrganizationID, Array<feedsModel.NotificationID>>
-            }
+            all: Array<feedsModel.OrganizationNotification>
+            byId: Map<feedsModel.NotificationID, feedsModel.OrganizationNotification>
+            // collections: {
+            //     byGroup: Map<orgModel.OrganizationID, Array<feedsModel.NotificationID>>
+            // }
         }
     }
 

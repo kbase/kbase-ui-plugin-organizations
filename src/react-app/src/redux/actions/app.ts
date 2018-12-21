@@ -6,6 +6,8 @@ import * as types from '../../types'
 import IFrameSimulator, { IFrameParams } from '../../lib/IFrameSimulator';
 import { IFrameIntegration } from '../../lib/IFrameIntegration';
 
+import * as notificationActions from './notifications'
+
 // Action Definitions
 
 // export interface AppStart extends Action {
@@ -45,6 +47,8 @@ export function appStart() {
     return (dispatch: ThunkDispatch<types.StoreState, void, Action>, getState: () => types.StoreState) => {
         // check and see if we are in an iframe
         const iframeParams = new IFrameIntegration().getParamsFromIFrame()
+
+
 
         if (iframeParams) {
             dispatch(appSuccess({
@@ -97,6 +101,8 @@ export function appStart() {
             }))
         }
 
+        // dispatch reqeusts for core data.
+        dispatch(notificationActions.load())
 
         // if so, get the params
 

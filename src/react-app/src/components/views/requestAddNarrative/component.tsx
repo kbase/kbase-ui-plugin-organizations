@@ -145,6 +145,13 @@ export class RequestAddNarrative extends React.Component<Props, State> {
     }
 
     renderNarratives() {
+        if (this.props.narratives.length === 0) {
+            return (
+                <div className="message">
+                    You do not have any Narratives
+                </div>
+            )
+        }
         return this.props.narratives.map((narrative, index) => {
             let isSelected
             if (this.props.selectedNarrative &&
@@ -216,7 +223,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 className="searchBar"
                 onSubmit={this.onSearchSubmit.bind(this)}>
                 <input
-                    placeholder="Search Organizations"
+                    placeholder="Search your Narratives"
                     // onChange={this.onSearchInputChange.bind(this)}
                     autoFocus
                 // ref={this.searchInput}
@@ -301,7 +308,6 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     <div className="narrativesTable">
                         {this.renderNarratives()}
                     </div>
-
                 </div>
             </div >
         )

@@ -71,7 +71,7 @@ import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
 
 import * as types from '../../types'
-import * as actions from '../../redux/actions/viewOrg'
+import * as actions from '../../redux/actions/notifications'
 
 export interface OwnProps {
     organizationId: string
@@ -94,8 +94,8 @@ function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
 
 export function mapDispatchToProps(dispatch: Dispatch<actions.Load>): DispatchProps {
     return {
-        onLoad: (organizationId: string) => {
-            dispatch(actions.load(organizationId) as any)
+        onLoad: () => {
+            dispatch(actions.load() as any)
         },
         onUnload: () => {
             dispatch(actions.unload() as any)

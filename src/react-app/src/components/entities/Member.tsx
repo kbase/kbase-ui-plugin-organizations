@@ -73,6 +73,13 @@ class Member extends React.Component<MemberProps, MemberState> {
     renderCompact() {
         return (
             <div className="Member View-COMPACT" >
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
+                </div>
                 <div className="avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
@@ -93,13 +100,7 @@ class Member extends React.Component<MemberProps, MemberState> {
                         }).format(this.props.member.joinedAt)}
                     </div>
                 </div>
-                <div className="controlCol">
-                    <a onClick={this.onToggleView.bind(this)}
-                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
-                    >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
-                    </a>
-                </div>
+
             </div>
         )
     }
@@ -107,6 +108,13 @@ class Member extends React.Component<MemberProps, MemberState> {
     renderNormal() {
         return (
             <div className="Member View-NORMAL" >
+                <div className="controlCol">
+                    <a onClick={this.onToggleView.bind(this)}
+                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+                    >
+                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                    </a>
+                </div>
                 <div className="avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
@@ -136,13 +144,7 @@ class Member extends React.Component<MemberProps, MemberState> {
                         {[this.props.user.city, this.props.user.state, this.props.user.country].filter(x => x).join(', ') || <i>no location information in user profile</i>}
                     </div>
                 </div>
-                <div className="controlCol">
-                    <a onClick={this.onToggleView.bind(this)}
-                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
-                    >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
-                    </a>
-                </div>
+
             </div>
         )
     }

@@ -15,6 +15,7 @@ import dashboard from './dashboard'
 import entities from './entities'
 import organizationCentric from './organizationCentric'
 import global from './global'
+import notifications from './notifications'
 
 
 export function reducer(state: StoreState, action: Action): StoreState {
@@ -33,6 +34,7 @@ export function reducer(state: StoreState, action: Action): StoreState {
         entities(state, action) ||
         organizationCentric(state, action) ||
         global(state, action) ||
+        notifications(state, action) ||
         state;
 }
 

@@ -116,3 +116,9 @@
     /* text-align: right; */
     margin-left: 10px;
 }
+
+.RequestNarrative .message {
+    font-style: italic;
+    text-align: center;
+    padding: 10px;
+}

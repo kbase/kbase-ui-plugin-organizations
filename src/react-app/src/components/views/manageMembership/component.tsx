@@ -35,6 +35,14 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         this.setState({ cancelToBrowser: true })
     }
 
+    doLeaveOrg() {
+        alert('this will leave you the org')
+    }
+
+    canSave() {
+        return false
+    }
+
     doShowInfo() {
         // this.setState({ showInfo: true })
         Modal.info({
@@ -81,10 +89,24 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         )
         const buttons = (
             <React.Fragment>
-                <Button icon="undo"
+                {/* <Button icon="undo"
                     type="danger"
                     onClick={this.doCancelToViewer.bind(this)}>
                     Return to this Org
+                </Button> */}
+                <Button icon="save"
+                    form="editMembershipForm"
+                    key="submit"
+                    disabled={!this.canSave.call(this)}
+                    htmlType="submit">
+                    Save
+                </Button>
+                <Button
+                    // shape="circle"
+                    type="danger"
+                    icon="frown"
+                    onClick={this.doLeaveOrg.bind(this)}>
+                    Leave Organization...
                 </Button>
                 <Button
                     shape="circle"
@@ -153,12 +175,12 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                 <p>
                     Your user profile is ...
                 </p>
-                <h3>
+                {/* <h3>
                     Leave Org
                 </h3>
                 <Button>
                     Leave This Org
-                </Button>
+                </Button> */}
             </div>
         )
     }
