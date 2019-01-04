@@ -1,10 +1,10 @@
 import * as React from 'react'
 import { Redirect, NavLink } from 'react-router-dom';
 import marked from 'marked';
-import { Button, Icon, Modal, Checkbox } from 'antd';
+import { Button, Icon, Modal, Checkbox, Input } from 'antd';
 import md5 from 'md5'
 
-import { EditableOrganization, SaveState, ValidationState, EditState } from '../../../types';
+import { EditableOrganization, SaveState, ValidationState, EditState, ValidationErrorType, Editable, SyncState } from '../../../types';
 
 import './component.css'
 
@@ -13,6 +13,7 @@ import OrganizationHeader from '../organizationHeader/loader';
 import * as orgModel from '../../../data/models/organization/model'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import OrgAvatar from '../../OrgAvatar'
+import TextArea from 'antd/lib/input/TextArea';
 
 export interface EditOrganizationProps {
     editState: EditState
@@ -176,7 +177,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     canSave() {
         return (
             this.props.editState === EditState.EDITED &&
-            this.props.validationState === ValidationState.VALID &&
+            this.props.validationState.type === ValidationErrorType.OK &&
             (this.props.saveState === SaveState.NEW ||
                 this.props.saveState === SaveState.READY ||
                 this.props.saveState === SaveState.SAVED)
@@ -191,15 +192,57 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
+    calcFieldClass(field: Editable) {
+        switch (field.validationState.type) {
+            // case (ValidationErrorType.OK):
+            //     return 'validation-ok'
+            case (ValidationErrorType.ERROR):
+                return 'validation-error'
+            case (ValidationErrorType.REQUIRED_MISSING):
+                return 'validation-error'
+        }
+
+        switch (field.syncState) {
+            case (SyncState.DIRTY):
+                return 'sync-dirty'
+            default:
+                return 'validation-ok'
+        }
+    }
+
+    renderFieldError(field: Editable) {
+        if (field.validationState.type !== ValidationErrorType.OK) {
+            if (field.syncState === SyncState.DIRTY) {
+                return (
+                    <span style={{ color: 'red' }}>
+                        {field.validationState.message}
+                    </span>
+                )
+            }
+        } else {
+            return ''
+        }
+    }
+
     renderForm() {
         return (
             <form id="editOrganizationForm" className="editor" onSubmit={this.onSubmit.bind(this)}>
                 <div className="row">
                     <div className="col1 field-label">name</div>
                     <div className="col2">
-                        <input value={this.props.editedOrganization.name.value || ''}
+                        <Input value={this.props.editedOrganization.name.value || ''}
+                            className={this.calcFieldClass(this.props.editedOrganization.name)}
                             onChange={this.onNameChange.bind(this)} />
-                        {this.props.editedOrganization.name.error ? (<span style={{ color: 'red' }}>{this.props.editedOrganization.name.error.message}</span>) : ''}
+                        {this.renderFieldError(this.props.editedOrganization.name)}
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col1 field-label">id</div>
+                    <div className="col2">
+                        <Input value={this.props.editedOrganization.id.value || ''}
+                            className={this.calcFieldClass(this.props.editedOrganization.id)}
+                            onChange={this.onIdChange.bind(this)} />
+                        {this.renderFieldError(this.props.editedOrganization.id)}
                     </div>
                 </div>
                 <div className="row">
@@ -207,8 +250,9 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                     <div className="col2">
                         <Checkbox
                             checked={this.props.editedOrganization.isPrivate.value}
+                            className={this.calcFieldClass(this.props.editedOrganization.isPrivate)}
                             onChange={this.onIsPrivateChange.bind(this)} />
-                        {this.props.editedOrganization.isPrivate.error ? (<span style={{ color: 'red' }}>{this.props.editedOrganization.isPrivate.error.message}</span>) : ''}
+                        {this.renderFieldError(this.props.editedOrganization.isPrivate)}
                     </div>
                 </div>
                 <div className="row gravatarHash">
@@ -226,25 +270,19 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                             </div>
                         </div>
 
-                        <input value={this.props.editedOrganization.gravatarHash.value || ''}
-                            onChange={this.onGravatarHashChange.bind(this)} />
-                        {this.props.editedOrganization.gravatarHash.error ? (<span style={{ color: 'red' }}>{this.props.editedOrganization.gravatarHash.error.message}</span>) : ''}
+                        {/* <input value={this.props.editedOrganization.gravatarHash.value || ''}
+                            onChange={this.onGravatarHashChange.bind(this)} /> */}
+                        {this.renderFieldError(this.props.editedOrganization.gravatarHash)}
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col1 field-label">id</div>
-                    <div className="col2">
-                        <input value={this.props.editedOrganization.id.value || ''}
-                            onChange={this.onIdChange.bind(this)} />
-                        {this.props.editedOrganization.id.error ? (<span style={{ color: 'red' }}>{this.props.editedOrganization.id.error.message}</span>) : ''}
-                    </div>
-                </div>
+
                 <div className="row" style={{ flex: '1 1 0px', minHeight: '30em', maxHeight: '60em' }}>
                     <div className="col1 field-label">description</div>
                     <div className="col2">
-                        <textarea value={this.props.editedOrganization.description.value || ''}
+                        <TextArea value={this.props.editedOrganization.description.value || ''}
+                            className={this.calcFieldClass(this.props.editedOrganization.description)}
                             onChange={this.onDescriptionChange.bind(this)} />
-                        {this.props.editedOrganization.description.error ? (<div style={{ color: 'red' }}>{this.props.editedOrganization.description.error.message}</div>) : ''}
+                        {this.renderFieldError(this.props.editedOrganization.description)}
                     </div>
                 </div>
                 <div className="row">
@@ -296,6 +334,14 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
             </div>
             <div className="row">
                 <div className="col2">
+                    <div className="id">
+                        <span style={{ color: 'silver' }}>{this.origin}/#orgs/organizations/</span>
+                        {this.props.editedOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col2">
                     <div className="isPrivate">
                         {this.renderIsPrivate(this.props.editedOrganization.isPrivate.value)}
                     </div>
@@ -308,14 +354,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                     </div>
                 </div>
             </div>
-            <div className="row">
-                <div className="col2">
-                    <div className="id">
-                        <span style={{ color: 'silver' }}>{this.origin}/#orgs/organizations/</span>
-                        {this.props.editedOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
-                    </div>
-                </div>
-            </div>
+
             <div className="row" style={{ flex: '1 1 0px' }}>
                 <div className="col2">
                     <div className="description"
@@ -336,14 +375,24 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
 
     renderOrgName(name: string) {
         const maxLength = 25
-        if (name.length < 25) {
-            return name
+        if (name.length === 0) {
+            return (
+                <span style={{ fontStyle: 'italic' }}>
+                    org name missing
+                </span>
+            )
+        }
+
+        let orgName = name
+        if (name.length >= maxLength) {
+            orgName = name.slice(0, 25) + '…'
         }
         return (
-            <span>
-                {name.slice(0, 25)}
-                …
-            </span>
+            <NavLink to={`/viewOrganization/${this.props.organization.id}`}>
+                <span style={{ fontWeight: 'bold' }}>
+                    {orgName}
+                </span>
+            </NavLink>
         )
     }
 
@@ -351,17 +400,14 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         const breadcrumbs = (
             <React.Fragment>
                 <span>
-                    <NavLink to={`/viewOrganization/${this.props.organization.id}`}>
-                        <span style={{ fontWeight: 'bold' }}>
-                            {this.renderOrgName(this.props.editedOrganization.name.value)}
-                        </span>
-                    </NavLink>
+                    {this.renderOrgName(this.props.editedOrganization.name.value)}
+
 
                     <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
 
                     <Icon type="tool" />
                     {' '}
-                    <span style={{ fontSize: '120%' }}>Managing Org Requests</span>
+                    <span style={{ fontSize: '120%' }}>Edit Organization</span>
                 </span>
             </React.Fragment>
         )

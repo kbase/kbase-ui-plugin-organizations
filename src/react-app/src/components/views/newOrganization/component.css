@@ -113,3 +113,15 @@
 .NewOrganization .preview .gravatarHash {
     height: 64px;
 }
+
+.NewOrganization .validation-error {
+    border: 1px transparent solid;
+}
+
+.NewOrganization .validation-error {
+    border: 1px red solid;
+}
+
+.NewOrganization .sync-dirty {
+    border: 1px orange solid;
+}

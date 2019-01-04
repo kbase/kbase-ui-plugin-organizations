@@ -1,6 +1,7 @@
 import * as React from 'react'
 
 import Container from './container'
+import { Spin, Alert } from 'antd';
 
 export interface Props {
     organizationId: string
@@ -18,10 +19,19 @@ class Loader extends React.Component<Props, State> {
     }
 
     renderLoading() {
-        return (
+        const message = (
             <div>
-                Loading Your Narratives...
+                Loading your Organization...
+                {' '}
+                <Spin />
             </div>
+        )
+        return (
+            <Alert type="info" message={message} style={{
+                width: '20em',
+                padding: '20px',
+                margin: '20px auto'
+            }} />
         )
     }
 

@@ -2,7 +2,7 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
-import { StoreState, AppError, UIError, UIErrorType, EditableOrganization, ValidationState, EditState } from '../../types'
+import { StoreState, AppError, EditableOrganization, ValidationState, EditState, ValidationErrorType, SyncState } from '../../types'
 import Validation from '../../data/models/organization/validation'
 import * as orgModel from '../../data/models/organization/model'
 
@@ -81,7 +81,7 @@ export interface EditOrgUpdateNameSuccess {
 export interface EditOrgUpdateNameError extends Action {
     type: ActionFlag.EDIT_ORG_UPDATE_NAME_ERROR,
     name: string,
-    error: UIError
+    error: ValidationState
 }
 
 // Updating gravatar hash field
@@ -99,7 +99,7 @@ export interface EditOrgUpdateGravatarHashSuccess {
 export interface EditOrgUpdateGravatarHashError extends Action {
     type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_ERROR,
     gravatarHash: string | null,
-    error: UIError
+    error: ValidationState
 }
 
 // Updating id Field
@@ -135,7 +135,7 @@ export interface EditOrgUpdateDescriptionSuccess {
 export interface EditOrgUpdateDescriptionError extends Action {
     type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_ERROR,
     description: string,
-    error: UIError
+    error: ValidationState
 }
 
 export interface UpdateIsPrivate extends Action<ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE> {
@@ -150,7 +150,7 @@ export interface UpdateIsPrivateSuccess extends Action<ActionFlag.EDIT_ORG_UPDAT
 
 export interface UpdateIsPrivateError extends Action<ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_ERROR> {
     type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_ERROR,
-    erro: UIError
+    error: ValidationState
 }
 
 
@@ -240,7 +240,7 @@ export function editOrgUpdateNameSuccess(name: string): EditOrgUpdateNameSuccess
     }
 }
 
-export function editOrgUpdateNameError(name: string, error: UIError): EditOrgUpdateNameError {
+export function editOrgUpdateNameError(name: string, error: ValidationState): EditOrgUpdateNameError {
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_NAME_ERROR,
         name: name,
@@ -264,7 +264,7 @@ export function editOrgUpdateGravatarHashSuccess(gravatarHash: string | null): E
     }
 }
 
-export function editOrgUpdateGravatarHashError(gravatarHash: string | null, error: UIError): EditOrgUpdateGravatarHashError {
+export function editOrgUpdateGravatarHashError(gravatarHash: string | null, error: ValidationState): EditOrgUpdateGravatarHashError {
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_ERROR,
         gravatarHash: gravatarHash,
@@ -290,7 +290,7 @@ export function editOrgUpdateDescriptionSuccess(description: string): EditOrgUpd
     }
 }
 
-export function editOrgUpdateDescriptionError(description: string, error: UIError): EditOrgUpdateDescriptionError {
+export function editOrgUpdateDescriptionError(description: string, error: ValidationState): EditOrgUpdateDescriptionError {
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_ERROR,
         description: description,
@@ -327,52 +327,35 @@ export function load(organizationId: string) {
                 const editableOrg: EditableOrganization = {
                     id: {
                         value: org.id,
-                        validationState: ValidationState.VALID,
-                        editState: EditState.NONE,
-                        validatedAt: null,
-                        error: {
-                            type: UIErrorType.NONE,
-                            message: ''
-                        }
+                        remoteValue: org.id,
+                        syncState: SyncState.NEW,
+                        validationState: Validation.validateOrgId(org.id)[1]
                     },
                     name: {
                         value: org.name,
-                        validationState: ValidationState.VALID,
-                        editState: EditState.NONE,
-                        validatedAt: null,
-                        error: {
-                            type: UIErrorType.NONE,
-                            message: ''
-                        }
+                        remoteValue: org.name,
+                        syncState: SyncState.NEW,
+                        validationState: Validation.validateOrgName(org.name)[1]
                     },
                     gravatarHash: {
                         value: org.gravatarHash,
-                        validationState: ValidationState.VALID,
-                        editState: EditState.NONE,
-                        validatedAt: null,
-                        error: {
-                            type: UIErrorType.NONE,
-                            message: ''
-                        }
+                        remoteValue: org.gravatarHash,
+                        syncState: SyncState.NEW,
+                        validationState: Validation.validateOrgGravatarHash(org.gravatarHash)[1]
                     },
                     description: {
                         value: org.description,
-                        validationState: ValidationState.VALID,
-                        editState: EditState.NONE,
-                        validatedAt: null,
-                        error: {
-                            type: UIErrorType.NONE,
-                            message: ''
-                        }
+                        remoteValue: org.description,
+                        syncState: SyncState.NEW,
+                        validationState: Validation.validateOrgDescription(org.description)[1]
                     },
                     isPrivate: {
                         value: org.isPrivate,
-                        validationState: ValidationState.VALID,
-                        editState: EditState.NONE,
-                        validatedAt: null,
-                        error: {
-                            type: UIErrorType.NONE,
-                            message: ''
+                        remoteValue: org.isPrivate,
+                        syncState: SyncState.NEW,
+                        validationState: {
+                            type: ValidationErrorType.OK,
+                            validatedAt: new Date()
                         }
                     }
                 }
@@ -387,7 +370,6 @@ export function load(organizationId: string) {
             })
     }
 }
-
 
 export function editOrgSave() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
@@ -463,22 +445,17 @@ export function editOrgEvaluate() {
             return
         }
 
-        if (editedOrganization.name.validationState !== ValidationState.VALID) {
+        if (editedOrganization.name.validationState.type !== ValidationErrorType.OK) {
             dispatch(editOrgEvaluateErrors())
             return
         }
 
-        // if (editedOrganization.id.status !== FieldState.EDITED_OK) {
-        //     dispatch(EditOrgEvaluateErrors())
-        //     return
-        // }
-
-        if (editedOrganization.gravatarHash.validationState !== ValidationState.VALID) {
+        if (editedOrganization.gravatarHash.validationState.type !== ValidationErrorType.OK) {
             dispatch(editOrgEvaluateErrors())
             return
         }
 
-        if (editedOrganization.description.validationState !== ValidationState.VALID) {
+        if (editedOrganization.description.validationState.type !== ValidationErrorType.OK) {
             dispatch(editOrgEvaluateErrors())
             return
         }
@@ -491,7 +468,7 @@ export function editOrgUpdateName(name: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
         const [validatedName, error] = Validation.validateOrgName(name)
 
-        if (error.type === UIErrorType.ERROR) {
+        if (error.type !== ValidationErrorType.OK) {
             dispatch(editOrgUpdateNameError(validatedName, error))
         } else {
             dispatch(editOrgUpdateNameSuccess(validatedName))
@@ -500,14 +477,14 @@ export function editOrgUpdateName(name: string) {
     }
 }
 
-export function editOrgUpdateGravatarHash(name: string | null) {
+export function editOrgUpdateGravatarHash(gravatarHash: string | null) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
-        const [validateGravatarHash, error] = Validation.validateOrgGravatarHash(name)
+        const [validatedGravatarHash, error] = Validation.validateOrgGravatarHash(gravatarHash)
 
-        if (error.type === UIErrorType.ERROR) {
-            dispatch(editOrgUpdateGravatarHashError(validateGravatarHash, error))
+        if (error.type !== ValidationErrorType.OK) {
+            dispatch(editOrgUpdateGravatarHashError(validatedGravatarHash, error))
         } else {
-            dispatch(editOrgUpdateGravatarHashSuccess(validateGravatarHash))
+            dispatch(editOrgUpdateGravatarHashSuccess(validatedGravatarHash))
         }
         dispatch(editOrgEvaluate())
     }
@@ -525,9 +502,9 @@ export function editOrgUpdateDescription(description: string) {
             token, username,
             groupsServiceURL: config.services.Groups.url
         })
-        const [validatedDescription, error] = orgClient.validateOrgDescription(description)
+        const [validatedDescription, error] = Validation.validateOrgDescription(description)
 
-        if (error.type === UIErrorType.ERROR) {
+        if (error.type !== ValidationErrorType.OK) {
             dispatch(editOrgUpdateDescriptionError(validatedDescription, error))
         } else {
             dispatch(editOrgUpdateDescriptionSuccess(validatedDescription))

@@ -19,6 +19,7 @@ interface StateProps {
 
 interface DispatchProps {
     onCancelOutboxRequest: (request: requestModel.Request) => void
+    onRefresh: () => void
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
@@ -37,6 +38,10 @@ function mapDispatchToProps(dispatch: Dispatch<actions.DashboardAction<any>>): D
     return {
         onCancelOutboxRequest: (request: requestModel.Request) => {
             dispatch(actions.cancelOutboxRequest(request) as any)
+        },
+        onRefresh: () => {
+            dispatch(actions.refresh() as any)
+            // alert('yes, wll refresh')
         }
     }
 }

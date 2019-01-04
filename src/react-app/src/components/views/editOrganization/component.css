@@ -113,3 +113,19 @@
 .EditOrganization .preview .gravatarHash {
     height: 64px;
 }
+
+.EditOrganization .ant-checkbox-wrapper.validation-ok {
+    border: 1px transparent solid;
+}
+
+.EditOrganization .validation-error {
+    border: 1px transparent solid;
+}
+
+.EditOrganization .validation-error {
+    border: 1px red solid;
+}
+
+.EditOrganization .sync-dirty {
+    border: 1px orange solid;
+}

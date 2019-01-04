@@ -4,7 +4,8 @@ import { ActionFlag } from './index'
 
 import * as orgModel from '../../data/models/organization/model'
 import * as userModel from '../../data/models/user'
-import { AppError, StoreState, EditState, ValidationState, UIErrorType } from '../../types'
+import { AppError, StoreState, EditState, ValidationState, UIErrorType, SyncState, ValidationErrorType } from '../../types'
+import Validation from '../../data/models/organization/validation';
 
 // Loading
 
@@ -89,13 +90,13 @@ export function load(organizationId: string) {
             }
             const editableProfile: orgModel.EditableMemberProfile = {
                 title: {
-                    editState: EditState.NONE,
                     value: thisMember.title,
-                    error: {
-                        type: UIErrorType.NONE
-                    },
-                    validatedAt: null,
-                    validationState: ValidationState.NONE
+                    remoteValue: thisMember.title,
+                    syncState: SyncState.NEW,
+                    validationState: {
+                        type: ValidationErrorType.OK,
+                        validatedAt: new Date()
+                    }
                 }
             }
 

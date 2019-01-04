@@ -1,5 +1,5 @@
 import { Action } from 'redux'
-import { StoreState, EditState, SaveState, UIErrorType, FieldState, ValidationState, ComponentLoadingState } from '../../types';
+import { StoreState, EditState, SaveState, UIErrorType, ValidationState, ComponentLoadingState, SyncState, ValidationErrorType } from '../../types';
 import { ActionFlag } from '../actions';
 import {
     LoadStart, Unload,
@@ -11,6 +11,7 @@ import {
     UpdateIdPass,
     UpdateIsPrivateSuccess
 } from '../actions/addOrg'
+import Validation from '../../data/models/organization/validation';
 
 // ADD ORG
 
@@ -57,7 +58,7 @@ export function saveSuccess(state: StoreState, action: SaveSuccess): StoreState 
 
 export function saveError(state: StoreState, action: SaveError): StoreState {
     if (!state.views.addOrgView.viewModel) {
-        console.warn('attempting saveSuccess without view model')
+        console.warn('attempting saveError without view model')
         return state
     }
     return {
@@ -90,7 +91,10 @@ export function addOrgEvaluateOk(state: StoreState, action: AddOrgEvaluateOK): S
                 ...state.views.addOrgView,
                 viewModel: {
                     ...state.views.addOrgView.viewModel,
-                    validationState: ValidationState.VALID
+                    validationState: {
+                        type: ValidationErrorType.OK,
+                        validatedAt: new Date()
+                    }
                 }
             }
         }
@@ -110,7 +114,11 @@ export function addOrgEvaluateErrors(state: StoreState, action: AddOrgEvaluateEr
                 ...state.views.addOrgView,
                 viewModel: {
                     ...state.views.addOrgView.viewModel,
-                    validationState: ValidationState.INVALID
+                    validationState: {
+                        type: ValidationErrorType.ERROR,
+                        message: 'TODO: form error',
+                        validatedAt: new Date()
+                    }
                 }
             }
         }
@@ -141,7 +149,10 @@ export function loadSuccess(state: StoreState, action: LoadSuccess): StoreState 
                 error: null,
                 viewModel: {
                     editState: EditState.UNEDITED,
-                    validationState: ValidationState.NONE,
+                    validationState: {
+                        type: ValidationErrorType.OK,
+                        validatedAt: new Date()
+                    },
                     saveState: SaveState.NEW,
                     error: null,
                     newOrganization: action.newOrganization
@@ -196,14 +207,18 @@ export function updateNameSuccess(state: StoreState, action: UpdateNameSuccess):
                     newOrganization: {
                         ...state.views.addOrgView.viewModel.newOrganization,
                         name: {
+                            ...state.views.addOrgView.viewModel.newOrganization.name,
                             value: action.name,
-                            validationState: ValidationState.VALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            // status: FieldState.EDITED_OK,
-                            error: {
-                                type: UIErrorType.NONE
-                            }
+                            syncState: SyncState.DIRTY,
+                            validationState: {
+                                type: ValidationErrorType.OK,
+                                validatedAt: new Date()
+                            },
+                            // editState: EditState.EDITED,
+                            // validatedAt: new Date(),
+                            // error: {
+                            //     type: UIErrorType.NONE
+                            // }
                         }
                     }
                 }
@@ -229,11 +244,13 @@ export function updateNameError(state: StoreState, action: UpdateNameError): Sto
                     newOrganization: {
                         ...state.views.addOrgView.viewModel.newOrganization,
                         name: {
+                            ...state.views.addOrgView.viewModel.newOrganization.name,
                             value: action.name,
-                            validationState: ValidationState.INVALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: action.error
+                            syncState: SyncState.DIRTY,
+                            validationState: action.error
+                            // editState: EditState.EDITED,
+                            // validatedAt: new Date(),
+                            // error: action.error
                         }
                     }
                 }
@@ -260,12 +277,12 @@ export function updateGravatarHashSuccess(state: StoreState, action: UpdateGrava
                     newOrganization: {
                         ...state.views.addOrgView.viewModel.newOrganization,
                         gravatarHash: {
+                            ...state.views.addOrgView.viewModel.newOrganization.gravatarHash,
+                            syncState: SyncState.DIRTY,
                             value: action.gravatarHash,
-                            validationState: ValidationState.VALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: {
-                                type: UIErrorType.NONE
+                            validationState: {
+                                type: ValidationErrorType.OK,
+                                validatedAt: new Date()
                             }
                         }
                     }
@@ -292,11 +309,10 @@ export function updateGravatarHashError(state: StoreState, action: UpdateGravata
                     newOrganization: {
                         ...state.views.addOrgView.viewModel.newOrganization,
                         gravatarHash: {
+                            ...state.views.addOrgView.viewModel.newOrganization.gravatarHash,
+                            syncState: SyncState.DIRTY,
                             value: action.gravatarHash,
-                            validationState: ValidationState.INVALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: action.error
+                            validationState: action.error
                         }
                     }
                 }
@@ -324,12 +340,12 @@ export function updateIdSuccess(state: StoreState, action: UpdateIdSuccess): Sto
                     newOrganization: {
                         ...state.views.addOrgView.viewModel.newOrganization,
                         id: {
+                            ...state.views.addOrgView.viewModel.newOrganization.id,
                             value: action.id,
-                            validationState: ValidationState.VALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: {
-                                type: UIErrorType.NONE
+                            syncState: SyncState.DIRTY,
+                            validationState: {
+                                type: ValidationErrorType.OK,
+                                validatedAt: new Date()
                             }
                         }
                     }
@@ -356,11 +372,10 @@ export function updateIdError(state: StoreState, action: UpdateIdError): StoreSt
                     newOrganization: {
                         ...state.views.addOrgView.viewModel.newOrganization,
                         id: {
+                            ...state.views.addOrgView.viewModel.newOrganization.id,
                             value: action.id,
-                            validationState: ValidationState.INVALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: action.error
+                            syncState: SyncState.DIRTY,
+                            validationState: action.error
                         }
                     }
                 }
@@ -388,7 +403,11 @@ export function updateIdPass(state: StoreState, action: UpdateIdPass): StoreStat
                         id: {
                             ...state.views.addOrgView.viewModel.newOrganization.id,
                             value: action.id,
-                            editState: EditState.EDITED
+                            syncState: SyncState.DIRTY,
+                            validationState: {
+                                type: ValidationErrorType.OK,
+                                validatedAt: new Date()
+                            }
                         }
                     }
                 }
@@ -414,12 +433,12 @@ export function updateDescriptionSuccess(state: StoreState, action: UpdateDescri
                     newOrganization: {
                         ...state.views.addOrgView.viewModel.newOrganization,
                         description: {
+                            ...state.views.addOrgView.viewModel.newOrganization.description,
                             value: action.description,
-                            validationState: ValidationState.VALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: {
-                                type: UIErrorType.NONE
+                            syncState: SyncState.DIRTY,
+                            validationState: {
+                                type: ValidationErrorType.OK,
+                                validatedAt: new Date()
                             }
                         }
                     }
@@ -446,11 +465,10 @@ export function updateDescriptionError(state: StoreState, action: UpdateDescript
                     newOrganization: {
                         ...state.views.addOrgView.viewModel.newOrganization,
                         description: {
+                            ...state.views.addOrgView.viewModel.newOrganization.description,
                             value: action.description,
-                            validationState: ValidationState.INVALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: action.error
+                            syncState: SyncState.DIRTY,
+                            validationState: action.error
                         }
                     }
                 }
@@ -476,12 +494,12 @@ export function updateIsPrivateSuccess(state: StoreState, action: UpdateIsPrivat
                     newOrganization: {
                         ...state.views.addOrgView.viewModel.newOrganization,
                         isPrivate: {
+                            ...state.views.addOrgView.viewModel.newOrganization.isPrivate,
                             value: action.isPrivate,
-                            validationState: ValidationState.VALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: {
-                                type: UIErrorType.NONE
+                            syncState: SyncState.DIRTY,
+                            validationState: {
+                                type: ValidationErrorType.OK,
+                                validatedAt: new Date()
                             }
                         }
                     }

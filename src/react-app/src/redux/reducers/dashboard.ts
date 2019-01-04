@@ -2,7 +2,7 @@ import { Action } from 'redux'
 
 import { ActionFlag } from '../actions'
 
-import { LoadStart, LoadSuccess, LoadError, DashboardAction, Unload, CancelOutboxRequest, CancelOutboxRequestSuccess, AcceptInboxRequestSuccess, RejectInboxRequestSuccess } from '../actions/dashboard'
+import { LoadStart, LoadSuccess, LoadError, DashboardAction, Unload, CancelOutboxRequest, CancelOutboxRequestSuccess, AcceptInboxRequestSuccess, RejectInboxRequestSuccess, RefreshStart, RefreshSuccess, RefreshError } from '../actions/dashboard'
 import { StoreState, ComponentLoadingState } from '../../types';
 
 function loadStart(state: StoreState, action: LoadStart): StoreState {
@@ -41,6 +41,52 @@ function loadSuccess(state: StoreState, action: LoadSuccess): StoreState {
 }
 
 function loadError(state: StoreState, action: LoadError): StoreState {
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            dashboardView: {
+                loadingState: ComponentLoadingState.ERROR,
+                error: action.error,
+                viewModel: null
+            }
+        }
+    }
+}
+
+function refreshStart(state: StoreState, action: RefreshStart): StoreState {
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            dashboardView: {
+                ...state.views.dashboardView,
+                loadingState: ComponentLoadingState.LOADING
+            }
+        }
+    }
+}
+
+function refreshSuccess(state: StoreState, action: RefreshSuccess): StoreState {
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            dashboardView: {
+                loadingState: ComponentLoadingState.SUCCESS,
+                error: null,
+                viewModel: {
+                    organizations: action.organizations,
+                    requestInbox: action.requestInbox,
+                    requestOutbox: action.requestOutbox,
+                    pendingAdminRequests: action.pendingGroupRequests
+                }
+            }
+        }
+    }
+}
+
+function refreshError(state: StoreState, action: RefreshError): StoreState {
     return {
         ...state,
         views: {
@@ -139,6 +185,12 @@ export default function reducer(state: StoreState, action: DashboardAction<any>)
             return loadError(state, action as LoadError)
         case ActionFlag.DASHBOARD_UNLOAD:
             return unload(state, action as Unload)
+        case ActionFlag.DASHBOARD_REFRESH_START:
+            return refreshStart(state, action as RefreshStart)
+        case ActionFlag.DASHBOARD_REFRESH_SUCCESS:
+            return refreshSuccess(state, action as RefreshSuccess)
+        case ActionFlag.DASHBOARD_REFRESH_ERROR:
+            return refreshError(state, action as RefreshError)
         case ActionFlag.DASHBOARD_CANCEL_OUTBOX_REQUEST_SUCCESS:
             return cancelOutboxRequest(state, action as CancelOutboxRequestSuccess)
         case ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_SUCCESS:

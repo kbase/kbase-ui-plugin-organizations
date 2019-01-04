@@ -1,4 +1,4 @@
-import { UIError, UIErrorType } from "../../../types";
+import { UIError, UIErrorType, ValidationState, ValidationErrorType } from "../../../types";
 
 export default class Validation {
     static nonPrintableRe = /[\000-\031]/
@@ -13,21 +13,23 @@ export default class Validation {
         const after = s.slice(firstNonPrintable + 1, firstNonPrintable + 6)
         return `Non-printable character at position ${firstNonPrintable}: "${before}___${after}`
     }
-    static validateOrgId(id: string): [string, UIError] {
+    static validateOrgId(id: string): [string, ValidationState] {
         // May not be empty
         if (id.length === 0) {
             return [
                 id, {
-                    type: UIErrorType.ERROR,
-                    message: 'Organization id may not be empty'
+                    type: ValidationErrorType.REQUIRED_MISSING,
+                    message: 'Organization id may not be empty',
+                    validatedAt: new Date()
                 }]
         }
         // No spaces
         if (id.match(/\s/)) {
             return [
                 id, {
-                    type: UIErrorType.ERROR,
-                    message: 'Organization id may not contain a space'
+                    type: ValidationErrorType.ERROR,
+                    message: 'Organization id may not contain a space',
+                    validatedAt: new Date()
                 }]
         }
         // May not exceed maximum size
@@ -35,8 +37,9 @@ export default class Validation {
         if (id.length > 100) {
             return [
                 id, {
-                    type: UIErrorType.ERROR,
-                    message: 'Organization id may not be longer than 100 characters'
+                    type: ValidationErrorType.ERROR,
+                    message: 'Organization id may not be longer than 100 characters',
+                    validatedAt: new Date()
                 }]
         }
 
@@ -45,90 +48,103 @@ export default class Validation {
         if (!id.match(alphaRe)) {
             return [
                 id, {
-                    type: UIErrorType.ERROR,
-                    message: 'Organization ID may only contain lower case letters (a-z), numeric digits (0-9) and the dash "-"'
+                    type: ValidationErrorType.ERROR,
+                    message: 'Organization ID may only contain lower case letters (a-z), numeric digits (0-9) and the dash "-"',
+                    validatedAt: new Date()
                 }
             ]
         }
 
         return [id, {
-            type: UIErrorType.NONE
+            type: ValidationErrorType.OK,
+            validatedAt: new Date()
         }]
     }
 
-    static validateOrgName(name: string): [string, UIError] {
+    static validateOrgName(name: string): [string, ValidationState] {
         if (name.length === 0) {
             return [
                 name, {
-                    type: UIErrorType.ERROR,
-                    message: 'Organization name may not be empty'
+                    type: ValidationErrorType.REQUIRED_MISSING,
+                    message: 'Organization name may not be empty',
+                    validatedAt: new Date()
                 }]
         }
         if (name.length > 256) {
             return [
                 name, {
-                    type: UIErrorType.ERROR,
-                    message: 'Organization name may not be longer than 256 characters'
+                    type: ValidationErrorType.ERROR,
+                    message: 'Organization name may not be longer than 256 characters',
+                    validatedAt: new Date()
                 }]
         }
         return [
             name, {
-                type: UIErrorType.NONE
+                type: ValidationErrorType.OK,
+                validatedAt: new Date()
             }]
     }
 
-    static validateOrgGravatarHash(gravatarHash: string | null): [string | null, UIError] {
+    static validateOrgGravatarHash(gravatarHash: string | null): [string | null, ValidationState] {
         if (!gravatarHash) {
             return [
                 null, {
-                    type: UIErrorType.NONE
+                    type: ValidationErrorType.OK,
+                    validatedAt: new Date()
                 }]
         }
         if (gravatarHash.length === 0) {
             return [
                 gravatarHash, {
-                    type: UIErrorType.NONE
+                    type: ValidationErrorType.OK,
+                    validatedAt: new Date()
                 }]
         }
         if (gravatarHash.length > 32) {
             return [
                 gravatarHash, {
-                    type: UIErrorType.ERROR,
-                    message: 'Organization gravatar hash may not be longer than 32 characters'
+                    type: ValidationErrorType.ERROR,
+                    message: 'Organization gravatar hash may not be longer than 32 characters',
+                    validatedAt: new Date()
                 }]
         }
         if (gravatarHash.length < 32) {
             return [
                 gravatarHash, {
-                    type: UIErrorType.ERROR,
-                    message: 'Organization gravatar hash may not be shorter than 32 characters'
+                    type: ValidationErrorType.ERROR,
+                    message: 'Organization gravatar hash may not be shorter than 32 characters',
+                    validatedAt: new Date()
                 }]
         }
         const acceptedChars = /^[a-f0-9]+$/
         if (!acceptedChars.test(gravatarHash)) {
             return [
                 gravatarHash, {
-                    type: UIErrorType.ERROR,
-                    message: 'Organization gravatar hash must consist only of the lower case hexadecimal characters a-f and 0-9'
+                    type: ValidationErrorType.ERROR,
+                    message: 'Organization gravatar hash must consist only of the lower case hexadecimal characters a-f and 0-9',
+                    validatedAt: new Date()
                 }
             ]
         }
 
         return [
             gravatarHash, {
-                type: UIErrorType.NONE
+                type: ValidationErrorType.OK,
+                validatedAt: new Date()
             }]
     }
 
-    static validateOrgDescription(description: string): [string, UIError] {
+    static validateOrgDescription(description: string): [string, ValidationState] {
         if (description.length === 0) {
-            return [name, {
-                type: UIErrorType.NONE
-            }]
             // return [name, {
-            //     type: UIErrorType.ERROR,
-            //     message: 'Organization description may not be empty'
+            //     type: ValidationErrorType.OK,
+            //     validatedAt: new Date()
             // }]
+            return [name, {
+                type: ValidationErrorType.ERROR,
+                message: 'Organization description may not be empty',
+                validatedAt: new Date()
+            }]
         }
         // TODO: Is there really a limit?
         // const nonPrintable = Validation.testNonPrintableCharacters(description)
@@ -143,13 +159,15 @@ export default class Validation {
         if (description.length > 4096) {
             return [
                 description, {
-                    type: UIErrorType.ERROR,
-                    message: 'Organization description may not be longer than 4,096 characters'
+                    type: ValidationErrorType.ERROR,
+                    message: 'Organization description may not be longer than 4,096 characters',
+                    validatedAt: new Date()
                 }]
         }
         return [
             description, {
-                type: UIErrorType.NONE
+                type: ValidationErrorType.OK,
+                validatedAt: new Date()
             }
         ]
     }

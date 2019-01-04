@@ -338,7 +338,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         if (this.props.organization.members.length === 0) {
             members = (
                 <p style={{ fontStyle: 'italic', textAlign: 'center' }}>
-                    This organization has no members
+                    No members
                 </p>
             )
         } else {
@@ -492,8 +492,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     renderGroupRequests(requests: Array<requestModel.Request>, invitations: Array<requestModel.Request>) {
         if (!requests.length) {
             return (
-                <div>
-                    There are no pending group requests
+                <div className="message">
+                    No pending group requests
                 </div>
             )
         } else {

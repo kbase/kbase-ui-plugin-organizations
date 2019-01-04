@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as orgModel from '../data/models/organization/model'
 import { Button, Tooltip, Icon, Drawer } from 'antd';
+import Narrative from './entities/narrative/reduxAdapter';
 
 export interface Props {
     narrative: orgModel.NarrativeResource
@@ -44,7 +45,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                     label = (
                         <span>
                             View Only (public)
-                            </span>
+                        </span>
                     )
                     buttonTooltip = 'Although you have View-Only access to this Narrative due to it being shared globally, you can obtain personal View-Only access by clicking this button'
                     shareButton = (
@@ -72,7 +73,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                 label = (
                     <span>
                         View Only
-                        </span>
+                    </span>
                 )
                 buttonTooltip = 'You already have View-Only access to this Narrative, but may request additional access'
                 shareButton = (
@@ -86,7 +87,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                 label = (
                     <span>
                         Edit
-                        </span>
+                    </span>
                 )
                 buttonTooltip = 'You already have Edit access to this Narrative, but may request additional access by clicking this button'
                 shareButton = (
@@ -100,7 +101,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                 label = (
                     <span>
                         Admin
-                        </span>
+                    </span>
                 )
                 break
             case orgModel.UserWorkspacePermission.OWNER:
@@ -108,7 +109,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                 label = (
                     <span>
                         Owner
-                        </span>
+                    </span>
                 )
                 break
             default:
@@ -161,25 +162,22 @@ export default class OrganizationNarrative extends React.Component<Props, State>
             return (
                 <React.Fragment>
                     <div className="title">{narrative.title}</div>
-                    <div>{this.renderPublicPermission(narrative)}</div>
+                    {/* <div>{this.renderPublicPermission(narrative)}</div> */}
                     <div>{this.renderNarrativePermission(narrative)}</div>
-
-                    {/* <div><i>abstract here?</i></div> */}
-                    <div><i>One-liner abstract?</i></div>
-                    <div><i>created, saved info here?</i></div>
                 </React.Fragment>
             )
         } else {
             return (
-                <React.Fragment>
-                    <div className="title"><a href={'https://ci.kbase.us/narrative/ws.' + narrative.workspaceId + '.obj.' + '1'} target="_blank">{narrative.title}</a></div>
-                    <div>{this.renderPublicPermission(narrative)}</div>
-                    <div>{this.renderNarrativePermission(narrative)}</div>
+                <Narrative workspaceId={narrative.workspaceId} />
+                // <React.Fragment>
+                //     <div className="title"><a href={'https://ci.kbase.us/narrative/ws.' + narrative.workspaceId + '.obj.' + '1'} target="_blank">{narrative.title}</a></div>
+                //     <div>{this.renderPublicPermission(narrative)}</div>
+                //     <div>{this.renderNarrativePermission(narrative)}</div>
 
-                    {/* <div><i>abstract here?</i></div> */}
-                    <div><i>One-liner abstract?</i></div>
-                    <div><i>created, saved info here?</i></div>
-                </React.Fragment>
+                //     <div>
+                //         <Narrative workspaceId={narrative.workspaceId} />
+                //     </div>
+                // </React.Fragment>
             )
         }
     }

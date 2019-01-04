@@ -1,5 +1,5 @@
 import { Action } from 'redux'
-import { StoreState, EditState, SaveState, UIErrorType, ValidationState, ComponentLoadingState } from '../../types';
+import { StoreState, EditState, SaveState, ComponentLoadingState, ValidationErrorType, SyncState, ValidationState, ValidationStateOk, EditOrgViewModel } from '../../types';
 import { ActionFlag } from '../actions';
 import {
     LoadStart, LoadSuccess, LoadError,
@@ -33,6 +33,14 @@ export function loadStart(state: StoreState, action: LoadStart) {
     }
 }
 
+function validationStateOk(): ValidationStateOk {
+    const x: ValidationState = {
+        type: ValidationErrorType.OK,
+        validatedAt: new Date()
+    }
+    return x
+}
+
 export function loadSuccess(state: StoreState, action: LoadSuccess) {
     return {
         ...state,
@@ -43,7 +51,11 @@ export function loadSuccess(state: StoreState, action: LoadSuccess) {
                 error: null,
                 viewModel: {
                     editState: EditState.UNEDITED,
-                    validationState: ValidationState.NONE,
+                    validationState: validationStateOk(),
+                    // validationState: {
+                    //     type: ValidationErrorType.OK,
+                    //     validatedAt: new Date()
+                    // },
                     saveState: SaveState.NEW,
                     // TODO: get rid of this...
                     // organizationId: action.id,
@@ -107,7 +119,29 @@ export function editOrgSaveSuccess(state: StoreState, action: EditOrgSaveSuccess
                 viewModel: {
                     ...state.views.editOrgView.viewModel,
                     editState: EditState.UNEDITED,
-                    saveState: SaveState.SAVED
+                    saveState: SaveState.SAVED,
+                    editedOrganization: {
+                        id: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.id,
+                            syncState: SyncState.CLEAN
+                        },
+                        name: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.name,
+                            syncState: SyncState.CLEAN
+                        },
+                        gravatarHash: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.gravatarHash,
+                            syncState: SyncState.CLEAN
+                        },
+                        isPrivate: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.isPrivate,
+                            syncState: SyncState.CLEAN
+                        },
+                        description: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.description,
+                            syncState: SyncState.CLEAN
+                        }
+                    }
                 }
             }
         }
@@ -150,7 +184,10 @@ export function editOrgEvaluateOk(state: StoreState, action: EditOrgEvaluateOK):
                 ...state.views.editOrgView,
                 viewModel: {
                     ...state.views.editOrgView.viewModel,
-                    validationState: ValidationState.VALID
+                    validationState: {
+                        type: ValidationErrorType.OK,
+                        validatedAt: new Date()
+                    }
                 }
             }
         }
@@ -170,11 +207,39 @@ export function editOrgEvaluateErrors(state: StoreState, action: EditOrgEvaluate
                 ...state.views.editOrgView,
                 viewModel: {
                     ...state.views.editOrgView.viewModel,
-                    validationState: ValidationState.INVALID
+                    validationState: {
+                        type: ValidationErrorType.ERROR,
+                        message: 'Validation errors',
+                        validatedAt: new Date()
+                    }
                 }
             }
         }
     }
+}
+
+function evaluateEditorState(viewModel: EditOrgViewModel): EditState {
+    if (viewModel.editedOrganization.name.syncState === SyncState.DIRTY) {
+        return EditState.EDITED
+    }
+
+    if (viewModel.editedOrganization.id.syncState === SyncState.DIRTY) {
+        return EditState.EDITED
+    }
+
+    if (viewModel.editedOrganization.gravatarHash.syncState === SyncState.DIRTY) {
+        return EditState.EDITED
+    }
+
+    if (viewModel.editedOrganization.isPrivate.syncState === SyncState.DIRTY) {
+        return EditState.EDITED
+    }
+
+    if (viewModel.editedOrganization.description.syncState === SyncState.DIRTY) {
+        return EditState.EDITED
+    }
+
+    return EditState.UNEDITED
 }
 
 
@@ -185,7 +250,15 @@ export function editOrgUpdateNameSuccess(state: StoreState, action: EditOrgUpdat
         return state
     }
 
-    return {
+    const editedOrg = state.views.editOrgView.viewModel.editedOrganization
+    let syncState
+    if (action.name !== editedOrg.name.remoteValue) {
+        syncState = SyncState.DIRTY
+    } else {
+        syncState = SyncState.CLEAN
+    }
+
+    const newState = {
         ...state,
         views: {
             ...state.views,
@@ -193,19 +266,34 @@ export function editOrgUpdateNameSuccess(state: StoreState, action: EditOrgUpdat
                 ...state.views.editOrgView,
                 viewModel: {
                     ...state.views.editOrgView.viewModel,
-                    editState: EditState.EDITED,
+                    // editState: editState,
                     editedOrganization: {
                         ...state.views.editOrgView.viewModel.editedOrganization,
                         name: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.name,
                             value: action.name,
-                            validationState: ValidationState.VALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: {
-                                type: UIErrorType.NONE
-                            }
+                            syncState: syncState,
+                            validationState: validationStateOk()
                         }
                     }
+                }
+            }
+        }
+    }
+
+    // This bit is just to ensure that the overall edit state (used for controlling, e.g., the 
+    // enablement of a save button).
+    const editState = evaluateEditorState(newState.views.editOrgView.viewModel)
+
+    return {
+        ...newState,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...newState.views.editOrgView,
+                viewModel: {
+                    ...newState.views.editOrgView.viewModel,
+                    editState: editState
                 }
             }
         }
@@ -229,11 +317,10 @@ export function editOrgUpdateNameError(state: StoreState, action: EditOrgUpdateN
                     editedOrganization: {
                         ...state.views.editOrgView.viewModel.editedOrganization,
                         name: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.name,
                             value: action.name,
-                            validationState: ValidationState.INVALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: action.error
+                            syncState: SyncState.DIRTY,
+                            validationState: action.error
                         }
                     }
                 }
@@ -248,7 +335,7 @@ export function editOrgUpdateGravatarHashSuccess(state: StoreState, action: Edit
         return state
     }
 
-    return {
+    const newState = {
         ...state,
         views: {
             ...state.views,
@@ -260,15 +347,30 @@ export function editOrgUpdateGravatarHashSuccess(state: StoreState, action: Edit
                     editedOrganization: {
                         ...state.views.editOrgView.viewModel.editedOrganization,
                         gravatarHash: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.gravatarHash,
                             value: action.gravatarHash,
-                            validationState: ValidationState.VALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: {
-                                type: UIErrorType.NONE
-                            }
+                            syncState: SyncState.DIRTY,
+                            validationState: validationStateOk()
                         }
                     }
+                }
+            }
+        }
+    }
+
+    // This bit is just to ensure that the overall edit state (used for controlling, e.g., the 
+    // enablement of a save button).
+    const editState = evaluateEditorState(newState.views.editOrgView.viewModel)
+
+    return {
+        ...newState,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...newState.views.editOrgView,
+                viewModel: {
+                    ...newState.views.editOrgView.viewModel,
+                    editState: editState
                 }
             }
         }
@@ -292,11 +394,10 @@ export function editOrgUpdateGravatarHashError(state: StoreState, action: EditOr
                     editedOrganization: {
                         ...state.views.editOrgView.viewModel.editedOrganization,
                         gravatarHash: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.gravatarHash,
                             value: action.gravatarHash,
-                            validationState: ValidationState.INVALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: action.error
+                            syncState: SyncState.DIRTY,
+                            validationState: action.error
                         }
                     }
                 }
@@ -343,12 +444,20 @@ export function editOrgUpdateGravatarHashError(state: StoreState, action: EditOr
 //     }
 // }
 
-export function editOrgUpdateDescriptionSuccess(state: StoreState, action: EditOrgUpdateDescriptionSuccess) {
+export function updateDescriptionSuccess(state: StoreState, action: EditOrgUpdateDescriptionSuccess) {
     if (!state.views.editOrgView.viewModel) {
         return state
     }
 
-    return {
+    const editedOrg = state.views.editOrgView.viewModel.editedOrganization
+    let syncState
+    if (action.description !== editedOrg.description.remoteValue) {
+        syncState = SyncState.DIRTY
+    } else {
+        syncState = SyncState.CLEAN
+    }
+
+    const newState = {
         ...state,
         views: {
             ...state.views,
@@ -360,15 +469,30 @@ export function editOrgUpdateDescriptionSuccess(state: StoreState, action: EditO
                     editedOrganization: {
                         ...state.views.editOrgView.viewModel.editedOrganization,
                         description: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.description,
                             value: action.description,
-                            validationState: ValidationState.VALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: {
-                                type: UIErrorType.NONE
-                            }
+                            syncState: syncState,
+                            validationState: validationStateOk()
                         }
                     }
+                }
+            }
+        }
+    }
+
+    // This bit is just to ensure that the overall edit state (used for controlling, e.g., the 
+    // enablement of a save button).
+    const editState = evaluateEditorState(newState.views.editOrgView.viewModel)
+
+    return {
+        ...newState,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...newState.views.editOrgView,
+                viewModel: {
+                    ...newState.views.editOrgView.viewModel,
+                    editState: editState
                 }
             }
         }
@@ -392,11 +516,10 @@ export function editOrgUpdateDescriptionError(state: StoreState, action: EditOrg
                     editedOrganization: {
                         ...state.views.editOrgView.viewModel.editedOrganization,
                         description: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.description,
                             value: action.description,
-                            validationState: ValidationState.INVALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: action.error
+                            syncState: SyncState.DIRTY,
+                            validationState: action.error
                         }
                     }
                 }
@@ -410,7 +533,16 @@ export function updateIsPrivateSuccess(state: StoreState, action: UpdateIsPrivat
         return state
     }
 
-    return {
+
+    const editedOrg = state.views.editOrgView.viewModel.editedOrganization
+    let syncState
+    if (action.isPrivate !== editedOrg.isPrivate.remoteValue) {
+        syncState = SyncState.DIRTY
+    } else {
+        syncState = SyncState.CLEAN
+    }
+
+    const newState = {
         ...state,
         views: {
             ...state.views,
@@ -422,15 +554,30 @@ export function updateIsPrivateSuccess(state: StoreState, action: UpdateIsPrivat
                     editedOrganization: {
                         ...state.views.editOrgView.viewModel.editedOrganization,
                         isPrivate: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.isPrivate,
                             value: action.isPrivate,
-                            validationState: ValidationState.VALID,
-                            editState: EditState.EDITED,
-                            validatedAt: new Date(),
-                            error: {
-                                type: UIErrorType.NONE
-                            }
+                            syncState: syncState,
+                            validationState: validationStateOk()
                         }
                     }
+                }
+            }
+        }
+    }
+
+    // This bit is just to ensure that the overall edit state (used for controlling, e.g., the 
+    // enablement of a save button).
+    const editState = evaluateEditorState(newState.views.editOrgView.viewModel)
+
+    return {
+        ...newState,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...newState.views.editOrgView,
+                viewModel: {
+                    ...newState.views.editOrgView.viewModel,
+                    editState: editState
                 }
             }
         }
@@ -473,7 +620,7 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
         // case ActionFlag.EDIT_ORG_UPDATE_ID_ERROR:
         //     return editOrgUpdateIdError(state, action as EditOrgUpdateIdError)
         case ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_SUCCESS:
-            return editOrgUpdateDescriptionSuccess(state, action as EditOrgUpdateDescriptionSuccess)
+            return updateDescriptionSuccess(state, action as EditOrgUpdateDescriptionSuccess)
         case ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_ERROR:
             return editOrgUpdateDescriptionError(state, action as EditOrgUpdateDescriptionError)
         case ActionFlag.EDIT_ORG_EVALUATE_OK:

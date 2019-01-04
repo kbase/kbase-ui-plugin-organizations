@@ -22,6 +22,7 @@ enum NavigateTo {
 export interface DashboardProps {
     viewModel: DashboardViewModel
     currentUser: userModel.Username
+    onRefresh: () => void
 }
 
 interface DashboardState {
@@ -43,6 +44,10 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
     onNavigateToNewOrg() {
         this.setState({ navigateTo: NavigateTo.NEW_ORG })
+    }
+
+    onRefresh() {
+        this.props.onRefresh()
     }
 
     onShowInfo() {
@@ -121,6 +126,8 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 <Button key="newOrgButton" onClick={this.onNavigateToNewOrg.bind(this)}><Icon type="plus" />{' '}New</Button>
                 {' '}
                 <Button key="browseButton" onClick={this.onNavigateToBrowser.bind(this)}>Browse All</Button>
+                {' '}
+                <Button key="refresh" onClick={this.onRefresh.bind(this)}><Icon type="reload" />{' '}Refresh</Button>
             </div>
         )
         return (

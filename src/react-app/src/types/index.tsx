@@ -23,32 +23,88 @@ export enum UIErrorType {
 }
 
 export interface UIError {
-    type: UIErrorType,
+    type: UIErrorType
     message?: string
 }
 
-export interface EditableString {
-    value: string
-    editState: EditState
-    validationState: ValidationState
-    validatedAt: Date | null
-    error: UIError
+export enum SyncState {
+    NONE = 0,
+    NEW,
+    DIRTY,
+    CLEAN
 }
 
-export interface EditableNullableString {
+export enum EditState {
+    NONE = 'NONE',
+    UNEDITED = 'UNEDITED',
+    EDITED = 'EDITED'
+}
+
+
+// export enum ValidationState {
+//     NONE = 0,
+//     VALID,
+//     INVALID,
+//     // DIRTY = 'DIRTY',
+//     MISSING
+// }
+
+export enum ValidationErrorType {
+    OK = 0,
+    ERROR,
+    REQUIRED_MISSING
+}
+
+export interface ValidationStateBase {
+    type: ValidationErrorType
+    validatedAt: Date
+}
+
+export interface ValidationStateOk extends ValidationStateBase {
+    type: ValidationErrorType.OK
+}
+
+export interface ValidationStateError extends ValidationStateBase {
+    type: ValidationErrorType.ERROR
+    message: string
+}
+
+export interface ValidationStateRequiredMissing extends ValidationStateBase {
+    type: ValidationErrorType.REQUIRED_MISSING
+    message: string
+}
+
+// export interface ValidationStateAsyncError extends ValidationStateBase {
+//     type: ValidationErrorType.ASYNC_ERROR
+//     message: string
+//     
+// }
+
+export type ValidationState = ValidationStateOk | ValidationStateError | ValidationStateRequiredMissing
+
+export interface Editable {
+    value: any
+    remoteValue: any
+    syncState: SyncState
+    // editState: EditState
+    // validationState: ValidationState
+    validationState: ValidationState
+    // validatedAt: Date | null
+    // error: UIError
+}
+export interface EditableString extends Editable {
+    value: string,
+    remoteValue: string | null
+}
+
+export interface EditableNullableString extends Editable {
     value: string | null
-    editState: EditState
-    validationState: ValidationState
-    validatedAt: Date | null
-    error: UIError
+    remoteValue: string | null
 }
 
-export interface EditableBoolean {
+export interface EditableBoolean extends Editable {
     value: boolean
-    editState: EditState
-    validationState: ValidationState
-    validatedAt: Date | null
-    error: UIError
+    remoteValue: boolean | null
 }
 
 export interface EditableOrganization {
@@ -57,6 +113,17 @@ export interface EditableOrganization {
     gravatarHash: EditableNullableString
     description: EditableString
     isPrivate: EditableBoolean
+}
+
+
+// TODO: or CLEAN to replace new and saved
+export enum SaveState {
+    NONE = 'NONE',
+    NEW = 'NEW',
+    READY = 'READY',
+    SAVING = 'SAVING',
+    SAVED = 'SAVED',
+    SAVE_ERROR = 'SAVE_ERROR'
 }
 
 export interface User {
@@ -252,56 +319,6 @@ export interface Authorization {
     status: AuthState,
     message: string,
     authorization: UserAuthorization
-}
-
-export enum EditOrgState {
-    NONE = 0,
-    FETCHING,
-    READY,
-    EDITING_CAN_SAVE,
-    EDITING_ERRORS,
-    SAVING,
-    SAVED,
-    ERROR
-}
-
-export enum SyncState {
-    NONE = 'NONE',
-    NEW = 'NEW',
-    DIRTY = 'DIRTY',
-    CLEAN = 'CLEAN'
-}
-
-export enum EditState {
-    NONE = 'NONE',
-    UNEDITED = 'UNEDITED',
-    EDITED = 'EDITED'
-}
-
-// TODO: or CLEAN to replace new and saved
-export enum SaveState {
-    NONE = 'NONE',
-    NEW = 'NEW',
-    READY = 'READY',
-    SAVING = 'SAVING',
-    SAVED = 'SAVED',
-    SAVE_ERROR = 'SAVE_ERROR'
-}
-
-export enum ValidationState {
-    NONE = 'NONE',
-    VALID = 'VALID',
-    INVALID = 'INVALID',
-    DIRTY = 'DIRTY'
-}
-
-export enum FieldState {
-    NONE = 0,
-    UNEDITED_OK,
-    UNEDITED_ERROR,
-    EDITED_OK,
-    EDITED_ERROR,
-    EDITED_WARNING
 }
 
 export enum ViewOrgState {

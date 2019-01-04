@@ -4,13 +4,14 @@ import marked from 'marked';
 import { Button, Icon, Modal, Input, Checkbox } from 'antd';
 import md5 from 'md5'
 
-import { EditableOrganization, SaveState, ValidationState, EditState, AppError } from '../../../types';
+import { EditableOrganization, SaveState, ValidationState, EditState, AppError, Editable, ValidationErrorType, SyncState } from '../../../types';
 
 import './component.css'
 
 import Header from '../../Header';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import OrgAvatar from '../../OrgAvatar';
+import Validation from '../../../data/models/organization/validation';
 
 export interface NewOrganizationProps {
     editState: EditState,
@@ -79,11 +80,23 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                             may also change it at any time.
                         </dd>
                         <dt>
-                            gravatar
+                            logo
                         </dt>
                         <dd>
-                            You should associate your Organization with an avatar hosted with the Gravatar service. To do so,
-                            simply enter the email address associated with your gravatar into the first
+                            <p>
+                                Logo support has undergone a redesign, but has not yet been implemented. The new
+                                design supports direct image upload, and removes gravatar support.
+                            </p>
+                            <p>
+                                For now, gravatar is the only support for org logo
+                            </p>
+                            <p>
+                                In order to display a custom logo for your organization, you need to associate
+                                your Organization with an avatar hosted with the Gravatar service.
+                                To do so,
+                                simply enter the email address associated with your gravatar and press the update
+                                button. This will calculate a new "gravatar hash" and associate it with your organization.
+                            </p>
                         </dd>
                         <dt>
                             id
@@ -191,7 +204,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
     canSave() {
         return (
             this.props.editState === EditState.EDITED &&
-            this.props.validationState === ValidationState.VALID &&
+            this.props.validationState.type === ValidationErrorType.OK &&
             (this.props.saveState === SaveState.NEW ||
                 this.props.saveState === SaveState.READY ||
                 this.props.saveState === SaveState.SAVED)
@@ -205,6 +218,38 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
+    calcFieldClass(field: Editable) {
+        switch (field.validationState.type) {
+            // case (ValidationErrorType.OK):
+            //     return 'validation-ok'
+            case (ValidationErrorType.ERROR):
+                return 'validation-error'
+            case (ValidationErrorType.REQUIRED_MISSING):
+                return 'validation-error'
+        }
+
+        switch (field.syncState) {
+            case (SyncState.DIRTY):
+                return 'sync-dirty'
+            default:
+                return 'validation-ok'
+        }
+    }
+
+    renderFieldError(field: Editable) {
+        if (field.validationState.type !== ValidationErrorType.OK) {
+            if (field.syncState === SyncState.DIRTY) {
+                return (
+                    <span style={{ color: 'red' }}>
+                        {field.validationState.message}
+                    </span>
+                )
+            }
+        } else {
+            return ''
+        }
+    }
+
     renderForm() {
         return (
             <form id="newOrganizationForm" className="editor" onSubmit={this.onSubmit.bind(this)}>
@@ -212,8 +257,19 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     <div className="col1 field-label">name</div>
                     <div className="col2">
                         <Input value={this.props.newOrganization.name.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.name)}
                             onChange={this.onNameChange.bind(this)} />
-                        {this.props.newOrganization.name.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.name.error.message}</span>) : ''}
+                        {this.renderFieldError(this.props.newOrganization.name)}
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col1 field-label">id</div>
+                    <div className="col2">
+                        <Input
+                            value={this.props.newOrganization.id.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.id)}
+                            onChange={this.onIdChange.bind(this)} />
+                        {this.renderFieldError(this.props.newOrganization.id)}
                     </div>
                 </div>
                 <div className="row">
@@ -221,12 +277,13 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     <div className="col2">
                         <Checkbox
                             checked={this.props.newOrganization.isPrivate.value}
+                            className={this.calcFieldClass(this.props.newOrganization.isPrivate)}
                             onChange={this.onIsPrivateChange.bind(this)} />
-                        {this.props.newOrganization.isPrivate.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.id.error.message}</span>) : ''}
+                        {this.renderFieldError(this.props.newOrganization.isPrivate)}
                     </div>
                 </div>
                 <div className="row gravatarHash">
-                    <div className="col1 field-label">gravatar hash</div>
+                    <div className="col1 field-label">logo</div>
                     <div className="col2">
                         <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '4px' }}>
                             <div style={{ flex: '1 1 0px' }}>
@@ -241,27 +298,20 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                                     onClick={this.onGravatarEmailSync.bind(this)} />
                             </div>
                         </div>
-                        <Input
+                        {/* <Input
                             value={this.props.newOrganization.gravatarHash.value || ''}
-                            onChange={this.onGravatarHashChange.bind(this)} />
-                        {this.props.newOrganization.gravatarHash.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.gravatarHash.error.message}</span>) : ''}
+                            onChange={this.onGravatarHashChange.bind(this)} /> */}
+                        {this.renderFieldError(this.props.newOrganization.gravatarHash)}
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col1 field-label">id</div>
-                    <div className="col2">
-                        <Input
-                            value={this.props.newOrganization.id.value || ''}
-                            onChange={this.onIdChange.bind(this)} />
-                        {this.props.newOrganization.id.error ? (<span style={{ color: 'red' }}>{this.props.newOrganization.id.error.message}</span>) : ''}
-                    </div>
-                </div>
+
                 <div className="row" style={{ flex: '1 1 0px', minHeight: '30em', maxHeight: '60em' }}>
                     <div className="col1 field-label">description</div>
                     <div className="col2">
                         <textarea value={this.props.newOrganization.description.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.description)}
                             onChange={this.onDescriptionChange.bind(this)} />
-                        {this.props.newOrganization.description.error ? (<div style={{ color: 'red' }}>{this.props.newOrganization.description.error.message}</div>) : ''}
+                        {this.renderFieldError(this.props.newOrganization.description)}
                     </div>
                 </div>
                 <div className="row">
@@ -312,6 +362,14 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             </div>
             <div className="row">
                 <div className="col2">
+                    <div className="id">
+                        <span style={{ color: 'silver' }}>{this.origin}/#orgs/organizations/</span>
+                        {this.props.newOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col2">
                     <div className="name">
                         {this.renderIsPrivate(this.props.newOrganization.isPrivate.value)}
                     </div>
@@ -324,14 +382,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     </div>
                 </div>
             </div>
-            <div className="row">
-                <div className="col2">
-                    <div className="id">
-                        <span style={{ color: 'silver' }}>{this.origin}/#orgs/organizations/</span>
-                        {this.props.newOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
-                    </div>
-                </div>
-            </div>
+
             <div className="row" style={{ flex: '1 1 0px' }}>
                 <div className="col2">
                     <div className="description"

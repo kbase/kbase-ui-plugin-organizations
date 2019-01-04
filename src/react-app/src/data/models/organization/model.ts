@@ -1,5 +1,5 @@
 import * as groupsApi from '../../apis/groups'
-import { SortDirection, EditableOrganization, UIErrorType, UIError, EditState, ValidationState, EditableString } from '../../../types';
+import { SortDirection, EditableOrganization, UIErrorType, UIError, EditState, ValidationState, EditableString, ValidationErrorType } from '../../../types';
 import * as requestModel from '../requests'
 import * as userModel from '../user';
 import Validation from './validation'
@@ -538,11 +538,11 @@ export class OrganizationModel {
         })
 
         // do record-level validation
-        if ((newOrg.id.error && newOrg.id.error.type === UIErrorType.ERROR) ||
-            (newOrg.name.error && newOrg.name.error.type === UIErrorType.ERROR) ||
-            (newOrg.gravatarHash.error && newOrg.gravatarHash.error.type === UIErrorType.ERROR) ||
-            (newOrg.description.error && newOrg.description.error.type === UIErrorType.ERROR) ||
-            (newOrg.isPrivate.error && newOrg.isPrivate.error.type === UIErrorType.ERROR)
+        if ((newOrg.id.validationState.type !== ValidationErrorType.OK) ||
+            (newOrg.name.validationState.type !== ValidationErrorType.OK) ||
+            (newOrg.gravatarHash.validationState.type !== ValidationErrorType.OK) ||
+            (newOrg.description.validationState.type !== ValidationErrorType.OK) ||
+            (newOrg.isPrivate.validationState.type !== ValidationErrorType.OK)
         ) {
             return Promise.reject(new Error('One or more fields are invalid'))
         }
@@ -588,15 +588,15 @@ export class OrganizationModel {
         })
     }
 
-    validateOrgId(id: string): [string, UIError] {
+    validateOrgId(id: string): [string, ValidationState] {
         return Validation.validateOrgId(id);
     }
 
-    validateOrgName(name: string): [string, UIError] {
+    validateOrgName(name: string): [string, ValidationState] {
         return Validation.validateOrgName(name)
     }
 
-    validateOrgDescription(description: string): [string, UIError] {
+    validateOrgDescription(description: string): [string, ValidationState] {
         return Validation.validateOrgDescription(description);
     }
 

@@ -225,6 +225,127 @@ export function load() {
     }
 }
 
+// Refresh
+// Much like load
+
+export interface Refresh extends DashboardAction<ActionFlag.DASHBOARD_REFRESH> {
+    type: ActionFlag.DASHBOARD_REFRESH
+}
+
+export interface RefreshStart extends DashboardAction<ActionFlag.DASHBOARD_REFRESH_START> {
+    type: ActionFlag.DASHBOARD_REFRESH_START
+}
+
+export interface RefreshSuccess extends DashboardAction<ActionFlag.DASHBOARD_REFRESH_SUCCESS> {
+    type: ActionFlag.DASHBOARD_REFRESH_SUCCESS
+    organizations: Array<uberModel.UberOrganization>
+    requestInbox: Array<requestModel.Request>
+    requestOutbox: Array<requestModel.Request>
+    pendingGroupRequests: Array<requestModel.Request>
+}
+
+export interface RefreshError extends DashboardAction<ActionFlag.DASHBOARD_REFRESH_ERROR> {
+    type: ActionFlag.DASHBOARD_REFRESH_ERROR
+    error: AppError
+}
+
+// Generators
+
+export function refreshStart(): RefreshStart {
+    return {
+        type: ActionFlag.DASHBOARD_REFRESH_START
+    }
+}
+
+export function refreshSuccess(
+    organizations: Array<uberModel.UberOrganization>,
+    requestInbox: Array<requestModel.Request>,
+    requestOutbox: Array<requestModel.Request>,
+    pendingGroupRequests: Array<requestModel.Request>): RefreshSuccess {
+    return {
+        type: ActionFlag.DASHBOARD_REFRESH_SUCCESS,
+        organizations: organizations,
+        // users: users,
+        requestInbox,
+        requestOutbox,
+        pendingGroupRequests: pendingGroupRequests
+    }
+}
+
+export function refreshError(error: AppError): RefreshError {
+    return {
+        type: ActionFlag.DASHBOARD_REFRESH_ERROR,
+        error: error
+    }
+}
+
+// Thunks
+
+export function refresh() {
+    return async (dispatch: ThunkDispatch<StoreState, void, DashboardAction<any>>, getState: () => StoreState) => {
+        dispatch(refreshStart())
+
+        const {
+            views: {
+                dashboardView
+            },
+            auth: { authorization: { token, username } },
+            app: { config } } = getState()
+
+        const uberClient = new uberModel.UberModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url,
+            workspaceServiceURL: config.services.Workspace.url,
+            serviceWizardURL: config.services.ServiceWizard.url
+        })
+
+        const requestModelClient = new requestModel.RequestsModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+
+        // TODO:
+
+        // get the projection, or view:
+        // - orgs of current user
+        // - requests created by or targeting current user
+        try {
+            const orgs = await uberClient.getOrganizationsForUser()
+
+            const requestOutbox = await requestModelClient.getOutboundRequests()
+
+            const requestInbox = await requestModelClient.getInboundRequests()
+
+            const adminOrgIds = orgs
+                .filter(({ organization }) => {
+                    // TODO: why not have relation on org, again?   
+                    if (organization.owner.username === username) {
+                        return true
+                    }
+                    if (organization.members.find((member) => {
+                        return (member.username === username && member.type === MemberType.ADMIN)
+                    })) {
+                        return true
+                    }
+                    return false
+                })
+                .map(({ organization }) => {
+                    return organization.id
+                })
+
+            const pendingGroupRequests = await requestModelClient.getPendingOrganizationRequests(adminOrgIds)
+
+            dispatch(refreshSuccess(orgs, requestInbox, requestOutbox, pendingGroupRequests))
+        } catch (ex) {
+            dispatch(refreshError({
+                code: 'error',
+                message: ex.message
+            }))
+        }
+    }
+}
+
 
 // Requests
 

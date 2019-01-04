@@ -24,6 +24,7 @@
 .OrganizationHeader .yourRelation {
     flex: 1 1 0px;
     /* border: 1px blue dashed; */
+    padding: 4px;
 }
 
 .OrganizationHeader .ownerInfo {

@@ -23,7 +23,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
     renderLoading() {
         return (
             <div>
-                Fetching your orgs and other stuff...
+                Fetching your orgs and other things...
             </div>
         )
     }
