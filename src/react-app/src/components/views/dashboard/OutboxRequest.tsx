@@ -79,7 +79,6 @@ export default class Request extends React.Component<RequestProps, RequestState>
                                 <div className="miniDetail">
                                     <Narrative workspaceId={parseInt(request.narrativeId, 10)} />
                                 </div>
-
                             </div>
                         )
                 }
@@ -88,11 +87,9 @@ export default class Request extends React.Component<RequestProps, RequestState>
                     case requestModel.RequestResourceType.USER:
                         return (
                             <div>
-
                                 <div className="miniDetail">
                                     <User userId={request.user} avatarSize={30} />
                                 </div>
-
                             </div>
                         )
                 }

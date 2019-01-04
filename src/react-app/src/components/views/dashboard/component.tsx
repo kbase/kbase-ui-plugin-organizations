@@ -3,7 +3,7 @@ import Header from '../../Header';
 import { Icon, Card, Button, Alert, Modal } from 'antd';
 import './component.css'
 import { Redirect } from 'react-router-dom';
-import { DashboardViewModel } from '../../../types';
+import { DashboardViewModel, ComponentLoadingState } from '../../../types';
 import * as orgModel from '../../../data/models/organization/model'
 import * as requestModel from '../../../data/models/requests'
 import Organization from './Organization';
@@ -120,6 +120,20 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         })
     }
 
+    renderRefreshButton() {
+        switch (this.props.viewModel.refreshState) {
+            case ComponentLoadingState.LOADING:
+                return (
+                    <Button key="refresh"><Icon type="sync" spin />{' '}Refreshing...</Button>
+                )
+            default:
+                return (
+                    <Button key="refresh" onClick={this.onRefresh.bind(this)}><Icon type="reload" />{' '}Refresh</Button>
+                )
+        }
+
+    }
+
     renderOrganizationsCard() {
         const extra = (
             <div>
@@ -127,7 +141,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 {' '}
                 <Button key="browseButton" onClick={this.onNavigateToBrowser.bind(this)}>Browse All</Button>
                 {' '}
-                <Button key="refresh" onClick={this.onRefresh.bind(this)}><Icon type="reload" />{' '}Refresh</Button>
+                {this.renderRefreshButton()}
             </div>
         )
         return (

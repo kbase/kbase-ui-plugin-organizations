@@ -526,6 +526,7 @@ export interface Notification {
 export interface DashboardViewModel {
     organizations: Array<uberModel.UberOrganization>
     // users: Map<userModel.Username, userModel.User>
+    refreshState: ComponentLoadingState
     requestInbox: Array<requestModel.Request>
     requestOutbox: Array<requestModel.Request>
     pendingAdminRequests: Array<requestModel.Request>
@@ -627,8 +628,6 @@ export interface StoreState {
             // }
         }
     }
-
-
 
     auth: Authorization
     error: AppError | null

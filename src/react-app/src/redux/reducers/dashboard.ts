@@ -1,181 +1,139 @@
-import { Action } from 'redux'
-
 import { ActionFlag } from '../actions'
 
-import { LoadStart, LoadSuccess, LoadError, DashboardAction, Unload, CancelOutboxRequest, CancelOutboxRequestSuccess, AcceptInboxRequestSuccess, RejectInboxRequestSuccess, RefreshStart, RefreshSuccess, RefreshError } from '../actions/dashboard'
-import { StoreState, ComponentLoadingState } from '../../types';
+import {
+    LoadStart, LoadSuccess, LoadError, DashboardAction, Unload,
+    CancelOutboxRequestSuccess, AcceptInboxRequestSuccess, RejectInboxRequestSuccess,
+    RefreshStart, RefreshSuccess, RefreshError
+} from '../actions/dashboard'
+import { StoreState, ComponentLoadingState, DashboardView } from '../../types';
 
-function loadStart(state: StoreState, action: LoadStart): StoreState {
+function loadStart(state: DashboardView, action: LoadStart): DashboardView {
     return {
-        ...state,
-        views: {
-            ...state.views,
-            dashboardView: {
-                loadingState: ComponentLoadingState.LOADING,
-                error: null,
-                viewModel: null
-            }
+        loadingState: ComponentLoadingState.LOADING,
+        error: null,
+        viewModel: null
+    }
+}
+
+function loadSuccess(state: DashboardView, action: LoadSuccess): DashboardView {
+    return {
+        loadingState: ComponentLoadingState.SUCCESS,
+        error: null,
+        viewModel: {
+            refreshState: ComponentLoadingState.NONE,
+            organizations: action.organizations,
+            // users: action.users,
+            // notifications: [],
+            requestInbox: action.requestInbox,
+            requestOutbox: action.requestOutbox,
+            pendingAdminRequests: action.pendingGroupRequests
         }
     }
 }
 
-function loadSuccess(state: StoreState, action: LoadSuccess): StoreState {
+function loadError(state: DashboardView, action: LoadError): DashboardView {
     return {
         ...state,
-        views: {
-            ...state.views,
-            dashboardView: {
-                loadingState: ComponentLoadingState.SUCCESS,
-                error: null,
-                viewModel: {
-                    organizations: action.organizations,
-                    // users: action.users,
-                    // notifications: [],
-                    requestInbox: action.requestInbox,
-                    requestOutbox: action.requestOutbox,
-                    pendingAdminRequests: action.pendingGroupRequests
-                }
-            }
+        loadingState: ComponentLoadingState.ERROR,
+        error: action.error,
+        viewModel: null
+    }
+}
+
+function refreshStart(state: DashboardView, action: RefreshStart): DashboardView {
+    if (!state.viewModel) {
+        return state
+    }
+    return {
+        ...state,
+        viewModel: {
+            ...state.viewModel,
+            refreshState: ComponentLoadingState.LOADING
+        }
+
+    }
+}
+
+function refreshSuccess(state: DashboardView, action: RefreshSuccess): DashboardView {
+    return {
+        ...state,
+        error: null,
+        viewModel: {
+            refreshState: ComponentLoadingState.SUCCESS,
+            organizations: action.organizations,
+            requestInbox: action.requestInbox,
+            requestOutbox: action.requestOutbox,
+            pendingAdminRequests: action.pendingGroupRequests
         }
     }
 }
 
-function loadError(state: StoreState, action: LoadError): StoreState {
+function refreshError(state: DashboardView, action: RefreshError): DashboardView {
+    if (!state.viewModel) {
+        return state
+    }
     return {
         ...state,
-        views: {
-            ...state.views,
-            dashboardView: {
-                loadingState: ComponentLoadingState.ERROR,
-                error: action.error,
-                viewModel: null
-            }
+        error: action.error,
+        viewModel: {
+            ...state.viewModel,
+            refreshState: ComponentLoadingState.ERROR
         }
     }
 }
 
-function refreshStart(state: StoreState, action: RefreshStart): StoreState {
+function unload(state: DashboardView, action: Unload): DashboardView {
     return {
-        ...state,
-        views: {
-            ...state.views,
-            dashboardView: {
-                ...state.views.dashboardView,
-                loadingState: ComponentLoadingState.LOADING
-            }
-        }
+        loadingState: ComponentLoadingState.NONE,
+        error: null,
+        viewModel: null
     }
 }
 
-function refreshSuccess(state: StoreState, action: RefreshSuccess): StoreState {
-    return {
-        ...state,
-        views: {
-            ...state.views,
-            dashboardView: {
-                loadingState: ComponentLoadingState.SUCCESS,
-                error: null,
-                viewModel: {
-                    organizations: action.organizations,
-                    requestInbox: action.requestInbox,
-                    requestOutbox: action.requestOutbox,
-                    pendingAdminRequests: action.pendingGroupRequests
-                }
-            }
-        }
-    }
-}
-
-function refreshError(state: StoreState, action: RefreshError): StoreState {
-    return {
-        ...state,
-        views: {
-            ...state.views,
-            dashboardView: {
-                loadingState: ComponentLoadingState.ERROR,
-                error: action.error,
-                viewModel: null
-            }
-        }
-    }
-}
-
-function unload(state: StoreState, action: Unload): StoreState {
-    return {
-        ...state,
-        views: {
-            ...state.views,
-            dashboardView: {
-                loadingState: ComponentLoadingState.NONE,
-                error: null,
-                viewModel: null
-            }
-        }
-    }
-}
-
-function cancelOutboxRequest(state: StoreState, action: CancelOutboxRequestSuccess): StoreState {
-    if (!state.views.dashboardView.viewModel) {
+function cancelOutboxRequest(state: DashboardView, action: CancelOutboxRequestSuccess): DashboardView {
+    if (!state.viewModel) {
         throw new Error('view model mysteriously missing in dashboard')
     }
     return {
         ...state,
-        views: {
-            ...state.views,
-            dashboardView: {
-                ...state.views.dashboardView,
-                viewModel: {
-                    ...state.views.dashboardView.viewModel,
-                    // TODO: rename to requestOutbox, requestInbox
-                    requestOutbox: action.requests
-                }
-            }
+        viewModel: {
+            ...state.viewModel,
+            // TODO: rename to requestOutbox, requestInbox
+            requestOutbox: action.requests
         }
     }
 }
 
-function acceptInboxRequest(state: StoreState, action: AcceptInboxRequestSuccess): StoreState {
-    if (!state.views.dashboardView.viewModel) {
+function acceptInboxRequest(state: DashboardView, action: AcceptInboxRequestSuccess): DashboardView {
+    if (!state.viewModel) {
         throw new Error('view model mysteriously missing in dashboard')
     }
     return {
         ...state,
-        views: {
-            ...state.views,
-            dashboardView: {
-                ...state.views.dashboardView,
-                viewModel: {
-                    ...state.views.dashboardView.viewModel,
-                    // TODO: rename to requestOutbox, requestInbox
-                    requestInbox: action.requests,
-                    organizations: action.organizations
-                }
-            }
+        viewModel: {
+            ...state.viewModel,
+            // TODO: rename to requestOutbox, requestInbox
+            requestInbox: action.requests,
+            organizations: action.organizations
         }
     }
 }
 
-function rejectInboxRequest(state: StoreState, action: RejectInboxRequestSuccess): StoreState {
-    if (!state.views.dashboardView.viewModel) {
+function rejectInboxRequest(state: DashboardView, action: RejectInboxRequestSuccess): DashboardView {
+    if (!state.viewModel) {
         throw new Error('view model mysteriously missing in dashboard')
     }
     return {
         ...state,
-        views: {
-            ...state.views,
-            dashboardView: {
-                ...state.views.dashboardView,
-                viewModel: {
-                    ...state.views.dashboardView.viewModel,
-                    // TODO: rename to requestOutbox, requestInbox
-                    requestInbox: action.requests
-                }
-            }
+        viewModel: {
+            ...state.viewModel,
+            // TODO: rename to requestOutbox, requestInbox
+            requestInbox: action.requests
         }
     }
 }
 
-export default function reducer(state: StoreState, action: DashboardAction<any>): StoreState | null {
+function localReducer(state: DashboardView, action: DashboardAction<any>): DashboardView | null {
     switch (action.type) {
         case ActionFlag.DASHBOARD_LOAD_START:
             return loadStart(state, action as LoadStart)
@@ -199,5 +157,19 @@ export default function reducer(state: StoreState, action: DashboardAction<any>)
             return rejectInboxRequest(state, action as RejectInboxRequestSuccess)
         default:
             return null
+    }
+}
+
+export default function reducer(state: StoreState, action: DashboardAction<any>): StoreState | null {
+    const dashboardView = localReducer(state.views.dashboardView, action)
+    if (!dashboardView) {
+        return null
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            dashboardView
+        }
     }
 }

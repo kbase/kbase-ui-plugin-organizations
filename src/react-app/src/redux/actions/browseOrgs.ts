@@ -8,8 +8,6 @@ import {
 } from '../../types'
 
 import * as orgModel from '../../data/models/organization/model'
-import * as uberModel from '../../data/models/uber'
-
 
 export interface Load extends Action<ActionFlag.BROWSE_ORGS_LOAD> {
     type: ActionFlag.BROWSE_ORGS_LOAD
@@ -192,8 +190,6 @@ export function load() {
     }
 }
 
-
-
 // TODO: proper typing here 
 export function searchOrgs(searchTerms: Array<string>) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
@@ -318,8 +314,3 @@ export function filterOrgs(filter: string) {
             })
     }
 }
-
-
-
-
-

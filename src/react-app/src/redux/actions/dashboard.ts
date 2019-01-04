@@ -2,13 +2,10 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
-import { AppError, StoreState, MemberType, ViewOrgState } from '../../types'
-import * as orgsModel from '../../data/models/organization/model'
+import { AppError, StoreState, MemberType } from '../../types'
 import * as userModel from '../../data/models/user'
 import * as requestModel from '../../data/models/requests'
 import * as uberModel from '../../data/models/uber'
-// temp
-import { FeedsClient } from '../../data/models/feeds'
 
 export interface DashboardAction<T> extends Action<T> {
 

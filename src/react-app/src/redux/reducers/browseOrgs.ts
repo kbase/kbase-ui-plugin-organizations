@@ -1,6 +1,6 @@
 import { Action } from 'redux'
 import * as actions from '../actions/browseOrgs'
-import * as types from '../../types'
+import { StoreState, SortDirection, ComponentLoadingState, BrowseOrgsView } from '../../types'
 import { ActionFlag } from '../actions'
 import * as orgModel from '../../data/models/organization/model'
 
@@ -29,13 +29,13 @@ export function applyOrgSearch(orgs: Array<orgModel.Organization>, searchTerms: 
 // dispatch the error
 // FOR NOW:
 // do it here...
-export function searchOrgs(state: types.StoreState, action: actions.SearchOrgs): types.StoreState {
-    if (state.views.browseOrgsView === null || state.views.browseOrgsView.viewModel === null) {
+export function searchOrgs(state: BrowseOrgsView, action: actions.SearchOrgs): BrowseOrgsView {
+    if (state.viewModel === null) {
         console.warn('Cannot start browseOrgs view')
         return state
     }
 
-    const { views: { browseOrgsView: { viewModel: { filter, sortBy, sortDirection } } } } = state
+    // const { viewModel: { filter, sortBy, sortDirection } } = state
 
     // const query: Query = {
     //     searchTerms: action.searchTerms,
@@ -56,147 +56,78 @@ export function searchOrgs(state: types.StoreState, action: actions.SearchOrgs):
     // selectedOrganizationId: string | null
     return {
         ...state,
-        // organizations: result.organizations, 
-        // totalCount: result.total, 
-        // filteredCount: result.organizations.length,
-        views: {
-            ...state.views,
-            browseOrgsView: {
-                ...state.views.browseOrgsView,
-                error: null,
-                viewModel: {
-                    ...state.views.browseOrgsView.viewModel,
-                    selectedOrganizationId: null,
-                    searchTerms: action.searchTerms,
-                    searching: true
-                }
-            }
+        viewModel: {
+            ...state.viewModel,
+            selectedOrganizationId: null,
+            searchTerms: action.searchTerms,
+            searching: true
         }
     }
 }
 
-export function searchOrgsStart(state: types.StoreState, action: actions.SearchOrgsStart): types.StoreState {
-    if (state.views.browseOrgsView === null || state.views.browseOrgsView.viewModel === null) {
+export function searchOrgsStart(state: BrowseOrgsView, action: actions.SearchOrgsStart): BrowseOrgsView {
+    if (state.viewModel === null) {
         console.warn('Cannot start browseOrgs view')
         return state
     }
     return {
         ...state,
-        views: {
-            ...state.views,
-            browseOrgsView: {
-                ...state.views.browseOrgsView,
-                viewModel: {
-                    ...state.views.browseOrgsView.viewModel,
-                    searching: true
-                }
-            }
+        viewModel: {
+            ...state.viewModel,
+            searching: true
         }
     }
 }
 
-export function searchOrgsSuccess(state: types.StoreState, action: actions.SearchOrgsSuccess): types.StoreState {
-    if (state.views.browseOrgsView === null || state.views.browseOrgsView.viewModel === null) {
+export function searchOrgsSuccess(state: BrowseOrgsView, action: actions.SearchOrgsSuccess): BrowseOrgsView {
+    if (state.viewModel === null) {
         console.warn('Cannot start browseOrgs view')
         return state
     }
     return {
         ...state,
-        views: {
-            ...state.views,
-            browseOrgsView: {
-                ...state.views.browseOrgsView,
-                viewModel: {
-                    ...state.views.browseOrgsView.viewModel,
-                    organizations: action.organizations,
-                    totalCount: action.totalCount,
-                    filteredCount: action.organizations.length,
-                    searching: false
-                }
-            }
+        viewModel: {
+            ...state.viewModel,
+            organizations: action.organizations,
+            totalCount: action.totalCount,
+            filteredCount: action.organizations.length,
+            searching: false
         }
     }
 }
 
 // TODO: hmm, uses the global error -- this was early in the development of this (a whole two weeks ago!)
 // and this should now go in the "browseOrgs" (or better named "searchOrgs") branch.
-export function searchOrgsError(state: types.StoreState, action: actions.SearchOrgsError): types.StoreState {
-    if (state.views.browseOrgsView === null || state.views.browseOrgsView.viewModel === null) {
+export function searchOrgsError(state: BrowseOrgsView, action: actions.SearchOrgsError): BrowseOrgsView {
+    if (state.viewModel === null) {
         console.warn('Cannot start browseOrgs view')
         return state
     }
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            browseOrgsView: {
-                ...state.views.browseOrgsView,
-                viewModel: {
-                    ...state.views.browseOrgsView.viewModel,
-                    searching: false,
-                    error: action.error
-                }
-            }
+        viewModel: {
+            ...state.viewModel,
+            searching: false,
+            error: action.error
         }
     }
-
-    // if (state.browseOrgs.view) {
-    //     return {
-    //         ...state,
-    //         browseOrgs: {
-    //             ...state.browseOrgs,
-    //             error: action.error,
-    //             state: types.BrowseOrgsState.ERROR,
-    //             view: {
-    //                 ...state.browseOrgs.view,
-    //                 searching: false
-    //             }
-    //         }
-    //     }
-    // } else {
-    //     return {
-    //         ...state,
-    //         browseOrgs: {
-    //             ...state.browseOrgs,
-    //             error: action.error
-    //         }
-    //     }
-    // }
 }
 
 
-export function sortOrgsStart(state: types.StoreState, action: actions.SortOrgsStart): types.StoreState {
-    if (state.views.browseOrgsView === null || state.views.browseOrgsView.viewModel === null) {
+export function sortOrgsStart(state: BrowseOrgsView, action: actions.SortOrgsStart): BrowseOrgsView {
+    if (state.viewModel === null) {
         console.warn('Cannot start browseOrgs view')
         return state
     }
-    const {
-        views: { browseOrgsView: { viewModel: { searchTerms, filter } } },
-        auth: { authorization: { username } }
-    } = state
-
-    // const query: Query = {
-    //     searchTerms: searchTerms,
-    //     filter: filter,
-    //     sortBy: action.sortBy,
-    //     sortDirection: action.sortDirection,
-    //     username: username
-    // }
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            browseOrgsView: {
-                ...state.views.browseOrgsView,
-                viewModel: {
-                    ...state.views.browseOrgsView.viewModel,
-                    sortBy: action.sortBy,
-                    sortDirection: action.sortDirection,
-                    searching: true
-                }
-            }
+        viewModel: {
+            ...state.viewModel,
+            sortBy: action.sortBy,
+            sortDirection: action.sortDirection,
+            searching: true
         }
     }
 }
@@ -206,7 +137,7 @@ interface Query {
     searchTerms: Array<string>,
     username: string,
     sortBy: string,
-    sortDirection: types.SortDirection,
+    sortDirection: SortDirection,
     filter: string
 }
 
@@ -215,8 +146,8 @@ interface QueryResults {
     total: number
 }
 
-function filterOrgsStart(state: types.StoreState, action: actions.FilterOrgsStart): types.StoreState {
-    if (state.views.browseOrgsView === null || state.views.browseOrgsView.viewModel === null) {
+function filterOrgsStart(state: BrowseOrgsView, action: actions.FilterOrgsStart): BrowseOrgsView {
+    if (state.viewModel === null) {
         console.warn('Cannot start browseOrgs view')
         return state
     }
@@ -225,21 +156,15 @@ function filterOrgsStart(state: types.StoreState, action: actions.FilterOrgsStar
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            browseOrgsView: {
-                ...state.views.browseOrgsView,
-                viewModel: {
-                    ...state.views.browseOrgsView.viewModel,
-                    filter,
-                    searching: true
-                }
-            }
+        viewModel: {
+            ...state.viewModel,
+            filter,
+            searching: true
         }
     }
 }
 
-function loadSuccess(state: types.StoreState, action: actions.LoadSuccess): types.StoreState {
+function loadSuccess(state: BrowseOrgsView, action: actions.LoadSuccess): BrowseOrgsView {
     const { defaultViewModel: {
         rawOrganizations, organizations, searchTerms, sortBy, sortDirection, filter,
         totalCount, filteredCount, selectedOrganizationId, error, searching
@@ -247,21 +172,16 @@ function loadSuccess(state: types.StoreState, action: actions.LoadSuccess): type
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            browseOrgsView: {
-                loadingState: types.ComponentLoadingState.SUCCESS,
-                error: null,
-                viewModel: {
-                    rawOrganizations, organizations, searchTerms, sortBy, sortDirection, filter,
-                    totalCount, filteredCount, selectedOrganizationId, error, searching
-                }
-            }
+        loadingState: ComponentLoadingState.SUCCESS,
+        error: null,
+        viewModel: {
+            rawOrganizations, organizations, searchTerms, sortBy, sortDirection, filter,
+            totalCount, filteredCount, selectedOrganizationId, error, searching
         }
     }
 }
 
-function reducer(state: types.StoreState, action: Action): types.StoreState | null {
+function localReducer(state: BrowseOrgsView, action: Action): BrowseOrgsView | null {
     // NB using discriminant union nature of the ActionX types to narrow
     // the type.
 
@@ -287,4 +207,16 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
     }
 }
 
-export default reducer
+export default function reducer(state: StoreState, action: Action<any>): StoreState | null {
+    const browseOrgsView = localReducer(state.views.browseOrgsView, action)
+    if (!browseOrgsView) {
+        return null
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            browseOrgsView
+        }
+    }
+}
