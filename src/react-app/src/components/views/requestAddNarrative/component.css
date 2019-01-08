@@ -15,12 +15,14 @@
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
+    margin-right: 5px;
 }
 
 .RequestNarrative .body .selectedNarrativeCol {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
+    margin-left: 5px;
 }
 
 .RequestNarrative .body .selectNarrativeCol .narrativeSelector {
