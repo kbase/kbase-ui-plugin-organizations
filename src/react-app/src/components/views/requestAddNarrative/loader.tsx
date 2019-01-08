@@ -39,7 +39,6 @@ class Loader extends React.Component<Props, State> {
     render() {
         switch (this.props.view.loadingState) {
             case types.ComponentLoadingState.NONE:
-                this.props.onLoad(this.props.organizationId)
                 return this.renderLoading()
             case types.ComponentLoadingState.LOADING:
                 return this.renderLoading()
@@ -56,6 +55,13 @@ class Loader extends React.Component<Props, State> {
                 return (
                     <Container />
                 )
+        }
+    }
+
+    componentDidMount() {
+        switch (this.props.view.loadingState) {
+            case types.ComponentLoadingState.NONE:
+                this.props.onLoad(this.props.organizationId)
         }
     }
 

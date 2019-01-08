@@ -293,7 +293,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                             Members
                         </Menu.Item>
                         <Menu.Item key="manageRequests">
-                            Requests and Invitations
+                            Manage Requests
                         </Menu.Item>
                         <Menu.Item key="editOrg" >
                             Edit this Org
@@ -338,7 +338,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                             Members
                         </Menu.Item>
                         <Menu.Item key="manageRequests">
-                            Requests and Invitations
+                            Manage Requests
                         </Menu.Item>
                         <Menu.Item key="editOrg">
                             Edit this Org

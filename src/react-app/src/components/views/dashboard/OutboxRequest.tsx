@@ -10,6 +10,7 @@ import './OutboxRequest.css'
 
 export interface RequestProps {
     request: requestModel.Request
+    showOrg: boolean
     onCancelOutboxRequest: (request: requestModel.Request) => void
 }
 
@@ -153,6 +154,14 @@ export default class Request extends React.Component<RequestProps, RequestState>
     }
 
     renderJoinRequest(request: requestModel.UserRequest) {
+        let orgInfo
+        if (this.props.showOrg) {
+            orgInfo = (
+                <div className="miniDetail">
+                    <OrganizationCompact organizationId={request.organizationId} />
+                </div>
+            )
+        }
         return (
             <React.Fragment>
                 {/* <div className="requestType">{this.renderRequestSentType(request)}</div> */}
@@ -161,9 +170,7 @@ export default class Request extends React.Component<RequestProps, RequestState>
                     REQUEST to join Organization
                 </div>
 
-                <div className="miniDetail">
-                    <OrganizationCompact organizationId={request.organizationId} />
-                </div>
+                {orgInfo}
 
                 {this.renderRequestOptions(request)}
             </React.Fragment>
@@ -171,6 +178,18 @@ export default class Request extends React.Component<RequestProps, RequestState>
     }
 
     renderWorkspaceRequest(request: requestModel.WorkspaceRequest) {
+        let orgInfo
+        if (this.props.showOrg) {
+            orgInfo = (
+                <React.Fragment>
+                    <div className="cardSectionHeader">with organization</div>
+
+                    <div className="miniDetail">
+                        <OrganizationCompact organizationId={request.organizationId} />
+                    </div>
+                </React.Fragment>
+            )
+        }
         return (
             <React.Fragment>
                 {/* <div className="requestType">{this.renderRequestReceivedType(request)}</div> */}
@@ -184,12 +203,6 @@ export default class Request extends React.Component<RequestProps, RequestState>
                 </div>
 
                 {/* <div className="requestSubject">{this.renderRequestReceivedSubject(request)}</div> */}
-
-                <div className="cardSectionHeader">with organization</div>
-
-                <div className="miniDetail">
-                    <OrganizationCompact organizationId={request.organizationId} />
-                </div>
 
                 {this.renderRequestOptions(request)}
             </React.Fragment>
@@ -214,15 +227,21 @@ export default class Request extends React.Component<RequestProps, RequestState>
     }
 
     renderUserInvitation(request: requestModel.UserInvitation) {
+        let orgInfo
+        if (this.props.showOrg) {
+            orgInfo = (
+                <div className="miniDetail">
+                    <OrganizationCompact organizationId={request.organizationId} />
+                </div>
+            )
+        }
         return (
             <React.Fragment>
                 <div className="cardSectionHeader">
                     INVITATION to join organization
                 </div>
 
-                <div className="miniDetail">
-                    <OrganizationCompact organizationId={request.organizationId} />
-                </div>
+                {orgInfo}
 
                 <div className="cardSectionHeader">
                     sent to

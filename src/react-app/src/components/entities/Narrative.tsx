@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as narrativeModel from '../../data/models/narrative'
-import { Tooltip, Icon } from 'antd';
+import { Tooltip, Icon, Alert } from 'antd';
 import './Narrative.css'
 
 export interface NarrativeProps {
@@ -158,6 +158,8 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
         if (narrative.access === narrativeModel.NarrativeAccess.NONE) {
             return (
                 <div>
+                    <Icon type="exclamation-circle" style={{ color: 'orange' }} />
+                    {' '}
                     You don't have access to this Narrative
                 </div>
             )

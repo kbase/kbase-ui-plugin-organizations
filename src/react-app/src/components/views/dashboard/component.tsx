@@ -231,7 +231,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return this.props.viewModel.requestOutbox.map((request, index) => {
             return (
                 <div key={index}>
-                    <OutboxRequest request={request} />
+                    <OutboxRequest request={request} showOrg={true} />
                 </div>
             )
         })
@@ -250,7 +250,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return requests.map((request, index) => {
             return (
                 <React.Fragment key={index}>
-                    <InboxRequest request={request} />
+                    <InboxRequest request={request} showOrg={true} />
                 </React.Fragment>
             )
         })
@@ -268,7 +268,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return this.props.viewModel.requestInbox.map((request) => {
             return (
                 <React.Fragment key={request.id}>
-                    <InboxRequest request={request} />
+                    <InboxRequest request={request} showOrg={true} />
                 </React.Fragment>
             )
         })

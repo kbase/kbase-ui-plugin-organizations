@@ -23,12 +23,17 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
                 <OrganizationCompact organization={this.props.organization} />
             )
         } else {
-            this.props.onLoad(this.props.organizationId)
             return (
                 <div>
                     Loading org...
                 </div>
             )
+        }
+    }
+
+    componentDidMount() {
+        if (!this.props.organization) {
+            this.props.onLoad(this.props.organizationId)
         }
     }
 }

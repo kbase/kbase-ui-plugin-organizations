@@ -480,7 +480,7 @@ export function load(organizationId: string) {
             // if (relation.type === orgModel.UserRelationToOrganization.OWNER ||
             //     relation.type === orgModel.UserRelationToOrganization.ADMIN ||
             //     relation.type === orgModel.UserRelationToOrganization.MEMBER) {
-            requestInbox = await requestClient.getRequestInboxForOrg(organizationId)
+            requestInbox = await requestClient.getCombinedRequestInboxForOrg(organizationId)
             requestOutbox = await requestClient.getRequestOutboxForOrg(organizationId)
             // }
 

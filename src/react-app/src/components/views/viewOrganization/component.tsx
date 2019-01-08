@@ -715,6 +715,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderInboxCard() {
+        // only show the inbox for admin and owner.
+        if (!(this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
+            this.props.relation.type === orgModel.UserRelationToOrganization.OWNER)) {
+            return
+        }
         const extras: Array<JSX.Element> = []
         const count = this.props.requestInbox.length
         const title = (
@@ -738,7 +743,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             inbox = this.props.requestInbox.map((request) => {
                 return (
                     <React.Fragment key={request.id}>
-                        <InboxRequest request={request} />
+                        <InboxRequest request={request} showOrg={false} />
                     </React.Fragment>
                 )
             })
@@ -756,6 +761,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderOutboxCard() {
+        // if (this.props.relation.type !== orgModel.UserRelationToOrganization.MEMBER) {
+        //     return
+        // }
         const extras: Array<JSX.Element> = []
         const count = this.props.requestOutbox.length
         const title = (
@@ -779,7 +787,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             outbox = this.props.requestOutbox.map((request) => {
                 return (
                     <React.Fragment key={request.id}>
-                        <OutboxRequest request={request} />
+                        <OutboxRequest request={request} showOrg={false} />
                     </React.Fragment>
                 )
             })
@@ -975,7 +983,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                             {/* <div className={this.renderRelationClass(this.props.organization)}>
                                 {this.renderAdminTasks()}
                             </div> */}
-                            {this.renderAdminTasks()}
+                            {/* {this.renderAdminTasks()} */}
                             <div className="infoBox">
                                 {this.renderInfo()}
                             </div>

@@ -10,6 +10,7 @@ import './InboxRequest.css'
 
 export interface RequestProps {
     request: requestModel.Request
+    showOrg: boolean
     onAcceptInboxRequest: (request: requestModel.Request) => void
     onRejectInboxRequest: (request: requestModel.Request) => void
 }
@@ -139,6 +140,18 @@ export default class Request extends React.Component<RequestProps, RequestState>
     }
 
     renderWorkspaceRequest(request: requestModel.WorkspaceRequest) {
+        let orgInfo
+        if (this.props.showOrg) {
+            orgInfo = (
+                <React.Fragment>
+                    <div className="cardSectionHeader">with organization</div>
+
+                    <div className="miniDetail">
+                        <OrganizationCompact organizationId={request.organizationId} />
+                    </div>
+                </React.Fragment>
+            )
+        }
         return (
             <React.Fragment>
                 {/* <div className="requestType">{this.renderRequestReceivedType(request)}</div> */}
@@ -153,11 +166,7 @@ export default class Request extends React.Component<RequestProps, RequestState>
 
                 {/* <div className="requestSubject">{this.renderRequestReceivedSubject(request)}</div> */}
 
-                <div className="cardSectionHeader">with organization</div>
-
-                <div className="miniDetail">
-                    <OrganizationCompact organizationId={request.organizationId} />
-                </div>
+                {orgInfo}
 
                 <div className="cardSectionHeader">from</div>
 

@@ -23,12 +23,17 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
                 />
             )
         } else {
-            this.props.onLoad(this.props.workspaceId)
             return (
                 <div>
                     Loading narrative...
                 </div>
             )
+        }
+    }
+
+    componentDidMount() {
+        if (!this.props.narrative) {
+            this.props.onLoad(this.props.workspaceId)
         }
     }
 }

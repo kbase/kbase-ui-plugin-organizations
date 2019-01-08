@@ -323,6 +323,39 @@ export class RequestsModel {
             })
     }
 
+    /*
+        For a given organization (by id), return a list of all requests to that org 
+    */
+    async getCombinedRequestInboxForOrg(organizationId: orgModel.OrganizationID): Promise<Array<Request>> {
+        const groupsClient = new groupsApi.GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        // const grequests = await groupsClient.getTargetedRequests({
+        //     includeClosed: false,
+        //     sortDirection: groupsApi.SortDirection.DESCENDING
+        // })
+
+        // // TODO should work in synchrony with above...
+        // return grequests
+        //     .filter((r) => {
+        //         return r.groupid === organizationId
+        //     })
+        //     .map((r) => {
+        //         return groupRequestToOrgRequest(r)
+        //     })
+
+        const groupRequests = await groupsClient.getGroupRequests(organizationId, {
+            includeClosed: false,
+            sortDirection: groupsApi.SortDirection.DESCENDING
+        })
+
+        return groupRequests.map((request) => {
+            return groupRequestToOrgRequest(request)
+        })
+    }
+
     async getRequestOutboxForOrg(organizationId: orgModel.OrganizationID): Promise<Array<Request>> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,

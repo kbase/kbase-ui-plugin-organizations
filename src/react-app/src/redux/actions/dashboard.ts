@@ -81,10 +81,6 @@ export function load() {
         dispatch(loadStart())
 
         const {
-            views: {
-                dashboardView
-            },
-            entities,
             auth: { authorization: { token, username } },
             app: { config } } = getState()
 

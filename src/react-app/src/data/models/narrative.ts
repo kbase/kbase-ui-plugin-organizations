@@ -179,7 +179,7 @@ export class NarrativeModel {
             ])
 
             if (rawObjectInfoError || rawWorkspaceInfoError) {
-                console.warn('narrative not accessible', rawObjectInfoError, rawWorkspaceInfoError)
+                // console.warn('narrative not accessible', rawObjectInfoError, rawWorkspaceInfoError)
                 return null
             }
 
@@ -194,7 +194,7 @@ export class NarrativeModel {
 
         } catch (ex) {
             // assume it is an inaccessible workspace
-            console.warn('narrative not accessible', ex)
+            // console.warn('narrative not accessible', ex)
             return null
         }
     }
@@ -227,7 +227,7 @@ export class NarrativeModel {
             ])
 
             if (rawObjectInfoError || rawWorkspaceInfoError) {
-                console.warn('narrative not accessible', rawObjectInfoError, rawWorkspaceInfoError)
+                // console.warn('narrative not accessible', rawObjectInfoError, rawWorkspaceInfoError)
                 return {
                     workspaceId: workspaceId,
                     access: NarrativeAccess.NONE

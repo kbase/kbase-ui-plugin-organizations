@@ -44,8 +44,6 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
     render() {
         switch (this.props.view.loadingState) {
             case ComponentLoadingState.NONE:
-                // should only appear briefly as the LOAD event is processed.
-                this.props.onLoad(this.props.organizationId)
                 return this.renderLoading()
             case ComponentLoadingState.LOADING:
                 return this.renderLoading()
@@ -55,6 +53,14 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
                 return (
                     <Container />
                 )
+        }
+    }
+
+    componentDidMount() {
+        switch (this.props.view.loadingState) {
+            case ComponentLoadingState.NONE:
+                // should only appear briefly as the LOAD event is processed.
+                this.props.onLoad(this.props.organizationId)
         }
     }
 

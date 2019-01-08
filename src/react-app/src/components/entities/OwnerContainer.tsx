@@ -24,12 +24,17 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
                 <Owner member={this.props.member} user={this.props.user} avatarSize={this.props.avatarSize} />
             )
         } else {
-            this.props.onLoad(this.props.member.username)
             return (
                 <div>
                     Loading user...
                 </div>
             )
+        }
+    }
+
+    componentDidMount() {
+        if (!this.props.user) {
+            this.props.onLoad(this.props.member.username)
         }
     }
 }

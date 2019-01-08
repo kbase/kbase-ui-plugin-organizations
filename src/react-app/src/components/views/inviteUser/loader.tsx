@@ -37,7 +37,6 @@ class InviteUserLoader extends React.Component<InviteUserLoaderProps, InviteUser
     render() {
         switch (this.props.loadingState) {
             case ComponentLoadingState.NONE:
-                this.props.onInviteUserLoad(this.props.organizationId)
                 return this.renderLoading()
             case ComponentLoadingState.LOADING:
                 return this.renderLoading()
@@ -47,6 +46,14 @@ class InviteUserLoader extends React.Component<InviteUserLoaderProps, InviteUser
                 return (
                     <Container />
                 )
+        }
+    }
+
+    componentDidMount() {
+        switch (this.props.loadingState) {
+            case ComponentLoadingState.NONE:
+                // should only appear briefly as the LOAD event is processed.
+                this.props.onInviteUserLoad(this.props.organizationId)
         }
     }
 

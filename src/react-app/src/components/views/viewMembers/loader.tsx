@@ -29,7 +29,6 @@ class ViewMembersLoader extends React.Component<ViewMemberLoaderProps, ViewMembe
     render() {
         switch (this.props.state) {
             case ComponentLoadingState.NONE:
-                this.props.onViewMembersLoad(this.props.organizationId)
                 return this.renderLoading()
             case ComponentLoadingState.LOADING:
                 return this.renderLoading()
@@ -37,6 +36,13 @@ class ViewMembersLoader extends React.Component<ViewMemberLoaderProps, ViewMembe
                 return (
                     <ViewMembersContainer />
                 )
+        }
+    }
+
+    componentDidMount() {
+        switch (this.props.state) {
+            case ComponentLoadingState.NONE:
+                this.props.onViewMembersLoad(this.props.organizationId)
         }
     }
 }
