@@ -535,7 +535,7 @@ export interface DashboardViewModel {
 
 export interface DashboardView {
     loadingState: ComponentLoadingState
-    error: AppError | null
+    error: SomeError | null
     viewModel: DashboardViewModel | null
 }
 
@@ -656,11 +656,29 @@ export interface StoreState {
     }
 }
 
+export enum ErrorCode {
+    NONE = 0,
+    ERROR
+}
+
 /* COMPONENT PROPS */
+
+export interface SomeError {
+    code: ErrorCode
+    message: string
+    detail: string
+    id: string
+    at: Date
+
+    errorHistory?: Array<AppError>
+    trace?: Array<string>
+    info?: any
+}
 
 export interface AppError {
     code: string
     message: string
+    generatedAt?: Date
     trace?: Array<string>
     errors?: Array<AppError>
     exception?: AppException

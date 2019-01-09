@@ -230,8 +230,12 @@
 
 .ViewOrganization .member .infoCol .org {}
 
-.membersCard.ant-card .ant-card-head {
+.ViewOrganization .ant-card .ant-card-head {
     padding: 0 6px;
+}
+
+.ViewOrganization .ant-card .ant-card-head .anticon {
+    margin-right: 4px;
 }
 
 .membersCard.ant-card .ant-card-body {
@@ -254,6 +258,7 @@
 
 .ViewOrganization .titleCount {
     color: rgba(200, 200, 200, 1);
+    margin-left: 4px;
 }
 
 .ViewOrganization .message {

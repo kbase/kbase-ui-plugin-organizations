@@ -311,11 +311,14 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             )
         }
         let members: JSX.Element | Array<JSX.Element>
+        const message = (
+            <div style={{ fontStyle: 'italic', textAlign: 'center' }}>
+                No members, yet; what is an Organization without people?
+            </div>
+        )
         if (this.props.organization.members.length === 0) {
             members = (
-                <p style={{ fontStyle: 'italic', textAlign: 'center' }}>
-                    No members
-                </p>
+                <Alert type="info" message={message} />
             )
         } else {
             members = this.props.organization.members.map((member) => {
@@ -681,11 +684,18 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         } else {
             memberCount = ''
         }
+        const title = (
+            <span>
+                <Icon type="team" />
+                members
+                {memberCount}
+            </span>
+        )
         return (
             <Card
                 className="slimCard membersCard"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                title={<span><Icon type="team" /> members {memberCount}</span>}
+                title={title}
                 extra={extras}
             >
                 {this.renderMembers()}
@@ -694,12 +704,14 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderNotificationsCard() {
-        const count = 0
+        const count = (
+            <span className="titleCount">(0)</span>
+        )
         const title = (
             <span>
                 <Icon type="notification" />
-                {' '}
-                notifications ({count})
+                notifications
+                {count}
             </span>
         )
         return (
@@ -724,7 +736,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             <span>
                 <Icon type="inbox" />
                 inbox
-                {' '}
                 <span className="titleCount">
                     ({count})
                 </span>
@@ -768,7 +779,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             <span>
                 <Icon type="export" />
                 outbox
-                {' '}
                 <span className="titleCount">
                     ({count})
                 </span>
@@ -867,7 +877,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         ]
 
         if (this.props.organization.narratives.length === 0) {
-            const message = 'Sorry, no Narratives are yet associated with this Organization'
+            const message = (
+                <div className="message">
+                    Sorry, no Narratives are yet associated with this Organization
+                </div>
+            )
             return (
                 <Card
                     className="slimCard  narratives"
@@ -902,7 +916,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         const title = (
             <span>
                 <Icon type="folder-open" />
-                {' '}
                 narratives
                 {' '}
                 <span className="titleCount">({narrativeCount})</span>

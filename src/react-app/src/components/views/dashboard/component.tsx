@@ -174,7 +174,6 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                     <Button key="refresh" onClick={this.onRefresh.bind(this)}><Icon type="reload" />{' '}Refresh</Button>
                 )
         }
-
     }
 
     renderOrganizationsCard() {
@@ -268,8 +267,6 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         )
     }
 
-
-
     renderPendingRequestsSent() {
         const requests = this.props.viewModel.requestOutbox
         if (requests.length === 0) {
@@ -325,8 +322,11 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         })
     }
 
-    render() {
+    componentDidCatch(error: Error, reactError: any) {
 
+    }
+
+    render() {
         switch (this.state.navigateTo) {
             case NavigateTo.BROWSER:
                 return (
@@ -337,7 +337,6 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                     <Redirect to="/newOrganization" />
                 )
         }
-
         return (
             <div className="Dashboard scrollable-flex-column">
                 {this.renderHeader()}

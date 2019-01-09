@@ -2,10 +2,11 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
-import { AppError, StoreState, MemberType } from '../../types'
+import { AppError, StoreState, MemberType, ErrorCode, SomeError } from '../../types'
 import * as userModel from '../../data/models/user'
 import * as requestModel from '../../data/models/requests'
 import * as uberModel from '../../data/models/uber'
+import uuid from 'uuid/v4'
 
 export interface DashboardAction<T> extends Action<T> {
 
@@ -30,7 +31,7 @@ export interface LoadSuccess extends DashboardAction<ActionFlag.DASHBOARD_LOAD_S
 
 export interface LoadError extends DashboardAction<ActionFlag.DASHBOARD_LOAD_ERROR> {
     type: ActionFlag.DASHBOARD_LOAD_ERROR
-    error: AppError
+    error: SomeError
 }
 
 export interface Unload extends DashboardAction<ActionFlag.DASHBOARD_UNLOAD> {
@@ -61,7 +62,7 @@ export function loadSuccess(
     }
 }
 
-export function loadError(error: AppError): LoadError {
+export function loadError(error: SomeError): LoadError {
     return {
         type: ActionFlag.DASHBOARD_LOAD_ERROR,
         error: error
@@ -84,14 +85,6 @@ export function load() {
             auth: { authorization: { token, username } },
             app: { config } } = getState()
 
-        // if (dashboardView === null) {
-        //     dispatch(searchOrgsError({
-        //         code: 'invalid-state',
-        //         message: 'Search orgs may not be called without a defined view'
-        //     }))
-        //     return
-        // }
-
         const uberClient = new uberModel.UberModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
@@ -99,16 +92,6 @@ export function load() {
             workspaceServiceURL: config.services.Workspace.url,
             serviceWizardURL: config.services.ServiceWizard.url
         })
-
-        // const orgModel = new organizationsModel.OrganizationModel({
-        //     token, username,
-        //     groupsServiceURL: config.services.Groups.url
-        // })
-
-        // const userModelClient = new userModel.UserModel({
-        //     token,
-        //     userProfileServiceURL: config.services.UserProfile.url
-        // })
 
         const requestModelClient = new requestModel.RequestsModel({
             token, username,
@@ -122,18 +105,6 @@ export function load() {
         // - requests created by or targeting current user
         try {
             const orgs = await uberClient.getOrganizationsForUser()
-            // const orgs = await orgModel.getOwnOrgs()
-
-            const allUsers: Map<userModel.Username, boolean> = new Map()
-
-            // orgs.forEach((org) => {
-            //     allUsers.set(org.owner.username, true)
-            //     org.members.forEach((member) => {
-            //         allUsers.set(member.username, true)
-            //     })
-            // })
-
-            // const users = await userModelClient.getUsers(Array.from(allUsers.keys()))
 
             const requestOutbox = await requestModelClient.getOutboundRequests()
 
@@ -161,8 +132,11 @@ export function load() {
             dispatch(loadSuccess(orgs, requestInbox, requestOutbox, pendingGroupRequests))
         } catch (ex) {
             dispatch(loadError({
-                code: 'error',
-                message: ex.message
+                code: ErrorCode.ERROR,
+                message: ex.message,
+                detail: '',
+                at: new Date(),
+                id: uuid()
             }))
         }
 
@@ -239,7 +213,7 @@ export interface RefreshSuccess extends DashboardAction<ActionFlag.DASHBOARD_REF
 
 export interface RefreshError extends DashboardAction<ActionFlag.DASHBOARD_REFRESH_ERROR> {
     type: ActionFlag.DASHBOARD_REFRESH_ERROR
-    error: AppError
+    error: SomeError
 }
 
 // Generators
@@ -265,7 +239,7 @@ export function refreshSuccess(
     }
 }
 
-export function refreshError(error: AppError): RefreshError {
+export function refreshError(error: SomeError): RefreshError {
     return {
         type: ActionFlag.DASHBOARD_REFRESH_ERROR,
         error: error
@@ -332,8 +306,11 @@ export function refresh() {
             dispatch(refreshSuccess(orgs, requestInbox, requestOutbox, pendingGroupRequests))
         } catch (ex) {
             dispatch(refreshError({
-                code: 'error',
-                message: ex.message
+                code: ErrorCode.ERROR,
+                message: ex.message,
+                detail: '',
+                at: new Date(),
+                id: uuid()
             }))
         }
     }

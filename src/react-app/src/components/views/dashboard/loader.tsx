@@ -1,6 +1,7 @@
 import * as React from 'react'
-import { ComponentLoadingState, AppError, DashboardViewModel, DashboardView, StoreState } from '../../../types';
+import { ComponentLoadingState, DashboardView, StoreState } from '../../../types';
 import Container from './container'
+import Error from '../../error/component'
 
 // First the loader component, which takes care of a loading view, error view, and the 
 // container.
@@ -22,8 +23,8 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
 
     renderLoading() {
         const message = (
-            <div>
-                Loading your organizations...
+            <div style={{ textAlign: 'center' }}>
+                Loading Organizations...
                 {' '}
                 <Spin />
             </div>
@@ -38,9 +39,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
             return
         }
         return (
-            <div>
-                Error! {this.props.view.error.message}
-            </div>
+            <Error error={this.props.view.error} />
         )
     }
 
