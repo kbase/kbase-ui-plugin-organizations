@@ -226,31 +226,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         return (
             <OrganizationHeader organizationId={this.props.organization.id} />
         )
-        // return (
-        //     <div className="orgHeader">
-        //         <div className="avatar">
-        //             {this.renderOrgAvatar(this.props.organization)}
-        //         </div>
-        //         <div className="orgInfo">
-        //             <div className="name">
-        //                 {this.props.organization.name}
-        //             </div>
-        //             <div className="id">
-        //                 <span className="label">permalink</span>{' '}
-        //                 <span className="permalinkBase">https://narrative.kbase.us#orgs/</span>{this.props.organization.id}
-        //             </div>
-        //         </div>
-        //         <div className="ownerInfo">
-        //             {this.renderOwnerInfo(this.props.organization)}
-        //         </div>
-        //         <div className="yourRelation">
-        //             {this.renderRelation(this.props.organization)}
-        //         </div>
-
-        //     </div>
-        // )
     }
-
 
     renderOrgAvatar(org: orgModel.Organization) {
         return (
@@ -643,10 +619,13 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     renderHeader() {
         const breadcrumbs = (
             <div style={{ flex: '0 0 auto' }}>
-                <span>
+                {/* <span>
                     Viewing Org "
                     {this.props.organization && this.props.organization.name}
                     "
+                </span> */}
+                <span>
+                    {this.props.organization && this.props.organization.name}
                 </span>
             </div>
         )
@@ -714,6 +693,25 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
+    renderNotificationsCard() {
+        const count = 0
+        const title = (
+            <span>
+                <Icon type="notification" />
+                {' '}
+                notifications ({count})
+            </span>
+        )
+        return (
+            <Card className="slimCard"
+                style={{ marginBottom: '10px' }}
+                headStyle={{ backgroundColor: 'gray', color: 'white' }}
+                title={title}>
+                not yet implemented
+            </Card>
+        )
+    }
+
     renderInboxCard() {
         // only show the inbox for admin and owner.
         if (!(this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
@@ -724,7 +722,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         const count = this.props.requestInbox.length
         const title = (
             <span>
-                <Icon type="team" />
+                <Icon type="inbox" />
                 inbox
                 {' '}
                 <span className="titleCount">
@@ -768,7 +766,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         const count = this.props.requestOutbox.length
         const title = (
             <span>
-                <Icon type="team" />
+                <Icon type="export" />
                 outbox
                 {' '}
                 <span className="titleCount">
@@ -987,6 +985,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                             <div className="infoBox">
                                 {this.renderInfo()}
                             </div>
+                            {this.renderNotificationsCard()}
                             {this.renderInboxCard()}
                             {this.renderOutboxCard()}
                             {this.renderMembersCard()}

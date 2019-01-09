@@ -182,7 +182,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         )
         const buttons = (
             <React.Fragment>
-                <Button icon="undo"
+                {/* <Button icon="undo"
                     type="danger"
                     onClick={this.onClickCancelToViewMembers.bind(this)}>
                     Return to Org Members
@@ -191,7 +191,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                     type="danger"
                     onClick={this.onClickCancelToViewer.bind(this)}>
                     Return to this Org
-            </Button>
+            </Button> */}
 
 
                 <Button

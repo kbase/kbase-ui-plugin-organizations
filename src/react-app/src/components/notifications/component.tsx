@@ -24,8 +24,6 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
         this.props.onRead(notification.id)
     }
 
-
-
     renderType(type: feedsModel.OrganizationNotificationType) {
         switch (type) {
             case (feedsModel.OrganizationNotificationType.JOIN_INVITATION):

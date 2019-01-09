@@ -98,3 +98,14 @@ a:hover {
     font-weight: bold;
     color: rgba(150, 150, 150, 1);
 }
+
+/* help pop-ups */
+
+.helpTitle {
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.helpSectionTitle {
+    font-weight: bold;
+}

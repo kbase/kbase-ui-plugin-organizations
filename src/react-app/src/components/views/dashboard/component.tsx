@@ -56,7 +56,50 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
             width: '50em',
             content: (
                 <div>
-                    <p>This is the dashboard...</p>
+                    <div className="helpTitle">Welcome to KBase Organizations!</div>
+                    <p>
+                        This is your Organizations Dashboard. It is your quick stop to see what
+                        happening with all of your Organizations, or to get involved with new ones.
+                    </p>
+                    <div className="helpSectionTitle">Your Organizations</div>
+                    <p>
+                        ... to do ...
+                    </p>
+
+                    <div className="helpSectionTitle">Notifications</div>
+                    <p>
+                        All unready messages you have from any organization will visible in this section.
+                        Each notification may be closed (read) by clicking the red "x" in the upper right
+                        corner.
+                    </p>
+                    <p>
+                        For access to all your notifications, and more control over them, visit your <a href="/#feeds">feeds</a>.
+                    </p>
+                    <div className="helpSectionTitle">Inbox</div>
+                    <p>
+                        ... to do ...
+                    </p>
+                    <div className="helpSectionTitle">Outbox</div>
+                    <p>
+                        ... to do ...
+                    </p>
+                    <div className="helpSectionTitle">Organization Inbox</div>
+                    <p>
+                        ... to do ...
+                    </p>
+                    <div className="helpSectionTitle">+ New</div>
+                    <p>
+                        ... to do ...
+                    </p>
+                    <div className="helpSectionTitle">Browse All</div>
+                    <p>
+                        ... to do ...
+                    </p>
+                    <div className="helpSectionTitle">Refresh</div>
+                    <p>
+                        ... to do ...
+                    </p>
+
                 </div>
             )
         })
@@ -157,9 +200,21 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         )
     }
 
-    renderNotificationsCard() {
+    renderPendingNotifications() {
         return (
-            <Card title="Notifications"
+            <Notifications />
+        )
+    }
+
+    renderNotificationsCard() {
+        const count = 2
+        const title = (
+            <span>
+                Notifications ({count})
+            </span>
+        )
+        return (
+            <Card title={title}
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 bodyStyle={{ maxHeight: '30em', display: 'flex', flexDirection: 'column' }}
                 className="slimCard notificationsCard">
@@ -213,11 +268,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         )
     }
 
-    renderPendingNotifications() {
-        return (
-            <Notifications />
-        )
-    }
+
 
     renderPendingRequestsSent() {
         const requests = this.props.viewModel.requestOutbox
