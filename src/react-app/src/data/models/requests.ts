@@ -332,6 +332,8 @@ export class RequestsModel {
             token: this.params.token
         })
 
+        let requests: Array<Request>
+
         // const grequests = await groupsClient.getTargetedRequests({
         //     includeClosed: false,
         //     sortDirection: groupsApi.SortDirection.DESCENDING
@@ -346,14 +348,19 @@ export class RequestsModel {
         //         return groupRequestToOrgRequest(r)
         //     })
 
-        const groupRequests = await groupsClient.getGroupRequests(organizationId, {
-            includeClosed: false,
-            sortDirection: groupsApi.SortDirection.DESCENDING
-        })
+        try {
+            requests = (await groupsClient.getGroupRequests(organizationId, {
+                includeClosed: false,
+                sortDirection: groupsApi.SortDirection.DESCENDING
+            }))
+                .map((request) => {
+                    return groupRequestToOrgRequest(request)
+                })
+        } catch (ex) {
+            requests = []
+        }
 
-        return groupRequests.map((request) => {
-            return groupRequestToOrgRequest(request)
-        })
+        return requests
     }
 
     async getRequestOutboxForOrg(organizationId: orgModel.OrganizationID): Promise<Array<Request>> {
