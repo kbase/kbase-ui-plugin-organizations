@@ -21,7 +21,7 @@ export interface NewOrganizationProps {
     newOrganization: EditableOrganization,
     onSave: () => void,
     onUpdateName: (name: string) => void,
-    onUpdateGravatarHash: (gravatarHash: string | null) => void;
+    // onUpdateGravatarHash: (gravatarHash: string | null) => void;
     onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
@@ -131,17 +131,17 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         })
     }
 
-    onGravatarEmailSync() {
-        let email
-        let hashed
-        if (this.gravatarEmail.current && this.gravatarEmail.current.value) {
-            email = this.gravatarEmail.current.value.toLowerCase()
-            hashed = md5(email)
-        } else {
-            hashed = null
-        }
-        this.props.onUpdateGravatarHash(hashed);
-    }
+    // onGravatarEmailSync() {
+    //     let email
+    //     let hashed
+    //     if (this.gravatarEmail.current && this.gravatarEmail.current.value) {
+    //         email = this.gravatarEmail.current.value.toLowerCase()
+    //         hashed = md5(email)
+    //     } else {
+    //         hashed = null
+    //     }
+    //     // this.props.onUpdateGravatarHash(hashed);
+    // }
 
     onClickCancelToBrowser() {
         if (!this.isModified()) {
@@ -182,10 +182,10 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         this.props.onUpdateName(e.target.value);
     }
 
-    onGravatarHashChange(e: React.ChangeEvent<HTMLInputElement>) {
-        e.persist();
-        this.props.onUpdateGravatarHash(e.target.value);
-    }
+    // onGravatarHashChange(e: React.ChangeEvent<HTMLInputElement>) {
+    //     e.persist();
+    //     this.props.onUpdateGravatarHash(e.target.value);
+    // }
 
     onDescriptionChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
         e.persist()
@@ -282,28 +282,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                         {this.renderFieldError(this.props.newOrganization.isPrivate)}
                     </div>
                 </div>
-                <div className="row gravatarHash">
-                    <div className="col1 field-label">logo</div>
-                    <div className="col2">
-                        <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '4px' }}>
-                            <div style={{ flex: '1 1 0px' }}>
-                                <input
-                                    ref={this.gravatarEmail}
-                                    placeholder="Provide your gravatar-linked email address, if any" />
-                            </div>
-                            <div style={{ flex: '0 0 auto' }}>
-                                <Button
-                                    icon="arrow-down"
-                                    style={{ height: '100%' }}
-                                    onClick={this.onGravatarEmailSync.bind(this)} />
-                            </div>
-                        </div>
-                        {/* <Input
-                            value={this.props.newOrganization.gravatarHash.value || ''}
-                            onChange={this.onGravatarHashChange.bind(this)} /> */}
-                        {this.renderFieldError(this.props.newOrganization.gravatarHash)}
-                    </div>
-                </div>
+
 
                 <div className="row" style={{ flex: '1 1 0px', minHeight: '30em', maxHeight: '60em' }}>
                     <div className="col1 field-label">description</div>
@@ -332,7 +311,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
     renderOrgAvatar(org: EditableOrganization) {
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash.value} size={64} organizationName={org.name.value} organizationId={org.id.value} />
+            <OrgAvatar gravatarHash={null} size={64} organizationName={org.name.value} organizationId={org.id.value} />
         )
     }
 
@@ -375,13 +354,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     </div>
                 </div>
             </div>
-            <div className="row">
-                <div className="col2">
-                    <div className="gravatarHash">
-                        {this.renderOrgAvatar(this.props.newOrganization)}
-                    </div>
-                </div>
-            </div>
+
 
             <div className="row" style={{ flex: '1 1 0px' }}>
                 <div className="col2">

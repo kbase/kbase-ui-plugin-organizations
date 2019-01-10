@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Redirect, NavLink } from 'react-router-dom';
 import marked from 'marked';
-import { Button, Icon, Modal, Checkbox, Input } from 'antd';
+import { Button, Icon, Modal, Checkbox, Input, Tooltip } from 'antd';
 import md5 from 'md5'
 
 import { EditableOrganization, SaveState, ValidationState, EditState, ValidationErrorType, Editable, SyncState } from '../../../types';
@@ -23,7 +23,7 @@ export interface EditOrganizationProps {
     organization: orgModel.Organization
     onEditOrgSave: () => void
     onUpdateName: (name: string) => void
-    onUpdateGravatarHash: (gravatarHash: string | null) => void
+    // onUpdateGravatarHash: (gravatarHash: string | null) => void
     // onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
@@ -74,17 +74,17 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     }
 
 
-    onGravatarEmailSync() {
-        let email
-        let hashed
-        if (this.gravatarEmail.current && this.gravatarEmail.current.value) {
-            email = this.gravatarEmail.current.value.toLowerCase()
-            hashed = md5(email)
-        } else {
-            hashed = null
-        }
-        this.props.onUpdateGravatarHash(hashed);
-    }
+    // onGravatarEmailSync() {
+    //     let email
+    //     let hashed
+    //     if (this.gravatarEmail.current && this.gravatarEmail.current.value) {
+    //         email = this.gravatarEmail.current.value.toLowerCase()
+    //         hashed = md5(email)
+    //     } else {
+    //         hashed = null
+    //     }
+    //     this.props.onUpdateGravatarHash(hashed);
+    // }
 
     onClickCancelToBrowser() {
         if (!this.isModified()) {
@@ -154,10 +154,10 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         this.props.onUpdateName(e.target.value);
     }
 
-    onGravatarHashChange(e: React.ChangeEvent<HTMLInputElement>) {
-        e.persist();
-        this.props.onUpdateGravatarHash(e.target.value);
-    }
+    // onGravatarHashChange(e: React.ChangeEvent<HTMLInputElement>) {
+    //     e.persist();
+    //     this.props.onUpdateGravatarHash(e.target.value);
+    // }
 
     onDescriptionChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
         e.persist()
@@ -228,7 +228,11 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         return (
             <form id="editOrganizationForm" className="editor" onSubmit={this.onSubmit.bind(this)}>
                 <div className="row">
-                    <div className="col1 field-label">name</div>
+                    <div className="col1 field-label">
+                        <Tooltip title="This is the name for your organization as you want KBase users to see it">
+                            name
+                        </Tooltip>
+                    </div>
                     <div className="col2">
                         <Input value={this.props.editedOrganization.name.value || ''}
                             className={this.calcFieldClass(this.props.editedOrganization.name)}
@@ -255,26 +259,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                         {this.renderFieldError(this.props.editedOrganization.isPrivate)}
                     </div>
                 </div>
-                <div className="row gravatarHash">
-                    <div className="col1 field-label">gravatar hash</div>
-                    <div className="col2">
-                        <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '4px' }}>
-                            <div style={{ flex: '1 1 0px' }}>
-                                <input ref={this.gravatarEmail} placeholder="Provide your gravatar-linked email address, if any" />
-                            </div>
-                            <div style={{ flex: '0 0 auto' }}>
-                                <Button
-                                    icon="arrow-down"
-                                    style={{ height: '100%' }}
-                                    onClick={this.onGravatarEmailSync.bind(this)} />
-                            </div>
-                        </div>
 
-                        {/* <input value={this.props.editedOrganization.gravatarHash.value || ''}
-                            onChange={this.onGravatarHashChange.bind(this)} /> */}
-                        {this.renderFieldError(this.props.editedOrganization.gravatarHash)}
-                    </div>
-                </div>
 
                 <div className="row" style={{ flex: '1 1 0px', minHeight: '30em', maxHeight: '60em' }}>
                     <div className="col1 field-label">description</div>
@@ -301,12 +286,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-    renderOrgAvatar(editedOrg: EditableOrganization) {
-        const org = this.props.organization
-        return (
-            <OrgAvatar gravatarHash={editedOrg.gravatarHash.value} size={64} organizationName={editedOrg.name.value} organizationId={org.id} />
-        )
-    }
+
 
     renderIsPrivate(isPrivate: boolean) {
         if (isPrivate) {
@@ -347,13 +327,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                     </div>
                 </div>
             </div>
-            <div className="row">
-                <div className="col2">
-                    <div className="gravatarHash">
-                        {this.renderOrgAvatar(this.props.editedOrganization)}
-                    </div>
-                </div>
-            </div>
+
 
             <div className="row" style={{ flex: '1 1 0px' }}>
                 <div className="col2">

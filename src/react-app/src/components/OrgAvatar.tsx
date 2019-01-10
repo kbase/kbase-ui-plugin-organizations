@@ -17,19 +17,19 @@ export default class OrgAvatar extends React.Component<OrgAvatarProps, OrgAvatar
         super(props)
     }
 
-    renderGravatar() {
-        if (!this.props.gravatarHash) {
-            return this.renderDefault()
-        }
-        const gravatarDefault = 'identicon';
+    // renderGravatar() {
+    //     if (!this.props.gravatarHash) {
+    //         return this.renderDefault()
+    //     }
+    //     const gravatarDefault = 'identicon';
 
-        const url = 'https://www.gravatar.com/avatar/' + this.props.gravatarHash + '?s=' + this.props.size + '&amp;r=pg&d=' + gravatarDefault;
+    //     const url = 'https://www.gravatar.com/avatar/' + this.props.gravatarHash + '?s=' + this.props.size + '&amp;r=pg&d=' + gravatarDefault;
 
-        return (
-            <img style={{ width: this.props.size, height: this.props.size }}
-                src={url} />
-        )
-    }
+    //     return (
+    //         <img style={{ width: this.props.size, height: this.props.size }}
+    //             src={url} />
+    //     )
+    // }
 
     renderDefault() {
         const url = 'unicorn-64.png'
@@ -49,14 +49,30 @@ export default class OrgAvatar extends React.Component<OrgAvatarProps, OrgAvatar
         )
     }
 
+    // see: https://github.com/lautis/unicode-substring/blob/master/index.js
+    charAt(inString: string, position: number) {
+        // const c1 = inString.charAt(position)
+        const c1 = inString.charCodeAt(position)
+        if (c1 >= 0xD800 && c1 <= 0xDBFF && inString.length > position + 1) {
+            const c2 = inString.charCodeAt(position + 1)
+            if (c2 > 0xDC00 && c2 <= 0xDFFF) {
+                return inString.substring(position, 2)
+            }
+        }
+        return inString.substring(position, 1)
+    }
+
     renderDefaultInitial() {
-        const initial = this.props.organizationName.substr(0, 1).toUpperCase()
+        const initial = this.charAt(this.props.organizationName, 0).toUpperCase()
+        // const initial = this.props.organizationName.substr(0, 1).toUpperCase()
         const hash = md5(this.props.organizationId)
+
         const color = hash.substr(0, 6)
         // return (
         //     <span style={{ color: '"#' + color + '"', width: this.props.size, height: this.props.size, fontSize: this.props.size - 6 }}
         //     >{initial}</span>
         // )
+        console.log('initial?', this.props.organizationName)
         return (
             <svg width={this.props.size} height={this.props.size} style={{ border: '1px rgba(200, 200, 200, 0.5) solid' }}>
                 <text x="50%" y="50%" dy={4} textAnchor="middle" dominantBaseline="middle" fontSize={this.props.size - 12} fill={'#' + color} fontFamily="sans-serif">{initial}</text>
@@ -65,10 +81,6 @@ export default class OrgAvatar extends React.Component<OrgAvatarProps, OrgAvatar
     }
 
     render() {
-        if (this.props.gravatarHash) {
-            return this.renderGravatar()
-        } else {
-            return this.renderDefaultInitial()
-        }
+        return this.renderDefaultInitial()
     }
 }
