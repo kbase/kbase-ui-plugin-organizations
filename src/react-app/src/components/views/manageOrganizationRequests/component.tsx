@@ -60,7 +60,7 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
         this.props.onGetViewAccess(requestId)
     }
     onViewProfile(username: string) {
-        window.open('#people/' + username, '_blank')
+        window.open('/#people/' + username, '_blank')
     }
     onShowInfo() {
         Modal.info({

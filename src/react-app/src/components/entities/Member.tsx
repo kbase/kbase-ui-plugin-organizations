@@ -85,7 +85,7 @@ class Member extends React.Component<MemberProps, MemberState> {
                 </div>
                 <div className="infoCol">
                     <div className="name">
-                        <a href={"#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
+                        <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
                         {' '}
                         ❨{this.props.user.username}❩
                     </div>
@@ -120,7 +120,7 @@ class Member extends React.Component<MemberProps, MemberState> {
                 </div>
                 <div className="infoCol">
                     <div className="name">
-                        <a href={"#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
+                        <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
                         {' '}
                         ❨{this.props.user.username}❩
                     </div>
@@ -173,7 +173,7 @@ class Member extends React.Component<MemberProps, MemberState> {
     //             </div>
     //             <div className="infoCol">
     //                 <div className="name">
-    //                     <a href={"#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
+    //                     <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
     //                     {' '}
     //                     ❨{this.props.user.username}❩
     //                 </div>

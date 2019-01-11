@@ -26,7 +26,7 @@ class User extends React.Component<UserProps, UserState> {
                 </div>
                 <div className="infoCol">
                     <div className="name">
-                        <a href={"#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
+                        <a href={"/#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
                         {' '}
                         ❨{this.props.user.username}❩
                                 </div>

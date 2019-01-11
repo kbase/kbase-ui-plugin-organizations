@@ -397,7 +397,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
 
                 {/* <div className="owner">
                     <span className="field-label">owner</span>
-                    <a href={"#people/" + org.owner.username} target="_blank">{org.owner.username}</a>
+                    <a href={"/#people/" + org.owner.username} target="_blank">{org.owner.username}</a>
                     {' '}
                     ❨{org.owner.username}❩
                                 </div> */}

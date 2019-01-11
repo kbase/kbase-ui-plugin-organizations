@@ -85,7 +85,7 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                 </div>
                 <div className="infoCol">
                     <div className="name">
-                        <a href={"#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
+                        <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
                         {' '}
                         ❨{this.props.user.username}❩
                     </div>
@@ -111,7 +111,7 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                 </div>
                 <div className="infoCol">
                     <div className="name">
-                        <a href={"#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
+                        <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
                         {' '}
                         ❨{this.props.user.username}❩
                     </div>
@@ -164,7 +164,7 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
     //             </div>
     //             <div className="infoCol">
     //                 <div className="name">
-    //                     <a href={"#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
+    //                     <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
     //                     {' '}
     //                     ❨{this.props.user.username}❩
     //                 </div>

@@ -204,7 +204,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 <div className="proprietorCol">
 
                     <div className="owner">
-                        <a href={"#people/" + org.owner.username} target="_blank">{org.owner.username}</a>
+                        <a href={"/#people/" + org.owner.username} target="_blank">{org.owner.username}</a>
                         {' '}
                         ❨{org.owner.username}❩
                                 </div>
@@ -361,7 +361,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         </div>
                         <div className="proprietorCol">
                             <div className="owner">
-                                <a href={"#people/" + this.props.organization.owner.user.username} target="_blank">{this.props.organization.owner.user.realname}</a>
+                                <a href={"/#people/" + this.props.organization.owner.user.username} target="_blank">{this.props.organization.owner.user.realname}</a>
                                 {' '}
                                 ❨{this.props.organization.owner.user.username}❩
                                         </div>
