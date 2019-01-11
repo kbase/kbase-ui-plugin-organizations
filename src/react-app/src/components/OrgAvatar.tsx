@@ -72,7 +72,6 @@ export default class OrgAvatar extends React.Component<OrgAvatarProps, OrgAvatar
         //     <span style={{ color: '"#' + color + '"', width: this.props.size, height: this.props.size, fontSize: this.props.size - 6 }}
         //     >{initial}</span>
         // )
-        console.log('initial?', this.props.organizationName)
         return (
             <svg width={this.props.size} height={this.props.size} style={{ border: '1px rgba(200, 200, 200, 0.5) solid' }}>
                 <text x="50%" y="50%" dy={4} textAnchor="middle" dominantBaseline="middle" fontSize={this.props.size - 12} fill={'#' + color} fontFamily="sans-serif">{initial}</text>

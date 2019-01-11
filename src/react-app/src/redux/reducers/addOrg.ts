@@ -403,11 +403,11 @@ export function updateIdPass(state: StoreState, action: UpdateIdPass): StoreStat
                         id: {
                             ...state.views.addOrgView.viewModel.newOrganization.id,
                             value: action.id,
-                            syncState: SyncState.DIRTY,
-                            validationState: {
-                                type: ValidationErrorType.OK,
-                                validatedAt: new Date()
-                            }
+                            syncState: SyncState.DIRTY
+                            // validationState: {
+                            //     type: ValidationErrorType.OK,
+                            //     validatedAt: new Date()
+                            // }
                         }
                     }
                 }

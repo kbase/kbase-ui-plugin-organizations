@@ -449,7 +449,6 @@ export function addOrgEvaluate() {
             return
         }
 
-
         const {
             views: {
                 addOrgView: {
@@ -611,6 +610,7 @@ export function updateId(id: string) {
         const lastValidatedAt = viewModel.newOrganization.id.validationState.validatedAt
         const now = new Date().getTime()
         const debounce = 500 // ms
+        dispatch(updateIdPass(validatedId))
         if (lastValidatedAt) {
 
             const elapsed = now - lastValidatedAt.getTime()

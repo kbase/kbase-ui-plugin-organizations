@@ -101,9 +101,6 @@ export function appStart() {
             }))
         }
 
-        // dispatch reqeusts for core data.
-        dispatch(notificationActions.load())
-
         // if so, get the params
 
         // if not, use the fake to get it
