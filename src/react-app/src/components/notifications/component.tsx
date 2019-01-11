@@ -192,14 +192,14 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
             )
         }
         return (
-            <div className="Notifications">
-                <div className="header">
+            <React.Fragment>
+                <div className="Notifications-Header">
                     {this.renderHeader()}
                 </div>
-                <div className="body">
+                <div className="Notifications-Body">
                     {this.renderNotifications()}
                 </div>
-            </div>
+            </React.Fragment>
         )
     }
 

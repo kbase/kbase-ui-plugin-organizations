@@ -9,6 +9,7 @@ function loadSuccess(state: StoreState, action: actions.LoadSuccess): StoreState
     action.notifications.forEach((notification) => {
         notificationsById.set(notification.id, notification)
     })
+
     return {
         ...state,
         db: {

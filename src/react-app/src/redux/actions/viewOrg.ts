@@ -10,6 +10,7 @@ import {
 import * as orgModel from '../../data/models/organization/model'
 import * as requestModel from '../../data/models/requests'
 import * as uberModel from '../../data/models/uber'
+import * as feedsModel from '../../data/models/feeds'
 
 
 // Action Types
@@ -31,6 +32,7 @@ export interface LoadSuccess extends Action {
     groupInvitations: Array<requestModel.Request> | null
     requestInbox: Array<requestModel.Request>
     requestOutbox: Array<requestModel.Request>
+    notifications: Array<feedsModel.OrganizationNotification>
 }
 
 export interface LoadError extends Action {
@@ -334,11 +336,12 @@ export function loadSuccess(
     groupRequests: Array<requestModel.Request> | null,
     groupInvitations: Array<requestModel.Request> | null,
     requestInbox: Array<requestModel.Request>,
-    requestOutbox: Array<requestModel.Request>): LoadSuccess {
+    requestOutbox: Array<requestModel.Request>,
+    notifications: Array<feedsModel.OrganizationNotification>): LoadSuccess {
     return {
         type: ActionFlag.VIEW_ORG_LOAD_SUCCESS,
         organization, relation, groupRequests, groupInvitations,
-        requestInbox, requestOutbox
+        requestInbox, requestOutbox, notifications
     }
 }
 
@@ -447,7 +450,8 @@ export function load(organizationId: string) {
 
         const {
             auth: { authorization: { token, username } },
-            app: { config }
+            app: { config },
+            db: { notifications: { all, byId } }
         } = getState()
 
         const uberClient = new uberModel.UberModel({
@@ -485,7 +489,11 @@ export function load(organizationId: string) {
             requestOutbox = await requestClient.getRequestOutboxForOrg(organizationId)
             // }
 
-            dispatch(loadSuccess(organization, relation, orgRequests, orgInvitations, requestInbox, requestOutbox))
+            const notifications: Array<feedsModel.OrganizationNotification> = all.filter((notification) => {
+                return (notification.organizationId === organizationId)
+            })
+
+            dispatch(loadSuccess(organization, relation, orgRequests, orgInvitations, requestInbox, requestOutbox, notifications))
         } catch (ex) {
             dispatch(loadError({
                 code: ex.name,

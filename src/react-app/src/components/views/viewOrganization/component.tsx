@@ -7,14 +7,16 @@ import './component.css'
 import { } from '../../../types'
 import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu, Alert } from 'antd'
 import Header from '../../Header'
-import Member from '../../entities/MemberContainer';
+import Member from '../../entities/MemberContainer'
 import OrganizationHeader from '../organizationHeader/loader'
 import * as orgModel from '../../../data/models/organization/model'
-import * as requestModel from '../../../data/models/requests';
+import * as requestModel from '../../../data/models/requests'
+import * as feedsModel from '../../../data/models/feeds'
 import OrganizationNarrative from '../../OrganizationNarrative'
 import InboxRequest from '../dashboard/InboxRequestContainer'
 import OutboxRequest from '../dashboard/OutboxRequestContainer'
-import OrgAvatar from '../../OrgAvatar';
+import OrgAvatar from '../../OrgAvatar'
+import Notifications from '../../notifications/component';
 
 enum NavigateTo {
     NONE = 0,
@@ -36,6 +38,7 @@ export interface ViewOrganizationProps {
     groupInvitations: Array<requestModel.Request> | null
     requestOutbox: Array<requestModel.Request>
     requestInbox: Array<requestModel.Request>
+    notifications: Array<feedsModel.OrganizationNotification>
     onViewOrg: (id: string) => void
     onJoinOrg: () => void
     onCancelJoinRequest: (requestId: string) => void
@@ -44,6 +47,7 @@ export interface ViewOrganizationProps {
     onRemoveNarrative: (narrative: orgModel.NarrativeResource) => void
     onGetViewAccess: (narrative: orgModel.NarrativeResource) => void
     onAcceptRequest: (request: requestModel.Request) => void
+    onReadNotification: (requestId: string) => void
 }
 
 class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrganizationState> {
@@ -182,7 +186,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         </div>
                         <div className="id">
                             <span className="label">permalink</span>{' '}
-                            <span className="permalinkBase">https://narrative.kbase.us#orgs/</span>{this.props.organization.id}
+                            <span className="permalinkBase">https:/narrative.kbase.us#orgs/</span>{this.props.organization.id}
                         </div>
                     </div>
                 </div> */}
@@ -704,6 +708,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
+    onReadNotification(notificationId: string) {
+        this.props.onReadNotification(notificationId);
+    }
+
     renderNotificationsCard() {
         const count = (
             <span className="titleCount">(0)</span>
@@ -715,12 +723,22 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 {count}
             </span>
         )
+        let notifications
+        if (this.props.notifications.length === 0) {
+            notifications = (
+                <div className="message">No notifications</div>
+            )
+        } else {
+            notifications = (
+                <Notifications notifications={this.props.notifications} onRead={this.onReadNotification.bind(this)} />
+            )
+        }
         return (
             <Card className="slimCard"
                 style={{ marginBottom: '10px' }}
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 title={title}>
-                not yet implemented
+                {notifications}
             </Card>
         )
     }

@@ -118,6 +118,16 @@ export default class Request extends React.Component<RequestProps, RequestState>
     }
 
     renderJoinRequest(request: requestModel.UserRequest) {
+        let orgInfo
+        if (this.props.showOrg) {
+            orgInfo = (
+                <React.Fragment>
+                    <div className="miniDetail">
+                        <OrganizationCompact organizationId={request.organizationId} />
+                    </div>
+                </React.Fragment>
+            )
+        }
         return (
             <React.Fragment>
                 {/* <div className="requestType">{this.renderRequestSentType(request)}</div> */}
@@ -126,9 +136,7 @@ export default class Request extends React.Component<RequestProps, RequestState>
                     REQUEST to join Organization
                 </div>
 
-                <div className="miniDetail">
-                    <OrganizationCompact organizationId={request.organizationId} />
-                </div>
+                {orgInfo}
 
                 <div className="cardSectionHeader">from</div>
 

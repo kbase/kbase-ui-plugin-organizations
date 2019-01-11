@@ -4,11 +4,13 @@ import { connect } from 'react-redux'
 import { StoreState } from '../../../types'
 import * as actions from '../../../redux/actions/viewOrg'
 import * as acceptInboxRequestActions from '../../../redux/actions/viewOrganization/acceptInboxRequest'
+import * as notificationActions from '../../../redux/actions/notifications'
 
 import ViewOrganization from './component'
 
 import * as orgModel from '../../../data/models/organization/model'
-import * as requestModel from '../../../data/models/requests';
+import * as requestModel from '../../../data/models/requests'
+import * as feedsModel from '../../../data/models/feeds'
 
 // Props for this component
 
@@ -24,6 +26,7 @@ interface StateProps {
     groupInvitations: Array<requestModel.Request> | null
     requestOutbox: Array<requestModel.Request>
     requestInbox: Array<requestModel.Request>
+    notifications: Array<feedsModel.OrganizationNotification>
 }
 
 // the interface for mapDispatchToProps
@@ -36,6 +39,7 @@ interface DispatchProps {
     onRemoveNarrative: (narrative: orgModel.NarrativeResource) => void
     onGetViewAccess: (narrative: orgModel.NarrativeResource) => void
     onAcceptRequest: (request: requestModel.Request) => void
+    onReadNotification: (notificationId: string) => void
 }
 
 // hmm this bit would be for the interface for the wrapped component.
@@ -56,11 +60,18 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
                     organization, relation, groupRequests, groupInvitations, requestInbox, requestOutbox
                 }
             }
+        },
+        db: {
+            notifications: { all }
         }
     } = state
+
+    const notifications = all.filter((notification) => {
+        return (notification.organizationId === organization.id)
+    })
     // TODO: of course this really needs to be an async fetch of the org info!
     return {
-        organization, relation, groupRequests, groupInvitations, requestInbox, requestOutbox
+        organization, relation, groupRequests, groupInvitations, requestInbox, requestOutbox, notifications
     }
 }
 
@@ -89,6 +100,9 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         },
         onAcceptRequest: (request: requestModel.Request) => {
             dispatch(acceptInboxRequestActions.acceptInboxRequest(request) as any)
+        },
+        onReadNotification: (notificationId: string) => {
+            dispatch(notificationActions.read(notificationId) as any)
         }
     }
 }

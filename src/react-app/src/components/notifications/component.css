@@ -5,11 +5,11 @@
     min-height: 0;
 }
 
-.Notifications .header {
+.Notifications>.Notifications-Header {
     flex: 0 0 auto;
 }
 
-.Notifications .body {
+.Notifications>.Notifications-Body {
     flex: 1 1 0px;
     display: block;
     overflow-y: auto;

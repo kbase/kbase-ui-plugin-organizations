@@ -129,6 +129,8 @@ export class FeedsClient {
             count: 100
         })
 
+        // console.log('got notifications', notifications)
+
         // console.log('raw notifications...', notifications)
 
         return notifications.user.feed

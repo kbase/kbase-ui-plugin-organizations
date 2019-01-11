@@ -389,7 +389,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                 </div>
                 {/* <div className="id">
                     <span className="label">permalink</span>{' '}
-                    <span className="permalinkBase">https://narrative.kbase.us#orgs/</span>{org.id}
+                    <span className="permalinkBase">https:/narrative.kbase.us#orgs/</span>{org.id}
                 </div> */}
                 <div className="owner">
                     <Owner member={org.owner} avatarSize={20} />
