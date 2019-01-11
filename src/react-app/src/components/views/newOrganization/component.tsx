@@ -342,7 +342,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             <div className="row">
                 <div className="col2">
                     <div className="id">
-                        <span style={{ color: 'silver' }}>{this.origin}/#orgs/organizations/</span>
+                        <span style={{ color: 'silver' }}>{this.origin}/#orgs/viewOrganization/</span>
                         {this.props.newOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
                     </div>
                 </div>

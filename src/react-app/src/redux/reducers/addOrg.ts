@@ -341,7 +341,7 @@ export function updateIdSuccess(state: StoreState, action: UpdateIdSuccess): Sto
                         ...state.views.addOrgView.viewModel.newOrganization,
                         id: {
                             ...state.views.addOrgView.viewModel.newOrganization.id,
-                            value: action.id,
+                            // value: action.id,
                             syncState: SyncState.DIRTY,
                             validationState: {
                                 type: ValidationErrorType.OK,
@@ -373,7 +373,7 @@ export function updateIdError(state: StoreState, action: UpdateIdError): StoreSt
                         ...state.views.addOrgView.viewModel.newOrganization,
                         id: {
                             ...state.views.addOrgView.viewModel.newOrganization.id,
-                            value: action.id,
+                            // value: action.id,
                             syncState: SyncState.DIRTY,
                             validationState: action.error
                         }

@@ -589,6 +589,7 @@ let activeDebouncer: Debouncer | null = null
 
 export function updateId(id: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(updateIdPass(id))
         const [validatedId, error] = Validation.validateOrgId(id)
         if (error.type !== ValidationErrorType.OK) {
             dispatch(updateIdError(validatedId, error))
@@ -610,12 +611,9 @@ export function updateId(id: string) {
         const lastValidatedAt = viewModel.newOrganization.id.validationState.validatedAt
         const now = new Date().getTime()
         const debounce = 500 // ms
-        dispatch(updateIdPass(validatedId))
         if (lastValidatedAt) {
-
             const elapsed = now - lastValidatedAt.getTime()
             if (elapsed < debounce) {
-                dispatch(updateIdPass(validatedId))
                 if (!activeDebouncer) {
                     activeDebouncer = new Debouncer(500, () => {
                         dispatch(evaluateId())
