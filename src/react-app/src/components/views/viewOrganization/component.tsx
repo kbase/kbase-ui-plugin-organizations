@@ -43,6 +43,7 @@ export interface ViewOrganizationProps {
     onRejectInvitation: (requestId: string) => void
     onRemoveNarrative: (narrative: orgModel.NarrativeResource) => void
     onGetViewAccess: (narrative: orgModel.NarrativeResource) => void
+    onAcceptRequest: (request: requestModel.Request) => void
 }
 
 class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrganizationState> {
@@ -724,12 +725,17 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
+    onAcceptRequest(request: requestModel.Request) {
+        this.props.onAcceptRequest(request)
+    }
+
     renderInboxCard() {
         // only show the inbox for admin and owner.
         if (!(this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
             this.props.relation.type === orgModel.UserRelationToOrganization.OWNER)) {
             return
         }
+
         const extras: Array<JSX.Element> = []
         const count = this.props.requestInbox.length
         const title = (
@@ -752,7 +758,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             inbox = this.props.requestInbox.map((request) => {
                 return (
                     <React.Fragment key={request.id}>
-                        <InboxRequest request={request} showOrg={false} />
+                        <InboxRequest
+                            request={request}
+                            showOrg={false}
+                            onAcceptInboxRequest={this.onAcceptRequest.bind(this)} />
                     </React.Fragment>
                 )
             })

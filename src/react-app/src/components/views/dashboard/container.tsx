@@ -18,6 +18,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
+    onAcceptInboxRequest: (request: requestModel.Request) => void
     onCancelOutboxRequest: (request: requestModel.Request) => void
     onRefresh: () => void
 }
@@ -36,6 +37,9 @@ function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
 
 function mapDispatchToProps(dispatch: Dispatch<actions.DashboardAction<any>>): DispatchProps {
     return {
+        onAcceptInboxRequest: (request: requestModel.Request) => {
+            dispatch(actions.acceptInboxRequest(request) as any)
+        },
         onCancelOutboxRequest: (request: requestModel.Request) => {
             dispatch(actions.cancelOutboxRequest(request) as any)
         },

@@ -23,6 +23,7 @@ export interface DashboardProps {
     viewModel: DashboardViewModel
     currentUser: userModel.Username
     onRefresh: () => void
+    onAcceptInboxRequest: (request: requestModel.Request) => void
 }
 
 interface DashboardState {
@@ -285,6 +286,10 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         })
     }
 
+    onAcceptInboxRequest(request: requestModel.Request) {
+        this.props.onAcceptInboxRequest(request)
+    }
+
     renderPendingAdminRequests() {
         const requests = this.props.viewModel.pendingAdminRequests
         if (requests.length === 0) {
@@ -298,7 +303,10 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return requests.map((request, index) => {
             return (
                 <React.Fragment key={index}>
-                    <InboxRequest request={request} showOrg={true} />
+                    <InboxRequest
+                        request={request}
+                        showOrg={true}
+                        onAcceptInboxRequest={this.onAcceptInboxRequest.bind(this)} />
                 </React.Fragment>
             )
         })
@@ -316,7 +324,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return this.props.viewModel.requestInbox.map((request) => {
             return (
                 <React.Fragment key={request.id}>
-                    <InboxRequest request={request} showOrg={true} />
+                    <InboxRequest request={request} showOrg={true} onAcceptInboxRequest={this.onAcceptInboxRequest.bind(this)} />
                 </React.Fragment>
             )
         })

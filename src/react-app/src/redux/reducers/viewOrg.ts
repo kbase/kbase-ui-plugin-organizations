@@ -2,6 +2,7 @@ import { Action } from 'redux'
 import * as actions from '../actions/viewOrg'
 import * as types from '../../types'
 import { ActionFlag } from '../actions'
+import acceptInboxRequest from './viewOrganization/acceptInboxRequest'
 
 export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
     return {
@@ -127,9 +128,9 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
             return removeNarrativeSuccess(state, action as actions.RemoveNarrativeSuccess)
         case ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_SUCCESS:
             return accessNarrativeSuccess(state, action as actions.AccessNarrativeSuccess)
-        default:
-            return null
     }
+
+    return acceptInboxRequest(state, action)
 }
 
 export default reducer

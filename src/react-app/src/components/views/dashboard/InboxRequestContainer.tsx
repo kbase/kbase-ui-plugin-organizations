@@ -7,7 +7,7 @@ import * as actions from '../../../redux/actions/dashboard'
 import InboxRequest from './InboxRequest'
 
 export interface OwnProps {
-
+    onAcceptInboxRequest: (request: requestModel.Request) => void
 }
 
 interface StateProps {
@@ -15,7 +15,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onAcceptInboxRequest: (request: requestModel.Request) => void
+    // onAcceptInboxRequest: (request: requestModel.Request) => void
     onRejectInboxRequest: (request: requestModel.Request) => void
 }
 
@@ -27,9 +27,9 @@ function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {
-        onAcceptInboxRequest: (request: requestModel.Request) => {
-            dispatch(actions.acceptInboxRequest(request) as any)
-        },
+        // onAcceptInboxRequest: (request: requestModel.Request) => {
+        //     dispatch(actions.acceptInboxRequest(request) as any)
+        // },
         onRejectInboxRequest: (request: requestModel.Request) => {
             dispatch(actions.rejectInboxRequest(request) as any)
         }

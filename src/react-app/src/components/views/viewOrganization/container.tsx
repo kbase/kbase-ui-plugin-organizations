@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 
 import { StoreState } from '../../../types'
 import * as actions from '../../../redux/actions/viewOrg'
+import * as acceptInboxRequestActions from '../../../redux/actions/viewOrganization/acceptInboxRequest'
 
 import ViewOrganization from './component'
 
@@ -34,6 +35,7 @@ interface DispatchProps {
     onRejectInvitation: (requestId: string) => void
     onRemoveNarrative: (narrative: orgModel.NarrativeResource) => void
     onGetViewAccess: (narrative: orgModel.NarrativeResource) => void
+    onAcceptRequest: (request: requestModel.Request) => void
 }
 
 // hmm this bit would be for the interface for the wrapped component.
@@ -84,6 +86,9 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         },
         onGetViewAccess: (narrative: orgModel.NarrativeResource) => {
             dispatch(actions.accessNarrative(narrative) as any)
+        },
+        onAcceptRequest: (request: requestModel.Request) => {
+            dispatch(acceptInboxRequestActions.acceptInboxRequest(request) as any)
         }
     }
 }

@@ -119,6 +119,7 @@ export interface RejectJoinInvitationError extends Action {
     error: AppError
 }
 
+
 // Delete Narrative
 
 export interface RemoveNarrative extends Action {

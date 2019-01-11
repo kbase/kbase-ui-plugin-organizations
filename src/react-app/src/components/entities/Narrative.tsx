@@ -101,7 +101,9 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                 </div>
                 <div className="mainCol">
                     <div className="title">
-                        {narrative.title}
+                        <a href={"//narrative/" + narrative.workspaceId} target="_blank">
+                            {narrative.title}
+                        </a>
                     </div>
                 </div>
 
@@ -125,7 +127,9 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                 </div>
                 <div className="mainCol">
                     <div className="title">
-                        {narrative.title}
+                        <a href={"//narrative/" + narrative.workspaceId} target="_blank">
+                            {narrative.title}
+                        </a>
                     </div>
                     <div>
                         {this.renderPublicPermission(narrative)}

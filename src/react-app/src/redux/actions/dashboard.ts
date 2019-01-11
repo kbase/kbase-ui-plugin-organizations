@@ -459,13 +459,13 @@ export function acceptInboxRequest(request: requestModel.Request) {
             const newRequest = await requestClient.acceptRequest(request.id)
 
             // refetch the inbox
-            const outbox = await requestClient.getInboundRequests()
+            const inbox = await requestClient.getInboundRequests()
 
             const orgs = await uberClient.getOrganizationsForUser()
 
             dispatch({
                 type: ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_SUCCESS,
-                requests: outbox,
+                requests: inbox,
                 organizations: orgs
             })
 
