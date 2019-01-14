@@ -109,7 +109,7 @@ export function appStart() {
         } else {
             // Hmm, not sure why the main router is not picking up 
             // the / default route.
-            window.history.pushState(null, 'test', '/organizations')
+            window.history.pushState(null, 'test', '/dashboard')
         }
     }
 }

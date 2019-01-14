@@ -62,10 +62,12 @@ class IFrameSimulator {
                 feedsServiceURL: '/services/feeds',
                 authServiceURL: '/services/auth',
                 originalPath: '',
-                view: 'org',
-                viewParams: {
-                    id: 'test'
-                }
+                view: null,
+                viewParams: null
+                // view: 'org',
+                // viewParams: {
+                //     id: 'test'
+                // }
             },
             parentHost: document.location!.origin
         }

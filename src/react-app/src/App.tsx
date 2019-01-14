@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Route, Switch } from 'react-router'
+import { Route, Switch, Redirect } from 'react-router'
 import { HashRouter, BrowserRouter } from 'react-router-dom'
 
 // redux
@@ -65,7 +65,7 @@ class App extends Component {
                 <div className="App scrollable-flex-column">
                   <div className="App-body scrollable-flex-column">
                     <Switch>
-                      <Route path="/" exact={true} component={DashboardView} />
+                      <Route path="/dashboard" exact={true} component={DashboardView} />
                       <Route path="/organizations" component={OrganizationsBrowser} />
                       <Route path="/newOrganization" component={NewOrganization} />
                       {/* The destructuring below is ugly, but effective */}
@@ -77,7 +77,7 @@ class App extends Component {
                       <Route path="/membership/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<ManageMembership organizationId={id} />)} />
                       <Route path="/requestAddNarrative/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<RequestAddNarrative organizationId={id} />)} />
 
-                      {/* <Redirect from="/" to="/organizations" exact={true} /> */}
+                      <Redirect from="/" to="/dashboard" exact={true} />
                     </Switch>
                   </div>
                 </div>
