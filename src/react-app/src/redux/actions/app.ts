@@ -3,10 +3,10 @@ import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
 import * as types from '../../types'
-import IFrameSimulator, { IFrameParams } from '../../lib/IFrameSimulator';
+import IFrameSimulator from '../../lib/IFrameSimulator';
 import { IFrameIntegration } from '../../lib/IFrameIntegration';
 
-import * as notificationActions from './notifications'
+import { } from 'react-router-dom';
 
 // Action Definitions
 
@@ -46,9 +46,7 @@ export function appError(error: AppError): AppError {
 export function appStart() {
     return (dispatch: ThunkDispatch<types.StoreState, void, Action>, getState: () => types.StoreState) => {
         // check and see if we are in an iframe
-        const iframeParams = new IFrameIntegration().getParamsFromIFrame()
-
-
+        let iframeParams = new IFrameIntegration().getParamsFromIFrame()
 
         if (iframeParams) {
             dispatch(appSuccess({
@@ -75,34 +73,43 @@ export function appStart() {
                 }
             }))
         } else {
-            const fakeIframeParams = new IFrameSimulator().getParamsFromIFrame()
+            iframeParams = new IFrameSimulator().getParamsFromIFrame()
             dispatch(appSuccess({
                 baseUrl: '',
                 services: {
                     Groups: {
-                        url: fakeIframeParams.params.groupsServiceURL
+                        url: iframeParams.params.groupsServiceURL
                     },
                     UserProfile: {
-                        url: fakeIframeParams.params.userProfileServiceURL
+                        url: iframeParams.params.userProfileServiceURL
                     },
                     Workspace: {
-                        url: fakeIframeParams.params.workspaceServiceURL
+                        url: iframeParams.params.workspaceServiceURL
                     },
                     ServiceWizard: {
-                        url: fakeIframeParams.params.serviceWizardURL
+                        url: iframeParams.params.serviceWizardURL
                     },
                     Feeds: {
-                        url: fakeIframeParams.params.feedsServiceURL
+                        url: iframeParams.params.feedsServiceURL
                     },
                     Auth: {
-                        url: fakeIframeParams.params.authServiceURL
+                        url: iframeParams.params.authServiceURL
                     }
                 }
             }))
         }
 
-        // if so, get the params
-
-        // if not, use the fake to get it
+        if (iframeParams.params.view) {
+            let viewParams
+            switch (iframeParams.params.view) {
+                case 'org':
+                    const path = '/viewOrganization/' + iframeParams.params.viewParams.id
+                    window.history.pushState(null, 'test', path)
+            }
+        } else {
+            // Hmm, not sure why the main router is not picking up 
+            // the / default route.
+            window.history.pushState(null, 'test', '/organizations')
+        }
     }
 }

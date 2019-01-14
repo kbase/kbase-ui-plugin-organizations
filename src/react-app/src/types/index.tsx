@@ -749,3 +749,19 @@ export interface AuthProps {
     onAddAuthorization: (token: string) => void
 }
 
+export interface IFrameParams {
+    channelId: string
+    frameId: string
+    params: {
+        groupsServiceURL: string
+        userProfileServiceURL: string
+        workspaceServiceURL: string
+        serviceWizardURL: string
+        feedsServiceURL: string
+        authServiceURL: string
+        originalPath: string | null,
+        view: string | null,
+        viewParams: any
+    },
+    parentHost: string
+}

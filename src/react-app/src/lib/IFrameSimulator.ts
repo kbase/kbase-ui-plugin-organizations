@@ -1,20 +1,23 @@
 import uuid from 'uuid/v4'
 import { Channel } from './windowChannel'
-import { runInThisContext } from 'vm';
+import { IFrameParams } from '../types'
 
-export interface IFrameParams {
-    channelId: string
-    frameId: string
-    params: {
-        groupsServiceURL: string
-        userProfileServiceURL: string
-        workspaceServiceURL: string
-        serviceWizardURL: string
-        feedsServiceURL: string
-        authServiceURL: string
-    },
-    parentHost: string
-}
+// export interface IFrameParams {
+//     channelId: string
+//     frameId: string
+//     params: {
+//         groupsServiceURL: string
+//         userProfileServiceURL: string
+//         workspaceServiceURL: string
+//         serviceWizardURL: string
+//         feedsServiceURL: string
+//         authServiceURL: string
+//         originalPath: string | null,
+//         view: string | null,
+//         viewParams: any
+//     },
+//     parentHost: string
+// }
 /*
  channelId: "3b33179e-8a6d-4ae9-bc95-af4c0492eaa6"
 frameId: "frame_kb_html_be553ee5-645c-4737-80ba-dcb642632f0c"
@@ -52,12 +55,17 @@ class IFrameSimulator {
             channelId: this.channel.id,
             frameId: uuid(),
             params: {
-                groupsServiceURL: 'services/groups',
-                userProfileServiceURL: 'services/user_profile/rpc',
-                workspaceServiceURL: 'services/ws',
-                serviceWizardURL: 'services/service_wizard',
-                feedsServiceURL: 'services/feeds',
-                authServiceURL: 'services/auth'
+                groupsServiceURL: '/services/groups',
+                userProfileServiceURL: '/services/user_profile/rpc',
+                workspaceServiceURL: '/services/ws',
+                serviceWizardURL: '/services/service_wizard',
+                feedsServiceURL: '/services/feeds',
+                authServiceURL: '/services/auth',
+                originalPath: '',
+                view: 'org',
+                viewParams: {
+                    id: 'test'
+                }
             },
             parentHost: document.location!.origin
         }

@@ -29,7 +29,13 @@ define([
             this.container.style['flex-direction'] = 'column';
         }
 
-        start() {
+        start(params) {
+            params = params || {};
+
+            if (params.viewParams) {
+                params.viewParams = JSON.parse(params.viewParams);
+            }
+
             this.iframer = new Iframer({
                 runtime: this.runtime,
                 node: this.container,
@@ -40,7 +46,10 @@ define([
                     workspaceServiceURL: this.runtime.config('services.Workspace.url'),
                     serviceWizardURL: this.runtime.config('services.ServiceWizard.url'),
                     feedsServiceURL: this.runtime.config('services.Feeds.url'),
-                    authServiceURL: this.runtime.config('services.auth2.url')
+                    authServiceURL: this.runtime.config('services.auth2.url'),
+                    originalPath: window.location.pathname,
+                    view: params.view || null,
+                    viewParams: params.viewParams || null
                 }
             });
 

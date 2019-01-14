@@ -16,9 +16,18 @@
         routes:
             -
                 path: [orgs]
+                exact: false
                 queryParams:
+                    view: {}
+                    viewParams: {}
+
                 widget: organizations_panel
                 authorization: true
+            # -
+            #     path: [orgs]
+            #     queryParams:
+            #     widget: organizations_panel
+            #     authorization: true
         menu:
             -
                 name: organizations

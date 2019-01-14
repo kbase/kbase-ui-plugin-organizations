@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Route, Switch } from 'react-router'
-import { HashRouter } from 'react-router-dom'
+import { HashRouter, BrowserRouter } from 'react-router-dom'
 
 // redux
 import { Provider } from 'react-redux';
@@ -61,7 +61,7 @@ class App extends Component {
         <KBaseIntegration>
           <Auth hosted={hosted}>
             <DataServices>
-              <HashRouter basename="/orgs/">
+              <BrowserRouter basename="/" >
                 <div className="App scrollable-flex-column">
                   <div className="App-body scrollable-flex-column">
                     <Switch>
@@ -81,7 +81,7 @@ class App extends Component {
                     </Switch>
                   </div>
                 </div>
-              </HashRouter>
+              </BrowserRouter>
             </DataServices>
           </Auth>
         </KBaseIntegration>

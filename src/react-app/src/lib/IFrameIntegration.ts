@@ -1,16 +1,20 @@
-export interface IFrameParams {
-    channelId: string
-    frameId: string
-    params: {
-        groupsServiceURL: string
-        userProfileServiceURL: string
-        workspaceServiceURL: string
-        serviceWizardURL: string
-        feedsServiceURL: string
-        authServiceURL: string
-    },
-    parentHost: string
-}
+import { IFrameParams } from '../types'
+// export interface IFrameParams {
+//     channelId: string
+//     frameId: string
+//     params: {
+//         groupsServiceURL: string
+//         userProfileServiceURL: string
+//         workspaceServiceURL: string
+//         serviceWizardURL: string
+//         feedsServiceURL: string
+//         authServiceURL: string
+//         originalPath: string | null,
+//         view: string | null,
+//         viewParams: any
+//     },
+//     parentHost: string
+// }
 
 export class IFrameIntegration {
     getParamsFromIFrame() {
@@ -26,6 +30,7 @@ export class IFrameIntegration {
             // throw new Error('No params found in window!')
             return null
         }
-        return JSON.parse(decodeURIComponent(params)) as IFrameParams
+        const iframeParams = JSON.parse(decodeURIComponent(params)) as IFrameParams
+        return iframeParams
     }
 }
