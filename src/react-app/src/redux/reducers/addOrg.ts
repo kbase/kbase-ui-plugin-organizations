@@ -4,12 +4,14 @@ import { ActionFlag } from '../actions';
 import {
     LoadStart, Unload,
     SaveError, SaveStart, SaveSuccess, AddOrgEvaluateOK, AddOrgEvaluateErrors,
-    LoadSuccess, UpdateNameSuccess, UpdateNameError, UpdateGravatarHashSuccess,
-    UpdateGravatarHashError, UpdateIdSuccess, UpdateIdError, UpdateDescriptionSuccess,
+    LoadSuccess, UpdateNameSuccess, UpdateNameError,
+    UpdateIdSuccess, UpdateIdError, UpdateDescriptionSuccess,
     UpdateDescriptionError,
     LoadError,
     UpdateIdPass,
-    UpdateIsPrivateSuccess
+    UpdateIsPrivateSuccess,
+    UpdateLogoUrlSuccess,
+    UpdateLogoUrlError
 } from '../actions/addOrg'
 import Validation from '../../data/models/organization/validation';
 
@@ -260,7 +262,7 @@ export function updateNameError(state: StoreState, action: UpdateNameError): Sto
 }
 
 // Gravatar hash
-export function updateGravatarHashSuccess(state: StoreState, action: UpdateGravatarHashSuccess): StoreState {
+export function updateLogoUrlSuccess(state: StoreState, action: UpdateLogoUrlSuccess): StoreState {
     if (!state.views.addOrgView.viewModel) {
         console.warn('attempting updateGravatarHashSuccess without view model')
         return state
@@ -276,10 +278,10 @@ export function updateGravatarHashSuccess(state: StoreState, action: UpdateGrava
                     editState: EditState.EDITED,
                     newOrganization: {
                         ...state.views.addOrgView.viewModel.newOrganization,
-                        gravatarHash: {
-                            ...state.views.addOrgView.viewModel.newOrganization.gravatarHash,
+                        logoUrl: {
+                            ...state.views.addOrgView.viewModel.newOrganization.logoUrl,
                             syncState: SyncState.DIRTY,
-                            value: action.gravatarHash,
+                            value: action.logoUrl,
                             validationState: {
                                 type: ValidationErrorType.OK,
                                 validatedAt: new Date()
@@ -292,7 +294,7 @@ export function updateGravatarHashSuccess(state: StoreState, action: UpdateGrava
     }
 }
 
-export function updateGravatarHashError(state: StoreState, action: UpdateGravatarHashError): StoreState {
+export function updateLogoUrlError(state: StoreState, action: UpdateLogoUrlError): StoreState {
     if (!state.views.addOrgView.viewModel) {
         console.warn('attempting updateGravatarHashError without view model')
         return state
@@ -308,10 +310,10 @@ export function updateGravatarHashError(state: StoreState, action: UpdateGravata
                     editState: EditState.EDITED,
                     newOrganization: {
                         ...state.views.addOrgView.viewModel.newOrganization,
-                        gravatarHash: {
-                            ...state.views.addOrgView.viewModel.newOrganization.gravatarHash,
+                        logoUrl: {
+                            ...state.views.addOrgView.viewModel.newOrganization.logoUrl,
                             syncState: SyncState.DIRTY,
-                            value: action.gravatarHash,
+                            value: action.logoUrl,
                             validationState: action.error
                         }
                     }
@@ -535,10 +537,10 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
         case ActionFlag.ADD_ORG_UPDATE_NAME_ERROR:
             return updateNameError(state, action as UpdateNameError)
 
-        case ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_SUCCESS:
-            return updateGravatarHashSuccess(state, action as UpdateGravatarHashSuccess)
-        case ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_ERROR:
-            return updateGravatarHashError(state, action as UpdateGravatarHashError)
+        case ActionFlag.ADD_ORG_UPDATE_LOGO_URL_SUCCESS:
+            return updateLogoUrlSuccess(state, action as UpdateLogoUrlSuccess)
+        case ActionFlag.ADD_ORG_UPDATE_LOGO_URL_ERROR:
+            return updateLogoUrlError(state, action as UpdateLogoUrlError)
 
         case ActionFlag.ADD_ORG_UPDATE_ID_SUCCESS:
             return updateIdSuccess(state, action as UpdateIdSuccess)

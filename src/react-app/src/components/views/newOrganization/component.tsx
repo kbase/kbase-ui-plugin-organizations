@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { Redirect } from 'react-router-dom';
-import marked from 'marked';
-import { Button, Icon, Modal, Input, Checkbox } from 'antd';
+import { Redirect } from 'react-router-dom'
+import marked from 'marked'
+import { Button, Icon, Modal, Input, Checkbox } from 'antd'
 import md5 from 'md5'
 
 import { EditableOrganization, SaveState, ValidationState, EditState, AppError, Editable, ValidationErrorType, SyncState } from '../../../types';
@@ -10,8 +10,7 @@ import './component.css'
 
 import Header from '../../Header';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import OrgAvatar from '../../OrgAvatar';
-import Validation from '../../../data/models/organization/validation';
+import OrgLogo from '../../OrgLogo';
 
 export interface NewOrganizationProps {
     editState: EditState,
@@ -21,10 +20,10 @@ export interface NewOrganizationProps {
     newOrganization: EditableOrganization,
     onSave: () => void,
     onUpdateName: (name: string) => void,
-    // onUpdateGravatarHash: (gravatarHash: string | null) => void;
     onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
+    onUpdateLogoUrl: (logoUrl: string) => void
 }
 
 
@@ -36,9 +35,6 @@ export interface NewOrganizationState {
 class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizationState> {
 
     origin: string;
-    gravatarEmail: React.RefObject<HTMLInputElement>
-
-    // idDebounceTime: number | null
 
     constructor(props: NewOrganizationProps) {
         super(props)
@@ -48,11 +44,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             showError: true
         }
 
-        this.gravatarEmail = React.createRef()
-
         this.origin = document.location!.origin
-
-        // this.idDebounceTime = null
     }
 
     onShowInfo() {
@@ -131,18 +123,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         })
     }
 
-    // onGravatarEmailSync() {
-    //     let email
-    //     let hashed
-    //     if (this.gravatarEmail.current && this.gravatarEmail.current.value) {
-    //         email = this.gravatarEmail.current.value.toLowerCase()
-    //         hashed = md5(email)
-    //     } else {
-    //         hashed = null
-    //     }
-    //     // this.props.onUpdateGravatarHash(hashed);
-    // }
-
     onClickCancelToBrowser() {
         if (!this.isModified()) {
             this.setState({ cancelToBrowser: true })
@@ -182,11 +162,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         this.props.onUpdateName(e.target.value);
     }
 
-    // onGravatarHashChange(e: React.ChangeEvent<HTMLInputElement>) {
-    //     e.persist();
-    //     this.props.onUpdateGravatarHash(e.target.value);
-    // }
-
     onDescriptionChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
         e.persist()
         this.props.onUpdateDescription(e.target.value);
@@ -195,6 +170,11 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
     onIdChange(e: React.ChangeEvent<HTMLInputElement>) {
         e.persist()
         this.props.onUpdateId(e.target.value)
+    }
+
+    onLogoUrlChange(e: React.ChangeEvent<HTMLInputElement>) {
+        e.persist()
+        this.props.onUpdateLogoUrl(e.target.value)
     }
 
     onIsPrivateChange(e: CheckboxChangeEvent) {
@@ -262,6 +242,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                         {this.renderFieldError(this.props.newOrganization.name)}
                     </div>
                 </div>
+
                 <div className="row">
                     <div className="col1 field-label">id</div>
                     <div className="col2">
@@ -272,6 +253,17 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                         {this.renderFieldError(this.props.newOrganization.id)}
                     </div>
                 </div>
+
+                <div className="row">
+                    <div className="col1 field-label">logo url</div>
+                    <div className="col2">
+                        <Input value={this.props.newOrganization.logoUrl.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.logoUrl)}
+                            onChange={this.onLogoUrlChange.bind(this)} />
+                        {this.renderFieldError(this.props.newOrganization.logoUrl)}
+                    </div>
+                </div>
+
                 <div className="row">
                     <div className="col1 field-label">is private?</div>
                     <div className="col2">
@@ -293,6 +285,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                         {this.renderFieldError(this.props.newOrganization.description)}
                     </div>
                 </div>
+
                 <div className="row">
                     <div className="col1"></div>
                     <div className="col2">
@@ -309,9 +302,21 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
-    renderOrgAvatar(org: EditableOrganization) {
+    charAt(inString: string, position: number) {
+        // const c1 = inString.charAt(position)
+        const c1 = inString.charCodeAt(position)
+        if (c1 >= 0xD800 && c1 <= 0xDBFF && inString.length > position + 1) {
+            const c2 = inString.charCodeAt(position + 1)
+            if (c2 > 0xDC00 && c2 <= 0xDFFF) {
+                return inString.substring(position, 2)
+            }
+        }
+        return inString.substring(position, 1)
+    }
+
+    renderLogo(org: EditableOrganization) {
         return (
-            <OrgAvatar gravatarHash={null} size={64} organizationName={org.name.value} organizationId={org.id.value} />
+            <OrgLogo logoUrl={null} size={64} organizationName={org.name.value} organizationId={org.id.value} />
         )
     }
 
@@ -330,6 +335,37 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
+    renderDefaultLogo() {
+        if (!(this.props.newOrganization.name.value && this.props.newOrganization.id.value)) {
+            return (
+                <div>
+                    Default logo preview available when the Organization name and id are completed
+                </div>
+            )
+        }
+        const initial = this.charAt(this.props.newOrganization.name.value, 0).toUpperCase()
+        // const initial = this.props.organizationName.substr(0, 1).toUpperCase()
+        const hash = md5(this.props.newOrganization.id.value)
+
+        const size = 60;
+
+        const color = hash.substr(0, 6)
+        return (
+            <svg width={size} height={size} style={{ border: '1px rgba(200, 200, 200, 0.5) solid' }}>
+                <text x="50%" y="50%" dy={4} textAnchor="middle" dominantBaseline="middle" fontSize={size - 12} fill={'#' + color} fontFamily="sans-serif">{initial}</text>
+            </svg>
+        )
+    }
+
+    renderLogoPreview() {
+        if (!this.props.newOrganization.logoUrl.value) {
+            return this.renderDefaultLogo()
+        }
+        return (
+            <img src={this.props.newOrganization.logoUrl.value} width={60} />
+        )
+    }
+
     renderPreview() {
         return <form className="preview">
             <div className="row">
@@ -339,6 +375,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     </div>
                 </div>
             </div>
+
             <div className="row">
                 <div className="col2">
                     <div className="id">
@@ -347,6 +384,15 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     </div>
                 </div>
             </div>
+
+            <div className="row">
+                <div className="col2">
+                    <div className="logoUrl">
+                        {this.renderLogoPreview()}
+                    </div>
+                </div>
+            </div>
+
             <div className="row">
                 <div className="col2">
                     <div className="name">

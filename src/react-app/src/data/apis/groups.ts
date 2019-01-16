@@ -11,7 +11,7 @@ export interface BriefGroup {
     id: string;
     name: string;
     custom: {
-        gravatarhash?: string
+        logourl?: string
     }
     owner: Member;
     // createdAt: number;
@@ -57,7 +57,7 @@ export interface Group {
         catalogmethod: Array<AppInfo>
     }
     custom: {
-        gravatarhash?: string
+        logourl?: string
         description: string
     }
 }
@@ -65,14 +65,14 @@ export interface Group {
 export interface NewGroup {
     id: string
     name: string
-    gravatarhash: string | null
+    logourl: string | null
     description: string
     isPrivate: boolean
 }
 
 export interface GroupUpdate {
     name: string
-    gravatarhash: string | null
+    logourl: string | null
     description: string
     private: boolean
 }
@@ -431,7 +431,7 @@ export class GroupsClient {
             name: newGroup.name,
             private: newGroup.isPrivate,
             custom: {
-                gravatarhash: newGroup.gravatarhash
+                logourl: newGroup.logourl
             }
         }
 
@@ -447,7 +447,7 @@ export class GroupsClient {
         const payload: any = {
             name: groupUpdate.name,
             custom: {
-                gravatarhash: groupUpdate.gravatarhash
+                logourl: groupUpdate.logourl
             },
             private: groupUpdate.private
         }

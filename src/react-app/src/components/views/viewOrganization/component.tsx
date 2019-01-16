@@ -15,7 +15,6 @@ import * as feedsModel from '../../../data/models/feeds'
 import OrganizationNarrative from '../../OrganizationNarrative'
 import InboxRequest from '../dashboard/InboxRequestContainer'
 import OutboxRequest from '../dashboard/OutboxRequestContainer'
-import OrgAvatar from '../../OrgAvatar'
 import Notifications from '../../notifications/component';
 
 enum NavigateTo {
@@ -176,24 +175,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         }
         return (
             <div className="org">
-                {/* <div className="nameAndLogo">
-                    <div className="avatar">
-                        {this.renderOrgAvatar(this.props.organization)}
-                    </div>
-                    <div className="nameAndLink">
-                        <div className="name">
-                            {this.props.organization.name}
-                        </div>
-                        <div className="id">
-                            <span className="label">permalink</span>{' '}
-                            <span className="permalinkBase">https:/narrative.kbase.us#orgs/</span>{this.props.organization.id}
-                        </div>
-                    </div>
-                </div> */}
                 <div className="description"
                     dangerouslySetInnerHTML={({ __html: marked(this.props.organization.description || '') })}
                 />
-
             </div>
         )
     }
@@ -230,12 +214,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         }
         return (
             <OrganizationHeader organizationId={this.props.organization.id} />
-        )
-    }
-
-    renderOrgAvatar(org: orgModel.Organization) {
-        return (
-            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} organizationId={org.id} />
         )
     }
 

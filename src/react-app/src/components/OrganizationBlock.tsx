@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom';
 import { Tooltip, Icon } from 'antd';
 
 import './OrganizationBlock.css'
-import OrgAvatar from './OrgAvatar';
+import OrgLogo from './OrgLogo';
 
 export interface OrganizationBlockProps {
     organization: orgModel.Organization
@@ -22,9 +22,9 @@ export default class OrganizationBlock extends React.Component<OrganizationBlock
         super(props)
     }
 
-    renderOrgAvatar(org: orgModel.Organization) {
+    renderLogo(org: orgModel.Organization) {
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} organizationId={org.id} />
+            <OrgLogo logoUrl={org.logoUrl} size={64} organizationName={org.name} organizationId={org.id} />
         )
     }
 
@@ -165,7 +165,7 @@ export default class OrganizationBlock extends React.Component<OrganizationBlock
             <div className="OrganizationBlock" key={org.id}>
                 <div className="avatarCol">
                     <NavLink to={`/viewOrganization/${org.id}`}>
-                        {this.renderOrgAvatar(org)}
+                        {this.renderLogo(org)}
                     </NavLink>
                 </div>
                 <div className="bodyCol">

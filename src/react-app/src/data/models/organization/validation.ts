@@ -85,54 +85,78 @@ export default class Validation {
             }]
     }
 
-    static validateOrgGravatarHash(gravatarHash: string | null): [string | null, ValidationState] {
-        if (!gravatarHash) {
+    static validateOrgLogoUrl(logoUrl: string | null): [string | null, ValidationState] {
+        if (logoUrl === null) {
             return [
-                null, {
+                logoUrl, {
                     type: ValidationErrorType.OK,
-                    validatedAt: new Date()
-                }]
-        }
-        if (gravatarHash.length === 0) {
-            return [
-                gravatarHash, {
-                    type: ValidationErrorType.OK,
-                    validatedAt: new Date()
-                }]
-        }
-        if (gravatarHash.length > 32) {
-            return [
-                gravatarHash, {
-                    type: ValidationErrorType.ERROR,
-                    message: 'Organization gravatar hash may not be longer than 32 characters',
-                    validatedAt: new Date()
-                }]
-        }
-        if (gravatarHash.length < 32) {
-            return [
-                gravatarHash, {
-                    type: ValidationErrorType.ERROR,
-                    message: 'Organization gravatar hash may not be shorter than 32 characters',
-                    validatedAt: new Date()
-                }]
-        }
-        const acceptedChars = /^[a-f0-9]+$/
-        if (!acceptedChars.test(gravatarHash)) {
-            return [
-                gravatarHash, {
-                    type: ValidationErrorType.ERROR,
-                    message: 'Organization gravatar hash must consist only of the lower case hexadecimal characters a-f and 0-9',
                     validatedAt: new Date()
                 }
             ]
         }
-
+        if (logoUrl.length > 1000) {
+            return [
+                logoUrl, {
+                    type: ValidationErrorType.ERROR,
+                    message: 'Logo url may not be longer than 1000 characters',
+                    validatedAt: new Date()
+                }]
+        }
         return [
-            gravatarHash, {
+            logoUrl, {
                 type: ValidationErrorType.OK,
                 validatedAt: new Date()
             }]
     }
+
+    // static validateOrgGravatarHash(gravatarHash: string | null): [string | null, ValidationState] {
+    //     if (!gravatarHash) {
+    //         return [
+    //             null, {
+    //                 type: ValidationErrorType.OK,
+    //                 validatedAt: new Date()
+    //             }]
+    //     }
+    //     if (gravatarHash.length === 0) {
+    //         return [
+    //             gravatarHash, {
+    //                 type: ValidationErrorType.OK,
+    //                 validatedAt: new Date()
+    //             }]
+    //     }
+    //     if (gravatarHash.length > 32) {
+    //         return [
+    //             gravatarHash, {
+    //                 type: ValidationErrorType.ERROR,
+    //                 message: 'Organization gravatar hash may not be longer than 32 characters',
+    //                 validatedAt: new Date()
+    //             }]
+    //     }
+    //     if (gravatarHash.length < 32) {
+    //         return [
+    //             gravatarHash, {
+    //                 type: ValidationErrorType.ERROR,
+    //                 message: 'Organization gravatar hash may not be shorter than 32 characters',
+    //                 validatedAt: new Date()
+    //             }]
+    //     }
+    //     const acceptedChars = /^[a-f0-9]+$/
+    //     if (!acceptedChars.test(gravatarHash)) {
+    //         return [
+    //             gravatarHash, {
+    //                 type: ValidationErrorType.ERROR,
+    //                 message: 'Organization gravatar hash must consist only of the lower case hexadecimal characters a-f and 0-9',
+    //                 validatedAt: new Date()
+    //             }
+    //         ]
+    //     }
+
+    //     return [
+    //         gravatarHash, {
+    //             type: ValidationErrorType.OK,
+    //             validatedAt: new Date()
+    //         }]
+    // }
 
     static validateOrgDescription(description: string): [string, ValidationState] {
         if (description.length === 0) {

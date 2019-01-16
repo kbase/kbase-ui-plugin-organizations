@@ -8,7 +8,7 @@ import {
     EditOrgUpdateNameSuccess, EditOrgUpdateNameError,
     // EditOrgUpdateIdSuccess, EditOrgUpdateIdError,
     EditOrgUpdateDescriptionSuccess, EditOrgUpdateDescriptionError,
-    EditOrgUpdateGravatarHashError, EditOrgUpdateGravatarHashSuccess, UpdateIsPrivateSuccess
+    UpdateIsPrivateSuccess, EditOrgUpdateLogoUrlSuccess, EditOrgUpdateLogoUrlError
 } from '../actions/editOrg'
 import { StateInstances } from '../state';
 
@@ -129,8 +129,8 @@ export function editOrgSaveSuccess(state: StoreState, action: EditOrgSaveSuccess
                             ...state.views.editOrgView.viewModel.editedOrganization.name,
                             syncState: SyncState.CLEAN
                         },
-                        gravatarHash: {
-                            ...state.views.editOrgView.viewModel.editedOrganization.gravatarHash,
+                        logoUrl: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.logoUrl,
                             syncState: SyncState.CLEAN
                         },
                         isPrivate: {
@@ -227,7 +227,7 @@ function evaluateEditorState(viewModel: EditOrgViewModel): EditState {
         return EditState.EDITED
     }
 
-    if (viewModel.editedOrganization.gravatarHash.syncState === SyncState.DIRTY) {
+    if (viewModel.editedOrganization.logoUrl.syncState === SyncState.DIRTY) {
         return EditState.EDITED
     }
 
@@ -245,7 +245,7 @@ function evaluateEditorState(viewModel: EditOrgViewModel): EditState {
 
 
 // Name
-export function editOrgUpdateNameSuccess(state: StoreState, action: EditOrgUpdateNameSuccess) {
+export function editOrgUpdateNameSuccess(state: StoreState, action: EditOrgUpdateNameSuccess): StoreState {
     if (!state.views.editOrgView.viewModel) {
         return state
     }
@@ -300,7 +300,7 @@ export function editOrgUpdateNameSuccess(state: StoreState, action: EditOrgUpdat
     }
 }
 
-export function editOrgUpdateNameError(state: StoreState, action: EditOrgUpdateNameError) {
+export function editOrgUpdateNameError(state: StoreState, action: EditOrgUpdateNameError): StoreState {
     if (!state.views.editOrgView.viewModel) {
         return state
     }
@@ -329,8 +329,8 @@ export function editOrgUpdateNameError(state: StoreState, action: EditOrgUpdateN
     }
 }
 
-// Gravatar hash
-export function editOrgUpdateGravatarHashSuccess(state: StoreState, action: EditOrgUpdateGravatarHashSuccess) {
+// Logo url
+export function editOrgUpdateLogoUrlSuccess(state: StoreState, action: EditOrgUpdateLogoUrlSuccess): StoreState {
     if (!state.views.editOrgView.viewModel) {
         return state
     }
@@ -346,9 +346,9 @@ export function editOrgUpdateGravatarHashSuccess(state: StoreState, action: Edit
                     editState: EditState.EDITED,
                     editedOrganization: {
                         ...state.views.editOrgView.viewModel.editedOrganization,
-                        gravatarHash: {
-                            ...state.views.editOrgView.viewModel.editedOrganization.gravatarHash,
-                            value: action.gravatarHash,
+                        logoUrl: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.logoUrl,
+                            value: action.logoUrl,
                             syncState: SyncState.DIRTY,
                             validationState: validationStateOk()
                         }
@@ -377,7 +377,7 @@ export function editOrgUpdateGravatarHashSuccess(state: StoreState, action: Edit
     }
 }
 
-export function editOrgUpdateGravatarHashError(state: StoreState, action: EditOrgUpdateGravatarHashError) {
+export function editOrgUpdateLogoUrlError(state: StoreState, action: EditOrgUpdateLogoUrlError): StoreState {
     if (!state.views.editOrgView.viewModel) {
         return state
     }
@@ -393,9 +393,9 @@ export function editOrgUpdateGravatarHashError(state: StoreState, action: EditOr
                     editState: EditState.EDITED,
                     editedOrganization: {
                         ...state.views.editOrgView.viewModel.editedOrganization,
-                        gravatarHash: {
-                            ...state.views.editOrgView.viewModel.editedOrganization.gravatarHash,
-                            value: action.gravatarHash,
+                        logoUrl: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.logoUrl,
+                            value: action.logoUrl,
                             syncState: SyncState.DIRTY,
                             validationState: action.error
                         }
@@ -444,7 +444,7 @@ export function editOrgUpdateGravatarHashError(state: StoreState, action: EditOr
 //     }
 // }
 
-export function updateDescriptionSuccess(state: StoreState, action: EditOrgUpdateDescriptionSuccess) {
+export function updateDescriptionSuccess(state: StoreState, action: EditOrgUpdateDescriptionSuccess): StoreState {
     if (!state.views.editOrgView.viewModel) {
         return state
     }
@@ -499,7 +499,7 @@ export function updateDescriptionSuccess(state: StoreState, action: EditOrgUpdat
     }
 }
 
-export function editOrgUpdateDescriptionError(state: StoreState, action: EditOrgUpdateDescriptionError) {
+export function editOrgUpdateDescriptionError(state: StoreState, action: EditOrgUpdateDescriptionError): StoreState {
     if (!state.views.editOrgView.viewModel) {
         return state
     }
@@ -528,7 +528,7 @@ export function editOrgUpdateDescriptionError(state: StoreState, action: EditOrg
     }
 }
 
-export function updateIsPrivateSuccess(state: StoreState, action: UpdateIsPrivateSuccess) {
+export function updateIsPrivateSuccess(state: StoreState, action: UpdateIsPrivateSuccess): StoreState {
     if (!state.views.editOrgView.viewModel) {
         return state
     }
@@ -607,10 +607,10 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
         case ActionFlag.EDIT_ORG_UPDATE_NAME_ERROR:
             return editOrgUpdateNameError(state, action as EditOrgUpdateNameError)
 
-        case ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_SUCCESS:
-            return editOrgUpdateGravatarHashSuccess(state, action as EditOrgUpdateGravatarHashSuccess)
-        case ActionFlag.EDIT_ORG_UPDATE_GRAVATAR_HASH_ERROR:
-            return editOrgUpdateGravatarHashError(state, action as EditOrgUpdateGravatarHashError)
+        case ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_SUCCESS:
+            return editOrgUpdateLogoUrlSuccess(state, action as EditOrgUpdateLogoUrlSuccess)
+        case ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_ERROR:
+            return editOrgUpdateLogoUrlError(state, action as EditOrgUpdateLogoUrlError)
 
         case ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_SUCCESS:
             return updateIsPrivateSuccess(state, action as UpdateIsPrivateSuccess)

@@ -83,21 +83,21 @@ export interface UpdateNameError extends Action {
     error: ValidationState
 }
 
-// Updating gravatar hash field
+// Updating logo url field
 
-export interface UpdateGravatarHash extends Action {
-    type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH,
+export interface UpdateLogoUrl extends Action {
+    type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL,
     name: string
 }
 
-export interface UpdateGravatarHashSuccess {
-    type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
-    gravatarHash: string | null
+export interface UpdateLogoUrlSuccess {
+    type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_SUCCESS,
+    logoUrl: string | null
 }
 
-export interface UpdateGravatarHashError extends Action {
-    type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_ERROR,
-    gravatarHash: string | null,
+export interface UpdateLogoUrlError extends Action {
+    type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_ERROR,
+    logoUrl: string | null,
     error: ValidationState
 }
 
@@ -257,17 +257,17 @@ export function updateIdPass(id: string): UpdateIdPass {
 
 // Update Gravatar Hash
 
-export function updateGravatarHashSuccess(gravatarHash: string | null): UpdateGravatarHashSuccess {
+export function updateLogoUrlSuccess(logoUrl: string | null): UpdateLogoUrlSuccess {
     return {
-        type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_SUCCESS,
-        gravatarHash: gravatarHash
+        type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_SUCCESS,
+        logoUrl: logoUrl
     }
 }
 
-export function updateGravatarHashError(gravatarHash: string | null, error: ValidationState): UpdateGravatarHashError {
+export function updateLogoUrlError(logoUrl: string | null, error: ValidationState): UpdateLogoUrlError {
     return {
-        type: ActionFlag.ADD_ORG_UPDATE_GRAVATAR_HASH_ERROR,
-        gravatarHash: gravatarHash,
+        type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_ERROR,
+        logoUrl: logoUrl,
         error: error
     }
 }
@@ -333,11 +333,11 @@ export function load() {
                 //     type: UIErrorType.NONE
                 // }
             },
-            gravatarHash: {
+            logoUrl: {
                 value: '',
                 remoteValue: null,
                 syncState: SyncState.CLEAN,
-                validationState: Validation.validateOrgGravatarHash('')[1]
+                validationState: Validation.validateOrgLogoUrl('')[1]
                 // editState: EditState.NONE,
                 // validationState: ValidationState.NONE,
                 // validatedAt: null,
@@ -473,14 +473,14 @@ export function addOrgEvaluate() {
 
         // TODO: quick hack to allow unmodified fields to evaluate to true.
 
-        if (newOrganization.gravatarHash.validationState.type !== ValidationErrorType.OK) {
+        if (newOrganization.logoUrl.validationState.type !== ValidationErrorType.OK) {
             dispatch(AddOrgEvaluateErrors())
             return
         }
 
         // if (newOrganization.gravatarHash.validationState.type === ValidationErrorType.OK) {
         //     if (newOrganization.gravatarHash.value) {
-        //         const [validGravatarHash, error] = Validation.validateOrgGravatarHash(name)
+        //         const [validLogoUrl, error] = Validation.validateOrgLogoUrl(name)
         //         if (error) {
         //             dispatch(AddOrgEvaluateErrors())
         //             return
@@ -531,14 +531,14 @@ export function updateName(name: string) {
     }
 }
 
-export function updateGravatarHash(name: string | null) {
+export function updateLogoUrl(name: string | null) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
-        const [validatedGravatarHash, error] = Validation.validateOrgGravatarHash(name)
+        const [validatedLogoUrl, error] = Validation.validateOrgLogoUrl(name)
 
         if (error.type !== ValidationErrorType.OK) {
-            dispatch(updateGravatarHashError(validatedGravatarHash, error))
+            dispatch(updateLogoUrlError(validatedLogoUrl, error))
         } else {
-            dispatch(updateGravatarHashSuccess(validatedGravatarHash))
+            dispatch(updateLogoUrlSuccess(validatedLogoUrl))
         }
         dispatch(addOrgEvaluate())
     }

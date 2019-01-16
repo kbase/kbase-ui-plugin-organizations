@@ -8,7 +8,7 @@ import * as requestModel from '../../../data/models/requests'
 import * as userModel from '../../../data/models/user'
 
 import './component.css'
-import OrgAvatar from '../../OrgAvatar';
+import OrgLogo from '../../OrgLogo';
 import Owner from '../../entities/OwnerContainer';
 
 
@@ -174,9 +174,9 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
     }
 
 
-    renderOrgAvatar(org: orgModel.Organization) {
+    renderLogo(org: orgModel.Organization) {
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} organizationId={org.id} />
+            <OrgLogo logoUrl={org.logoUrl} size={64} organizationName={org.name} organizationId={org.id} />
         )
     }
 
@@ -446,7 +446,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
         return (
             <div className="OrganizationHeader">
                 <div className="avatar">
-                    {this.renderOrgAvatar(this.props.organization)}
+                    {this.renderLogo(this.props.organization)}
                 </div>
                 <div className="orgInfo">
                     {this.renderOrgInfo()}

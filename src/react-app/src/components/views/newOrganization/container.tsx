@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { StoreState, EditState, SaveState, ValidationState, EditableOrganization, AppError } from '../../../types';
 import {
-    addOrg, updateName, updateGravatarHash, updateId, updateDescription, updateIsPrivate
+    addOrg, updateName, updateLogoUrl, updateId, updateDescription, updateIsPrivate
 } from '../../../redux/actions/addOrg';
 
 import Component from './component';
@@ -22,7 +22,7 @@ export interface StateProps {
 export interface DispatchProps {
     onSave: () => void
     onUpdateName: (name: string) => void
-    onUpdateGravatarHash: (gravatarHash: string | null) => void
+    onUpdateLogoUrl: (logoUrl: string | null) => void
     onUpdateId: (id: string) => void
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
@@ -57,8 +57,8 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         onUpdateName: (name) => {
             dispatch(updateName(name) as any)
         },
-        onUpdateGravatarHash: (gravatarHash: string | null) => {
-            dispatch(updateGravatarHash(gravatarHash) as any)
+        onUpdateLogoUrl: (logoUrl: string | null) => {
+            dispatch(updateLogoUrl(logoUrl) as any)
         },
         onUpdateId: (id) => {
             dispatch(updateId(id) as any)

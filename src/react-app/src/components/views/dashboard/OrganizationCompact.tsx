@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 
 import './OrganizationCompact.css'
 import { Icon } from 'antd';
-import OrgAvatar from '../../OrgAvatar';
+import OrgLogo from '../../OrgLogo';
 import Owner from '../../entities/OwnerContainer';
 
 export interface OrganizationProps {
@@ -44,9 +44,9 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
         })
     }
 
-    renderAvatar(org: orgModel.Organization) {
+    renderLogo(org: orgModel.Organization) {
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash} size={32} organizationName={org.name} organizationId={org.id} />
+            <OrgLogo logoUrl={org.logoUrl} size={32} organizationName={org.name} organizationId={org.id} />
         )
     }
 
@@ -79,7 +79,7 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
                 </div>
                 <div className="avatarCol">
                     <NavLink to={`/viewOrganization/${org.id}`}>
-                        {this.renderAvatar(org)}
+                        {this.renderLogo(org)}
                     </NavLink>
                 </div>
                 <div className="bodyCol">
@@ -123,7 +123,7 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
                 </div>
                 <div className="avatarCol">
                     <NavLink to={`/viewOrganization/${org.id}`}>
-                        {this.renderAvatar(org)}
+                        {this.renderLogo(org)}
                     </NavLink>
                 </div>
                 <div className="bodyCol">

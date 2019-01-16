@@ -5,14 +5,10 @@ import { StoreState, EditableOrganization, EditState, SaveState, ValidationState
 import {
     editOrgSave,
     editOrgUpdateName,
-    // editOrgUpdateId, 
-    editOrgUpdateDescription, editOrgUpdateGravatarHash
+    editOrgUpdateDescription, editOrgUpdateLogoUrl, updateIsPrivate
 } from '../../../redux/actions/editOrg';
-
 import EditOrganization from './component';
-
 import * as orgModel from '../../../data/models/organization/model'
-import { updateIsPrivate } from '../../../redux/actions/editOrg';
 
 interface OwnProps {
 }
@@ -28,7 +24,7 @@ export interface StateProps {
 export interface DispatchProps {
     onEditOrgSave: () => void
     onUpdateName: (name: string) => void
-    onUpdateGravatarHash: (gravatarHash: string | null) => void
+    onUpdateLogoUrl: (gravatarHash: string | null) => void
     // onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
@@ -63,8 +59,8 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         onUpdateName: (name: string) => {
             dispatch(editOrgUpdateName(name) as any)
         },
-        onUpdateGravatarHash: (gravatarHash: string | null) => {
-            dispatch(editOrgUpdateGravatarHash(gravatarHash) as any)
+        onUpdateLogoUrl: (gravatarHash: string | null) => {
+            dispatch(editOrgUpdateLogoUrl(gravatarHash) as any)
         },
         // onUpdateId: (id) => {
         //     dispatch(editOrgUpdateId(id) as any)

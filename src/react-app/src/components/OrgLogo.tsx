@@ -1,19 +1,19 @@
 import * as React from 'react'
 import md5 from 'md5'
 
-export interface OrgAvatarProps {
-    gravatarHash: string | null
+export interface OrgLogoProps {
+    logoUrl: string | null
     size: number
     organizationName: string
     organizationId: string
 }
 
-export interface OrgAvatarState {
+export interface OrgLogoState {
 
 }
 
-export default class OrgAvatar extends React.Component<OrgAvatarProps, OrgAvatarState> {
-    constructor(props: OrgAvatarProps) {
+export default class OrgLogo extends React.Component<OrgLogoProps, OrgLogoState> {
+    constructor(props: OrgLogoProps) {
         super(props)
     }
 
@@ -37,6 +37,17 @@ export default class OrgAvatar extends React.Component<OrgAvatarProps, OrgAvatar
         return (
             <img style={{ width: this.props.size, height: this.props.size }}
                 src={url} />
+        )
+    }
+
+    renderLogoUrl() {
+        if (!this.props.logoUrl) {
+            return (
+                <span>n/a</span>
+            )
+        }
+        return (
+            <img src={this.props.logoUrl} width={this.props.size} />
         )
     }
 
@@ -79,7 +90,14 @@ export default class OrgAvatar extends React.Component<OrgAvatarProps, OrgAvatar
         )
     }
 
+    renderLogo() {
+        if (this.props.logoUrl) {
+            return this.renderLogoUrl()
+        }
+        return this.renderDefaultInitial();
+    }
+
     render() {
-        return this.renderDefaultInitial()
+        return this.renderLogo()
     }
 }

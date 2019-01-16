@@ -8,7 +8,7 @@ import UserComponent from '../../entities/UserContainer'
 import UserLoader from '../../entities/UserLoader'
 
 import './Organization.css'
-import OrgAvatar from '../../OrgAvatar';
+import OrgLogo from '../../OrgLogo';
 
 export interface OrganizationProps {
     organization: uberModel.UberOrganization
@@ -23,9 +23,9 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
         super(props)
     }
 
-    renderAvatar(org: orgModel.Organization) {
+    renderLogo(org: orgModel.Organization) {
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} organizationId={org.id} />
+            <OrgLogo logoUrl={org.logoUrl} size={64} organizationName={org.name} organizationId={org.id} />
         )
     }
 
@@ -195,7 +195,7 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
             <div className="OrganizationBlock" key={org.id}>
                 <div className="avatarCol">
                     <NavLink to={`/viewOrganization/${org.id}`}>
-                        {this.renderAvatar(org)}
+                        {this.renderLogo(org)}
                     </NavLink>
                 </div>
                 <div className="bodyCol">

@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { Alert } from 'antd';
 import * as orgModel from '../../data/models/organization/model'
 import Owner from '../entities/OwnerContainer';
-import OrgAvatar from '../OrgAvatar';
+import OrgLogo from '../OrgLogo';
 
 // TODO: need more ergonomic way to resolve the common issue of data types interfering with 
 // component types.
@@ -27,9 +27,9 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
         }
     }
 
-    renderOrgAvatar(org: orgModel.Organization) {
+    renderLogo(org: orgModel.Organization) {
         return (
-            <OrgAvatar gravatarHash={org.gravatarHash} size={64} organizationName={org.name} organizationId={org.id} />
+            <OrgLogo logoUrl={org.logoUrl} size={64} organizationName={org.name} organizationId={org.id} />
         )
     }
 
@@ -191,7 +191,7 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
             <div className="row organizationCard" key={String(index)}>
                 <div className="col2">
                     <NavLink to={`/viewOrganization/${org.id}`}>
-                        {this.renderOrgAvatar(org)}
+                        {this.renderLogo(org)}
                     </NavLink>
                 </div>
                 <div className="col1">

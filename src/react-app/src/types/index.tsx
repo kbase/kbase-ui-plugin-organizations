@@ -110,9 +110,9 @@ export interface EditableBoolean extends Editable {
 export interface EditableOrganization {
     id: EditableString
     name: EditableString
-    gravatarHash: EditableNullableString
     description: EditableString
     isPrivate: EditableBoolean
+    logoUrl: EditableNullableString
 }
 
 
@@ -214,7 +214,7 @@ export interface Member {
 export interface BriefOrganization {
     id: string
     name: string
-    gravatarHash: string | null
+    logoUrl: string | null
     owner: {
         username: string
         realname: string

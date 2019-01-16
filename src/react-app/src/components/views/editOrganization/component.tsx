@@ -12,7 +12,7 @@ import Header from '../../Header';
 import OrganizationHeader from '../organizationHeader/loader';
 import * as orgModel from '../../../data/models/organization/model'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import OrgAvatar from '../../OrgAvatar'
+import OrgLogo from '../../OrgLogo'
 import TextArea from 'antd/lib/input/TextArea';
 
 export interface EditOrganizationProps {
@@ -23,10 +23,9 @@ export interface EditOrganizationProps {
     organization: orgModel.Organization
     onEditOrgSave: () => void
     onUpdateName: (name: string) => void
-    // onUpdateGravatarHash: (gravatarHash: string | null) => void
-    // onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
+    onUpdateLogoUrl: (logoUrl: string) => void
 }
 
 enum NavigateTo {
@@ -45,8 +44,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
 
     origin: string;
 
-    gravatarEmail: React.RefObject<HTMLInputElement>
-
     constructor(props: EditOrganizationProps) {
         super(props)
 
@@ -55,8 +52,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
             cancelToViewer: false,
             navigateTo: NavigateTo.NONE
         }
-
-        this.gravatarEmail = React.createRef()
 
         this.origin = document.location!.origin
     }
@@ -72,19 +67,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
             )
         })
     }
-
-
-    // onGravatarEmailSync() {
-    //     let email
-    //     let hashed
-    //     if (this.gravatarEmail.current && this.gravatarEmail.current.value) {
-    //         email = this.gravatarEmail.current.value.toLowerCase()
-    //         hashed = md5(email)
-    //     } else {
-    //         hashed = null
-    //     }
-    //     this.props.onUpdateGravatarHash(hashed);
-    // }
 
     onClickCancelToBrowser() {
         if (!this.isModified()) {
@@ -154,24 +136,23 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         this.props.onUpdateName(e.target.value);
     }
 
-    // onGravatarHashChange(e: React.ChangeEvent<HTMLInputElement>) {
-    //     e.persist();
-    //     this.props.onUpdateGravatarHash(e.target.value);
-    // }
-
     onDescriptionChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
         e.persist()
         this.props.onUpdateDescription(e.target.value);
     }
 
     onIdChange(e: React.ChangeEvent<HTMLInputElement>) {
-        e.persist();
-        // this.props.onUpdateId(e.target.value);
+        e.persist()
         console.warn('no updating id, naughty!')
     }
 
     onIsPrivateChange(e: CheckboxChangeEvent) {
         this.props.onUpdateIsPrivate(e.target.checked)
+    }
+
+    onLogoUrlChange(e: React.ChangeEvent<HTMLInputElement>) {
+        e.persist()
+        this.props.onUpdateLogoUrl(e.target.value)
     }
 
     canSave() {
@@ -240,6 +221,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                         {this.renderFieldError(this.props.editedOrganization.name)}
                     </div>
                 </div>
+
                 <div className="row">
                     <div className="col1 field-label">id</div>
                     <div className="col2">
@@ -249,6 +231,17 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                         {this.renderFieldError(this.props.editedOrganization.id)}
                     </div>
                 </div>
+
+                <div className="row">
+                    <div className="col1 field-label">logo url</div>
+                    <div className="col2">
+                        <Input value={this.props.editedOrganization.logoUrl.value || ''}
+                            className={this.calcFieldClass(this.props.editedOrganization.logoUrl)}
+                            onChange={this.onLogoUrlChange.bind(this)} />
+                        {this.renderFieldError(this.props.editedOrganization.logoUrl)}
+                    </div>
+                </div>
+
                 <div className="row">
                     <div className="col1 field-label">is private?</div>
                     <div className="col2">
@@ -270,6 +263,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                         {this.renderFieldError(this.props.editedOrganization.description)}
                     </div>
                 </div>
+
                 <div className="row">
                     <div className="col1"></div>
                     <div className="col2">
@@ -286,8 +280,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-
-
     renderIsPrivate(isPrivate: boolean) {
         if (isPrivate) {
             return (
@@ -303,6 +295,49 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
+    renderLogoPreview() {
+        if (!this.props.editedOrganization.logoUrl.value) {
+            return this.renderDefaultLogo()
+        }
+        return (
+            <img src={this.props.editedOrganization.logoUrl.value} width={60} />
+        )
+    }
+
+    charAt(inString: string, position: number) {
+        // const c1 = inString.charAt(position)
+        const c1 = inString.charCodeAt(position)
+        if (c1 >= 0xD800 && c1 <= 0xDBFF && inString.length > position + 1) {
+            const c2 = inString.charCodeAt(position + 1)
+            if (c2 > 0xDC00 && c2 <= 0xDFFF) {
+                return inString.substring(position, 2)
+            }
+        }
+        return inString.substring(position, 1)
+    }
+
+    renderDefaultLogo() {
+        if (!(this.props.editedOrganization.name.value && this.props.editedOrganization.id.value)) {
+            return (
+                <div>
+                    Default logo preview available when the Organization name and id are completed
+                </div>
+            )
+        }
+        const initial = this.charAt(this.props.editedOrganization.name.value, 0).toUpperCase()
+        // const initial = this.props.organizationName.substr(0, 1).toUpperCase()
+        const hash = md5(this.props.editedOrganization.id.value)
+
+        const size = 60;
+
+        const color = hash.substr(0, 6)
+        return (
+            <svg width={size} height={size} style={{ border: '1px rgba(200, 200, 200, 0.5) solid' }}>
+                <text x="50%" y="50%" dy={4} textAnchor="middle" dominantBaseline="middle" fontSize={size - 12} fill={'#' + color} fontFamily="sans-serif">{initial}</text>
+            </svg>
+        )
+    }
+
     renderPreview() {
         return <form className="preview">
             <div className="row">
@@ -312,6 +347,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                     </div>
                 </div>
             </div>
+
             <div className="row">
                 <div className="col2">
                     <div className="id">
@@ -320,6 +356,15 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                     </div>
                 </div>
             </div>
+
+            <div className="row">
+                <div className="col2">
+                    <div className="logoUrl">
+                        {this.renderLogoPreview()}
+                    </div>
+                </div>
+            </div>
+
             <div className="row">
                 <div className="col2">
                     <div className="isPrivate">

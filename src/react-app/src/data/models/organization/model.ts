@@ -9,7 +9,7 @@ import Validation from './validation'
 
 export interface OrganizationUpdate {
     name: string
-    gravatarHash: string | null
+    logoUrl: string | null
     description: string
     isPrivate: boolean
 }
@@ -123,7 +123,7 @@ export interface Organization {
     name: string
     isPrivate: boolean
     isMember: boolean
-    gravatarHash: string | null
+    logoUrl: string | null
     description: string
     owner: Member
     members: Array<Member>
@@ -244,7 +244,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: usernam
         name: group.name,
         isPrivate: group.private,
         isMember: group.ismember,
-        gravatarHash: group.custom.gravatarhash || null,
+        logoUrl: group.custom.logourl || null,
         description: group.custom.description,
         owner: owner,
         members: members,
@@ -540,7 +540,7 @@ export class OrganizationModel {
         // do record-level validation
         if ((newOrg.id.validationState.type !== ValidationErrorType.OK) ||
             (newOrg.name.validationState.type !== ValidationErrorType.OK) ||
-            (newOrg.gravatarHash.validationState.type !== ValidationErrorType.OK) ||
+            (newOrg.logoUrl.validationState.type !== ValidationErrorType.OK) ||
             (newOrg.description.validationState.type !== ValidationErrorType.OK) ||
             (newOrg.isPrivate.validationState.type !== ValidationErrorType.OK)
         ) {
@@ -550,7 +550,7 @@ export class OrganizationModel {
         return groupsClient.createGroup({
             id: newOrg.id.value,
             name: newOrg.name.value,
-            gravatarhash: newOrg.gravatarHash.value,
+            logourl: newOrg.logoUrl.value,
             description: newOrg.description.value,
             isPrivate: newOrg.isPrivate.value
         })
@@ -582,7 +582,7 @@ export class OrganizationModel {
 
         return groupsClient.updateGroup(id, {
             name: orgUpdate.name,
-            gravatarhash: orgUpdate.gravatarHash,
+            logourl: orgUpdate.logoUrl,
             description: orgUpdate.description,
             private: orgUpdate.isPrivate
         })
