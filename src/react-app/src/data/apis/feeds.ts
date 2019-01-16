@@ -18,12 +18,17 @@ import { AppException } from "../../types";
 }
 */
 
+export interface Resource {
+    id: string
+    name: string
+    type: string
+}
 export interface Notification {
     id: string
-    actor: string
+    actor: Resource
     verb: string
-    object: string
-    target: Array<string>
+    object: Resource
+    target: Array<Resource>
     source: string
     level: string
     seen: boolean
@@ -90,7 +95,7 @@ export class FeedsClient {
         this.params = params
     }
 
-    put<T>(path: Array<string>, body: any): Promise<T> {
+    async put<T>(path: Array<string>, body: any): Promise<T> {
         const url = (this.baseURLPath().concat(path)).join('/')
         return fetch(url, {
             headers: {

@@ -8,6 +8,7 @@ import Narrative from '../entities/NarrativeContainer';
 
 export interface NotificationsProps {
     notifications: Array<feedsModel.OrganizationNotification>
+    showOrg: boolean
     onRead: (notificationId: string) => void
 }
 
@@ -24,22 +25,6 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
         this.props.onRead(notification.id)
     }
 
-    renderType(type: feedsModel.OrganizationNotificationType) {
-        switch (type) {
-            case (feedsModel.OrganizationNotificationType.JOIN_INVITATION):
-                return 'You have been invited to Join'
-            case (feedsModel.OrganizationNotificationType.JOIN_REQUEST):
-                return 'Request to Join'
-            case (feedsModel.OrganizationNotificationType.UNKNOWN):
-                return 'UNKNOWN'
-            case (feedsModel.OrganizationNotificationType.NARRATIVE_ASSOCIATION_REQUEST):
-                return 'Request to associate Narrative'
-            case (feedsModel.OrganizationNotificationType.APP_ASSOCIATION_REQUEST):
-                return 'Request to associate App'
-            default:
-                return 'UNKNOWN NOTIFICATION TYPE'
-        }
-    }
     renderInvitationToOrg(notification: feedsModel.OrganizationNotification) {
         return (
             <div className="notification" key={notification.id}>
@@ -67,15 +52,21 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
     }
 
     renderRequestToJoinToOrg(notification: feedsModel.OrganizationNotification) {
+        let orgInfo
+        if (this.props.showOrg) {
+            orgInfo = (
+                <div>
+                    <OrganizationCompactContainer organizationId={notification.organizationId} />
+                </div>
+            )
+        }
         return (
             <div className="notification" key={notification.id}>
                 <div className="mainCol">
                     <div>
-                        Request to Join
+                        Request to join organization
                     </div>
-                    <div>
-                        <OrganizationCompactContainer organizationId={notification.organizationId} />
-                    </div>
+                    {orgInfo}
                     <div>
                         <span className="field-label">from</span>
                     </div>
@@ -93,7 +84,20 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
     }
 
     renderNarrativeAssociationRequest(notification: feedsModel.OrganizationNotification) {
-        const workspaceId = parseInt(notification.regarding[0], 10)
+        const workspaceId = parseInt(notification.regarding[0].id, 10)
+        let orgInfo
+        if (this.props.showOrg) {
+            orgInfo = (
+                <React.Fragment>
+                    <div>
+                        <span className="field-label">with organization</span>
+                    </div>
+                    <div>
+                        <OrganizationCompactContainer organizationId={notification.organizationId} />
+                    </div>
+                </React.Fragment>
+            )
+        }
         return (
             <div className="notification" key={notification.id}>
                 <div className="mainCol">
@@ -103,14 +107,11 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
                     <div>
                         <Narrative workspaceId={workspaceId} />
                     </div>
+
+                    {orgInfo}
+
                     <div>
-                        <span className="field-label">with</span>
-                    </div>
-                    <div>
-                        <OrganizationCompactContainer organizationId={notification.organizationId} />
-                    </div>
-                    <div>
-                        <span className="field-label">by</span>
+                        <span className="field-label">from</span>
                     </div>
                     <div>
                         <User userId={notification.from} avatarSize={30} />
@@ -140,28 +141,6 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
             default:
                 return 'UNKNOWN NOTIFICATION TYPE'
         }
-    }
-
-    renderNotificationx(notification: feedsModel.OrganizationNotification) {
-        return (
-            <div className="notification" key={notification.id}>
-                <div className="mainCol">
-                    <div>
-                        {this.renderType(notification.type)}
-                    </div>
-                    <div>
-                        <User userId={notification.from} avatarSize={30} />
-                    </div>
-                    <div>
-                        <OrganizationCompactContainer organizationId={notification.organizationId} />
-                    </div>
-                </div>
-                <div className="actionCol">
-                    <Button type="danger" icon="cross" size="small" onClick={() => { this.onReadNotification.call(this, notification) }} />
-                </div>
-
-            </div>
-        )
     }
 
     renderNotifications() {

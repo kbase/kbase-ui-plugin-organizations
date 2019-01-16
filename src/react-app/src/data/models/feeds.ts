@@ -16,12 +16,17 @@ export enum Level {
 
 export interface Context { }
 
+export interface Entity {
+    id: string
+    name: string
+    type: string
+}
 export interface Notification {
     id: NotificationID
-    actor: string
+    actor: Entity
     verb: string
-    object: string
-    target: Array<string>
+    object: Entity
+    target: Array<Entity>
     source: string
     level: Level
     seen: boolean
@@ -49,7 +54,7 @@ export interface OrganizationNotification {
     organizationId: orgModel.OrganizationID
     type: OrganizationNotificationType
     read: boolean
-    regarding: Array<string>
+    regarding: Array<Entity>
 }
 
 function convertLevel(level: string) {
@@ -68,24 +73,29 @@ function convertLevel(level: string) {
 }
 
 function convertNotificationType(notification: feedsApi.Notification): OrganizationNotificationType {
-    if (!(notification.context && notification.context.resourcetype)) {
-        return OrganizationNotificationType.UNKNOWN
-    }
+    // Grok
+    // if (!(notification.target && notification.context.resourcetype)) {
+    //     return OrganizationNotificationType.UNKNOWN
+    // }
+    const target = notification.target[0]
     switch (notification.verb) {
         case 'requested':
-            switch (notification.context.resourcetype) {
+            switch (target.type) {
                 case 'user':
                     return OrganizationNotificationType.JOIN_REQUEST
+                case 'narrative':
                 case 'workspace':
                     return OrganizationNotificationType.NARRATIVE_ASSOCIATION_REQUEST
                 case 'app':
                     return OrganizationNotificationType.APP_ASSOCIATION_REQUEST
             }
         case 'invited':
-            switch (notification.context.resourcetype) {
+            switch (target.type) {
                 case 'user':
                     return OrganizationNotificationType.JOIN_INVITATION
             }
+        default:
+            return OrganizationNotificationType.UNKNOWN
     }
 
     return OrganizationNotificationType.UNKNOWN
@@ -129,26 +139,22 @@ export class FeedsClient {
             count: 100
         })
 
-        // console.log('got notifications', notifications)
-
-        // console.log('raw notifications...', notifications)
-
         return notifications.user.feed
             .filter(({ actor, source }) => {
                 return (
                     source === 'groupsservice' &&
-                    actor !== this.params.username
+                    actor.id !== this.params.username
                 )
             })
             .map((notification) => {
                 return {
                     id: notification.id,
-                    from: notification.actor,
+                    from: notification.actor.id,
                     createdAt: new Date(notification.created),
                     expiresAt: new Date(notification.expires),
                     level: convertLevel(notification.level),
                     read: notification.seen,
-                    organizationId: notification.object,
+                    organizationId: notification.object.id,
                     type: convertNotificationType(notification),
                     regarding: notification.target
                 }

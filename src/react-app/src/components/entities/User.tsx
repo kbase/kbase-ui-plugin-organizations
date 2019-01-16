@@ -67,11 +67,11 @@ class User extends React.Component<UserProps, UserState> {
                 <div className="infoCol">
                     <div className="name">
                         <a href={"/#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
-                        {' '}
-                        ❨{this.props.user.username}❩
+                    </div>
+                    <div>
+                        {this.props.user.username}
                     </div>
                 </div>
-
             </React.Fragment>
         )
     }
@@ -92,8 +92,9 @@ class User extends React.Component<UserProps, UserState> {
                 <div className="infoCol">
                     <div className="name">
                         <a href={"/#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
-                        {' '}
-                        ❨{this.props.user.username}❩
+                    </div>
+                    <div>
+                        {this.props.user.username}
                     </div>
                     <div className="organization">
                         {this.props.user.organization || <i>no organization in user profile</i>}
@@ -102,7 +103,6 @@ class User extends React.Component<UserProps, UserState> {
                         {[this.props.user.city, this.props.user.state, this.props.user.country].filter(x => x).join(', ') || <i>no location information in user profile</i>}
                     </div>
                 </div>
-
             </React.Fragment>
         )
     }

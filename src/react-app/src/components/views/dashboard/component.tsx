@@ -202,15 +202,14 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
     renderPendingNotifications() {
         return (
-            <Notifications />
+            <Notifications showOrg={true} />
         )
     }
 
     renderNotificationsCard() {
-        const count = 2
         const title = (
             <span>
-                Notifications ({count})
+                Notifications
             </span>
         )
         return (

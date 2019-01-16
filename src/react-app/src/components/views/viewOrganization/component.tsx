@@ -730,7 +730,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             )
         } else {
             notifications = (
-                <Notifications notifications={this.props.notifications} onRead={this.onReadNotification.bind(this)} />
+                <Notifications
+                    notifications={this.props.notifications}
+                    showOrg={false}
+                    onRead={this.onReadNotification.bind(this)} />
             )
         }
         return (
