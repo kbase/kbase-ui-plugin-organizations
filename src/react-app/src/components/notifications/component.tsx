@@ -126,6 +126,79 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
         )
     }
 
+    renderNarrativeAssociated(notification: feedsModel.OrganizationNotification) {
+        const workspaceId = parseInt(notification.regarding[0].id, 10)
+        let orgInfo
+        if (this.props.showOrg) {
+            orgInfo = (
+                <React.Fragment>
+                    <div>
+                        <span className="field-label">with organization</span>
+                    </div>
+                    <div>
+                        <OrganizationCompactContainer organizationId={notification.organizationId} />
+                    </div>
+                </React.Fragment>
+            )
+        }
+        return (
+            <div className="notification" key={notification.id}>
+                <div className="mainCol">
+                    <div>
+                        New Narrative associated
+                    </div>
+                    <div>
+                        <Narrative workspaceId={workspaceId} />
+                    </div>
+
+                    {orgInfo}
+                </div>
+                <div className="actionCol">
+                    <Button type="danger" icon="cross" size="small" onClick={() => { this.onReadNotification.call(this, notification) }} />
+                </div>
+
+            </div>
+        )
+    }
+
+    renderNarrativeAccepted(notification: feedsModel.OrganizationNotification) {
+        const workspaceId = parseInt(notification.regarding[0].id, 10)
+        let orgInfo
+        if (this.props.showOrg) {
+            orgInfo = (
+                <React.Fragment>
+                    <div>
+                        <span className="field-label">into organization</span>
+                    </div>
+                    <div>
+                        <OrganizationCompactContainer organizationId={notification.organizationId} />
+                    </div>
+                </React.Fragment>
+            )
+        }
+        return (
+            <div className="notification" key={notification.id}>
+                <div className="mainCol">
+                    <div>
+                        Your Narrative
+                    </div>
+                    <div>
+                        <Narrative workspaceId={workspaceId} />
+                    </div>
+                    <div>
+                        was accepted
+                    </div>
+                    {orgInfo}
+                </div>
+                <div className="actionCol">
+                    <Button type="danger" icon="cross" size="small" onClick={() => { this.onReadNotification.call(this, notification) }} />
+                </div>
+
+            </div>
+        )
+    }
+
+
     renderNotification(notification: feedsModel.OrganizationNotification) {
         switch (notification.type) {
             case (feedsModel.OrganizationNotificationType.JOIN_INVITATION):
@@ -136,6 +209,10 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
                 return 'UNKNOWN'
             case (feedsModel.OrganizationNotificationType.NARRATIVE_ASSOCIATION_REQUEST):
                 return this.renderNarrativeAssociationRequest(notification)
+            case (feedsModel.OrganizationNotificationType.NARRATIVE_ASSOCIATED):
+                return this.renderNarrativeAssociated(notification)
+            case (feedsModel.OrganizationNotificationType.NARRATIVE_ACCEPTED):
+                return this.renderNarrativeAccepted(notification)
             case (feedsModel.OrganizationNotificationType.APP_ASSOCIATION_REQUEST):
                 return 'Request to associate App'
             default:

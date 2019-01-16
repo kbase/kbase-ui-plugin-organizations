@@ -228,11 +228,16 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     renderPendingRequestsSentCard() {
+        const requests = (
+            <div style={{ maxHeight: '30em', overflowY: 'auto' }}>
+                {this.renderPendingRequestsSent()}
+            </div>
+        )
         return (
             <Card title="Outbox"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 className="slimCard pendingRequestsCard">
-                {this.renderPendingRequestsSent()}
+                {requests}
             </Card>
         )
     }
@@ -258,11 +263,16 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         if (!this.isAdmin()) {
             return
         }
+        const requests = (
+            <div style={{ overflowY: 'auto', maxHeight: '30em' }}>
+                {this.renderPendingAdminRequests()}
+            </div>
+        )
         return (
             <Card title="Organization Inbox"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 className="slimCard pendingAdminTasksCard">
-                {this.renderPendingAdminRequests()}
+                {requests}
             </Card>
         )
     }
@@ -276,6 +286,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 </div>
             )
         }
+
         return this.props.viewModel.requestOutbox.map((request, index) => {
             return (
                 <div key={index}>
@@ -352,14 +363,16 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                         {this.renderOrganizationsCard()}
                     </div>
                     <div className="col2 scrollable-flex-column">
+                        <div className="scrollable-flex-column" style={{ overflowY: 'auto' }}>
 
-                        {this.renderNotificationsCard()}
+                            {this.renderNotificationsCard()}
 
-                        {this.renderPendingRequestsReceivedCard()}
+                            {this.renderPendingRequestsReceivedCard()}
 
-                        {this.renderPendingRequestsSentCard()}
+                            {this.renderPendingRequestsSentCard()}
 
-                        {this.renderPendingAdminTasksCard()}
+                            {this.renderPendingAdminTasksCard()}
+                        </div>
                     </div>
                 </div>
 

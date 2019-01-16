@@ -221,6 +221,7 @@ export function getViewAccess(requestId: string) {
         // get requests 
         try {
             const request = await orgClient.grantViewAccess(requestId)
+            console.log('view access granted', request)
             dispatch(getViewAccessSuccess(request))
         } catch (ex) {
             dispatch(getViewAccessError({

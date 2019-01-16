@@ -776,7 +776,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </div>
             )
         } else {
-            inbox = this.props.requestInbox.map((request) => {
+            const inboxItems = this.props.requestInbox.map((request) => {
                 return (
                     <React.Fragment key={request.id}>
                         <InboxRequest
@@ -786,6 +786,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     </React.Fragment>
                 )
             })
+            inbox = (
+                <div style={{ maxHeight: '30em', overflowY: 'auto' }}>
+                    {inboxItems}
+                </div>
+            )
         }
         return (
             <Card className="slimCard outboxCard"
@@ -822,13 +827,18 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </div>
             )
         } else {
-            outbox = this.props.requestOutbox.map((request) => {
+            const outboxItems = this.props.requestOutbox.map((request) => {
                 return (
                     <React.Fragment key={request.id}>
                         <OutboxRequest request={request} showOrg={false} />
                     </React.Fragment>
                 )
             })
+            outbox = (
+                <div style={{ maxHeight: '30em', overflowY: 'auto' }}>
+                    {outboxItems}
+                </div>
+            )
         }
         return (
             <Card className="slimCard outboxCard"
@@ -841,7 +851,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
 
     }
-
 
     renderNarrativeMenu(narrative: orgModel.NarrativeResource) {
         const relation = this.props.relation
@@ -1020,19 +1029,20 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                                 {this.renderNarratives()}
                             </div>
                         </div>
-                        <div className="infoColumn">
-                            {/* <div className={this.renderRelationClass(this.props.organization)}>
+                        <div className="infoColumn scrollable-flex-column">
+                            <div style={{ overflowY: 'auto' }}>
+                                {/* <div className={this.renderRelationClass(this.props.organization)}>
                                 {this.renderAdminTasks()}
                             </div> */}
-                            {/* {this.renderAdminTasks()} */}
-                            <div className="infoBox">
-                                {this.renderInfo()}
+                                {/* {this.renderAdminTasks()} */}
+                                <div className="infoBox">
+                                    {this.renderInfo()}
+                                </div>
+                                {this.renderNotificationsCard()}
+                                {this.renderInboxCard()}
+                                {this.renderOutboxCard()}
+                                {this.renderMembersCard()}
                             </div>
-                            {this.renderNotificationsCard()}
-                            {this.renderInboxCard()}
-                            {this.renderOutboxCard()}
-                            {this.renderMembersCard()}
-
                         </div>
                     </div>
                     {accessModal}

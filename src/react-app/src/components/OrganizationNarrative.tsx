@@ -50,7 +50,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                     buttonTooltip = 'Although you have View-Only access to this Narrative due to it being shared globally, you can obtain personal View-Only access by clicking this button'
                     shareButton = (
                         <Button size="small" onClick={() => { this.onGetViewAccess.call(this) }}>
-                            Click for Access
+                            Click for View Access
                         </Button>
                     )
                 } else {
@@ -63,7 +63,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                     buttonTooltip = 'You cannot access this Narrative; in order to immediately obtain View-Only access click this button.'
                     shareButton = (
                         <Button size="small" onClick={() => { this.onGetViewAccess.call(this) }}>
-                            Click for Access
+                            Click for View Access
                         </Button>
                     )
                 }

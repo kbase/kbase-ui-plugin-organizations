@@ -40,8 +40,12 @@ export enum OrganizationNotificationType {
     UNKNOWN = 0,
     JOIN_REQUEST,
     JOIN_INVITATION,
+    USER_JOINED,
     NARRATIVE_ASSOCIATION_REQUEST,
+    NARRATIVE_ASSOCIATED,
+    NARRATIVE_ACCEPTED, // what is the difference from associated?
     APP_ASSOCIATION_REQUEST,
+    APP_ASSOCIATED,
     MESSAGE
 }
 
@@ -89,12 +93,27 @@ function convertNotificationType(notification: feedsApi.Notification): Organizat
                 case 'app':
                     return OrganizationNotificationType.APP_ASSOCIATION_REQUEST
             }
+        case 'updated':
+            switch (target.type) {
+                case 'narrative':
+                case 'workspace':
+                    console.log('narrative associated', notification)
+                    return OrganizationNotificationType.NARRATIVE_ASSOCIATED
+            }
+        case 'accepted':
+            switch (target.type) {
+                case 'narrative':
+                case 'workspace':
+                    console.log('narrative accepted', notification)
+                    return OrganizationNotificationType.NARRATIVE_ACCEPTED
+            }
         case 'invited':
             switch (target.type) {
                 case 'user':
                     return OrganizationNotificationType.JOIN_INVITATION
             }
         default:
+            console.log('unknown??', notification);
             return OrganizationNotificationType.UNKNOWN
     }
 
