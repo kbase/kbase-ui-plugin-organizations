@@ -23,11 +23,16 @@
 
                 widget: organizations_panel
                 authorization: true
-            # -
-            #     path: [orgs]
-            #     queryParams:
-            #     widget: organizations_panel
-            #     authorization: true
+            -
+                path: [orgs, {type: param, name: orgId}]
+                queryParams:
+                widget: organizations_panel
+                authorization: true
+            -
+                path: [org, {type: param, name: orgId}]
+                queryParams:
+                widget: organizations_panel
+                authorization: true
         menu:
             -
                 name: organizations

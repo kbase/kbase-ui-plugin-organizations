@@ -297,6 +297,7 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result: GroupList) => {
+                console.log('got groups', result)
                 return Promise.all(result.map((group) => (this.getGroupById(group.id))))
             })
             .then((result) => {

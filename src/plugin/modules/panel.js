@@ -36,6 +36,13 @@ define([
                 params.viewParams = JSON.parse(params.viewParams);
             }
 
+            if (params.orgId) {
+                params.view = 'org';
+                params.viewParams = {
+                    'id': params.orgId
+                };
+            }
+
             this.iframer = new Iframer({
                 runtime: this.runtime,
                 node: this.container,
