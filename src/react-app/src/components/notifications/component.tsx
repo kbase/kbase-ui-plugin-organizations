@@ -39,8 +39,41 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
                         <span className="field-label">by</span>
                     </div>
                     <div>
-                        <User userId={notification.from} avatarSize={30} />
+
+                        {/* <User userId={notification.from} avatarSize={30} /> */}
                     </div>
+
+                </div>
+                <div className="actionCol">
+                    <Button type="danger" icon="cross" size="small" onClick={() => { this.onReadNotification.call(this, notification) }} />
+                </div>
+
+            </div>
+        )
+    }
+
+    renderUserAcceptedNotification(notification: feedsModel.OrganizationNotification) {
+        let orgInfo
+        if (this.props.showOrg) {
+            orgInfo = (
+                <div>
+                    <OrganizationCompactContainer organizationId={notification.organizationId} />
+                </div>
+            )
+        } else {
+            orgInfo = (
+                <span>
+                    this organization
+                </span>
+            )
+        }
+        return (
+            <div className="notification" key={notification.id}>
+                <div className="mainCol">
+                    <div>
+                        Your membership request has been accepted for
+                    </div>
+                    {orgInfo}
 
                 </div>
                 <div className="actionCol">
@@ -198,7 +231,6 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
         )
     }
 
-
     renderNotification(notification: feedsModel.OrganizationNotification) {
         switch (notification.type) {
             case (feedsModel.OrganizationNotificationType.JOIN_INVITATION):
@@ -215,6 +247,8 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
                 return this.renderNarrativeAccepted(notification)
             case (feedsModel.OrganizationNotificationType.APP_ASSOCIATION_REQUEST):
                 return 'Request to associate App'
+            case (feedsModel.OrganizationNotificationType.USER_ACCEPTED):
+                return this.renderUserAcceptedNotification(notification)
             default:
                 return 'UNKNOWN NOTIFICATION TYPE'
         }

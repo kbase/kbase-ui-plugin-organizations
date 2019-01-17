@@ -41,6 +41,7 @@ export enum OrganizationNotificationType {
     JOIN_REQUEST,
     JOIN_INVITATION,
     USER_JOINED,
+    USER_ACCEPTED,
     NARRATIVE_ASSOCIATION_REQUEST,
     NARRATIVE_ASSOCIATED,
     NARRATIVE_ACCEPTED, // what is the difference from associated?
@@ -106,6 +107,10 @@ function convertNotificationType(notification: feedsApi.Notification): Organizat
                 case 'workspace':
                     console.log('narrative accepted', notification)
                     return OrganizationNotificationType.NARRATIVE_ACCEPTED
+                case 'user':
+                    // user request to join group has been accepted.
+                    console.log('user accepted', notification)
+                    return OrganizationNotificationType.USER_ACCEPTED
             }
         case 'invited':
             switch (target.type) {
@@ -157,6 +162,8 @@ export class FeedsClient {
         const notifications = await this.feedsClient.getNotifications({
             count: 100
         })
+
+        console.log('notifications', notifications)
 
         return notifications.user.feed
             .filter(({ actor, source }) => {
