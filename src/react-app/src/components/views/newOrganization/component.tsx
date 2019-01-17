@@ -24,6 +24,8 @@ export interface NewOrganizationProps {
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
     onUpdateLogoUrl: (logoUrl: string) => void
+    onUpdateHomeUrl: (homeUrl: string) => void
+    onUpdateResearchInterests: (researchInterests: string) => void
 }
 
 
@@ -177,6 +179,16 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         this.props.onUpdateLogoUrl(e.target.value)
     }
 
+    onHomeUrlChange(e: React.ChangeEvent<HTMLInputElement>) {
+        e.persist()
+        this.props.onUpdateHomeUrl(e.target.value)
+    }
+
+    onResearchInterestsChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
+        e.persist()
+        this.props.onUpdateResearchInterests(e.target.value)
+    }
+
     onIsPrivateChange(e: CheckboxChangeEvent) {
         this.props.onUpdateIsPrivate(e.target.checked)
     }
@@ -265,6 +277,16 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </div>
 
                 <div className="row">
+                    <div className="col1 field-label">home page url</div>
+                    <div className="col2">
+                        <Input value={this.props.newOrganization.homeUrl.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.homeUrl)}
+                            onChange={this.onHomeUrlChange.bind(this)} />
+                        {this.renderFieldError(this.props.newOrganization.homeUrl)}
+                    </div>
+                </div>
+
+                <div className="row">
                     <div className="col1 field-label">is private?</div>
                     <div className="col2">
                         <Checkbox
@@ -272,6 +294,16 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                             className={this.calcFieldClass(this.props.newOrganization.isPrivate)}
                             onChange={this.onIsPrivateChange.bind(this)} />
                         {this.renderFieldError(this.props.newOrganization.isPrivate)}
+                    </div>
+                </div>
+
+                <div className="row" style={{ flex: '1 1 0px', height: '5em' }}>
+                    <div className="col1 field-label">research interests</div>
+                    <div className="col2">
+                        <textarea value={this.props.newOrganization.researchInterests.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.researchInterests)}
+                            onChange={this.onResearchInterestsChange.bind(this)} />
+                        {this.renderFieldError(this.props.newOrganization.researchInterests)}
                     </div>
                 </div>
 
@@ -395,8 +427,24 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
             <div className="row">
                 <div className="col2">
-                    <div className="name">
+                    <div className="homeUrl" style={{ height: '1em' }}>
+                        {this.props.newOrganization.homeUrl.value || ''}
+                    </div>
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col2">
+                    <div className="isPrivate">
                         {this.renderIsPrivate(this.props.newOrganization.isPrivate.value)}
+                    </div>
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col2">
+                    <div className="researchInterests" style={{ height: '5em' }}>
+                        {this.props.newOrganization.researchInterests.value || ''}
                     </div>
                 </div>
             </div>

@@ -26,6 +26,8 @@ export interface EditOrganizationProps {
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
     onUpdateLogoUrl: (logoUrl: string) => void
+    onUpdateHomeUrl: (homeUrl: string) => void
+    onUpdateResearchInterests: (researchInterests: string) => void
 }
 
 enum NavigateTo {
@@ -155,6 +157,16 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         this.props.onUpdateLogoUrl(e.target.value)
     }
 
+    onHomeUrlChange(e: React.ChangeEvent<HTMLInputElement>) {
+        e.persist()
+        this.props.onUpdateHomeUrl(e.target.value)
+    }
+
+    onResearchInterestsChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
+        e.persist()
+        this.props.onUpdateResearchInterests(e.target.value)
+    }
+
     canSave() {
         return (
             this.props.editState === EditState.EDITED &&
@@ -243,6 +255,16 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                 </div>
 
                 <div className="row">
+                    <div className="col1 field-label">home page url</div>
+                    <div className="col2">
+                        <Input value={this.props.editedOrganization.homeUrl.value || ''}
+                            className={this.calcFieldClass(this.props.editedOrganization.homeUrl)}
+                            onChange={this.onHomeUrlChange.bind(this)} />
+                        {this.renderFieldError(this.props.editedOrganization.homeUrl)}
+                    </div>
+                </div>
+
+                <div className="row">
                     <div className="col1 field-label">is private?</div>
                     <div className="col2">
                         <Checkbox
@@ -250,6 +272,16 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                             className={this.calcFieldClass(this.props.editedOrganization.isPrivate)}
                             onChange={this.onIsPrivateChange.bind(this)} />
                         {this.renderFieldError(this.props.editedOrganization.isPrivate)}
+                    </div>
+                </div>
+
+                <div className="row" style={{ flex: '1 1 0px', height: '5em' }}>
+                    <div className="col1 field-label">research interests</div>
+                    <div className="col2">
+                        <textarea value={this.props.editedOrganization.researchInterests.value || ''}
+                            className={this.calcFieldClass(this.props.editedOrganization.researchInterests)}
+                            onChange={this.onResearchInterestsChange.bind(this)} />
+                        {this.renderFieldError(this.props.editedOrganization.researchInterests)}
                     </div>
                 </div>
 
@@ -367,11 +399,28 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
 
             <div className="row">
                 <div className="col2">
+                    <div className="homeUrl" style={{ height: '1em' }}>
+                        {this.props.editedOrganization.homeUrl.value || ''}
+                    </div>
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col2">
                     <div className="isPrivate">
                         {this.renderIsPrivate(this.props.editedOrganization.isPrivate.value)}
                     </div>
                 </div>
             </div>
+
+            <div className="row">
+                <div className="col2">
+                    <div className="researchInterests" style={{ height: '5em' }}>
+                        {this.props.editedOrganization.researchInterests.value || ''}
+                    </div>
+                </div>
+            </div>
+
 
 
             <div className="row" style={{ flex: '1 1 0px' }}>

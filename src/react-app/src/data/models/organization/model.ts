@@ -12,6 +12,8 @@ export interface OrganizationUpdate {
     logoUrl: string | null
     description: string
     isPrivate: boolean
+    homeUrl: string | null
+    researchInterests: string
 }
 
 export interface User {
@@ -124,6 +126,8 @@ export interface Organization {
     isPrivate: boolean
     isMember: boolean
     logoUrl: string | null
+    homeUrl: string | null
+    researchInterests: string
     description: string
     owner: Member
     members: Array<Member>
@@ -245,6 +249,8 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: usernam
         isPrivate: group.private,
         isMember: group.ismember,
         logoUrl: group.custom.logourl || null,
+        homeUrl: group.custom.homeurl || null,
+        researchInterests: group.custom.researchinterests || '',
         description: group.custom.description,
         owner: owner,
         members: members,
@@ -550,7 +556,9 @@ export class OrganizationModel {
         return groupsClient.createGroup({
             id: newOrg.id.value,
             name: newOrg.name.value,
-            logourl: newOrg.logoUrl.value,
+            logoUrl: newOrg.logoUrl.value,
+            homeUrl: newOrg.homeUrl.value,
+            researchInterests: newOrg.researchInterests.value,
             description: newOrg.description.value,
             isPrivate: newOrg.isPrivate.value
         })
@@ -582,7 +590,9 @@ export class OrganizationModel {
 
         return groupsClient.updateGroup(id, {
             name: orgUpdate.name,
-            logourl: orgUpdate.logoUrl,
+            logoUrl: orgUpdate.logoUrl,
+            homeUrl: orgUpdate.homeUrl,
+            researchInterests: orgUpdate.researchInterests,
             description: orgUpdate.description,
             private: orgUpdate.isPrivate
         })

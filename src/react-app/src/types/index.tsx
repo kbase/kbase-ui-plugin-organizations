@@ -113,6 +113,8 @@ export interface EditableOrganization {
     description: EditableString
     isPrivate: EditableBoolean
     logoUrl: EditableNullableString
+    homeUrl: EditableNullableString
+    researchInterests: EditableString
 }
 
 
@@ -215,6 +217,7 @@ export interface BriefOrganization {
     id: string
     name: string
     logoUrl: string | null
+    // TODO: we need researchInterests here
     owner: {
         username: string
         realname: string

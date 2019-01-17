@@ -68,17 +68,17 @@ export interface AddOrgEvaluateErrors extends Action<ActionFlag.ADD_ORG_EVALUATE
 // Updating name field
 
 export interface UpdateName extends Action {
-    type: ActionFlag.ADD_ORG_UPDATE_NAME,
+    type: ActionFlag.ADD_ORG_UPDATE_NAME
     name: string
 }
 
 export interface UpdateNameSuccess {
-    type: ActionFlag.ADD_ORG_UPDATE_NAME_SUCCESS,
+    type: ActionFlag.ADD_ORG_UPDATE_NAME_SUCCESS
     name: string
 }
 
 export interface UpdateNameError extends Action {
-    type: ActionFlag.ADD_ORG_UPDATE_NAME_ERROR,
+    type: ActionFlag.ADD_ORG_UPDATE_NAME_ERROR
     name: string,
     error: ValidationState
 }
@@ -86,18 +86,52 @@ export interface UpdateNameError extends Action {
 // Updating logo url field
 
 export interface UpdateLogoUrl extends Action {
-    type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL,
+    type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL
     name: string
 }
 
 export interface UpdateLogoUrlSuccess {
-    type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_SUCCESS,
+    type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_SUCCESS
     logoUrl: string | null
 }
 
 export interface UpdateLogoUrlError extends Action {
-    type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_ERROR,
+    type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_ERROR
     logoUrl: string | null,
+    error: ValidationState
+}
+
+// Updating home url field
+export interface UpdateHomeUrl extends Action {
+    type: ActionFlag.ADD_ORG_UPDATE_HOME_URL
+    homeUrl: string | null
+}
+
+export interface UpdateHomeUrlSuccess extends Action {
+    type: ActionFlag.ADD_ORG_UPDATE_HOME_URL_SUCCESS
+    homeUrl: string | null
+}
+
+export interface UpdateHomeUrlError extends Action {
+    type: ActionFlag.ADD_ORG_UPDATE_HOME_URL_ERROR
+    homeUrl: string | null
+    error: ValidationState
+}
+
+// Updating research interests field
+export interface UpdateResearchInterests extends Action {
+    type: ActionFlag.ADD_ORG_UPDATE_RESEARCH_INTERESTS
+    researchInterests: string
+}
+
+export interface UpdateResearchInterestsSuccess extends Action {
+    type: ActionFlag.ADD_ORG_UPDATE_RESEARCH_INTERESTS_SUCCESS
+    researchInterests: string
+}
+
+export interface UpdateResearchInterestsError extends Action {
+    type: ActionFlag.ADD_ORG_UPDATE_RESEARCH_INTERESTS_ERROR
+    researchInterests: string
     error: ValidationState
 }
 
@@ -182,7 +216,7 @@ export function saveError(error: AppError): SaveError {
     }
 }
 
-// Eiditing
+// Editing
 
 function loadStart() {
     return {
@@ -310,52 +344,36 @@ export function load() {
                 remoteValue: null,
                 syncState: SyncState.CLEAN,
                 validationState: Validation.validateOrgId('')[1]
-                // validationState: {
-                //     type: ValidationErrorType.OK,
-                //     validatedAt: new Date()
-                // }
-                // editState: EditState.NONE,
-                // validationState: ValidationState.NONE,
-                // validatedAt: null,
-                // error: {
-                //     type: UIErrorType.NONE
-                // }
             },
             name: {
                 value: '',
                 remoteValue: null,
                 syncState: SyncState.CLEAN,
                 validationState: Validation.validateOrgName('')[1]
-                // editState: EditState.NONE,
-                // validationState: ValidationState.NONE,
-                // validatedAt: null,
-                // error: {
-                //     type: UIErrorType.NONE
-                // }
             },
             logoUrl: {
                 value: '',
                 remoteValue: null,
                 syncState: SyncState.CLEAN,
                 validationState: Validation.validateOrgLogoUrl('')[1]
-                // editState: EditState.NONE,
-                // validationState: ValidationState.NONE,
-                // validatedAt: null,
-                // error: {
-                //     type: UIErrorType.NONE
-                // }
+            },
+            homeUrl: {
+                value: '',
+                remoteValue: null,
+                syncState: SyncState.CLEAN,
+                validationState: Validation.validateOrgHomeUrl('')[1]
+            },
+            researchInterests: {
+                value: '',
+                remoteValue: null,
+                syncState: SyncState.CLEAN,
+                validationState: Validation.validateOrgResearchInterests('')[1]
             },
             description: {
                 value: '',
                 remoteValue: null,
                 syncState: SyncState.CLEAN,
                 validationState: Validation.validateOrgDescription('')[1]
-                // editState: EditState.NONE,
-                // validationState: ValidationState.NONE,
-                // validatedAt: null,
-                // error: {
-                //     type: UIErrorType.NONE
-                // }
             },
             isPrivate: {
                 value: false,
@@ -365,12 +383,6 @@ export function load() {
                     type: ValidationErrorType.OK,
                     validatedAt: new Date()
                 }
-                // editState: EditState.NONE,
-                // validationState: ValidationState.NONE,
-                // validatedAt: null,
-                // error: {
-                //     type: UIErrorType.NONE
-                // }
             }
         }
         dispatch(loadSuccess(newOrg))
@@ -478,31 +490,20 @@ export function addOrgEvaluate() {
             return
         }
 
-        // if (newOrganization.gravatarHash.validationState.type === ValidationErrorType.OK) {
-        //     if (newOrganization.gravatarHash.value) {
-        //         const [validLogoUrl, error] = Validation.validateOrgLogoUrl(name)
-        //         if (error) {
-        //             dispatch(AddOrgEvaluateErrors())
-        //             return
-        //         }
-        //     }
-        // } else {
-        //     if (newOrganization.gravatarHash.validationState.type !== ValidationErrorType.OK) {
-        //         dispatch(AddOrgEvaluateErrors())
-        //         return
-        //     }
-        // }
+        if (newOrganization.homeUrl.validationState.type !== ValidationErrorType.OK) {
+            dispatch(AddOrgEvaluateErrors())
+            return
+        }
+
+        if (newOrganization.researchInterests.validationState.type !== ValidationErrorType.OK) {
+            dispatch(AddOrgEvaluateErrors())
+            return
+        }
 
         if (newOrganization.description.validationState.type !== ValidationErrorType.OK) {
             dispatch(AddOrgEvaluateErrors())
             return
         }
-
-        // TODO: just remove this; there is no validation task for isPrivate atm.
-        // if (newOrganization.isPrivate.validationState !== ValidationState.VALID) {
-        //     dispatch(AddOrgEvaluateErrors())
-        //     return
-        // }
 
         dispatch(addOrgEvaluateOk())
     }
@@ -541,6 +542,44 @@ export function updateLogoUrl(name: string | null) {
             dispatch(updateLogoUrlSuccess(validatedLogoUrl))
         }
         dispatch(addOrgEvaluate())
+    }
+}
+
+export function updateHomeUrl(homeUrl: string | null) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+        const [validatedHomeUrl, error] = Validation.validateOrgHomeUrl(homeUrl)
+
+        if (error.type !== ValidationErrorType.OK) {
+            dispatch({
+                type: ActionFlag.ADD_ORG_UPDATE_HOME_URL_ERROR,
+                homeUrl: homeUrl,
+                error: error
+            } as UpdateHomeUrlError)
+        } else {
+            dispatch({
+                type: ActionFlag.ADD_ORG_UPDATE_HOME_URL_SUCCESS,
+                homeUrl: validatedHomeUrl
+            })
+        }
+    }
+}
+
+export function updateResearchInterests(researchInterests: string | null) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+        const [validatedResearchInterests, error] = Validation.validateOrgHomeUrl(researchInterests)
+
+        if (error.type !== ValidationErrorType.OK) {
+            dispatch({
+                type: ActionFlag.ADD_ORG_UPDATE_RESEARCH_INTERESTS_ERROR,
+                researchInterests: validatedResearchInterests,
+                error: error
+            } as UpdateResearchInterestsError)
+        } else {
+            dispatch({
+                type: ActionFlag.ADD_ORG_UPDATE_RESEARCH_INTERESTS_SUCCESS,
+                researchInterests: validatedResearchInterests
+            }) as UpdateResearchInterestsSuccess
+        }
     }
 }
 

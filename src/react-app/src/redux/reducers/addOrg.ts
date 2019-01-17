@@ -11,7 +11,11 @@ import {
     UpdateIdPass,
     UpdateIsPrivateSuccess,
     UpdateLogoUrlSuccess,
-    UpdateLogoUrlError
+    UpdateLogoUrlError,
+    UpdateHomeUrlSuccess,
+    UpdateHomeUrlError,
+    UpdateResearchInterestsSuccess,
+    UpdateResearchInterestsError
 } from '../actions/addOrg'
 import Validation from '../../data/models/organization/validation';
 
@@ -261,10 +265,10 @@ export function updateNameError(state: StoreState, action: UpdateNameError): Sto
     }
 }
 
-// Gravatar hash
+// Logo URL
 export function updateLogoUrlSuccess(state: StoreState, action: UpdateLogoUrlSuccess): StoreState {
     if (!state.views.addOrgView.viewModel) {
-        console.warn('attempting updateGravatarHashSuccess without view model')
+        console.warn('attempting Logo URL without view model')
         return state
     }
     return {
@@ -296,7 +300,7 @@ export function updateLogoUrlSuccess(state: StoreState, action: UpdateLogoUrlSuc
 
 export function updateLogoUrlError(state: StoreState, action: UpdateLogoUrlError): StoreState {
     if (!state.views.addOrgView.viewModel) {
-        console.warn('attempting updateGravatarHashError without view model')
+        console.warn('attempting Logo URL error without view model')
         return state
     }
     return {
@@ -314,6 +318,130 @@ export function updateLogoUrlError(state: StoreState, action: UpdateLogoUrlError
                             ...state.views.addOrgView.viewModel.newOrganization.logoUrl,
                             syncState: SyncState.DIRTY,
                             value: action.logoUrl,
+                            validationState: action.error
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Home URL
+export function updateHomeUrlSuccess(state: StoreState, action: UpdateHomeUrlSuccess): StoreState {
+    if (!state.views.addOrgView.viewModel) {
+        console.warn('attempting Home URL (success) without view model')
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        homeUrl: {
+                            ...state.views.addOrgView.viewModel.newOrganization.homeUrl,
+                            syncState: SyncState.DIRTY,
+                            value: action.homeUrl,
+                            validationState: {
+                                type: ValidationErrorType.OK,
+                                validatedAt: new Date()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+export function updateHomeUrlError(state: StoreState, action: UpdateHomeUrlError): StoreState {
+    if (!state.views.addOrgView.viewModel) {
+        console.warn('attempting update to home url without view model')
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        homeUrl: {
+                            ...state.views.addOrgView.viewModel.newOrganization.homeUrl,
+                            syncState: SyncState.DIRTY,
+                            value: action.homeUrl,
+                            validationState: action.error
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Research Interests
+export function updateResearchInterestsSuccess(state: StoreState, action: UpdateResearchInterestsSuccess): StoreState {
+    if (!state.views.addOrgView.viewModel) {
+        console.warn('attempting Research Interests without view model')
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        researchInterests: {
+                            ...state.views.addOrgView.viewModel.newOrganization.researchInterests,
+                            syncState: SyncState.DIRTY,
+                            value: action.researchInterests,
+                            validationState: {
+                                type: ValidationErrorType.OK,
+                                validatedAt: new Date()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+export function updateResearchInterestsError(state: StoreState, action: UpdateResearchInterestsError): StoreState {
+    if (!state.views.addOrgView.viewModel) {
+        console.warn('attempting update to research interests (error) without view model')
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            addOrgView: {
+                ...state.views.addOrgView,
+                viewModel: {
+                    ...state.views.addOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    newOrganization: {
+                        ...state.views.addOrgView.viewModel.newOrganization,
+                        researchInterests: {
+                            ...state.views.addOrgView.viewModel.newOrganization.researchInterests,
+                            syncState: SyncState.DIRTY,
+                            value: action.researchInterests,
                             validationState: action.error
                         }
                     }
@@ -541,6 +669,16 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
             return updateLogoUrlSuccess(state, action as UpdateLogoUrlSuccess)
         case ActionFlag.ADD_ORG_UPDATE_LOGO_URL_ERROR:
             return updateLogoUrlError(state, action as UpdateLogoUrlError)
+
+        case ActionFlag.ADD_ORG_UPDATE_HOME_URL_SUCCESS:
+            return updateHomeUrlSuccess(state, action as UpdateHomeUrlSuccess)
+        case ActionFlag.ADD_ORG_UPDATE_HOME_URL_ERROR:
+            return updateHomeUrlError(state, action as UpdateHomeUrlError)
+
+        case ActionFlag.ADD_ORG_UPDATE_RESEARCH_INTERESTS_SUCCESS:
+            return updateResearchInterestsSuccess(state, action as UpdateResearchInterestsSuccess)
+        case ActionFlag.ADD_ORG_UPDATE_RESEARCH_INTERESTS_ERROR:
+            return updateResearchInterestsError(state, action as UpdateResearchInterestsError)
 
         case ActionFlag.ADD_ORG_UPDATE_ID_SUCCESS:
             return updateIdSuccess(state, action as UpdateIdSuccess)

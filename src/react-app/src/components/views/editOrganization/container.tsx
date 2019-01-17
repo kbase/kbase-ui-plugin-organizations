@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { StoreState, EditableOrganization, EditState, SaveState, ValidationState } from '../../../types';
 import {
     editOrgSave,
-    editOrgUpdateName,
-    editOrgUpdateDescription, editOrgUpdateLogoUrl, updateIsPrivate
+    updateName,
+    updateDescription, updateLogoUrl, updateIsPrivate, updateHomeUrl, updateResearchInterests
 } from '../../../redux/actions/editOrg';
 import EditOrganization from './component';
 import * as orgModel from '../../../data/models/organization/model'
@@ -28,6 +28,8 @@ export interface DispatchProps {
     // onUpdateId: (id: string) => void,
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
+    onUpdateHomeUrl: (homeUrl: string | null) => void
+    onUpdateResearchInterests: (researchInterests: string) => void
 }
 
 export function mapStateToProps(state: StoreState): StateProps {
@@ -57,19 +59,25 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
             dispatch(editOrgSave() as any)
         },
         onUpdateName: (name: string) => {
-            dispatch(editOrgUpdateName(name) as any)
+            dispatch(updateName(name) as any)
         },
         onUpdateLogoUrl: (gravatarHash: string | null) => {
-            dispatch(editOrgUpdateLogoUrl(gravatarHash) as any)
+            dispatch(updateLogoUrl(gravatarHash) as any)
         },
         // onUpdateId: (id) => {
         //     dispatch(editOrgUpdateId(id) as any)
         // },
         onUpdateDescription: (description) => {
-            dispatch(editOrgUpdateDescription(description) as any)
+            dispatch(updateDescription(description) as any)
         },
         onUpdateIsPrivate: (isPrivate: boolean) => {
             dispatch(updateIsPrivate(isPrivate) as any)
+        },
+        onUpdateHomeUrl: (homeUrl: string | null) => {
+            dispatch(updateHomeUrl(homeUrl) as any)
+        },
+        onUpdateResearchInterests: (researchInterests: string) => {
+            dispatch(updateResearchInterests(researchInterests) as any)
         }
     }
 }

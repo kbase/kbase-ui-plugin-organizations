@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { StoreState, EditState, SaveState, ValidationState, EditableOrganization, AppError } from '../../../types';
 import {
-    addOrg, updateName, updateLogoUrl, updateId, updateDescription, updateIsPrivate
+    addOrg, updateName, updateLogoUrl, updateId, updateDescription, updateIsPrivate, updateHomeUrl, updateResearchInterests
 } from '../../../redux/actions/addOrg';
 
 import Component from './component';
@@ -26,6 +26,8 @@ export interface DispatchProps {
     onUpdateId: (id: string) => void
     onUpdateDescription: (description: string) => void
     onUpdateIsPrivate: (isPrivate: boolean) => void
+    onUpdateHomeUrl: (homeUrl: string | null) => void
+    onUpdateResearchInterests: (researchInterests: string) => void
 }
 
 export function mapStateToProps(state: StoreState): StateProps {
@@ -68,6 +70,12 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         },
         onUpdateIsPrivate: (isPrivate: boolean) => {
             dispatch(updateIsPrivate(isPrivate) as any)
+        },
+        onUpdateHomeUrl: (homeUrl: string | null) => {
+            dispatch(updateHomeUrl(homeUrl) as any)
+        },
+        onUpdateResearchInterests: (researchInterests: string) => {
+            dispatch(updateResearchInterests(researchInterests) as any)
         }
     }
 }

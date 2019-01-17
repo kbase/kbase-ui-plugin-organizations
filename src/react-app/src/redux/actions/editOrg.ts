@@ -102,23 +102,39 @@ export interface EditOrgUpdateLogoUrlError extends Action {
     error: ValidationState
 }
 
-// Updating id Field
+// Updating home url field
+export interface UpdateHomeUrl extends Action {
+    type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL
+    homeUrl: string | null
+}
 
-// export interface EditOrgUpdateId extends Action {
-//     type: ActionFlag.EDIT_ORG_UPDATE_ID,
-//     id: string
-// }
+export interface UpdateHomeUrlSuccess extends Action {
+    type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_SUCCESS
+    homeUrl: string | null
+}
 
-// export interface EditOrgUpdateIdSuccess {
-//     type: ActionFlag.EDIT_ORG_UPDATE_ID_SUCCESS,
-//     id: string
-// }
+export interface UpdateHomeUrlError extends Action {
+    type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_ERROR
+    homeUrl: string | null
+    error: ValidationState
+}
 
-// export interface EditOrgUpdateIdError extends Action {
-//     type: ActionFlag.EDIT_ORG_UPDATE_ID_ERROR,
-//     id: string,
-//     error: UIError
-// }
+// Updating research interests field
+export interface UpdateResearchInterests extends Action {
+    type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS
+    researchInterests: string
+}
+
+export interface UpdateResearchInterestsSuccess extends Action {
+    type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_SUCCESS
+    researchInterests: string
+}
+
+export interface UpdateResearchInterestsError extends Action {
+    type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_ERROR
+    researchInterests: string
+    error: ValidationState
+}
 
 // Updating description field
 
@@ -343,6 +359,18 @@ export function load(organizationId: string) {
                         syncState: SyncState.NEW,
                         validationState: Validation.validateOrgLogoUrl(org.logoUrl)[1]
                     },
+                    homeUrl: {
+                        value: org.homeUrl,
+                        remoteValue: org.homeUrl,
+                        syncState: SyncState.NEW,
+                        validationState: Validation.validateOrgHomeUrl(org.homeUrl)[1]
+                    },
+                    researchInterests: {
+                        value: org.researchInterests,
+                        remoteValue: org.researchInterests,
+                        syncState: SyncState.NEW,
+                        validationState: Validation.validateOrgResearchInterests(org.researchInterests)[1]
+                    },
                     description: {
                         value: org.description,
                         remoteValue: org.description,
@@ -406,7 +434,9 @@ export function editOrgSave() {
             name: editedOrganization.name.value,
             logoUrl: editedOrganization.logoUrl.value,
             description: editedOrganization.description.value,
-            isPrivate: editedOrganization.isPrivate.value
+            isPrivate: editedOrganization.isPrivate.value,
+            homeUrl: editedOrganization.homeUrl.value,
+            researchInterests: editedOrganization.researchInterests.value
         }
 
         orgClient.updateOrg(organization.id, update)
@@ -455,6 +485,16 @@ export function editOrgEvaluate() {
             return
         }
 
+        if (editedOrganization.homeUrl.validationState.type !== ValidationErrorType.OK) {
+            dispatch(editOrgEvaluateErrors())
+            return
+        }
+
+        if (editedOrganization.researchInterests.validationState.type !== ValidationErrorType.OK) {
+            dispatch(editOrgEvaluateErrors())
+            return
+        }
+
         if (editedOrganization.description.validationState.type !== ValidationErrorType.OK) {
             dispatch(editOrgEvaluateErrors())
             return
@@ -464,7 +504,7 @@ export function editOrgEvaluate() {
     }
 }
 
-export function editOrgUpdateName(name: string) {
+export function updateName(name: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
         const [validatedName, error] = Validation.validateOrgName(name)
 
@@ -477,7 +517,7 @@ export function editOrgUpdateName(name: string) {
     }
 }
 
-export function editOrgUpdateLogoUrl(logoUrl: string | null) {
+export function updateLogoUrl(logoUrl: string | null) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
         const [validatedLogoUrl, error] = Validation.validateOrgLogoUrl(logoUrl)
 
@@ -490,7 +530,47 @@ export function editOrgUpdateLogoUrl(logoUrl: string | null) {
     }
 }
 
-export function editOrgUpdateDescription(description: string) {
+export function updateHomeUrl(homeUrl: string | null) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+        const [validatedHomeUrl, error] = Validation.validateOrgHomeUrl(homeUrl)
+
+        if (error.type !== ValidationErrorType.OK) {
+            dispatch({
+                type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_ERROR,
+                homeUrl: validatedHomeUrl,
+                error: error
+            } as UpdateHomeUrlError)
+        } else {
+            dispatch({
+                type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_SUCCESS,
+                homeUrl: validatedHomeUrl
+            } as UpdateHomeUrlSuccess)
+        }
+        dispatch(editOrgEvaluate())
+    }
+}
+
+export function updateResearchInterests(researchInterests: string | null) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+        const [validatedResearchInterests, error] = Validation.validateOrgHomeUrl(researchInterests)
+
+        if (error.type !== ValidationErrorType.OK) {
+            dispatch({
+                type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_ERROR,
+                researchInterests: validatedResearchInterests,
+                error: error
+            } as UpdateResearchInterestsError)
+        } else {
+            dispatch({
+                type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_SUCCESS,
+                researchInterests: validatedResearchInterests
+            } as UpdateResearchInterestsSuccess)
+        }
+        dispatch(editOrgEvaluate())
+    }
+}
+
+export function updateDescription(description: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>,
         getState: () => StoreState) => {
         const {

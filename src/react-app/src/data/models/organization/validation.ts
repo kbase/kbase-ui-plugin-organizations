@@ -109,6 +109,54 @@ export default class Validation {
             }]
     }
 
+    static validateOrgHomeUrl(homeUrl: string | null): [string | null, ValidationState] {
+        if (homeUrl === null) {
+            return [
+                homeUrl, {
+                    type: ValidationErrorType.OK,
+                    validatedAt: new Date()
+                }
+            ]
+        }
+        if (homeUrl.length > 1000) {
+            return [
+                homeUrl, {
+                    type: ValidationErrorType.ERROR,
+                    message: 'Home url may not be longer than 1000 characters',
+                    validatedAt: new Date()
+                }]
+        }
+        return [
+            homeUrl, {
+                type: ValidationErrorType.OK,
+                validatedAt: new Date()
+            }]
+    }
+
+    static validateOrgResearchInterests(researchInterests: string): [string, ValidationState] {
+        if (researchInterests.length === 0) {
+            return [
+                name, {
+                    type: ValidationErrorType.REQUIRED_MISSING,
+                    message: 'Research Interests may not be empty',
+                    validatedAt: new Date()
+                }]
+        }
+        if (researchInterests.length > 280) {
+            return [
+                researchInterests, {
+                    type: ValidationErrorType.ERROR,
+                    message: 'Research Interests may not be longer than 280 characters',
+                    validatedAt: new Date()
+                }]
+        }
+        return [
+            researchInterests, {
+                type: ValidationErrorType.OK,
+                validatedAt: new Date()
+            }]
+    }
+
     // static validateOrgGravatarHash(gravatarHash: string | null): [string | null, ValidationState] {
     //     if (!gravatarHash) {
     //         return [

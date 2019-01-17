@@ -1,4 +1,4 @@
-.OrganizationBlock {
+.Organization {
     flex: 0 0 auto;
     /* border: 1px silver dashed; */
     /* border-bottom: 1px rgba(200, 200, 200, 0.8) solid; */
@@ -8,31 +8,35 @@
     flex-direction: row;
 }
 
-.OrganizationBlock:hover {
+.Organization:hover {
     background-color: rgba(200, 200, 200, 0.5)
 }
 
-.OrganizationBlock>.avatarCol {
+.Organization>.avatarCol {
     flex: 0 0 auto;
     padding-top: 6px;
 }
 
-.OrganizationBlock>.bodyCol {
+.Organization>.bodyCol {
     flex: 1 1 0px;
     margin-left: 10px;
 }
 
-.OrganizationBlock .orgName {
+.Organization .orgName {
     font-weight: bold;
     font-size: 120%;
     cursor: pointer;
 }
 
-.OrganizationBlock .Organizations-info-table {
+.Organization .researchInterests {
+    font-style: italic;
+}
+
+.Organization .Organizations-info-table {
     width: 100%
 }
 
-.OrganizationBlock .Organizations-info-table th {
+.Organization .Organizations-info-table th {
     text-align: right;
     font-weight: bold;
     color: rgba(150, 150, 150, 1);
@@ -40,7 +44,7 @@
     vertical-align: top;
 }
 
-.OrganizationBlock .Organizations-info-table td {
+.Organization .Organizations-info-table td {
     /* width: 50% */
     vertical-align: top;
 }

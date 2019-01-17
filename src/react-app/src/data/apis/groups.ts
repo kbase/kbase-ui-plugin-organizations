@@ -12,8 +12,10 @@ export interface BriefGroup {
     name: string;
     custom: {
         logourl?: string
+        researchinterests?: string
     }
     owner: Member;
+
     // createdAt: number;
     // modifiedAt: number
 }
@@ -59,20 +61,26 @@ export interface Group {
     custom: {
         logourl?: string
         description: string
+        researchinterests: string
+        homeurl?: string
     }
 }
 
 export interface NewGroup {
     id: string
     name: string
-    logourl: string | null
+    logoUrl: string | null
+    homeUrl: string | null
+    researchInterests: string
     description: string
     isPrivate: boolean
 }
 
 export interface GroupUpdate {
     name: string
-    logourl: string | null
+    logoUrl: string | null
+    homeUrl: string | null
+    researchInterests: string
     description: string
     private: boolean
 }
@@ -431,7 +439,9 @@ export class GroupsClient {
             name: newGroup.name,
             private: newGroup.isPrivate,
             custom: {
-                logourl: newGroup.logourl
+                logourl: newGroup.logoUrl,
+                researchinterests: newGroup.researchInterests,
+                homeurl: newGroup.homeUrl
             }
         }
 
@@ -447,7 +457,9 @@ export class GroupsClient {
         const payload: any = {
             name: groupUpdate.name,
             custom: {
-                logourl: groupUpdate.logourl
+                logourl: groupUpdate.logoUrl,
+                homeurl: groupUpdate.homeUrl,
+                researchinterests: groupUpdate.researchInterests
             },
             private: groupUpdate.private
         }

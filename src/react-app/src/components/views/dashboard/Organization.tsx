@@ -4,11 +4,11 @@ import * as orgModel from '../../../data/models/organization/model'
 import * as uberModel from '../../../data/models/uber'
 import { NavLink } from 'react-router-dom';
 import { Tooltip, Icon } from 'antd';
-import UserComponent from '../../entities/UserContainer'
 import UserLoader from '../../entities/UserLoader'
 
 import './Organization.css'
 import OrgLogo from '../../OrgLogo';
+import { organizationLoader } from '../../../redux/actions/entities';
 
 export interface OrganizationProps {
     organization: uberModel.UberOrganization
@@ -18,7 +18,7 @@ export interface OrganizationProps {
 interface OrganizationState {
 }
 
-export default class OrganizationBlock extends React.Component<OrganizationProps, OrganizationState> {
+export default class Organization extends React.Component<OrganizationProps, OrganizationState> {
     constructor(props: OrganizationProps) {
         super(props)
     }
@@ -189,10 +189,37 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
         )
     }
 
+    renderOwner(org: orgModel.Organization) {
+        if (this.props.organization.relation.type === orgModel.UserRelationToOrganization.OWNER) {
+            return
+        }
+        return (
+            <div className="orgOwner">
+                <span className="field-label">owner</span>
+                <span className="field-value">{this.renderMemberCompact(org.owner)}</span>
+            </div>
+        )
+    }
+
+    renderHomeUrl(org: orgModel.Organization) {
+        if (!org.homeUrl) {
+            return
+        }
+        return (
+            <div className="homeUrl">
+                <a href={org.homeUrl} target="_blank">
+                    <Icon type="home" />
+                    {' '}
+                    {org.homeUrl}
+                </a>
+            </div>
+        )
+    }
+
     render() {
         const org = this.props.organization.organization
         return (
-            <div className="OrganizationBlock" key={org.id}>
+            <div className="Organization" key={org.id}>
                 <div className="avatarCol">
                     <NavLink to={`/viewOrganization/${org.id}`}>
                         {this.renderLogo(org)}
@@ -204,6 +231,10 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
                             {org.name}
                         </NavLink>
                     </div>
+                    <div className="researchInterests">
+                        {org.researchInterests}
+                    </div>
+                    {this.renderHomeUrl(org)}
                     <div>
                         {this.renderPrivate()}
                     </div>
@@ -216,10 +247,9 @@ export default class OrganizationBlock extends React.Component<OrganizationProps
                     <div>
                         {this.renderAdminInfo()}
                     </div>
-                    <div className="orgOwner">
-                        <span className="field-label">owner</span>
-                        <span className="field-value">{this.renderMemberCompact(org.owner)}</span>
-                    </div>
+
+                    {this.renderOwner(org)}
+
                     <div className="orgCreated">
                         <span className="field-label">established</span>
                         <span className="field-value">{Intl.DateTimeFormat('en-US', {

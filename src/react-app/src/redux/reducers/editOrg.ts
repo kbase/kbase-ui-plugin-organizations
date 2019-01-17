@@ -8,7 +8,7 @@ import {
     EditOrgUpdateNameSuccess, EditOrgUpdateNameError,
     // EditOrgUpdateIdSuccess, EditOrgUpdateIdError,
     EditOrgUpdateDescriptionSuccess, EditOrgUpdateDescriptionError,
-    UpdateIsPrivateSuccess, EditOrgUpdateLogoUrlSuccess, EditOrgUpdateLogoUrlError
+    UpdateIsPrivateSuccess, EditOrgUpdateLogoUrlSuccess, EditOrgUpdateLogoUrlError, UpdateHomeUrlSuccess, UpdateHomeUrlError, UpdateResearchInterestsError, UpdateResearchInterestsSuccess
 } from '../actions/editOrg'
 import { StateInstances } from '../state';
 
@@ -133,6 +133,14 @@ export function editOrgSaveSuccess(state: StoreState, action: EditOrgSaveSuccess
                             ...state.views.editOrgView.viewModel.editedOrganization.logoUrl,
                             syncState: SyncState.CLEAN
                         },
+                        homeUrl: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.homeUrl,
+                            syncState: SyncState.CLEAN
+                        },
+                        researchInterests: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.researchInterests,
+                            syncState: SyncState.CLEAN
+                        },
                         isPrivate: {
                             ...state.views.editOrgView.viewModel.editedOrganization.isPrivate,
                             syncState: SyncState.CLEAN
@@ -228,6 +236,14 @@ function evaluateEditorState(viewModel: EditOrgViewModel): EditState {
     }
 
     if (viewModel.editedOrganization.logoUrl.syncState === SyncState.DIRTY) {
+        return EditState.EDITED
+    }
+
+    if (viewModel.editedOrganization.homeUrl.syncState === SyncState.DIRTY) {
+        return EditState.EDITED
+    }
+
+    if (viewModel.editedOrganization.researchInterests.syncState === SyncState.DIRTY) {
         return EditState.EDITED
     }
 
@@ -406,43 +422,163 @@ export function editOrgUpdateLogoUrlError(state: StoreState, action: EditOrgUpda
     }
 }
 
-// Id
+// Update Home Url
 
-// export function editOrgUpdateIdSuccess(state: StoreState, action: EditOrgUpdateIdSuccess) {
-//     return {
-//         ...state, editOrg: {
-//             ...state.editOrg,
-//             editState: EditState.EDITED,
-//             editedOrganization: {
-//                 ...state.editOrg.editedOrganization!,
-//                 id: {
-//                     value: action.id,
-//                     status: FieldState.EDITED_OK,
-//                     error: {
-//                         type: UIErrorType.NONE
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
+// Logo url
+export function editOrgUpdateHomeUrlSuccess(state: StoreState, action: UpdateHomeUrlSuccess): StoreState {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
 
-// export function editOrgUpdateIdError(state: StoreState, action: EditOrgUpdateIdError) {
-//     return {
-//         ...state, editOrg: {
-//             ...state.editOrg,
-//             editState: EditState.EDITED,
-//             editedOrganization: {
-//                 ...state.editOrg.editedOrganization!,
-//                 id: {
-//                     value: action.id,
-//                     status: FieldState.EDITED_ERROR,
-//                     error: action.error
-//                 }
-//             }
-//         }
-//     }
-// }
+    const newState = {
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    editedOrganization: {
+                        ...state.views.editOrgView.viewModel.editedOrganization,
+                        homeUrl: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.homeUrl,
+                            value: action.homeUrl,
+                            syncState: SyncState.DIRTY,
+                            validationState: validationStateOk()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // This bit is just to ensure that the overall edit state (used for controlling, e.g., the 
+    // enablement of a save button).
+    const editState = evaluateEditorState(newState.views.editOrgView.viewModel)
+
+    return {
+        ...newState,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...newState.views.editOrgView,
+                viewModel: {
+                    ...newState.views.editOrgView.viewModel,
+                    editState: editState
+                }
+            }
+        }
+    }
+}
+
+export function editOrgUpdateHomeUrlError(state: StoreState, action: UpdateHomeUrlError): StoreState {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    editedOrganization: {
+                        ...state.views.editOrgView.viewModel.editedOrganization,
+                        homeUrl: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.homeUrl,
+                            value: action.homeUrl,
+                            syncState: SyncState.DIRTY,
+                            validationState: action.error
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Update Research Interests
+
+// Logo url
+export function updateResearchInterestsSuccess(state: StoreState, action: UpdateResearchInterestsSuccess): StoreState {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
+    const newState = {
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    editedOrganization: {
+                        ...state.views.editOrgView.viewModel.editedOrganization,
+                        researchInterests: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.researchInterests,
+                            value: action.researchInterests,
+                            syncState: SyncState.DIRTY,
+                            validationState: validationStateOk()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // This bit is just to ensure that the overall edit state (used for controlling, e.g., the 
+    // enablement of a save button).
+    const editState = evaluateEditorState(newState.views.editOrgView.viewModel)
+
+    return {
+        ...newState,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...newState.views.editOrgView,
+                viewModel: {
+                    ...newState.views.editOrgView.viewModel,
+                    editState: editState
+                }
+            }
+        }
+    }
+}
+
+export function updateResearchInterestsError(state: StoreState, action: UpdateResearchInterestsError): StoreState {
+    if (!state.views.editOrgView.viewModel) {
+        return state
+    }
+
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                ...state.views.editOrgView,
+                viewModel: {
+                    ...state.views.editOrgView.viewModel,
+                    editState: EditState.EDITED,
+                    editedOrganization: {
+                        ...state.views.editOrgView.viewModel.editedOrganization,
+                        researchInterests: {
+                            ...state.views.editOrgView.viewModel.editedOrganization.researchInterests,
+                            value: action.researchInterests,
+                            syncState: SyncState.DIRTY,
+                            validationState: action.error
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 export function updateDescriptionSuccess(state: StoreState, action: EditOrgUpdateDescriptionSuccess): StoreState {
     if (!state.views.editOrgView.viewModel) {
@@ -611,6 +747,16 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
             return editOrgUpdateLogoUrlSuccess(state, action as EditOrgUpdateLogoUrlSuccess)
         case ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_ERROR:
             return editOrgUpdateLogoUrlError(state, action as EditOrgUpdateLogoUrlError)
+
+        case ActionFlag.EDIT_ORG_UPDATE_HOME_URL_SUCCESS:
+            return editOrgUpdateHomeUrlSuccess(state, action as UpdateHomeUrlSuccess)
+        case ActionFlag.EDIT_ORG_UPDATE_HOME_URL_ERROR:
+            return editOrgUpdateHomeUrlError(state, action as UpdateHomeUrlError)
+
+        case ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_SUCCESS:
+            return updateResearchInterestsSuccess(state, action as UpdateResearchInterestsSuccess)
+        case ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_ERROR:
+            return updateResearchInterestsError(state, action as UpdateResearchInterestsError)
 
         case ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_SUCCESS:
             return updateIsPrivateSuccess(state, action as UpdateIsPrivateSuccess)
