@@ -1,5 +1,6 @@
 import * as React from 'react'
 import './Avatar.css'
+import noUserPic from './nouserpic.png'
 
 import { User } from '../../types'
 
@@ -25,12 +26,12 @@ export class Avatar extends React.Component<AvatarProps, AvatarState> {
                 if (gravatarHash) {
                     return 'https://www.gravatar.com/avatar/' + gravatarHash + '?s=60&amp;r=pg&d=' + gravatarDefault;
                 } else {
-                    return './nouserpic.png';
+                    return noUserPic;
                 }
             case 'silhouette':
             case 'mysteryman':
             default:
-                return './nouserpic.png';
+                return noUserPic;
         }
     }
 

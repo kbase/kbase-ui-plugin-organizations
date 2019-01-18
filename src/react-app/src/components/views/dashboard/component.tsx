@@ -111,7 +111,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         const breadcrumbs = (
             <React.Fragment>
                 <span>
-                    Your Orgs Dashboard
+                    My Organizations
                 </span>
             </React.Fragment>
         )
@@ -189,7 +189,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
             </div>
         )
         return (
-            <Card title="Your Organizations"
+            <Card title="My Organizations"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 bodyStyle={{ minHeight: '0', flex: '1 1 0px', display: 'flex', flexDirection: 'column' }}
                 className="slimCard yourOrgsCard scrollable-flex-column"
@@ -215,8 +215,9 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         )
         return (
             <Card title={title}
+                style={{ display: 'flex', flexDirection: 'column', flex: '1 1 0px', minHeight: '30em' }}
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                bodyStyle={{ maxHeight: '30em', display: 'flex', flexDirection: 'column' }}
+                bodyStyle={{ flex: '1 1 0px', display: 'flex', flexDirection: 'column' }}
                 className="slimCard notificationsCard">
                 {this.renderPendingNotifications()}
             </Card>
@@ -246,7 +247,9 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     renderInboxCard() {
         return (
             <Card title="Inbox"
+                style={{ display: 'flex', flexDirection: 'column', flex: '1 1 0px', minHeight: '30em' }}
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
+                bodyStyle={{ flex: '1 1 0px', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}
                 className="slimCard pendingInvitationsCard">
                 {this.renderPendingRequestsReceived()}
             </Card>
@@ -328,7 +331,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         if (requests.length === 0) {
             return (
                 <div className="message">
-                    No pending invitations
+                    No pending requests
                 </div>
             )
         }
@@ -370,9 +373,9 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
                             {this.renderInboxCard()}
 
-                            {this.renderOutboxCard()}
+                            {/* {this.renderOutboxCard()} */}
 
-                            {this.renderPendingAdminTasksCard()}
+                            {/* {this.renderPendingAdminTasksCard()} */}
                         </div>
                     </div>
                 </div>

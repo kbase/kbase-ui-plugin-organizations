@@ -267,7 +267,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
                 {' '}
                 {this.props.notifications.length}
                 {' '}
-                unread organization notification
+                unread notification
                 {this.props.notifications.length === 1 ? '' : 's'}
             </span>
         )

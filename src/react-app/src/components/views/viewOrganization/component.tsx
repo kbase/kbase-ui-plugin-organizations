@@ -756,12 +756,12 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         } else {
             const inboxItems = this.props.requestInbox.map((request) => {
                 return (
-                    <React.Fragment key={request.id}>
+                    <div key={request.id} className="simpleCard">
                         <InboxRequest
                             request={request}
                             showOrg={false}
                             onAcceptInboxRequest={this.onAcceptRequest.bind(this)} />
-                    </React.Fragment>
+                    </div>
                 )
             })
             inbox = (

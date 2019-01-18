@@ -494,7 +494,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                     type="danger"
                     onClick={this.onClickCancelToViewer.bind(this)}>
                     {/* <FaUndo style={{ verticalAlign: 'center' }} />  */}
-                    Return to this Org
+                    Cancel
                         </Button>
                 <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
             </React.Fragment>

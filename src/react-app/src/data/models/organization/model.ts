@@ -514,11 +514,9 @@ export class OrganizationModel {
 
     async getAllOrgs2(): Promise<Array<BriefOrganization>> {
         const groups = await this.groupsClient.listGroups()
-        console.log('all groups...', groups)
         const orgs = groups.map((group) => {
             return this.listGroupToBriefOrganization(group)
         })
-        console.log('all orgs!', orgs)
         return orgs
     }
 

@@ -55,7 +55,7 @@
     "redux-thunk": "2.3.0",
     "typed-rest-client": "1.0.11",
     "typeface-oxygen": "0.0.54",
-    "typescript": "3.2.2",
+    "typescript": "3.2.4",
     "uuid": "3.3.2"
   },
   "proxy": "https://ci.kbase.us/"

@@ -50,7 +50,6 @@ class MemberRow extends React.Component<MemberRowProps, MemberRowState> {
             case orgModel.MemberType.OWNER:
                 return
         }
-
     }
 
     renderMemberButtons(member: orgModel.Member) {

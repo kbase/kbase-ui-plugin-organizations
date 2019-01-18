@@ -2,15 +2,12 @@ import * as React from 'react'
 
 import './component.css'
 
-import { Member, MemberType, RequestResourceType } from '../../../types'
 import Header from '../../Header'
 import { Redirect } from 'react-router'
-import { Button, Icon, Modal, Row, Col, Menu, Dropdown, Alert } from 'antd';
-import MemberComponent from '../../entities/Member';
+import { Button, Icon, Modal } from 'antd';
 import MemberRowComponent from './MemberRow'
 import { NavLink } from 'react-router-dom';
 import OrganizationHeader from '../organizationHeader/loader';
-import { Request } from '../../request/component'
 import * as orgModel from '../../../data/models/organization/model'
 
 export interface ViewMembersProps {
@@ -26,8 +23,6 @@ interface ViewMembersState {
     cancelToBrowser: boolean
     cancelToViewer: boolean
 }
-
-
 
 class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
     constructor(props: ViewMembersProps) {
@@ -123,11 +118,11 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
         )
         const buttons = (
             <React.Fragment>
-                <Button icon="undo"
+                {/* <Button icon="undo"
                     type="danger"
                     onClick={this.onClickCancelToViewer.bind(this)}>
                     Return to this Org
-                </Button>
+                </Button> */}
                 <Button
                     shape="circle"
                     icon="info"
@@ -202,7 +197,7 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
             )
         } else {
             members = this.props.organization.members.map((member) => (
-                <React.Fragment key={member.username}>
+                <div key={member.username} className="simpleCard">
                     <MemberRowComponent
                         member={member}
                         relation={this.props.relation}
@@ -211,7 +206,7 @@ class ViewMembers extends React.Component<ViewMembersProps, ViewMembersState> {
                         onDemoteAdminToMember={this.props.onDemoteAdminToMember}
                         onRemoveMember={this.props.onRemoveMember}
                     />
-                </React.Fragment>
+                </div>
             ))
         }
         return (

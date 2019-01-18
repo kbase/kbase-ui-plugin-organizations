@@ -113,11 +113,11 @@ class ManageGroupRequests extends React.Component<ManageGroupRequestsProps, Mana
         )
         const buttons = (
             <React.Fragment>
-                <Button icon="undo"
+                {/* <Button icon="undo"
                     type="danger"
                     onClick={this.onClickCancelToViewer.bind(this)}>
                     Return to this Org
-                </Button>
+                </Button> */}
                 <Button
                     shape="circle"
                     icon="info"

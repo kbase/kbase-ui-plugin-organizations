@@ -105,29 +105,26 @@ export function load() {
 
             const requestOutbox = await requestModelClient.getOutboundRequests()
 
-            const requestInbox = await requestModelClient.getInboundRequests()
+            const requestInboxPersonal = await requestModelClient.getInboundRequests()
 
             // TODO: revive this?
-            // const adminOrgIds = orgs
-            //     .filter(({ organization }) => {
-            //         // TODO: why not have relation on org, again?   
-            //         if (organization.owner.username === username) {
-            //             return true
-            //         }
-            //         if (organization.members.find((member) => {
-            //             return (member.username === username && member.type === MemberType.ADMIN)
-            //         })) {
-            //             return true
-            //         }
-            //         return false
-            //     })
-            //     .map(({ organization }) => {
-            //         return organization.id
-            //     })
+            const adminOrgIds = orgs
+                .filter((organization) => {
+                    return (organization.relation === orgModel.UserRelationToOrganization.ADMIN ||
+                        organization.relation === orgModel.UserRelationToOrganization.OWNER)
+                })
+                .map((organization) => {
+                    return organization.id
+                })
 
-            // const pendingGroupRequests = await requestModelClient.getPendingOrganizationRequests(adminOrgIds)
-            // just empty if for now, remove later if really getting rid of.
-            const pendingGroupRequests: Array<requestModel.Request> = []
+
+            // Note - now using combined personal + group inbox.
+            const pendingGroupRequests = await requestModelClient.getPendingOrganizationRequests(adminOrgIds)
+
+            const requestInbox = requestInboxPersonal.concat(pendingGroupRequests)
+                .sort((a: requestModel.Request, b: requestModel.Request) => {
+                    return (a.createdAt.getTime() - b.createdAt.getTime())
+                })
 
             dispatch(loadSuccess(orgs, requestInbox, requestOutbox, pendingGroupRequests))
         } catch (ex) {

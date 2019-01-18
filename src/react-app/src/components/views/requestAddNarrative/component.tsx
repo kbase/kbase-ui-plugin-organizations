@@ -127,11 +127,11 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         )
         const buttons = (
             <React.Fragment>
-                <Button icon="undo"
+                {/* <Button icon="undo"
                     type="danger"
                     onClick={this.doCancelToViewer.bind(this)}>
                     Return to this Org
-                </Button>
+                </Button> */}
                 <Button
                     shape="circle"
                     icon="info"
