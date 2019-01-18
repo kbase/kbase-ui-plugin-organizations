@@ -3,7 +3,7 @@ import * as userModel from '../../data/models/user'
 import Owner from './Owner'
 
 interface LoaderProps {
-    member: orgModel.Member
+    username: orgModel.Username
     user: userModel.User | undefined
     avatarSize: number
     onLoad: (userId: userModel.Username) => void
@@ -21,7 +21,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
     render() {
         if (this.props.user) {
             return (
-                <Owner member={this.props.member} user={this.props.user} avatarSize={this.props.avatarSize} />
+                <Owner user={this.props.user} avatarSize={this.props.avatarSize} />
             )
         } else {
             return (
@@ -34,7 +34,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
 
     componentDidMount() {
         if (!this.props.user) {
-            this.props.onLoad(this.props.member.username)
+            this.props.onLoad(this.props.username)
         }
     }
 }
@@ -47,7 +47,7 @@ import * as orgModel from '../../data/models/organization/model'
 
 
 export interface OwnProps {
-    member: orgModel.Member
+    username: orgModel.Username
     avatarSize: number
 }
 
@@ -61,7 +61,7 @@ interface DispatchProps {
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
     return {
-        user: state.entities.users.byId.get(props.member.username)
+        user: state.entities.users.byId.get(props.username)
     }
 }
 

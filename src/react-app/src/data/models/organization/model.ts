@@ -1,7 +1,9 @@
 import * as groupsApi from '../../apis/groups'
-import { SortDirection, EditableOrganization, UIErrorType, UIError, EditState, ValidationState, EditableString, ValidationErrorType } from '../../../types';
+import {
+    SortDirection, EditableOrganization, ValidationState, EditableString, ValidationErrorType
+} from '../../../types';
 import * as requestModel from '../requests'
-import * as userModel from '../user';
+import * as userModel from '../user'
 import Validation from './validation'
 
 // import Member from '../../../components/entities/Member';
@@ -45,13 +47,13 @@ export interface EditableMemberProfile {
     title: EditableString
 }
 export enum UserRelationToOrganization {
-    NONE = 0,
-    VIEW,
-    MEMBER_REQUEST_PENDING,
-    MEMBER_INVITATION_PENDING,
-    MEMBER,
-    ADMIN,
-    OWNER
+    NONE = 'NONE',
+    VIEW = 'VIEW',
+    MEMBER_REQUEST_PENDING = 'MEMBER_REQUEST_PENDING',
+    MEMBER_INVITATION_PENDING = 'MEMBER_INVITATION_PENDING',
+    MEMBER = 'MEMBER',
+    ADMIN = 'ADMIN',
+    OWNER = 'OWNER'
 }
 
 export interface UserOrgRelation {
@@ -90,10 +92,10 @@ export interface OwnerRelation extends UserOrgRelation {
 
 export type Relation = NoRelation | ViewRelation | MembershipRequestPendingRelation | MembershipInvitationPendingRelation | MemberRelation | AdminRelation | OwnerRelation
 
-export type username = string
+export type Username = string
 
 export interface Member {
-    username: username
+    username: Username
     type: MemberType
 }
 
@@ -118,6 +120,23 @@ export type AppID = string
 
 export interface AppInfo {
     appId: AppID
+}
+
+export interface BriefOrganization {
+    id: string
+    name: string
+    logoUrl: string | null
+    private: boolean
+    homeUrl: string | null
+    researchInterests: string | null
+    // TODO: we need researchInterests here
+    owner: Username,
+    relation: UserRelationToOrganization,
+    createdAt: Date
+    modifiedAt: Date
+
+    memberCount: number
+    narrativeCount: number
 }
 
 export interface Organization {
@@ -205,7 +224,7 @@ function groupPermissionToWorkspacePermission(groupsPermission: string): UserWor
     }
 }
 
-export function groupToOrganization(group: groupsApi.Group, currentUser: username): Organization {
+export function groupToOrganization(group: groupsApi.Group, currentUser: Username): Organization {
 
     const owner: Member = {
         username: group.owner.name,
@@ -307,7 +326,7 @@ export interface ConstructorParams {
 }
 
 export interface QueryResults {
-    organizations: Array<Organization>
+    organizations: Array<BriefOrganization>
     total: number
 }
 
@@ -327,7 +346,7 @@ export interface NarrativeResource {
     isPublic: boolean
 }
 
-export function applyOrgSearch(orgs: Array<Organization>, searchTerms: Array<string>): Array<Organization> {
+export function applyOrgSearch(orgs: Array<BriefOrganization>, searchTerms: Array<string>): Array<BriefOrganization> {
     const searchTermsRe = searchTerms.map((term) => {
         return new RegExp(term, 'i')
     })
@@ -337,15 +356,14 @@ export function applyOrgSearch(orgs: Array<Organization>, searchTerms: Array<str
         }
         return searchTermsRe.every((termRe) => {
             return termRe.test(org.name) ||
-                termRe.test(org.owner.username) ||
-                termRe.test(org.owner.username)
+                termRe.test(org.owner)
         })
     })
 
     return filteredOrgs
 }
 
-function applySort(organizations: Array<Organization>, sortBy: string, sortDirection: SortDirection): Array<Organization> {
+function applySort(organizations: Array<BriefOrganization>, sortBy: string, sortDirection: SortDirection): Array<BriefOrganization> {
     const direction = sortDirection === SortDirection.ASCENDING ? 1 : -1
     switch (sortBy) {
         case 'created':
@@ -361,8 +379,10 @@ function applySort(organizations: Array<Organization>, sortBy: string, sortDirec
                 return direction * a.name.localeCompare(b.name)
             })
         case 'owner':
+            // TODO: after the dust settles for org -> brief org conversion,
+            // we may need to convert the owner to a member via profile...
             return organizations.slice().sort((a, b) => {
-                return direction * a.owner.username.localeCompare(b.owner.username)
+                return direction * a.owner.localeCompare(b.owner)
             })
         default:
             console.warn('unimplemented sort field: ' + sortBy)
@@ -372,34 +392,22 @@ function applySort(organizations: Array<Organization>, sortBy: string, sortDirec
 
 
 
-function applyFilter(organizations: Array<Organization>, filter: string, username: groupsApi.Username): Array<Organization> {
+function applyFilter(organizations: Array<BriefOrganization>, filter: string, username: groupsApi.Username): Array<BriefOrganization> {
     switch (filter) {
         case 'all':
             return organizations
         case 'notMemberOf':
             return organizations.filter((org) => {
-                // return !org.isMember
-                if (org.members.findIndex((member) => (member.username === username)) >= 0) {
-                    return false
-                }
-                if (org.owner.username === username) {
-                    return false
-                }
-                return true
+                return (org.relation === UserRelationToOrganization.NONE)
             })
         case 'memberOf':
             return organizations.filter((org) => {
-                // return org.isMember
-                if ((org.members.findIndex((member) => (member.username === username)) >= 0) ||
-                    (org.owner.username === username)) {
-                    return true
-                }
-                return false
+                return (org.relation !== UserRelationToOrganization.NONE)
             })
         case 'owned':
-            return organizations.filter((org) => (org.owner.username === username))
+            return organizations.filter((org) => (org.relation === UserRelationToOrganization.OWNER))
         case 'notOwned':
-            return organizations.filter((org) => (org.owner.username !== username))
+            return organizations.filter((org) => (org.relation !== UserRelationToOrganization.OWNER))
         // TODO: re-enable when have relation again...
         // case 'pending':
         //     return organizations.filter((org) => (
@@ -459,24 +467,64 @@ export class OrganizationModel {
         return this.getOrgs(ids)
     }
 
-    async getOwnOrgs(): Promise<Array<Organization>> {
-        const orgs = await this.getAllOrgs()
+    async getOwnOrgs(): Promise<Array<BriefOrganization>> {
+        const orgs = await this.getAllOrgs2()
 
-        return orgs.filter((org: Organization) => {
-            if (org.owner.username === this.params.username) {
-                return true
-            }
-            if (org.members.find(({ username }) => {
-                return (username === this.params.username)
-            })) {
-                return true
-            }
-            return false
+        const ownOrgs = orgs
+            .filter((org: BriefOrganization) => {
+                // ensure that user has some relationship to the org:
+                // member, admin, or owner
+                return (org.relation !== UserRelationToOrganization.NONE)
+            })
+
+        return ownOrgs
+
+        // return Promise.all(ownOrgs.map((org: BriefOrganization) => {
+        //     return this.getOrg(org.id)
+        // }))
+    }
+
+    groupRoleToUserRelation(role: groupsApi.Role): UserRelationToOrganization {
+        switch (role) {
+            case 'none': return UserRelationToOrganization.NONE
+            case 'member': return UserRelationToOrganization.MEMBER
+            case 'admin': return UserRelationToOrganization.ADMIN
+            case 'owner': return UserRelationToOrganization.OWNER
+            default: throw new Error('Unknown role: ' + role)
+        }
+    }
+
+    listGroupToBriefOrganization(group: groupsApi.BriefGroup): BriefOrganization {
+        return {
+            id: group.id,
+            name: group.name,
+            logoUrl: group.custom.logourl || null,
+            private: group.private,
+            homeUrl: group.custom.homeurl || null,
+            researchInterests: group.custom.researchinterests || null,
+            owner: group.owner,
+            // fix these...
+            relation: this.groupRoleToUserRelation(group.role),
+            createdAt: new Date(group.createdate),
+            modifiedAt: new Date(group.moddate),
+            memberCount: group.memcount || 0,
+            narrativeCount: group.rescount.workspace || 0
+        }
+    }
+
+    async getAllOrgs2(): Promise<Array<BriefOrganization>> {
+        const groups = await this.groupsClient.listGroups()
+        console.log('all groups...', groups)
+        const orgs = groups.map((group) => {
+            return this.listGroupToBriefOrganization(group)
         })
+        console.log('all orgs!', orgs)
+        return orgs
     }
 
     async queryOrgs(query: Query): Promise<QueryResults> {
-        const orgs = await this.getAllOrgs()
+        // const orgs = await this.getAllOrgs()
+        const orgs = await this.getAllOrgs2()
 
         const filtered = applyFilter(orgs, query.filter, query.username)
         const searched = applyOrgSearch(filtered, query.searchTerms)
@@ -489,40 +537,63 @@ export class OrganizationModel {
     }
 
     async ownOrgs(username: groupsApi.Username): Promise<QueryResults> {
-        const orgs = await this.getAllOrgs()
+        // const orgs = await this.getAllOrgs2()
 
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
+        // const groupsClient = new groupsApi.GroupsClient({
+        //     url: this.params.groupsServiceURL,
+        //     token: this.params.token
+        // })
 
-        const groups = await groupsClient.getGroups()
+        // const groups = await groupsClient.getGroups()
 
-        const ownGroups = groups.filter((group: groupsApi.Group) => {
-            if (group.owner.name === username) {
-                return true
-            }
-            if (group.members.find((member) => {
-                return (member.name === username)
-            })) {
-                return true
-            }
-            if (group.admins.find((member) => {
-                return (member.name === username)
-            })) {
-                return true
-            }
-            return false
-        })
+        // const ownGroups = groups.filter((group: groupsApi.Group) => {
+        //     if (group.owner.name === username) {
+        //         return true
+        //     }
+        //     if (group.members.find((member) => {
+        //         return (member.name === username)
+        //     })) {
+        //         return true
+        //     }
+        //     if (group.admins.find((member) => {
+        //         return (member.name === username)
+        //     })) {
+        //         return true
+        //     }
+        //     return false
+        // })
 
 
-        const ownOrganizations = ownGroups.map((group) => {
-            return groupToOrganization(group, username)
+        // const ownOrganizations = ownGroups.map((group) => {
+        //     // return groupToOrganization(group, username)
+        //     return this.listGroupToBriefOrganization(group)
+        // })
+
+        const orgs = await this.getAllOrgs2()
+
+
+        const ownOrgs = orgs.filter((org: BriefOrganization) => {
+
+            return (org.relation !== UserRelationToOrganization.NONE)
+            // if (org.owner === username) {
+            //     return true
+            // }
+            // if (org.members.find((member) => {
+            //     return (member.name === username)
+            // })) {
+            //     return true
+            // }
+            // if (group.admins.find((member) => {
+            //     return (member.name === username)
+            // })) {
+            //     return true
+            // }
+            // return false
         })
 
         return {
-            organizations: ownOrganizations,
-            total: ownOrganizations.length
+            organizations: ownOrgs,
+            total: ownOrgs.length
         }
     }
 

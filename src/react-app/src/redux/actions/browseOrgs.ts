@@ -112,7 +112,7 @@ export interface SearchOrgsStart extends Action<ActionFlag.BROWSE_ORGS_SEARCH_ST
 // Sets the organizations found
 export interface SearchOrgsSuccess extends Action<ActionFlag.BROWSE_ORGS_SEARCH_SUCCESS> {
     type: ActionFlag.BROWSE_ORGS_SEARCH_SUCCESS,
-    organizations: Array<orgModel.Organization>,
+    organizations: Array<orgModel.BriefOrganization>,
     totalCount: number
 }
 
@@ -131,7 +131,7 @@ function searchOrgsStart(): SearchOrgsStart {
     }
 }
 
-function searchOrgsSuccess(organizations: Array<orgModel.Organization>, totalCount: number): SearchOrgsSuccess {
+function searchOrgsSuccess(organizations: Array<orgModel.BriefOrganization>, totalCount: number): SearchOrgsSuccess {
     return {
         type: ActionFlag.BROWSE_ORGS_SEARCH_SUCCESS,
         organizations: organizations,

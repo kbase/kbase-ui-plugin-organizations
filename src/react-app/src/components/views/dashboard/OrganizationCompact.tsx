@@ -91,10 +91,9 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
                     <div className="orgOwner">
                         <span className="field-label">owner</span>
                         <span>
-                            <Owner member={org.owner} avatarSize={30} />
+                            <Owner username={org.owner.username} avatarSize={30} />
                         </span>
                         {/* <span className="field-value"><a href={"/#people/" + org.owner.username} target="_blank">{org.owner.username} ❨{org.owner.username}❩</a></span> */}
-
                     </div>
                     <div className="orgCreated">
                         <span className="field-label">established</span>
@@ -132,9 +131,7 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
                             {org.name}
                         </NavLink>
                     </div>
-
                 </div>
-
             </div>
         )
     }

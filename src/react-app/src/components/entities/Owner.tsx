@@ -14,7 +14,7 @@ enum View {
 }
 
 export interface OwnerProps {
-    member: orgModel.Member
+    // member: orgModel.Member
     user: userModel.User
     avatarSize?: number
 }
@@ -48,26 +48,11 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
     }
 
     renderRole() {
-        switch (this.props.member.type) {
-            case orgModel.MemberType.OWNER:
-                return (
-                    <span>
-                        <Icon type="crown" /> owner
-                </span>
-                )
-            case orgModel.MemberType.ADMIN:
-                return (
-                    <span>
-                        <Icon type="unlock" /> admin
-                </span>
-                )
-            case orgModel.MemberType.MEMBER:
-                return (
-                    <span>
-                        <Icon type="user" /> member
-                </span>
-                )
-        }
+        return (
+            <span>
+                <Icon type="crown" /> owner
+        </span>
+        )
     }
 
     renderCompact() {
@@ -80,18 +65,18 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                         <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
                     </a>
                 </div>
+
                 <div className="avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
                 <div className="infoCol">
                     <div className="name">
-                        <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
-                        {' '}
-                        ❨{this.props.user.username}❩
+                        <a href={"/#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
                     </div>
-
+                    <div className="username">
+                        {this.props.user.username}
+                    </div>
                 </div>
-
             </div>
         )
     }
@@ -111,20 +96,21 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                 </div>
                 <div className="infoCol">
                     <div className="name">
-                        <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
-                        {' '}
-                        ❨{this.props.user.username}❩
+                        <a href={"/#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
+                    </div>
+                    <div className="username">
+                        {this.props.user.username}
                     </div>
                     <div className="role">
                         {this.renderRole()}
                     </div>
-                    <div className="joinedAt">
+                    {/* <div className="joinedAt">
                         <span className="field-label">joined</span>{' '}{Intl.DateTimeFormat('en-US', {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric'
                         }).format(this.props.member.joinedAt)}
-                    </div>
+                    </div> */}
                     <div className="title">
                         {this.props.user.title || <i>no title in user profile</i>}
                     </div>

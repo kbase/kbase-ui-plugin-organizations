@@ -12,6 +12,7 @@ import Notifications from '../../notifications/storeAdapter'
 import InboxRequest from './InboxRequestContainer'
 import OutboxRequest from './OutboxRequestContainer'
 import * as userModel from '../../../data/models/user'
+import BriefOrganization from '../organizationHeader/BriefOrganization';
 
 enum NavigateTo {
     NONE = 0,
@@ -157,8 +158,8 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         }
         return this.props.viewModel.organizations.map((org) => {
             return (
-                <div key={org.organization.id}>
-                    <Organization organization={org} />
+                <div key={org.id} className="simpleCard" >
+                    <BriefOrganization organization={org} />
                 </div>
             )
         })
@@ -227,7 +228,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         )
     }
 
-    renderPendingRequestsSentCard() {
+    renderOutboxCard() {
         const requests = (
             <div style={{ maxHeight: '30em', overflowY: 'auto' }}>
                 {this.renderPendingRequestsSent()}
@@ -242,7 +243,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         )
     }
 
-    renderPendingRequestsReceivedCard() {
+    renderInboxCard() {
         return (
             <Card title="Inbox"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
@@ -254,8 +255,8 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
     isAdmin() {
         return (this.props.viewModel.organizations.some(({ relation }) => {
-            return (relation.type === orgModel.UserRelationToOrganization.OWNER ||
-                relation.type === orgModel.UserRelationToOrganization.ADMIN)
+            return (relation === orgModel.UserRelationToOrganization.OWNER ||
+                relation === orgModel.UserRelationToOrganization.ADMIN)
         }))
     }
 
@@ -289,7 +290,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         return this.props.viewModel.requestOutbox.map((request, index) => {
             return (
-                <div key={index}>
+                <div key={index} className="simpleCard">
                     <OutboxRequest request={request} showOrg={true} />
                 </div>
             )
@@ -312,12 +313,12 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         return requests.map((request, index) => {
             return (
-                <React.Fragment key={index}>
+                <div key={index} className="simpleCard">
                     <InboxRequest
                         request={request}
                         showOrg={true}
                         onAcceptInboxRequest={this.onAcceptInboxRequest.bind(this)} />
-                </React.Fragment>
+                </div>
             )
         })
     }
@@ -333,9 +334,9 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         }
         return this.props.viewModel.requestInbox.map((request) => {
             return (
-                <React.Fragment key={request.id}>
+                <div key={request.id} className="simpleCard">
                     <InboxRequest request={request} showOrg={true} onAcceptInboxRequest={this.onAcceptInboxRequest.bind(this)} />
-                </React.Fragment>
+                </div>
             )
         })
     }
@@ -367,9 +368,9 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
                             {this.renderNotificationsCard()}
 
-                            {this.renderPendingRequestsReceivedCard()}
+                            {this.renderInboxCard()}
 
-                            {this.renderPendingRequestsSentCard()}
+                            {this.renderOutboxCard()}
 
                             {this.renderPendingAdminTasksCard()}
                         </div>

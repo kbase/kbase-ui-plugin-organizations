@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
 import { AppError, StoreState, MemberType, ErrorCode, SomeError } from '../../types'
-import * as userModel from '../../data/models/user'
+import * as orgModel from '../../data/models/organization/model'
 import * as requestModel from '../../data/models/requests'
 import * as uberModel from '../../data/models/uber'
 import uuid from 'uuid/v4'
@@ -22,7 +22,7 @@ export interface LoadStart extends DashboardAction<ActionFlag.DASHBOARD_LOAD_STA
 
 export interface LoadSuccess extends DashboardAction<ActionFlag.DASHBOARD_LOAD_SUCCESS> {
     type: ActionFlag.DASHBOARD_LOAD_SUCCESS
-    organizations: Array<uberModel.UberOrganization>
+    organizations: Array<orgModel.BriefOrganization>
     // users: Map<userModel.Username, userModel.User>
     requestInbox: Array<requestModel.Request>
     requestOutbox: Array<requestModel.Request>
@@ -47,7 +47,7 @@ export function loadStart(): LoadStart {
 }
 
 export function loadSuccess(
-    organizations: Array<uberModel.UberOrganization>,
+    organizations: Array<orgModel.BriefOrganization>,
     // users: Map<userModel.Username, userModel.User>,
     requestInbox: Array<requestModel.Request>,
     requestOutbox: Array<requestModel.Request>,
@@ -85,12 +85,9 @@ export function load() {
             auth: { authorization: { token, username } },
             app: { config } } = getState()
 
-        const uberClient = new uberModel.UberModel({
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
         const requestModelClient = new requestModel.RequestsModel({
@@ -104,30 +101,33 @@ export function load() {
         // - orgs of current user
         // - requests created by or targeting current user
         try {
-            const orgs = await uberClient.getOrganizationsForUser()
+            const orgs = await orgClient.getOwnOrgs()
 
             const requestOutbox = await requestModelClient.getOutboundRequests()
 
             const requestInbox = await requestModelClient.getInboundRequests()
 
-            const adminOrgIds = orgs
-                .filter(({ organization }) => {
-                    // TODO: why not have relation on org, again?   
-                    if (organization.owner.username === username) {
-                        return true
-                    }
-                    if (organization.members.find((member) => {
-                        return (member.username === username && member.type === MemberType.ADMIN)
-                    })) {
-                        return true
-                    }
-                    return false
-                })
-                .map(({ organization }) => {
-                    return organization.id
-                })
+            // TODO: revive this?
+            // const adminOrgIds = orgs
+            //     .filter(({ organization }) => {
+            //         // TODO: why not have relation on org, again?   
+            //         if (organization.owner.username === username) {
+            //             return true
+            //         }
+            //         if (organization.members.find((member) => {
+            //             return (member.username === username && member.type === MemberType.ADMIN)
+            //         })) {
+            //             return true
+            //         }
+            //         return false
+            //     })
+            //     .map(({ organization }) => {
+            //         return organization.id
+            //     })
 
-            const pendingGroupRequests = await requestModelClient.getPendingOrganizationRequests(adminOrgIds)
+            // const pendingGroupRequests = await requestModelClient.getPendingOrganizationRequests(adminOrgIds)
+            // just empty if for now, remove later if really getting rid of.
+            const pendingGroupRequests: Array<requestModel.Request> = []
 
             dispatch(loadSuccess(orgs, requestInbox, requestOutbox, pendingGroupRequests))
         } catch (ex) {
@@ -205,7 +205,7 @@ export interface RefreshStart extends DashboardAction<ActionFlag.DASHBOARD_REFRE
 
 export interface RefreshSuccess extends DashboardAction<ActionFlag.DASHBOARD_REFRESH_SUCCESS> {
     type: ActionFlag.DASHBOARD_REFRESH_SUCCESS
-    organizations: Array<uberModel.UberOrganization>
+    organizations: Array<orgModel.BriefOrganization>
     requestInbox: Array<requestModel.Request>
     requestOutbox: Array<requestModel.Request>
     pendingGroupRequests: Array<requestModel.Request>
@@ -225,7 +225,7 @@ export function refreshStart(): RefreshStart {
 }
 
 export function refreshSuccess(
-    organizations: Array<uberModel.UberOrganization>,
+    organizations: Array<orgModel.BriefOrganization>,
     requestInbox: Array<requestModel.Request>,
     requestOutbox: Array<requestModel.Request>,
     pendingGroupRequests: Array<requestModel.Request>): RefreshSuccess {
@@ -259,12 +259,17 @@ export function refresh() {
             auth: { authorization: { token, username } },
             app: { config } } = getState()
 
-        const uberClient = new uberModel.UberModel({
+        // const uberClient = new uberModel.UberModel({
+        //     token, username,
+        //     groupsServiceURL: config.services.Groups.url,
+        //     userProfileServiceURL: config.services.UserProfile.url,
+        //     workspaceServiceURL: config.services.Workspace.url,
+        //     serviceWizardURL: config.services.ServiceWizard.url
+        // })
+
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
         const requestModelClient = new requestModel.RequestsModel({
@@ -278,30 +283,32 @@ export function refresh() {
         // - orgs of current user
         // - requests created by or targeting current user
         try {
-            const orgs = await uberClient.getOrganizationsForUser()
+            // const orgs = await uberClient.getOrganizationsForUser()
+            const orgs = await orgClient.getOwnOrgs()
 
             const requestOutbox = await requestModelClient.getOutboundRequests()
 
             const requestInbox = await requestModelClient.getInboundRequests()
 
-            const adminOrgIds = orgs
-                .filter(({ organization }) => {
-                    // TODO: why not have relation on org, again?   
-                    if (organization.owner.username === username) {
-                        return true
-                    }
-                    if (organization.members.find((member) => {
-                        return (member.username === username && member.type === MemberType.ADMIN)
-                    })) {
-                        return true
-                    }
-                    return false
-                })
-                .map(({ organization }) => {
-                    return organization.id
-                })
+            // const adminOrgIds = orgs
+            //     .filter(({ organization }) => {
+            //         // TODO: why not have relation on org, again?   
+            //         if (organization.owner.username === username) {
+            //             return true
+            //         }
+            //         if (organization.members.find((member) => {
+            //             return (member.username === username && member.type === MemberType.ADMIN)
+            //         })) {
+            //             return true
+            //         }
+            //         return false
+            //     })
+            //     .map(({ organization }) => {
+            //         return organization.id
+            //     })
 
-            const pendingGroupRequests = await requestModelClient.getPendingOrganizationRequests(adminOrgIds)
+            // const pendingGroupRequests = await requestModelClient.getPendingOrganizationRequests(adminOrgIds)
+            const pendingGroupRequests: Array<requestModel.Request> = []
 
             dispatch(refreshSuccess(orgs, requestInbox, requestOutbox, pendingGroupRequests))
         } catch (ex) {
@@ -409,7 +416,7 @@ interface AcceptInboxRequestStart extends DashboardAction<ActionFlag.DASHBOARD_A
 export interface AcceptInboxRequestSuccess extends DashboardAction<ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_SUCCESS> {
     type: ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_SUCCESS,
     requests: Array<requestModel.Request>
-    organizations: Array<uberModel.UberOrganization>
+    organizations: Array<orgModel.BriefOrganization>
 }
 
 interface AcceptInboxRequestError extends DashboardAction<ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_ERROR> {
@@ -446,12 +453,17 @@ export function acceptInboxRequest(request: requestModel.Request) {
             groupsServiceURL: config.services.Groups.url
         })
 
-        const uberClient = new uberModel.UberModel({
+        // const uberClient = new uberModel.UberModel({
+        //     token, username,
+        //     groupsServiceURL: config.services.Groups.url,
+        //     userProfileServiceURL: config.services.UserProfile.url,
+        //     workspaceServiceURL: config.services.Workspace.url,
+        //     serviceWizardURL: config.services.ServiceWizard.url
+        // })
+
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
+            groupsServiceURL: config.services.Groups.url
         })
 
 
@@ -461,7 +473,7 @@ export function acceptInboxRequest(request: requestModel.Request) {
             // refetch the inbox
             const inbox = await requestClient.getInboundRequests()
 
-            const orgs = await uberClient.getOrganizationsForUser()
+            const orgs = await orgClient.getOwnOrgs()
 
             dispatch({
                 type: ActionFlag.DASHBOARD_ACCEPT_INBOX_REQUEST_SUCCESS,

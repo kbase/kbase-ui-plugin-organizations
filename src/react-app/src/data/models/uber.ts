@@ -66,61 +66,61 @@ export class UberModel {
         }
     }
 
-    async getOrganizationsForUser(): Promise<Array<UberOrganization>> {
-        // const {
-        //     auth: { authorization: { token, username } },
-        //     app: { config }
-        // } = getState()
+    // async getOrganizationsForUser(): Promise<Array<UberOrganization>> {
+    //     // const {
+    //     //     auth: { authorization: { token, username } },
+    //     //     app: { config }
+    //     // } = getState()
 
-        const orgClient = new orgModel.OrganizationModel({
-            token: this.params.token, username: this.params.username,
-            groupsServiceURL: this.params.groupsServiceURL
-        })
+    //     const orgClient = new orgModel.OrganizationModel({
+    //         token: this.params.token, username: this.params.username,
+    //         groupsServiceURL: this.params.groupsServiceURL
+    //     })
 
-        const requestClient = new requestModel.RequestsModel({
-            token: this.params.token, username: this.params.username,
-            groupsServiceURL: this.params.groupsServiceURL
-        })
+    //     const requestClient = new requestModel.RequestsModel({
+    //         token: this.params.token, username: this.params.username,
+    //         groupsServiceURL: this.params.groupsServiceURL
+    //     })
 
-        const orgs = await orgClient.getOwnOrgs()
+    //     const orgs = await orgClient.getOwnOrgs()
 
-        const requestOutbox = await requestClient.getOutboundRequests()
-        const requestInbox = await requestClient.getInboundRequests()
+    //     const requestOutbox = await requestClient.getOutboundRequests()
+    //     const requestInbox = await requestClient.getInboundRequests()
 
-        return await Promise.all(orgs.map(async (organization) => {
-            const request = requestOutbox.find((request) => {
-                if (request.organizationId === organization.id) {
-                    if (request.type === RequestType.REQUEST &&
-                        request.resourceType === requestModel.RequestResourceType.USER) {
-                        return true
-                    }
-                }
-                return false
-            }) as requestModel.UserRequest
+    //     return await Promise.all(orgs.map(async (organization) => {
+    //         const request = requestOutbox.find((request) => {
+    //             if (request.organizationId === organization.id) {
+    //                 if (request.type === RequestType.REQUEST &&
+    //                     request.resourceType === requestModel.RequestResourceType.USER) {
+    //                     return true
+    //                 }
+    //             }
+    //             return false
+    //         }) as requestModel.UserRequest
 
-            const invitation = requestInbox.find((request) => {
-                if (request.organizationId === organization.id) {
-                    if (request.type === RequestType.INVITATION &&
-                        request.resourceType === requestModel.RequestResourceType.USER) {
-                        return true
-                    }
-                }
-                return false
-            }) as requestModel.UserInvitation
+    //         const invitation = requestInbox.find((request) => {
+    //             if (request.organizationId === organization.id) {
+    //                 if (request.type === RequestType.INVITATION &&
+    //                     request.resourceType === requestModel.RequestResourceType.USER) {
+    //                     return true
+    //                 }
+    //             }
+    //             return false
+    //         }) as requestModel.UserInvitation
 
-            const relation = orgModel.determineRelation(organization, this.params.username, request || null, invitation)
+    //         const relation = orgModel.determineRelation(organization, this.params.username, request || null, invitation)
 
-            let groupRequests
-            if (relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-                relation.type === orgModel.UserRelationToOrganization.OWNER) {
-                groupRequests = await requestClient.getPendingOrganizationRequestsForOrg(organization.id)
-            } else {
-                groupRequests = null
-            }
+    //         let groupRequests
+    //         if (relation.type === orgModel.UserRelationToOrganization.ADMIN ||
+    //             relation.type === orgModel.UserRelationToOrganization.OWNER) {
+    //             groupRequests = await requestClient.getPendingOrganizationRequestsForOrg(organization.id)
+    //         } else {
+    //             groupRequests = null
+    //         }
 
-            return {
-                organization, request, invitation, relation, groupRequests
-            }
-        }))
-    }
+    //         return {
+    //             organization, request, invitation, relation, groupRequests
+    //         }
+    //     }))
+    // }
 }

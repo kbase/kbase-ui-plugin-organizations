@@ -27,7 +27,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
 
     renderInvitationToOrg(notification: feedsModel.OrganizationNotification) {
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
                         You have been invited to Join
@@ -68,7 +68,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
             )
         }
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
                         Your membership request has been accepted for
@@ -94,7 +94,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
             )
         }
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
                         Request to join organization
@@ -132,7 +132,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
             )
         }
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
                         Request to associate Narrative
@@ -175,7 +175,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
             )
         }
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
                         New Narrative associated
@@ -210,7 +210,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
             )
         }
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
                         Your Narrative

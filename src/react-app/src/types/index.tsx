@@ -14,6 +14,10 @@ import * as feedsModel from '../data/models/feeds'
 */
 
 
+export enum ComponentView {
+    COMPACT = 0,
+    NORMAL
+}
 
 export enum UIErrorType {
     NONE = 0,
@@ -213,19 +217,7 @@ export interface Member {
 //     type: UserRelationToOrganization.OWNER
 // }
 
-export interface BriefOrganization {
-    id: string
-    name: string
-    logoUrl: string | null
-    // TODO: we need researchInterests here
-    owner: {
-        username: string
-        realname: string
-    },
-    relation: orgModel.UserRelationToOrganization,
-    createdAt: Date
-    modifiedAt: Date
-}
+
 
 export enum RequestType {
     REQUEST = 0,
@@ -382,8 +374,8 @@ export enum BrowseOrgsState {
 }
 
 export interface BrowseOrgsViewModel {
-    rawOrganizations: Array<orgModel.Organization>
-    organizations: Array<orgModel.Organization>
+    rawOrganizations: Array<orgModel.BriefOrganization>
+    organizations: Array<orgModel.BriefOrganization>
     totalCount: number
     filteredCount: number
     sortBy: string
@@ -527,7 +519,8 @@ export interface Notification {
 }
 
 export interface DashboardViewModel {
-    organizations: Array<uberModel.UberOrganization>
+    organizations: Array<orgModel.BriefOrganization>
+    // organizations: Array<uberModel.UberOrganization>
     // users: Map<userModel.Username, userModel.User>
     refreshState: ComponentLoadingState
     requestInbox: Array<requestModel.Request>

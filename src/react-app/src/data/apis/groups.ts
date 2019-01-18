@@ -7,21 +7,6 @@ export interface GroupsServiceInfo {
     gitcommithash: string
 }
 
-export interface BriefGroup {
-    id: string;
-    name: string;
-    custom: {
-        logourl?: string
-        researchinterests?: string
-    }
-    owner: Member;
-
-    // createdAt: number;
-    // modifiedAt: number
-}
-
-export type GroupList = Array<BriefGroup>
-
 export type Username = string;
 
 export interface Member {
@@ -43,6 +28,30 @@ export interface WorkspaceInfo {
 export interface AppInfo {
     rid: string
 }
+
+export type Role = "none" | "member" | "admin" | "owner"
+
+export interface BriefGroup {
+    id: string
+    name: string
+    createdate: number
+    moddate: number
+    private: boolean
+    role: Role
+
+    custom: {
+        logourl?: string
+        researchinterests?: string
+        homeurl?: string
+    }
+    owner: Username
+
+    memcount: number
+    rescount: {
+        workspace: number
+    }
+}
+
 
 export interface Group {
     id: string
@@ -279,9 +288,7 @@ export class GroupsClient {
     //         })
     // }
 
-
-    getGroups(): Promise<Array<Group>> {
-        let start = new Date().getTime()
+    async listGroups(): Promise<Array<BriefGroup>> {
         return fetch(this.url + '/group', {
             headers: {
                 Authorization: this.token,
@@ -296,8 +303,25 @@ export class GroupsClient {
                 }
                 return response.json()
             })
-            .then((result: GroupList) => {
-                console.log('got groups', result)
+    }
+
+
+    getGroups(): Promise<Array<Group>> {
+        return fetch(this.url + '/group', {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json'
+            },
+            mode: 'cors'
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    console.error('error fetching groups', response)
+                    throw new Error('Error fetching groups')
+                }
+                return response.json()
+            })
+            .then((result: Array<BriefGroup>) => {
                 return Promise.all(result.map((group) => (this.getGroupById(group.id))))
             })
             .then((result) => {

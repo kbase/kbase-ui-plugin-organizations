@@ -52,7 +52,7 @@ export default class Organization extends React.Component<OrganizationProps, Org
             case (orgModel.UserRelationToOrganization.MEMBER):
                 return (<span><Icon type="user" /> You are a <b>member</b> of this organization</span>)
             case (orgModel.UserRelationToOrganization.ADMIN):
-                return (<span><Icon type="unlock" />Admin</span>)
+                return (<span><Icon type="unlock" />You are an <b>admin</b> of this organization</span>)
             case (orgModel.UserRelationToOrganization.OWNER):
                 return (
                     <Tooltip

@@ -8,7 +8,7 @@ import * as orgModel from '../../../data/models/organization/model'
 // Typing for the mapState and mapDispatch
 //
 export interface LinkStateProps {
-    organizations: Array<orgModel.Organization>
+    organizations: Array<orgModel.BriefOrganization>
     totalCount: number
     filteredCount: number
     sortBy: string

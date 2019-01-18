@@ -19,36 +19,38 @@ export default class Error extends React.Component<ErrorProps, ErrorState> {
     renderDetail() {
         return (
             <table className='errorTable'>
-                <tr>
-                    <th>
-                        <span className="field-label">generated at</span>
-                    </th>
-                    <td>
-                        {
-                            Intl.DateTimeFormat('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric'
-                            }).format(this.props.error.at)
-                        }
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <span className="field-label">error id</span>
-                    </th>
-                    <td>
-                        <span style={{ fontFamily: 'monospace' }}>{this.props.error.id}</span>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <span className="field-label">explanation</span>
-                    </th>
-                    <td>
-                        {this.props.error.detail}
-                    </td>
-                </tr>
+                <tbody>
+                    <tr>
+                        <th>
+                            <span className="field-label">generated at</span>
+                        </th>
+                        <td>
+                            {
+                                Intl.DateTimeFormat('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                }).format(this.props.error.at)
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <span className="field-label">error id</span>
+                        </th>
+                        <td>
+                            <span style={{ fontFamily: 'monospace' }}>{this.props.error.id}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <span className="field-label">explanation</span>
+                        </th>
+                        <td>
+                            {this.props.error.detail}
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         )
     }

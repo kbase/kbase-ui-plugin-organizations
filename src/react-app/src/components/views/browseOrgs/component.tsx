@@ -42,6 +42,10 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
             showInfo: false
         }
 
+    }
+
+    // https://reactjs.org/docs/react-component.html#componentdidmount
+    componentDidMount() {
         this.props.onSearchOrgs([])
     }
 

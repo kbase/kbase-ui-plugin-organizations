@@ -59,29 +59,13 @@ button {
     margin-left: 2px
 }
 
-.slimCard.ant-card .ant-card-head {
-    padding: 0 6px;
-    min-height: unset;
-}
-
-.slimCard.ant-card .ant-card-head-title {
-    padding: 6px 0;
-}
-
-.slimCard.ant-card .ant-card-extra {
-    padding: 6px 0;
-}
-
-.slimCard.ant-card .ant-card-body {
-    padding: 6px
-}
-
 a:hover {
     text-decoration: underline;
 }
 
 .linkButton {
     padding: 4px;
+    color: rgba(200, 200, 200, 1);
 }
 
 .linkButton:hover {
@@ -108,4 +92,41 @@ a:hover {
 
 .helpSectionTitle {
     font-weight: bold;
+}
+
+/* a simple, rounded-corner "card" - hoverable */
+
+.simpleCard {
+    border: 1px rgba(200, 200, 200, 0.5) solid;
+    background-color: rgba(200, 200, 200, 0.3);
+    border-radius: 4px;
+    /* box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5); */
+    /* padding: 4px; */
+    margin: 10px 0 10px 0;
+    padding: 4px;
+}
+
+.simpleCard:hover {
+    border: 1px rgba(200, 200, 200, 0.8) solid;
+    background-color: rgba(200, 200, 200, 0.5)
+    /* box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.8); */
+}
+
+/* Matching our own card above */
+
+.slimCard.ant-card .ant-card-head {
+    padding: 0 6px;
+    min-height: unset;
+}
+
+.slimCard.ant-card .ant-card-head-title {
+    padding: 6px 0;
+}
+
+.slimCard.ant-card .ant-card-extra {
+    padding: 6px 0;
+}
+
+.slimCard.ant-card .ant-card-body {
+    padding: 6px
 }

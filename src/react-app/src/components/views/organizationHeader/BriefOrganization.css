@@ -1,0 +1,59 @@
+.BriefOrganization {
+    /* flex: 1 1 0px; */
+    flex: 0 0 auto;
+    /* min-height: 0; */
+}
+
+/* .BriefOrganization:hover {
+    background-color: rgba(200, 200, 200, 0.3)
+}
+
+*/
+.BriefOrganization-body {
+    padding: 4px;
+    display: flex;
+    display: flex;
+    flex-direction: row;
+}
+
+.BriefOrganization-col1 {
+    flex: 1 1 0px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.BriefOrganization-col2 {
+    flex: 0 0 64px;
+}
+
+.BriefOrganization-orgName {
+    font-weight: bold;
+    font-size: 120%;
+    cursor: pointer;
+}
+
+.BriefOrganization-infoTable {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.BriefOrganization-infoTableRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.BriefOrganization-infoTableCol1 {
+    flex: 0 0 7em;
+    text-align: left;
+}
+
+.BriefOrganization-infoTableCol2 {
+    flex: 0 0 30em;
+}
+
+.BriefOrganization-researchInterests {
+    font-style: italic;
+}
