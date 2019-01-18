@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Redirect } from 'react-router-dom'
-import marked from 'marked'
+import { Marked } from 'marked-ts'
 import { Button, Icon, Modal, Input, Checkbox } from 'antd'
 import md5 from 'md5'
 
@@ -453,7 +453,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             <div className="row" style={{ flex: '1 1 0px' }}>
                 <div className="col2">
                     <div className="description"
-                        dangerouslySetInnerHTML={({ __html: marked(this.props.newOrganization.description.value || '') })}
+                        dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.newOrganization.description.value || '') })}
                     />
                 </div>
             </div>

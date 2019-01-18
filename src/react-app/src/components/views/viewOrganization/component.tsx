@@ -1,5 +1,5 @@
 import * as React from 'react'
-import marked from 'marked'
+import { Marked, Renderer, MarkedOptions } from 'marked-ts'
 import { NavLink, Redirect } from 'react-router-dom'
 
 import './component.css'
@@ -15,7 +15,7 @@ import * as feedsModel from '../../../data/models/feeds'
 import OrganizationNarrative from '../../OrganizationNarrative'
 import InboxRequest from '../dashboard/InboxRequestContainer'
 import OutboxRequest from '../dashboard/OutboxRequestContainer'
-import Notifications from '../../notifications/component';
+import Notifications from '../../notifications/component'
 
 enum NavigateTo {
     NONE = 0,
@@ -176,7 +176,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         return (
             <div className="org">
                 <div className="description"
-                    dangerouslySetInnerHTML={({ __html: marked(this.props.organization.description || '') })}
+                    dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.organization.description || '') })}
                 />
             </div>
         )
@@ -916,7 +916,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             // create buttons or not, depending on being an admin
 
             return (
-                <div className="narrative" key={String(narrative.workspaceId)}>
+                <div className="narrative simpleCard" key={String(narrative.workspaceId)}>
                     <div className="dataCol">
                         <OrganizationNarrative
                             narrative={narrative}

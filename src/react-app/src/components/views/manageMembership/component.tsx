@@ -10,6 +10,7 @@ import * as userModel from '../../../data/models/user'
 export interface ManageMembershipProps {
     username: userModel.Username
     organization: orgModel.Organization
+    onLeaveOrganization: (organizationId: string) => void
 }
 
 interface MangeMembershipState {
@@ -36,7 +37,8 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
     }
 
     doLeaveOrg() {
-        alert('this will leave you the org')
+        // alert('this will leave you the org')
+        this.props.onLeaveOrganization(this.props.organization.id)
     }
 
     canSave() {

@@ -46,8 +46,8 @@
 }
 
 .ViewOrganization .mainRow>.mainColumn>.narrativesRow .narrativesTable .narrative {
-    border: 1px rgba(150, 150, 150, 0.5) solid;
-    padding: 4px;
+    /* border: 1px rgba(150, 150, 150, 0.5) solid;
+padding:4px; */
     margin: 0 0 10px 0;
     flex: 1 1 0px;
     display: flex;

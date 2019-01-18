@@ -39,7 +39,7 @@ class Auth extends React.Component<types.AuthProps, AuthState> {
     buildAuthForm() {
         return (
             <div className="Auth-form">
-                Token: <input ref={this.tokenRef} />
+                Token: <input ref={this.tokenRef} style={{ width: '30em' }} />
                 <Button
                     icon="save"
                     htmlType="submit"

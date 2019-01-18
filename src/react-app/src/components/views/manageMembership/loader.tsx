@@ -1,7 +1,5 @@
 import * as React from 'react'
-
 import { ManageMembershipView, AppError, ComponentLoadingState, StoreState } from '../../../types'
-
 import Container from './container'
 
 export interface Props {
@@ -77,10 +75,7 @@ class Loader extends React.Component<Props, State> {
 
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
-
-
 import * as actions from '../../../redux/actions/manageMembership'
-import { types } from 'util';
 
 export interface OwnProps {
     organizationId: string

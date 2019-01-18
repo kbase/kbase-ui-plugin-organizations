@@ -17,6 +17,8 @@ interface StateProps {
 }
 
 interface DispatchProps {
+    onLeaveOrganization: (organizationId: string) => void,
+
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
@@ -38,6 +40,9 @@ function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
 
 export function mapDispatchToProps(dispatch: Dispatch<actions.Load>): DispatchProps {
     return {
+        onLeaveOrganization: (organizationId: string) => {
+            dispatch(actions.leaveOrg(organizationId) as any)
+        }
     }
 }
 

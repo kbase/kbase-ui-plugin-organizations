@@ -117,7 +117,6 @@ export function load() {
                     return organization.id
                 })
 
-
             // Note - now using combined personal + group inbox.
             const pendingGroupRequests = await requestModelClient.getPendingOrganizationRequests(adminOrgIds)
 
@@ -136,7 +135,6 @@ export function load() {
                 id: uuid()
             }))
         }
-
 
         // resolve all data!
         // - orgs
@@ -566,7 +564,6 @@ export function rejectInboxRequest(request: requestModel.Request) {
                 }
             })
         }
-
 
         // or error
     }

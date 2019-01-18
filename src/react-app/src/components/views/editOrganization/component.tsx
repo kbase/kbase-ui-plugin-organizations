@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Redirect, NavLink } from 'react-router-dom';
-import marked from 'marked';
+import { Marked } from 'marked-ts';
 import { Button, Icon, Modal, Checkbox, Input, Tooltip } from 'antd';
 import md5 from 'md5'
 
@@ -426,7 +426,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
             <div className="row" style={{ flex: '1 1 0px' }}>
                 <div className="col2">
                     <div className="description"
-                        dangerouslySetInnerHTML={({ __html: marked(this.props.editedOrganization.description.value || '') })}
+                        dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.editedOrganization.description.value || '') })}
                     />
                 </div>
             </div>

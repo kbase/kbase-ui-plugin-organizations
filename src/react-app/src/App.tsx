@@ -31,6 +31,51 @@ import RequestAddNarrative from './components/views/requestAddNarrative/loader'
 import DashboardView from './components/views/dashboard/loader'
 import { StateInstances } from './redux/state';
 import DataServices from './components/dataServices/storeAdapter'
+import { AppContextProvider } from './AppContext'
+import { Marked, Renderer, MarkedOptions } from 'marked-ts'
+
+class DescriptionRenderer extends Renderer {
+  constructor(options?: MarkedOptions) {
+    super(options)
+  }
+  link(href: string, title: string, text: string) {
+    if (this.options.sanitize) {
+      let prot: string;
+
+      try {
+        prot = decodeURIComponent(this.options.unescape!(href))
+          .replace(/[^\w:]/g, '')
+          .toLowerCase()
+      }
+      catch (e) {
+        return text
+      }
+
+      if
+        (
+        prot.indexOf('javascript:') === 0
+        || prot.indexOf('vbscript:') === 0
+        || prot.indexOf('data:') === 0
+      ) {
+        return text
+      }
+    }
+
+    let out = '<a href="' + href + '"';
+
+    if (title) {
+      out += ' title="' + title + '"';
+    }
+
+    out += ' target="_blank">' + text + '</a>';
+
+    return out;
+  }
+}
+
+let options = new MarkedOptions()
+options.renderer = new DescriptionRenderer()
+Marked.setOptions({ renderer: new DescriptionRenderer() })
 
 // Put the redux store together
 // Just for prototyping --- This is super naive and will change!
@@ -50,6 +95,8 @@ const initialState = StateInstances.makeInitialState()
 // const store = createStore<StoreState, SortOrgs, null, null>(theReducer as any, initialState, applyMiddleware(thunk));
 const store = createStore(theReducer as any, initialState as any, compose(applyMiddleware(thunk)))
 
+
+
 class App extends Component {
   constructor(props: any) {
     super(props)
@@ -57,35 +104,37 @@ class App extends Component {
 
   render() {
     return (
-      <Provider store={store}>
-        <KBaseIntegration>
-          <Auth hosted={hosted}>
-            <DataServices>
-              <BrowserRouter basename="/" >
-                <div className="App scrollable-flex-column">
-                  <div className="App-body scrollable-flex-column">
-                    <Switch>
-                      <Route path="/dashboard" exact={true} component={DashboardView} />
-                      <Route path="/organizations" component={OrganizationsBrowser} />
-                      <Route path="/newOrganization" component={NewOrganization} />
-                      {/* The destructuring below is ugly, but effective */}
-                      <Route path="/viewOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewOrganization organizationId={id} />} />
-                      <Route path="/editOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <EditOrganization organizationId={id} />} />
-                      <Route path="/manageOrganizationRequests/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ManageOrganizationRequests organizationId={id} />} />
-                      <Route path="/viewMembers/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewMembers organizationId={id} />} />
-                      <Route path="/inviteUser/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<InviteUser organizationId={id} />)} />
-                      <Route path="/membership/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<ManageMembership organizationId={id} />)} />
-                      <Route path="/requestAddNarrative/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<RequestAddNarrative organizationId={id} />)} />
+      <AppContextProvider value={{ test: 'ok' }}>
+        <Provider store={store}>
+          <KBaseIntegration>
+            <Auth hosted={hosted}>
+              <DataServices>
+                <BrowserRouter basename="/" >
+                  <div className="App scrollable-flex-column">
+                    <div className="App-body scrollable-flex-column">
+                      <Switch>
+                        <Route path="/dashboard" exact={true} component={DashboardView} />
+                        <Route path="/organizations" component={OrganizationsBrowser} />
+                        <Route path="/newOrganization" component={NewOrganization} />
+                        {/* The destructuring below is ugly, but effective */}
+                        <Route path="/viewOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewOrganization organizationId={id} />} />
+                        <Route path="/editOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <EditOrganization organizationId={id} />} />
+                        <Route path="/manageOrganizationRequests/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ManageOrganizationRequests organizationId={id} />} />
+                        <Route path="/viewMembers/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewMembers organizationId={id} />} />
+                        <Route path="/inviteUser/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<InviteUser organizationId={id} />)} />
+                        <Route path="/membership/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<ManageMembership organizationId={id} />)} />
+                        <Route path="/requestAddNarrative/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<RequestAddNarrative organizationId={id} />)} />
 
-                      <Redirect from="/" to="/dashboard" exact={true} />
-                    </Switch>
+                        <Redirect from="/" to="/dashboard" exact={true} />
+                      </Switch>
+                    </div>
                   </div>
-                </div>
-              </BrowserRouter>
-            </DataServices>
-          </Auth>
-        </KBaseIntegration>
-      </Provider>
+                </BrowserRouter>
+              </DataServices>
+            </Auth>
+          </KBaseIntegration>
+        </Provider>
+      </AppContextProvider>
     )
   }
 }

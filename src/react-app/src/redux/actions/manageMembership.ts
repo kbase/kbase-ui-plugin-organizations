@@ -109,5 +109,59 @@ export function load(organizationId: string) {
             }))
         }
     }
-
 }
+
+// Leaving the Org
+
+export interface LeaveOrg extends Action {
+    type: ActionFlag.MANAGE_MEMBERSHIP_LEAVE_ORG
+    organizationId: orgModel.OrganizationID
+}
+
+interface LeaveOrgSuccess extends Action {
+    type: ActionFlag.MANAGE_MEMBERSHIP_LEAVE_ORG_SUCCESS
+}
+
+interface LeaveOrgError extends Action {
+    type: ActionFlag.MANAGE_MEMBERSHIP_LEAVE_ORG_ERROR,
+    error: AppError
+}
+
+export function leaveOrg(organizationId: orgModel.OrganizationID) {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(({
+            type: ActionFlag.MANAGE_MEMBERSHIP_LEAVE_ORG_START
+        }))
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config }
+        } = getState()
+
+        const orgClient = new orgModel.OrganizationModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+
+        try {
+            orgClient.removeMember(organizationId, username)
+            dispatch({
+                type: ActionFlag.MANAGE_MEMBERSHIP_LEAVE_ORG_SUCCESS
+            })
+        } catch (ex) {
+            console.error('ERROR leaving org', ex)
+            dispatch({
+                type: ActionFlag.MANAGE_MEMBERSHIP_LEAVE_ORG_ERROR,
+                error: {
+                    code: ex.name,
+                    message: ex.message
+                }
+            })
+        }
+
+
+    }
+}
+
+
+// Updating Profile

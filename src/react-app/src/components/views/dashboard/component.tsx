@@ -6,13 +6,13 @@ import { Redirect } from 'react-router-dom';
 import { DashboardViewModel, ComponentLoadingState } from '../../../types';
 import * as orgModel from '../../../data/models/organization/model'
 import * as requestModel from '../../../data/models/requests'
-import Organization from './Organization';
 import User from '../../entities/UserContainer';
 import Notifications from '../../notifications/storeAdapter'
 import InboxRequest from './InboxRequestContainer'
 import OutboxRequest from './OutboxRequestContainer'
 import * as userModel from '../../../data/models/user'
 import BriefOrganization from '../organizationHeader/BriefOrganization';
+import { AppContextConsumer, AppContext } from '../../../AppContext';
 
 enum NavigateTo {
     NONE = 0,
@@ -125,7 +125,17 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
             </React.Fragment>
         )
         return (
-            <Header breadcrumbs={breadcrumbs} buttons={buttons} />
+            <AppContextConsumer>
+                {(appContext: AppContext | null) => {
+                    if (appContext) {
+                        return (
+                            <Header breadcrumbs={breadcrumbs} buttons={buttons} test={appContext.test} />
+                        )
+                    } else {
+                        return null
+                    }
+                }}
+            </AppContextConsumer>
         )
     }
 
@@ -169,11 +179,11 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         switch (this.props.viewModel.refreshState) {
             case ComponentLoadingState.LOADING:
                 return (
-                    <Button key="refresh"><Icon type="sync" spin />{' '}Refreshing...</Button>
+                    <Button key="refresh"><Icon type="sync" spin /></Button>
                 )
             default:
                 return (
-                    <Button key="refresh" onClick={this.onRefresh.bind(this)}><Icon type="reload" />{' '}Refresh</Button>
+                    <Button key="refresh" onClick={this.onRefresh.bind(this)}><Icon type="reload" /></Button>
                 )
         }
     }
@@ -181,10 +191,10 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     renderOrganizationsCard() {
         const extra = (
             <div>
-                <Button key="newOrgButton" onClick={this.onNavigateToNewOrg.bind(this)}><Icon type="plus" />{' '}New</Button>
-                {' '}
-                <Button key="browseButton" onClick={this.onNavigateToBrowser.bind(this)}>Browse All</Button>
-                {' '}
+                {/* <Button key="newOrgButton" onClick={this.onNavigateToNewOrg.bind(this)}><Icon type="plus" />{' '}New</Button>
+                {' '} */}
+                {/* <Button key="browseButton" onClick={this.onNavigateToBrowser.bind(this)}>Browse All</Button>
+                {' '} */}
                 {this.renderRefreshButton()}
             </div>
         )
