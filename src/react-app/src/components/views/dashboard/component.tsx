@@ -227,7 +227,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
             <Card title={title}
                 style={{ display: 'flex', flexDirection: 'column', flex: '1 1 0px', minHeight: '30em' }}
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                bodyStyle={{ flex: '1 1 0px', display: 'flex', flexDirection: 'column' }}
+                bodyStyle={{ flex: '1 1 0px', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}
                 className="slimCard notificationsCard">
                 {this.renderPendingNotifications()}
             </Card>
