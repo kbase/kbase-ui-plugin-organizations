@@ -1,0 +1,16 @@
+.AnError {}
+
+.AnError .ant-collapse-borderless>.ant-collapse-item {
+    border-bottom: 0;
+}
+
+.AnError-errorTable {
+    width: 100%;
+}
+
+.AnError-errorTable th {
+    text-align: right;
+    width: 10em;
+}
+
+.AnError-errorTable.td {}

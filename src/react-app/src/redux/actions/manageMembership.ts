@@ -3,9 +3,8 @@ import { ThunkDispatch } from 'redux-thunk'
 import { ActionFlag } from './index'
 
 import * as orgModel from '../../data/models/organization/model'
-import * as userModel from '../../data/models/user'
-import { AppError, StoreState, EditState, ValidationState, UIErrorType, SyncState, ValidationErrorType } from '../../types'
-import Validation from '../../data/models/organization/validation';
+import { StoreState, SyncState, ValidationErrorType } from '../../types'
+import { AnError, makeError } from '../../lib/error'
 
 // Loading
 
@@ -25,7 +24,7 @@ export interface LoadSuccess extends Action {
 
 export interface LoadError extends Action {
     type: ActionFlag.MANAGE_MEMBERSHIP_LOAD_ERROR,
-    error: AppError
+    error: AnError
 }
 
 export interface Unload extends Action {
@@ -46,7 +45,7 @@ export function loadSuccess(organization: orgModel.Organization, editableMemberP
     }
 }
 
-export function loadError(error: AppError): LoadError {
+export function loadError(error: AnError): LoadError {
     return {
         type: ActionFlag.MANAGE_MEMBERSHIP_LOAD_ERROR,
         error: error
@@ -63,7 +62,6 @@ export function load(organizationId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(loadStart())
 
-
         const {
             auth: { authorization: { token, username } },
             app: { config }
@@ -77,15 +75,22 @@ export function load(organizationId: string) {
         // TODO: here is where we would hook into the store state entities for groups
         try {
             const org = await orgClient.getOrg(organizationId)
+
+            if (!org.isMember) {
+                dispatch(loadError(makeError({
+                    code: 'notfound',
+                    message: 'The user "' + username + '" is not a member of this org'
+                })))
+                return
+            }
             const thisMember = org.members.find((member) => {
                 return member.username === username
             })
             if (!thisMember) {
-                console.error('did not find member', username, org)
-                dispatch(loadError({
+                dispatch(loadError(makeError({
                     code: 'notfound',
-                    message: 'The member "' + username + '" was not found in this org'
-                }))
+                    message: 'The user "' + username + '" was not found in the members list'
+                })))
                 return
             }
             const editableProfile: orgModel.EditableMemberProfile = {
@@ -103,10 +108,10 @@ export function load(organizationId: string) {
             dispatch(loadSuccess(org, editableProfile))
         } catch (ex) {
             console.error('Error :(', ex)
-            dispatch(loadError({
+            dispatch(loadError(makeError({
                 code: ex.name,
                 message: ex.message
-            }))
+            })))
         }
     }
 }
@@ -124,7 +129,7 @@ interface LeaveOrgSuccess extends Action {
 
 interface LeaveOrgError extends Action {
     type: ActionFlag.MANAGE_MEMBERSHIP_LEAVE_ORG_ERROR,
-    error: AppError
+    error: AnError
 }
 
 export function leaveOrg(organizationId: orgModel.OrganizationID) {

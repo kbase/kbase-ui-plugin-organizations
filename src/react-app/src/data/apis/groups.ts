@@ -1,4 +1,4 @@
-import { AppError, AppException } from "../../types";
+import { AppException } from "../../types";
 
 export interface GroupsServiceInfo {
     servname: string;
@@ -52,20 +52,25 @@ export interface BriefGroup {
     }
 }
 
-
 export interface Group {
     id: string
     private: boolean
-    ismember: boolean
+    privatemembers: boolean
     name: string
+    role: Role
     owner: Member
     admins: Array<Member>
     members: Array<Member>
+    memcount: number
     createdate: number
     moddate: number
     resources: {
         workspace: Array<WorkspaceInfo>,
         catalogmethod: Array<AppInfo>
+    }
+    rescount: {
+        workspace: number
+        catalogmethod: number
     }
     custom: {
         logourl?: string

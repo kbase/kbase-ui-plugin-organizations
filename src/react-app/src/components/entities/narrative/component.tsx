@@ -167,6 +167,7 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
     render() {
         const narrative = this.props.narrative
         if (narrative.access === narrativeModel.NarrativeAccess.NONE) {
+            console.log('NO ACCESS', narrative)
             return (
                 <div>
                     You don't have access to this Narrative

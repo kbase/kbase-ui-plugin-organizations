@@ -7,9 +7,7 @@ import * as actions from '../../../redux/actions/dashboard';
 import * as userModel from '../../../data/models/user'
 import * as requestModel from '../../../data/models/requests'
 
-
 export interface OwnProps {
-
 }
 
 interface StateProps {

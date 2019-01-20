@@ -40,7 +40,7 @@ export function loadError(state: types.StoreState, action: actions.LoadError): t
         views: {
             ...state.views,
             manageMembershipView: {
-                loadingState: types.ComponentLoadingState.LOADING,
+                loadingState: types.ComponentLoadingState.ERROR,
                 error: action.error,
                 viewModel: null
             }

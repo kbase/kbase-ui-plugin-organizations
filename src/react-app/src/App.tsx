@@ -33,6 +33,7 @@ import { StateInstances } from './redux/state';
 import DataServices from './components/dataServices/storeAdapter'
 import { AppContextProvider } from './AppContext'
 import { Marked, Renderer, MarkedOptions } from 'marked-ts'
+import MainMenu from './components/menu/component';
 
 class DescriptionRenderer extends Renderer {
   constructor(options?: MarkedOptions) {
@@ -89,13 +90,10 @@ const hosted = window.frameElement ? true : false
 // TODO: move to own file
 const initialState = StateInstances.makeInitialState()
 
-
 // TODO: remove the cast of reducer to any...
 // const middleware = [thunk]
 // const store = createStore<StoreState, SortOrgs, null, null>(theReducer as any, initialState, applyMiddleware(thunk));
 const store = createStore(theReducer as any, initialState as any, compose(applyMiddleware(thunk)))
-
-
 
 class App extends Component {
   constructor(props: any) {
@@ -112,6 +110,7 @@ class App extends Component {
                 <BrowserRouter basename="/" >
                   <div className="App scrollable-flex-column">
                     <div className="App-body scrollable-flex-column">
+                      <MainMenu />
                       <Switch>
                         <Route path="/dashboard" exact={true} component={DashboardView} />
                         <Route path="/organizations" component={OrganizationsBrowser} />
@@ -124,7 +123,6 @@ class App extends Component {
                         <Route path="/inviteUser/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<InviteUser organizationId={id} />)} />
                         <Route path="/membership/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<ManageMembership organizationId={id} />)} />
                         <Route path="/requestAddNarrative/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<RequestAddNarrative organizationId={id} />)} />
-
                         <Redirect from="/" to="/dashboard" exact={true} />
                       </Switch>
                     </div>

@@ -144,17 +144,22 @@ export interface Organization {
     name: string
     isPrivate: boolean
     isMember: boolean
+    relation: UserRelationToOrganization
     logoUrl: string | null
     homeUrl: string | null
     researchInterests: string
     description: string
     owner: Member
+    areMembersPrivate: boolean
     members: Array<Member>
     // relation: UserOrgRelation
     createdAt: Date
-    modifiedAt: Date,
-    narratives: Array<NarrativeInfo>,
+    modifiedAt: Date
+    narratives: Array<NarrativeInfo>
     apps: Array<AppInfo>
+    memberCount: number
+    narrativeCount: number
+    appCount: number
 }
 
 export function determineRelation(
@@ -262,21 +267,27 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
     })
     const apps: Array<AppInfo> = []
 
+
     return {
         id: group.id,
         name: group.name,
         isPrivate: group.private,
-        isMember: group.ismember,
+        isMember: (group.role !== "none"),
+        relation: groupRoleToUserRelation(group.role),
         logoUrl: group.custom.logourl || null,
         homeUrl: group.custom.homeurl || null,
         researchInterests: group.custom.researchinterests || '',
         description: group.custom.description,
         owner: owner,
+        areMembersPrivate: group.privatemembers,
         members: members,
         modifiedAt: new Date(group.moddate),
         createdAt: new Date(group.createdate),
         narratives: narratives,
-        apps: []
+        apps: [],
+        memberCount: group.memcount,
+        narrativeCount: group.rescount.workspace || 0,
+        appCount: group.rescount.catalogmethod || 0
     }
 }
 
@@ -390,7 +401,15 @@ function applySort(organizations: Array<BriefOrganization>, sortBy: string, sort
     }
 }
 
-
+function groupRoleToUserRelation(role: groupsApi.Role): UserRelationToOrganization {
+    switch (role) {
+        case 'none': return UserRelationToOrganization.NONE
+        case 'member': return UserRelationToOrganization.MEMBER
+        case 'admin': return UserRelationToOrganization.ADMIN
+        case 'owner': return UserRelationToOrganization.OWNER
+        default: throw new Error('Unknown role: ' + role)
+    }
+}
 
 function applyFilter(organizations: Array<BriefOrganization>, filter: string, username: groupsApi.Username): Array<BriefOrganization> {
     switch (filter) {
@@ -484,15 +503,7 @@ export class OrganizationModel {
         // }))
     }
 
-    groupRoleToUserRelation(role: groupsApi.Role): UserRelationToOrganization {
-        switch (role) {
-            case 'none': return UserRelationToOrganization.NONE
-            case 'member': return UserRelationToOrganization.MEMBER
-            case 'admin': return UserRelationToOrganization.ADMIN
-            case 'owner': return UserRelationToOrganization.OWNER
-            default: throw new Error('Unknown role: ' + role)
-        }
-    }
+
 
     listGroupToBriefOrganization(group: groupsApi.BriefGroup): BriefOrganization {
         return {
@@ -504,7 +515,7 @@ export class OrganizationModel {
             researchInterests: group.custom.researchinterests || null,
             owner: group.owner,
             // fix these...
-            relation: this.groupRoleToUserRelation(group.role),
+            relation: groupRoleToUserRelation(group.role),
             createdAt: new Date(group.createdate),
             modifiedAt: new Date(group.moddate),
             memberCount: group.memcount || 0,

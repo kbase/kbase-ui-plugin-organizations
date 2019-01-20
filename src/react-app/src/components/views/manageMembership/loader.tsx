@@ -1,6 +1,7 @@
 import * as React from 'react'
-import { ManageMembershipView, AppError, ComponentLoadingState, StoreState } from '../../../types'
+import { ManageMembershipView, ComponentLoadingState, StoreState } from '../../../types'
 import Container from './container'
+import Error from '../../../combo/error/component'
 
 export interface Props {
     organizationId: string
@@ -25,14 +26,9 @@ class Loader extends React.Component<Props, State> {
         )
     }
 
-    renderError(error: AppError) {
+    renderError(error: AnError) {
         return (
-            <div>
-                Error!
-                <div>
-                    {error.message}
-                </div>
-            </div>
+            <Error error={error} />
         )
     }
 
@@ -46,10 +42,10 @@ class Loader extends React.Component<Props, State> {
                 if (this.props.view.error) {
                     return this.renderError(this.props.view.error)
                 } else {
-                    return this.renderError({
-                        code: 'Missing Error',
+                    return this.renderError(makeError({
+                        code: 'missing-error',
                         message: 'The error appears to be missing'
-                    })
+                    }))
                 }
             default:
                 return (
@@ -76,6 +72,7 @@ class Loader extends React.Component<Props, State> {
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
 import * as actions from '../../../redux/actions/manageMembership'
+import { AnError, makeError } from '../../../combo/error/api';
 
 export interface OwnProps {
     organizationId: string

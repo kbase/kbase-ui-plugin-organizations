@@ -72,6 +72,14 @@ export function appStart() {
                     }
                 }
             }))
+            switch (iframeParams.params.view) {
+                case 'org':
+                    const path = '/viewOrganization/' + iframeParams.params.viewParams.id
+                    window.history.pushState(null, 'test', path)
+                default:
+                    console.log('hmm, defaulting to dashboard??')
+                    window.history.pushState(null, 'dashboard', '/dashboard')
+            }
         } else {
             iframeParams = new IFrameSimulator().getParamsFromIFrame()
             dispatch(appSuccess({
@@ -99,17 +107,17 @@ export function appStart() {
             }))
         }
 
-        if (iframeParams.params.view) {
-            let viewParams
-            switch (iframeParams.params.view) {
-                case 'org':
-                    const path = '/viewOrganization/' + iframeParams.params.viewParams.id
-                    window.history.pushState(null, 'test', path)
-            }
-        } else {
-            // Hmm, not sure why the main router is not picking up 
-            // the / default route.
-            window.history.pushState(null, 'test', '/dashboard')
-        }
+        // if (iframeParams.params.view) {
+        //     switch (iframeParams.params.view) {
+        //         case 'org':
+        //             const path = '/viewOrganization/' + iframeParams.params.viewParams.id
+        //             window.history.pushState(null, 'test', path)
+        //         default:
+        //             console.log('hmm, defaulting to dashboard??')
+        //             window.history.pushState(null, 'dashboard', '/dashboard')
+        //     }
+        // } else {
+        //     // for local dev, don't need to do anything fancy, just leave things alone.
+        // }
     }
 }

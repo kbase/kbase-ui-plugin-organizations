@@ -6,6 +6,7 @@ import * as requestModel from '../data/models/requests'
 import * as narrativeModel from '../data/models/narrative'
 import * as uberModel from '../data/models/uber'
 import * as feedsModel from '../data/models/feeds'
+import { AnError } from "../combo/error/api";
 
 /* Types from the organization service (approximately) */
 
@@ -438,7 +439,7 @@ export interface ManageMembershipViewModel {
 
 export interface ManageMembershipView {
     loadingState: ComponentLoadingState
-    error: AppError | null
+    error: AnError | null
     viewModel: ManageMembershipViewModel | null
 }
 

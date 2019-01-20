@@ -97,7 +97,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
             <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
-                        Request to join organization
+                        Request to join your organization
                     </div>
                     {orgInfo}
                     <div>

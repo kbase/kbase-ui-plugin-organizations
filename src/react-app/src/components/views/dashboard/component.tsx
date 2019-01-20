@@ -228,7 +228,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 style={{ display: 'flex', flexDirection: 'column', flex: '1 1 0px', minHeight: '30em' }}
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 bodyStyle={{ flex: '1 1 0px', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}
-                className="slimCard notificationsCard">
+                className="slimCard Dashboard-notificationsCard">
                 {this.renderPendingNotifications()}
             </Card>
         )
@@ -248,7 +248,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <Card title="Outbox"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                className="slimCard pendingRequestsCard">
+                className="slimCard Dashboard-pendingRequestsCard">
                 {requests}
             </Card>
         )
@@ -260,7 +260,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 style={{ display: 'flex', flexDirection: 'column', flex: '1 1 0px', minHeight: '30em' }}
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 bodyStyle={{ flex: '1 1 0px', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}
-                className="slimCard pendingInvitationsCard">
+                className="slimCard Dashboard-pendingInvitationsCard">
                 {this.renderPendingRequestsReceived()}
             </Card>
         )
@@ -285,7 +285,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <Card title="Organization Inbox"
                 headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                className="slimCard pendingAdminTasksCard">
+                className="slimCard Dashboard-pendingAdminTasksCard">
                 {requests}
             </Card>
         )
@@ -372,11 +372,11 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <div className="Dashboard scrollable-flex-column">
                 {this.renderHeader()}
-                <div className="body scrollable-flex-column">
-                    <div className="col1 scrollable-flex-column">
+                <div className="Dashboard-body scrollable-flex-column">
+                    <div className="Dashboard-col1 scrollable-flex-column">
                         {this.renderOrganizationsCard()}
                     </div>
-                    <div className="col2 scrollable-flex-column">
+                    <div className="Dashboard-col2 scrollable-flex-column">
                         <div className="scrollable-flex-column" style={{ overflowY: 'auto' }}>
 
                             {this.renderNotificationsCard()}
