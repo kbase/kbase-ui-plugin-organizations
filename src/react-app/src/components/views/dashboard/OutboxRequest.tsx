@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import * as requestModel from '../../../data/models/requests'
-import * as formatters from '../../../data/formatters'
+import { niceElapsed } from '../../../lib/time'
 import OrganizationCompact from './OrganizationCompactContainer';
 import Narrative from '../../entities/NarrativeContainer';
 import User from '../../entities/UserContainer';
@@ -297,10 +297,10 @@ export default class Request extends React.Component<RequestProps, RequestState>
     render() {
         const request = this.props.request
         return (
-            <div key={request.id} className="OutboxRequest">
-                <div className="requestHeader">
-                    <div className="requestHeaderRow">
-                        <div className="requestHeaderCreatedAt">
+            <div key={request.id} className="OutboxRequest kbCard">
+                <div className="kbCard-header">
+                    <div className="OutboxRequest-requestHeaderRow">
+                        <div className="OutboxRequest-requestHeaderCreatedAt">
                             {/* <span className="field-label">created</span>
                                 {' '} */}
                             {Intl.DateTimeFormat('en-US', {
@@ -309,14 +309,14 @@ export default class Request extends React.Component<RequestProps, RequestState>
                                 year: 'numeric'
                             }).format(request.createdAt)}
                         </div>
-                        <div className="requestHeaderExpireAt">
+                        <div className="OutboxRequest-requestHeaderExpireAt">
                             <span className="field-label">expires</span>
                             {' '}
-                            {formatters.niceElapsed(request.expireAt)}
+                            {niceElapsed(request.expireAt)}
                         </div>
                     </div>
                 </div>
-                <div className="requestBody">
+                <div className="kbCard-body">
                     {this.renderBody()}
                 </div>
             </div>

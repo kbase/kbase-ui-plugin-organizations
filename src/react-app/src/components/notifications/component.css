@@ -36,14 +36,39 @@
     flex: 1 1 0px;
 }
 
-.Notifications .notification .actionCol {
-    flex: 0 0 auto;
-}
-
 /* .Notifications .notification:hover {
     background-color: rgba(200, 200, 200, 0.5);
 } */
 
 .Notifications .notification+.notification {
     margin-top: 10px;
+}
+
+.Notifications-notificationHeaderRow {
+    padding: 4px;
+    background-color: rgba(200, 200, 200, 0.3);
+    border-bottom: 1px rgba(200, 200, 200, 0.5) solid;
+}
+
+.Notifications-notificationHeader {
+    display: flex;
+    flex-direction: row;
+}
+
+.Notifications-notificationHeaderDate {
+    flex: 2 1 0px;
+}
+
+.Notifications-notificationHeaderTimeAgo {
+    flex: 1 1 0px;
+    text-align: left;
+}
+
+.Notifications-notificationHeaderReadButton {
+    flex: 0 0 auto;
+    text-align: right;
+}
+
+.Notifications-notificationBody {
+    padding: 4px;
 }

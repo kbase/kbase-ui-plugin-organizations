@@ -112,6 +112,30 @@ a:hover {
     /* box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.8); */
 }
 
+.kbCard {
+    border: 1px rgba(200, 200, 200, 0.5) solid;
+    background-color: rgba(200, 200, 200, 0.3);
+    border-radius: 4px;
+    /* box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5); */
+    /* padding: 4px; */
+    margin: 10px 0 10px 0;
+}
+
+.kbCard-header {
+    background-color: rgba(200, 200, 200, 0.5);
+    padding: 4px;
+}
+
+.kbCard-body {
+    padding: 4px;
+}
+
+.kbCard:hover {
+    border: 1px rgba(200, 200, 200, 0.8) solid;
+    background-color: rgba(200, 200, 200, 0.5)
+    /* box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.8); */
+}
+
 /* Matching our own card above */
 
 .slimCard.ant-card .ant-card-head {

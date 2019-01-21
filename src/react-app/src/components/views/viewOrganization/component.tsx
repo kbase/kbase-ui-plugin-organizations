@@ -698,7 +698,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             <span>
                 <Icon type="notification" />
                 notifications
-                {count}
             </span>
         )
         let notifications
@@ -756,7 +755,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         } else {
             const inboxItems = this.props.requestInbox.map((request) => {
                 return (
-                    <div key={request.id} className="simpleCard">
+                    <div key={request.id}>
                         <InboxRequest
                             request={request}
                             showOrg={false}

@@ -1,11 +1,10 @@
 import * as React from 'react'
 import * as feedsModel from '../../data/models/feeds'
 import './component.css'
-import UserInline from './UserInlineContainer';
-import OrganizationInline from './OrganizationInlineContainer';
+import User from '../entities/UserContainer';
+import OrganizationCompactContainer from '../views/dashboard/OrganizationCompactContainer';
 import { Button } from 'antd';
-import NarrativeInline from './NarrativeInlineContainer';
-import { niceElapsed } from '../../lib/time';
+import Narrative from '../entities/NarrativeContainer';
 
 export interface NotificationsProps {
     notifications: Array<feedsModel.OrganizationNotification>
@@ -28,12 +27,27 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
 
     renderInvitationToOrg(notification: feedsModel.OrganizationNotification) {
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
-                        You have been invited to join <OrganizationInline organizationId={notification.organizationId} />
+                        You have been invited to Join
                     </div>
+                    <div>
+                        <OrganizationCompactContainer organizationId={notification.organizationId} />
+                    </div>
+                    <div>
+                        <span className="field-label">by</span>
+                    </div>
+                    <div>
+
+                        {/* <User userId={notification.from} avatarSize={30} /> */}
+                    </div>
+
                 </div>
+                <div className="actionCol">
+                    <Button type="danger" icon="cross" size="small" onClick={() => { this.onReadNotification.call(this, notification) }} />
+                </div>
+
             </div>
         )
     }
@@ -42,7 +56,9 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
         let orgInfo
         if (this.props.showOrg) {
             orgInfo = (
-                <OrganizationInline organizationId={notification.organizationId} />
+                <div>
+                    <OrganizationCompactContainer organizationId={notification.organizationId} />
+                </div>
             )
         } else {
             orgInfo = (
@@ -52,12 +68,18 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
             )
         }
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
-                        Your membership request has been accepted for {orgInfo}
+                        Your membership request has been accepted for
                     </div>
+                    {orgInfo}
+
                 </div>
+                <div className="actionCol">
+                    <Button type="danger" icon="cross" size="small" onClick={() => { this.onReadNotification.call(this, notification) }} />
+                </div>
+
             </div>
         )
     }
@@ -66,21 +88,30 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
         let orgInfo
         if (this.props.showOrg) {
             orgInfo = (
-                <span>
-                    {' '}<OrganizationInline organizationId={notification.organizationId} />{' '}
-                </span>
+                <div>
+                    <OrganizationCompactContainer organizationId={notification.organizationId} />
+                </div>
             )
         }
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
                         Request to join your organization
-                        {orgInfo}
-                        from
-                        {' '}<UserInline userId={notification.from} avatarSize={20} />
                     </div>
+                    {orgInfo}
+                    <div>
+                        <span className="field-label">from</span>
+                    </div>
+                    <div>
+                        <User userId={notification.from} avatarSize={30} />
+                    </div>
+
                 </div>
+                <div className="actionCol">
+                    <Button type="danger" icon="cross" size="small" onClick={() => { this.onReadNotification.call(this, notification) }} />
+                </div>
+
             </div>
         )
     }
@@ -90,22 +121,40 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
         let orgInfo
         if (this.props.showOrg) {
             orgInfo = (
-                <span>{' '}with organization{' '}<OrganizationInline organizationId={notification.organizationId} />{' '}</span>
+                <React.Fragment>
+                    <div>
+                        <span className="field-label">with organization</span>
+                    </div>
+                    <div>
+                        <OrganizationCompactContainer organizationId={notification.organizationId} />
+                    </div>
+                </React.Fragment>
             )
         }
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
                         Request to associate Narrative
-                        {' '}
-                        <NarrativeInline workspaceId={workspaceId} />
-                        {orgInfo}
-                        from
-                        {' '}
-                        <UserInline userId={notification.from} avatarSize={20} />
                     </div>
+                    <div>
+                        <Narrative workspaceId={workspaceId} />
+                    </div>
+
+                    {orgInfo}
+
+                    <div>
+                        <span className="field-label">from</span>
+                    </div>
+                    <div>
+                        <User userId={notification.from} avatarSize={30} />
+                    </div>
+
                 </div>
+                <div className="actionCol">
+                    <Button type="danger" icon="cross" size="small" onClick={() => { this.onReadNotification.call(this, notification) }} />
+                </div>
+
             </div>
         )
     }
@@ -115,21 +164,32 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
         let orgInfo
         if (this.props.showOrg) {
             orgInfo = (
-                <span>{' '}with organization{' '}<OrganizationInline organizationId={notification.organizationId} />{' '}</span>
+                <React.Fragment>
+                    <div>
+                        <span className="field-label">with organization</span>
+                    </div>
+                    <div>
+                        <OrganizationCompactContainer organizationId={notification.organizationId} />
+                    </div>
+                </React.Fragment>
             )
         }
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
-                        New Narrative
-                        {' '}
-                        <NarrativeInline workspaceId={workspaceId} />
-                        {' '}
-                        associated
-                        {orgInfo}
+                        New Narrative associated
                     </div>
+                    <div>
+                        <Narrative workspaceId={workspaceId} />
+                    </div>
+
+                    {orgInfo}
                 </div>
+                <div className="actionCol">
+                    <Button type="danger" icon="cross" size="small" onClick={() => { this.onReadNotification.call(this, notification) }} />
+                </div>
+
             </div>
         )
     }
@@ -139,38 +199,34 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
         let orgInfo
         if (this.props.showOrg) {
             orgInfo = (
-                <span>{' '}into organization{' '}<OrganizationInline organizationId={notification.organizationId} /></span>
+                <React.Fragment>
+                    <div>
+                        <span className="field-label">into organization</span>
+                    </div>
+                    <div>
+                        <OrganizationCompactContainer organizationId={notification.organizationId} />
+                    </div>
+                </React.Fragment>
             )
         }
         return (
-            <div className="notification" key={notification.id}>
+            <div className="notification simpleCard" key={notification.id}>
                 <div className="mainCol">
                     <div>
                         Your Narrative
-                        {' '}<NarrativeInline workspaceId={workspaceId} />{' '}
-                        was accepted{orgInfo}
                     </div>
+                    <div>
+                        <Narrative workspaceId={workspaceId} />
+                    </div>
+                    <div>
+                        was accepted
+                    </div>
+                    {orgInfo}
                 </div>
-            </div>
-        )
-    }
-
-    renderNotificationHeader(notification: feedsModel.OrganizationNotification) {
-        return (
-            <div className="Notifications-notificationHeader">
-                <div className="Notifications-notificationHeaderDate">
-                    {Intl.DateTimeFormat('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                    }).format(notification.createdAt)}
-                </div>
-                <div className="Notifications-notificationHeaderTimeAgo">
-                    {niceElapsed(notification.createdAt)}
-                </div>
-                <div className="Notifications-notificationHeaderReadButton">
+                <div className="actionCol">
                     <Button type="danger" icon="cross" size="small" onClick={() => { this.onReadNotification.call(this, notification) }} />
                 </div>
+
             </div>
         )
     }
@@ -200,16 +256,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
 
     renderNotifications() {
         return this.props.notifications.map((notification) => {
-            return (
-                <div className="kbCard" key={notification.id}>
-                    <div className="kbCard-header">
-                        {this.renderNotificationHeader(notification)}
-                    </div>
-                    <div className="kbCard-body">
-                        {this.renderNotification(notification)}
-                    </div>
-                </div>
-            )
+            return this.renderNotification(notification)
         })
     }
 

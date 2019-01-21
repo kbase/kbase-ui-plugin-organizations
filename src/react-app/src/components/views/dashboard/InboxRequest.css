@@ -1,50 +1,26 @@
-.InboxRequest {
-    /* border: 1px rgba(200, 200, 200, 0.5) solid;
-    border-radius: 4px; */
-    /* padding: 4px; */
-    /* margin-bottom: 4px;
-    background-color: rgba(200, 200, 200, 0.3) */
-}
+.InboxRequest {}
 
-/* .InboxRequest:hover {
-    background-color: rgba(200, 200, 200, 0.8)
-} */
-
-.InboxRequest .requestHeader {
-    border-bottom: 1px rgba(200, 200, 200, 0.5) solid;
-    padding: 4px;
-}
-
-.InboxRequest .requestHeader .requestHeaderRow {
+.InboxRequest-requestHeaderRow {
     display: flex;
     flex-direction: row;
 }
 
-.InboxRequest .requestHeader .requestHeaderType {
+.InboxRequest-requestHeaderType {
     flex: 1 1 0px;
     font-weight: bold;
 }
 
-.InboxRequest .requestHeader .requestHeaderCreatedAt {
+.InboxRequest-requestHeaderCreatedAt {
     flex: 1 1 0px;
     text-align: left;
 }
 
-.InboxRequest .requestHeader .requestHeaderExpireAt {
+.InboxRequest-requestHeaderExpireAt {
     flex: 1 1 0px;
     text-align: right;
 }
 
-.InboxRequest .requestBody {
-    padding: 4px;
-}
-
-.InboxRequest .requestType {
+.InboxRequest-requestType {
     flex: 1 1 0px;
     font-weight: bold;
-}
-
-.InboxRequest .miniDetail {
-    /* border: 1px rgba(200, 200, 200, 0.5) solid; */
-    /* padding: 4px; */
 }
