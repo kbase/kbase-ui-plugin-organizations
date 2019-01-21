@@ -96,6 +96,7 @@ export function accessNarrativeSuccess(state: types.StoreState, action: actions.
     if (!state.views.viewOrgView.viewModel) {
         return state
     }
+    console.log('narrative access success', action)
     return {
         ...state,
         views: {

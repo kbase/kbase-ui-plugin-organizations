@@ -65,10 +65,14 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
         let label
         switch (narrative.access) {
             case narrativeModel.NarrativeAccess.VIEW:
-                label = 'View-Only'
+                label = (
+                    <span>View-Only (<i>visit narrative to request additional access</i>)</span>
+                )
                 break
             case narrativeModel.NarrativeAccess.EDIT:
-                label = 'Edit'
+                label = (
+                    <span>Edit (<i>visit narrative to request additional access</i>)</span>
+                )
                 break
             case narrativeModel.NarrativeAccess.ADMIN:
                 label = 'Admin'

@@ -11,6 +11,7 @@ import * as orgModel from '../../data/models/organization/model'
 import * as requestModel from '../../data/models/requests'
 import * as uberModel from '../../data/models/uber'
 import * as feedsModel from '../../data/models/feeds'
+import { loadNarrative } from './entities';
 
 
 // Action Types
@@ -304,7 +305,12 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
 
         try {
             await orgClient.grantNarrativeAccess(groupId, resourceId)
+            // Getting a fresh copy of the org will trigger the view org component and
+            // all subcomponents with changed data to refresh. All we are intending here is that
+            // the narrative in the list of narratives provided by the groups api is updated, but
+            // there may be other elements of the group/org which have changed as well. So be it.
             const org = await orgClient.getOrg(groupId)
+            dispatch(loadNarrative(narrative.workspaceId))
             dispatch(accessNarrativeSuccess(org))
         } catch (ex) {
             dispatch(accessNarrativeError({
