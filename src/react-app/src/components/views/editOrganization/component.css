@@ -11,6 +11,74 @@
     text-align: center;
 }
 
+/* New editor layout */
+
+.EditOrganization-editor {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top level grid */
+
+.EditOrganization-row {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+}
+
+.EditOrganization-col1 {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    margin-right: 5px;
+}
+
+.EditOrganization-col2 {
+    flex: 1 1 0px;
+    margin-left: 5px;
+}
+
+/* Form rows */
+
+.EditOrganization-formLabel {
+    flex: 0 0 7em;
+    font-weight: bold;
+    text-align: left;
+}
+
+.EditOrganization-formControl {
+    flex: 1 1 0px;
+}
+
+/* individual fields */
+
+.EditOrganization-preview-name {}
+
+.EditOrganization-preview-researchInterests {
+    /* max-height: 5em; */
+    overflow-y: scroll;
+}
+
+.EditOrganization-control-researchInterests {
+    min-height: 5em;
+    max-height: 5em;
+}
+
+.EditOrganization-control-description {
+    min-height: 5em;
+    max-height: 15em;
+}
+
+.EditOrganization-preview-description {
+    /* min-height: 5em;
+    max-height: 15em; */
+    overflow-y: scroll;
+}
+
+/* new editor layout ends */
+
 .EditOrganization .mainRow {
     flex: 1 1 0px;
     display: flex;

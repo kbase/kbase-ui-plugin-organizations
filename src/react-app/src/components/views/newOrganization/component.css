@@ -125,3 +125,71 @@
 .NewOrganization .sync-dirty {
     border: 1px orange solid;
 }
+
+/* New editor layout */
+
+.NewOrganization-editor {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top level grid */
+
+.NewOrganization-row {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+}
+
+.NewOrganization-col1 {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    margin-right: 5px;
+}
+
+.NewOrganization-col2 {
+    flex: 1 1 0px;
+    margin-left: 5px;
+}
+
+/* Form rows */
+
+.NewOrganization-formLabel {
+    flex: 0 0 7em;
+    font-weight: bold;
+    text-align: left;
+}
+
+.NewOrganization-formControl {
+    flex: 1 1 0px;
+}
+
+/* individual fields */
+
+.NewOrganization-preview-name {}
+
+.NewOrganization-preview-researchInterests {
+    /* max-height: 5em; */
+    overflow-y: scroll;
+}
+
+.NewOrganization-control-researchInterests {
+    min-height: 5em;
+    max-height: 5em;
+}
+
+.NewOrganization-control-description {
+    min-height: 5em;
+    max-height: 15em;
+}
+
+.NewOrganization-preview-description {
+    /* min-height: 5em;
+    max-height: 15em; */
+    overflow-y: scroll;
+}
+
+/* new editor layout ends */

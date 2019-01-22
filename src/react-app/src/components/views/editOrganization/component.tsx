@@ -217,98 +217,181 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         }
     }
 
-    renderForm() {
+    renderEditor() {
         return (
-            <form id="editOrganizationForm" className="editor" onSubmit={this.onSubmit.bind(this)}>
-                <div className="row">
-                    <div className="col1 field-label">
-                        <Tooltip title="This is the name for your organization as you want KBase users to see it">
-                            name
-                        </Tooltip>
+            <form id="editOrganizationForm" className="EditOrganization-editor" onSubmit={this.onSubmit.bind(this)}>
+                <div className="EditOrganization-row">
+                    <div className="EditOrganization-col1">
+                        <div style={{ flex: '1 1 0px' }}>
+                            <h3>Edit Your Organization</h3>
+                        </div>
                     </div>
-                    <div className="col2">
-                        <Input value={this.props.editedOrganization.name.value || ''}
-                            className={this.calcFieldClass(this.props.editedOrganization.name)}
-                            onChange={this.onNameChange.bind(this)} />
-                        {this.renderFieldError(this.props.editedOrganization.name)}
+                    <div className="EditOrganization-col2">
+                        <h3>Preview</h3>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col1 field-label">id</div>
-                    <div className="col2">
-                        <Input value={this.props.editedOrganization.id.value || ''}
-                            className={this.calcFieldClass(this.props.editedOrganization.id)}
-                            onChange={this.onIdChange.bind(this)} />
-                        {this.renderFieldError(this.props.editedOrganization.id)}
+                {/* Org name */}
+                <div className="EditOrganization-row">
+                    <div className="EditOrganization-col1">
+                        <div className="EditOrganization-formLabel field-label">
+                            <Tooltip title="This is the name for your organization as you want KBase users to see it">
+                                Name
+                            </Tooltip>
+                        </div>
+                        <div className="EditOrganization-formControl">
+                            <Input value={this.props.editedOrganization.name.value || ''}
+                                className={this.calcFieldClass(this.props.editedOrganization.name)}
+                                onChange={this.onNameChange.bind(this)} />
+                            {this.renderFieldError(this.props.editedOrganization.name)}
+                        </div>
+                    </div>
+                    <div className="EditOrganization-col2">
+                        <div className="EditOrganization-preview-name">
+                            {this.props.editedOrganization.name.value || ''}
+                        </div>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col1 field-label">logo url</div>
-                    <div className="col2">
-                        <Input value={this.props.editedOrganization.logoUrl.value || ''}
-                            className={this.calcFieldClass(this.props.editedOrganization.logoUrl)}
-                            onChange={this.onLogoUrlChange.bind(this)} />
-                        {this.renderFieldError(this.props.editedOrganization.logoUrl)}
+                {/* Org ID */}
+                <div className="EditOrganization-row">
+                    <div className="EditOrganization-col1">
+                        <div className="EditOrganization-formLabel field-label">
+                            ID
+                        </div>
+                        <div className="EditOrganization-formControl">
+                            <Input value={this.props.editedOrganization.id.value || ''}
+                                className={this.calcFieldClass(this.props.editedOrganization.id)}
+                                onChange={this.onIdChange.bind(this)} />
+                            {this.renderFieldError(this.props.editedOrganization.id)}
+                        </div>
+                    </div>
+                    <div className="EditOrganization-col2">
+                        <div className="EditOrganization-preview-id">
+                            <span style={{ color: 'silver' }}>{this.origin}/#org/</span>
+                            {this.props.editedOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
+                        </div>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col1 field-label">home page url</div>
-                    <div className="col2">
-                        <Input value={this.props.editedOrganization.homeUrl.value || ''}
-                            className={this.calcFieldClass(this.props.editedOrganization.homeUrl)}
-                            onChange={this.onHomeUrlChange.bind(this)} />
-                        {this.renderFieldError(this.props.editedOrganization.homeUrl)}
+                {/* Logo URL */}
+                <div className="EditOrganization-row">
+                    <div className="EditOrganization-col1">
+                        <div className="EditOrganization-formLabel field-label">
+                            Logo URL
+                        </div>
+                        <div className="EditOrganization-formControl">
+                            <Input value={this.props.editedOrganization.logoUrl.value || ''}
+                                className={this.calcFieldClass(this.props.editedOrganization.logoUrl)}
+                                onChange={this.onLogoUrlChange.bind(this)} />
+                            {this.renderFieldError(this.props.editedOrganization.logoUrl)}
+                        </div>
+                    </div>
+                    <div className="EditOrganization-col2">
+                        <div className="EditOrganization-preview-logo">
+                            {this.renderLogoPreview()}
+                        </div>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col1 field-label">is private?</div>
-                    <div className="col2">
-                        <Checkbox
-                            checked={this.props.editedOrganization.isPrivate.value}
-                            className={this.calcFieldClass(this.props.editedOrganization.isPrivate)}
-                            onChange={this.onIsPrivateChange.bind(this)} />
-                        {this.renderFieldError(this.props.editedOrganization.isPrivate)}
+                {/* Home Page URL */}
+                <div className="EditOrganization-row">
+                    <div className="EditOrganization-col1">
+                        <div className="EditOrganization-formLabel field-label">
+                            Home Page URL
+                        </div>
+                        <div className="EditOrganization-formControl">
+                            <Input value={this.props.editedOrganization.homeUrl.value || ''}
+                                className={this.calcFieldClass(this.props.editedOrganization.homeUrl)}
+                                onChange={this.onHomeUrlChange.bind(this)} />
+                            {this.renderFieldError(this.props.editedOrganization.homeUrl)}
+                        </div>
+                    </div>
+                    <div className="EditOrganization-col2">
+                        <div className="EditOrganization-field-name">
+                            <a href={this.props.editedOrganization.homeUrl.value || ''} target="_blank">{this.props.editedOrganization.homeUrl.value || ''}</a>
+                        </div>
                     </div>
                 </div>
 
-                <div className="row" style={{ flex: '1 1 0px', height: '5em' }}>
-                    <div className="col1 field-label">research interests</div>
-                    <div className="col2">
-                        <textarea value={this.props.editedOrganization.researchInterests.value || ''}
-                            className={this.calcFieldClass(this.props.editedOrganization.researchInterests)}
-                            onChange={this.onResearchInterestsChange.bind(this)} />
-                        {this.renderFieldError(this.props.editedOrganization.researchInterests)}
+
+                {/* Is Private? */}
+                <div className="EditOrganization-row">
+                    <div className="EditOrganization-col1">
+                        <div className="EditOrganization-formLabel field-label">
+                            Is Private?
+                        </div>
+                        <div className="EditOrganization-formControl">
+                            <Checkbox
+                                checked={this.props.editedOrganization.isPrivate.value}
+                                className={this.calcFieldClass(this.props.editedOrganization.isPrivate)}
+                                onChange={this.onIsPrivateChange.bind(this)} />
+                            {this.renderFieldError(this.props.editedOrganization.isPrivate)}
+                        </div>
+                    </div>
+                    <div className="EditOrganization-col2">
+                        <div className="EditOrganization-preview-isPrivate">
+                            {this.renderIsPrivate(this.props.editedOrganization.isPrivate.value)}
+                        </div>
                     </div>
                 </div>
 
 
-                <div className="row" style={{ flex: '1 1 0px', minHeight: '30em', maxHeight: '60em' }}>
-                    <div className="col1 field-label">description</div>
-                    <div className="col2">
-                        <TextArea value={this.props.editedOrganization.description.value || ''}
-                            className={this.calcFieldClass(this.props.editedOrganization.description)}
-                            onChange={this.onDescriptionChange.bind(this)} />
-                        {this.renderFieldError(this.props.editedOrganization.description)}
+                {/* Research Interests */}
+                <div className="EditOrganization-row">
+                    <div className="EditOrganization-col1">
+                        <div className="EditOrganization-formLabel field-label">
+                            Research Interests
+                        </div>
+                        <div className="EditOrganization-formControl">
+                            <TextArea value={this.props.editedOrganization.researchInterests.value || ''}
+                                className={this.calcFieldClass(this.props.editedOrganization.researchInterests) + ' EditOrganization-control-researchInterests'}
+                                autosize={{ minRows: 2, maxRows: 2 }}
+                                onChange={this.onResearchInterestsChange.bind(this)} />
+                            {this.renderFieldError(this.props.editedOrganization.researchInterests)}
+                        </div>
+                    </div>
+                    <div className="EditOrganization-col2">
+                        <div className="EditOrganization-preview-researchInterests">
+                            {this.props.editedOrganization.researchInterests.value || ''}
+                        </div>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col1"></div>
-                    <div className="col2">
-                        {/* <div className="footer">
-                            <Button form="newOrganizationForm"
-                                key="submit"
-                                htmlType="submit">Save</Button>
-                            <Button type="danger"
-                                onClick={this.onClickCancel.bind(this)}>Cancel</Button>
-                        </div> */}
+                {/* Description*/}
+                <div className="EditOrganization-row">
+                    <div className="EditOrganization-col1">
+                        <div className="EditOrganization-formLabel field-label">
+                        </div>
+                        <div className="EditOrganization-formControl">
+                            <TextArea value={this.props.editedOrganization.description.value || ''}
+                                className={this.calcFieldClass(this.props.editedOrganization.description) + ' EditOrganization-control-description'}
+                                autosize={{ minRows: 5, maxRows: 15 }}
+                                onChange={this.onDescriptionChange.bind(this)} />
+                            {this.renderFieldError(this.props.editedOrganization.description)}
+                        </div>
+                    </div>
+                    <div className="EditOrganization-col2">
+                        <div className="EditOrganization-preview-description"
+                            dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.editedOrganization.description.value || '') })}
+                        />
                     </div>
                 </div>
-            </form>
+
+                {/* Empty row */}
+                {/* <div className="EditOrganization-row">
+                    <div className="EditOrganization-col1">
+                        <div className="EditOrganization-formLabel field-label">
+                        </div>
+                        <div className="EditOrganization-formControl">
+                        </div>
+                    </div>
+                    <div className="EditOrganization-col2">
+                        <div className="EditOrganization-preview-FIELD">
+                        </div>
+                    </div>
+                </div> */}
+            </form >
         )
     }
 
@@ -368,69 +451,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                 <text x="50%" y="50%" dy={4} textAnchor="middle" dominantBaseline="middle" fontSize={size - 12} fill={'#' + color} fontFamily="sans-serif">{initial}</text>
             </svg>
         )
-    }
-
-    renderPreview() {
-        return <form className="preview">
-            <div className="row">
-                <div className="col2">
-                    <div className="name">
-                        {this.props.editedOrganization.name.value || ''}
-                    </div>
-                </div>
-            </div>
-
-            <div className="row">
-                <div className="col2">
-                    <div className="id">
-                        <span style={{ color: 'silver' }}>{this.origin}/orgs/viewOrganization/</span>
-                        {this.props.editedOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
-                    </div>
-                </div>
-            </div>
-
-            <div className="row">
-                <div className="col2">
-                    <div className="logoUrl">
-                        {this.renderLogoPreview()}
-                    </div>
-                </div>
-            </div>
-
-            <div className="row">
-                <div className="col2">
-                    <div className="homeUrl" style={{ height: '1em' }}>
-                        {this.props.editedOrganization.homeUrl.value || ''}
-                    </div>
-                </div>
-            </div>
-
-            <div className="row">
-                <div className="col2">
-                    <div className="isPrivate">
-                        {this.renderIsPrivate(this.props.editedOrganization.isPrivate.value)}
-                    </div>
-                </div>
-            </div>
-
-            <div className="row">
-                <div className="col2">
-                    <div className="researchInterests" style={{ height: '5em' }}>
-                        {this.props.editedOrganization.researchInterests.value || ''}
-                    </div>
-                </div>
-            </div>
-
-
-
-            <div className="row" style={{ flex: '1 1 0px' }}>
-                <div className="col2">
-                    <div className="description"
-                        dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.editedOrganization.description.value || '') })}
-                    />
-                </div>
-            </div>
-        </form>
     }
 
     renderState() {
@@ -504,31 +524,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-    // renderFooter() {
-    //     return (
-    //         <div className="footerRow">
-    //             <div className="editorColumn">
-    //                 <div className="row">
-    //                     <div className="col1">
-    //                     </div>
-    //                     <div className="col2">
-    //                         <div className="footer">
-    //                             <Button form="editOrganizationForm"
-    //                                 key="submit"
-    //                                 htmlType="submit">Save</Button>
-    //                             <Button type="danger"
-    //                                 onClick={this.onClickCancel.bind(this)}>Cancel</Button>
-    //                         </div>
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //             <div className="previewColumn">
-
-    //             </div>
-    //         </div>
-    //     )
-    // }
-
     renderLoadingHeader() {
         const breadcrumbs = (
             <span>
@@ -539,42 +534,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
             <Header breadcrumbs={breadcrumbs} />
         )
     }
-
-    // renderHeader() {
-    //     let orgName: string
-    //     return (
-    //         <Header>
-    //             <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-    //                 <div style={{ flex: '0 0 auto' }}>
-    //                     <span>
-    //                         <Icon type="tool" />
-    //                         {' '}
-    //                         Managing your membership in the Organization "
-    //                         {this.props.organization.name}
-    //                         "
-    //                     </span>
-    //                 </div>
-    //                 <div style={{ flex: '1 1 0px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-    //                     <Button icon="undo"
-    //                         type="danger"
-    //                         onClick={this.doCancelToViewer.bind(this)}>
-    //                         Return to this Org
-    //                     </Button>
-    //                     <Button icon="undo"
-    //                         type="danger"
-    //                         onClick={this.doCancelToBrowser.bind(this)}>
-    //                         Return to Orgs Browser
-    //                     </Button>
-    //                     <Button
-    //                         shape="circle"
-    //                         icon="info"
-    //                         onClick={this.doShowInfo.bind(this)}>
-    //                     </Button>
-    //                 </div>
-    //             </div>
-    //         </Header>
-    //     )
-    // }
 
     renderOrgHeader() {
         // apparently TS is not smart enough to know this from the conditional branch in render()!
@@ -596,11 +555,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
             return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
         }
 
-        // // TODO: this is just a prop for today.
-        // if (this.props.saveState === SaveState.SAVED) {
-        //     return <Redirect push to={"/editOrganization/" + this.props.editedOrganization.id.value} />
-        // }
-
         if (!this.props.editedOrganization) {
             return (
                 <div className="EditOrganization">
@@ -613,17 +567,7 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
             <div className="EditOrganization">
                 {this.renderHeader()}
                 {this.renderOrgHeader()}
-                <div className="mainRow">
-                    <div className="editorColumn">
-                        <h3>Editor</h3>
-                        {this.renderForm()}
-                    </div>
-                    <div className="previewColumn">
-                        <h3>Preview</h3>
-                        {this.renderPreview()}
-                    </div>
-                </div>
-                {/* {this.renderFooter()} */}
+                {this.renderEditor()}
             </div>
         )
     }

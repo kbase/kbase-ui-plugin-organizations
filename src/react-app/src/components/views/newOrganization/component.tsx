@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Redirect } from 'react-router-dom'
 import { Marked } from 'marked-ts'
-import { Button, Icon, Modal, Input, Checkbox } from 'antd'
+import { Button, Icon, Modal, Input, Checkbox, Tooltip } from 'antd'
 import md5 from 'md5'
 
 import { EditableOrganization, SaveState, ValidationState, EditState, AppError, Editable, ValidationErrorType, SyncState } from '../../../types';
@@ -11,6 +11,7 @@ import './component.css'
 import Header from '../../Header';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import OrgLogo from '../../OrgLogo';
+import TextArea from 'antd/lib/input/TextArea';
 
 export interface NewOrganizationProps {
     editState: EditState,
@@ -27,7 +28,6 @@ export interface NewOrganizationProps {
     onUpdateHomeUrl: (homeUrl: string) => void
     onUpdateResearchInterests: (researchInterests: string) => void
 }
-
 
 export interface NewOrganizationState {
     cancelToBrowser: boolean
@@ -242,97 +242,170 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         }
     }
 
-    renderForm() {
+    renderEditor() {
         return (
-            <form id="newOrganizationForm" className="editor" onSubmit={this.onSubmit.bind(this)}>
-                <div className="row">
-                    <div className="col1 field-label">name</div>
-                    <div className="col2">
-                        <Input value={this.props.newOrganization.name.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.name)}
-                            onChange={this.onNameChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.name)}
+            <form id="newOrganizationForm" className="NewOrganization-editor" onSubmit={this.onSubmit.bind(this)}>
+                <div className="NewOrganization-row">
+                    <div className="NewOrganization-col1">
+                        <div style={{ flex: '1 1 0px' }}>
+                            <h3>Create Your Organization</h3>
+                        </div>
+                    </div>
+                    <div className="NewOrganization-col2">
+                        <h3>Preview</h3>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col1 field-label">id</div>
-                    <div className="col2">
-                        <Input
-                            value={this.props.newOrganization.id.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.id)}
-                            onChange={this.onIdChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.id)}
+                {/* Org name */}
+                <div className="NewOrganization-row">
+                    <div className="NewOrganization-col1">
+                        <div className="NewOrganization-formLabel field-label">
+                            <Tooltip title="This is the name for your organization as you want KBase users to see it">
+                                Name
+                            </Tooltip>
+                        </div>
+                        <div className="NewOrganization-formControl">
+                            <Input value={this.props.newOrganization.name.value || ''}
+                                className={this.calcFieldClass(this.props.newOrganization.name)}
+                                onChange={this.onNameChange.bind(this)} />
+                            {this.renderFieldError(this.props.newOrganization.name)}
+                        </div>
+                    </div>
+                    <div className="NewOrganization-col2">
+                        <div className="NewOrganization-preview-name">
+                            {this.props.newOrganization.name.value || ''}
+                        </div>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col1 field-label">logo url</div>
-                    <div className="col2">
-                        <Input value={this.props.newOrganization.logoUrl.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.logoUrl)}
-                            onChange={this.onLogoUrlChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.logoUrl)}
+                {/* Org ID */}
+                <div className="NewOrganization-row">
+                    <div className="NewOrganization-col1">
+                        <div className="NewOrganization-formLabel field-label">
+                            ID
+                        </div>
+                        <div className="NewOrganization-formControl">
+                            <Input value={this.props.newOrganization.id.value || ''}
+                                className={this.calcFieldClass(this.props.newOrganization.id)}
+                                onChange={this.onIdChange.bind(this)} />
+                            {this.renderFieldError(this.props.newOrganization.id)}
+                        </div>
+                    </div>
+                    <div className="NewOrganization-col2">
+                        <div className="NewOrganization-preview-id">
+                            <span style={{ color: 'silver' }}>{this.origin}/#org/</span>
+                            {this.props.newOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
+                        </div>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col1 field-label">home page url</div>
-                    <div className="col2">
-                        <Input value={this.props.newOrganization.homeUrl.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.homeUrl)}
-                            onChange={this.onHomeUrlChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.homeUrl)}
+                {/* Logo URL */}
+                <div className="NewOrganization-row">
+                    <div className="NewOrganization-col1">
+                        <div className="NewOrganization-formLabel field-label">
+                            Logo URL
+                        </div>
+                        <div className="NewOrganization-formControl">
+                            <Input value={this.props.newOrganization.logoUrl.value || ''}
+                                className={this.calcFieldClass(this.props.newOrganization.logoUrl)}
+                                onChange={this.onLogoUrlChange.bind(this)} />
+                            {this.renderFieldError(this.props.newOrganization.logoUrl)}
+                        </div>
+                    </div>
+                    <div className="NewOrganization-col2">
+                        <div className="NewOrganization-preview-logo">
+                            {this.renderLogoPreview()}
+                        </div>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col1 field-label">is private?</div>
-                    <div className="col2">
-                        <Checkbox
-                            checked={this.props.newOrganization.isPrivate.value}
-                            className={this.calcFieldClass(this.props.newOrganization.isPrivate)}
-                            onChange={this.onIsPrivateChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.isPrivate)}
+                {/* Home Page URL */}
+                <div className="NewOrganization-row">
+                    <div className="NewOrganization-col1">
+                        <div className="NewOrganization-formLabel field-label">
+                            Home Page URL
+                        </div>
+                        <div className="NewOrganization-formControl">
+                            <Input value={this.props.newOrganization.homeUrl.value || ''}
+                                className={this.calcFieldClass(this.props.newOrganization.homeUrl)}
+                                onChange={this.onHomeUrlChange.bind(this)} />
+                            {this.renderFieldError(this.props.newOrganization.homeUrl)}
+                        </div>
+                    </div>
+                    <div className="NewOrganization-col2">
+                        <div className="NewOrganization-field-name">
+                            <a href={this.props.newOrganization.homeUrl.value || ''} target="_blank">{this.props.newOrganization.homeUrl.value || ''}</a>
+                        </div>
                     </div>
                 </div>
 
-                <div className="row" style={{ flex: '1 1 0px', height: '5em' }}>
-                    <div className="col1 field-label">research interests</div>
-                    <div className="col2">
-                        <textarea value={this.props.newOrganization.researchInterests.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.researchInterests)}
-                            onChange={this.onResearchInterestsChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.researchInterests)}
+
+                {/* Is Private? */}
+                <div className="NewOrganization-row">
+                    <div className="NewOrganization-col1">
+                        <div className="NewOrganization-formLabel field-label">
+                            Is Private?
+                        </div>
+                        <div className="NewOrganization-formControl">
+                            <Checkbox
+                                checked={this.props.newOrganization.isPrivate.value}
+                                className={this.calcFieldClass(this.props.newOrganization.isPrivate)}
+                                onChange={this.onIsPrivateChange.bind(this)} />
+                            {this.renderFieldError(this.props.newOrganization.isPrivate)}
+                        </div>
+                    </div>
+                    <div className="NewOrganization-col2">
+                        <div className="NewOrganization-preview-isPrivate">
+                            {this.renderIsPrivate(this.props.newOrganization.isPrivate.value)}
+                        </div>
                     </div>
                 </div>
 
 
-                <div className="row" style={{ flex: '1 1 0px', minHeight: '30em', maxHeight: '60em' }}>
-                    <div className="col1 field-label">description</div>
-                    <div className="col2">
-                        <textarea value={this.props.newOrganization.description.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.description)}
-                            onChange={this.onDescriptionChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.description)}
+                {/* Research Interests */}
+                <div className="NewOrganization-row">
+                    <div className="NewOrganization-col1">
+                        <div className="NewOrganization-formLabel field-label">
+                            Research Interests
+                        </div>
+                        <div className="NewOrganization-formControl">
+                            <TextArea value={this.props.newOrganization.researchInterests.value || ''}
+                                className={this.calcFieldClass(this.props.newOrganization.researchInterests) + ' NewOrganization-control-researchInterests'}
+                                autosize={{ minRows: 2, maxRows: 2 }}
+                                onChange={this.onResearchInterestsChange.bind(this)} />
+                            {this.renderFieldError(this.props.newOrganization.researchInterests)}
+                        </div>
+                    </div>
+                    <div className="NewOrganization-col2">
+                        <div className="NewOrganization-preview-researchInterests">
+                            {this.props.newOrganization.researchInterests.value || ''}
+                        </div>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col1"></div>
-                    <div className="col2">
-                        {/* <div className="footer">
-                            <Button form="newOrganizationForm"
-                                key="submit"
-                                htmlType="submit">Save</Button>
-                            <Button type="danger"
-                                onClick={this.onClickCancel.bind(this)}>Cancel</Button>
-                        </div> */}
+                {/* Description*/}
+                <div className="NewOrganization-row">
+                    <div className="NewOrganization-col1">
+                        <div className="NewOrganization-formLabel field-label">
+                        </div>
+                        <div className="NewOrganization-formControl">
+                            <TextArea value={this.props.newOrganization.description.value || ''}
+                                className={this.calcFieldClass(this.props.newOrganization.description) + ' NewOrganization-control-description'}
+                                autosize={{ minRows: 5, maxRows: 15 }}
+                                onChange={this.onDescriptionChange.bind(this)} />
+                            {this.renderFieldError(this.props.newOrganization.description)}
+                        </div>
+                    </div>
+                    <div className="NewOrganization-col2">
+                        <div className="NewOrganization-preview-description"
+                            dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.newOrganization.description.value || '') })}
+                        />
                     </div>
                 </div>
-            </form>
+            </form >
         )
     }
+
 
     charAt(inString: string, position: number) {
         // const c1 = inString.charAt(position)
@@ -398,67 +471,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
-    renderPreview() {
-        return <form className="preview">
-            <div className="row">
-                <div className="col2">
-                    <div className="name">
-                        {this.props.newOrganization.name.value || ''}
-                    </div>
-                </div>
-            </div>
-
-            <div className="row">
-                <div className="col2">
-                    <div className="id">
-                        <span style={{ color: 'silver' }}>{this.origin}/orgs/viewOrganization/</span>
-                        {this.props.newOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
-                    </div>
-                </div>
-            </div>
-
-            <div className="row">
-                <div className="col2">
-                    <div className="logoUrl">
-                        {this.renderLogoPreview()}
-                    </div>
-                </div>
-            </div>
-
-            <div className="row">
-                <div className="col2">
-                    <div className="homeUrl" style={{ height: '1em' }}>
-                        {this.props.newOrganization.homeUrl.value || ''}
-                    </div>
-                </div>
-            </div>
-
-            <div className="row">
-                <div className="col2">
-                    <div className="isPrivate">
-                        {this.renderIsPrivate(this.props.newOrganization.isPrivate.value)}
-                    </div>
-                </div>
-            </div>
-
-            <div className="row">
-                <div className="col2">
-                    <div className="researchInterests" style={{ height: '5em' }}>
-                        {this.props.newOrganization.researchInterests.value || ''}
-                    </div>
-                </div>
-            </div>
-
-
-            <div className="row" style={{ flex: '1 1 0px' }}>
-                <div className="col2">
-                    <div className="description"
-                        dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.newOrganization.description.value || '') })}
-                    />
-                </div>
-            </div>
-        </form>
-    }
 
     renderState() {
         const { editState, validationState, saveState } = this.props;
@@ -590,16 +602,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         return (
             <div className="NewOrganization">
                 {this.renderHeader()}
-                <div className="mainRow">
-                    <div className="editorColumn">
-                        <h3>Editor</h3>
-                        {this.renderForm()}
-                    </div>
-                    <div className="previewColumn">
-                        <h3>Preview</h3>
-                        {this.renderPreview()}
-                    </div>
-                </div>
+                {this.renderEditor()}
                 {this.renderError()}
             </div>
         )
