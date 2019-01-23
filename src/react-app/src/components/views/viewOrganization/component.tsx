@@ -803,7 +803,12 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         }
         const extras = [
             (
-                <a href="/#feeds" target=" _blank">View All Your KBase Feeds</a>
+                <Button
+                    size="small"
+                    href="/#feeds"
+                    target=" _blank">
+                    <Icon type="notification" />{' '}View All Your KBase Feeds
+                </Button>
             )
         ]
         return (
@@ -812,7 +817,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     {extras}
                 </div>
                 <div className="ViewOrganization-tabPaneHeader">updates</div>
-                <p className="message"></p>
+                <p className="message">** org updates not yet available **</p>
                 <div className="ViewOrganization-tabPaneHeader">notifications</div>
                 {notifications}
 
@@ -1203,7 +1208,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
 
         tabs.push((
-            <Tabs.TabPane tab={<span><Icon type="book" />Feed</span>} key="news" style={{ flexDirection: 'column' }}>
+            <Tabs.TabPane tab={<span><Icon type="notification" />Feed</span>} key="news" style={{ flexDirection: 'column' }}>
                 {this.renderFeedTab()}
             </Tabs.TabPane>
         ))
