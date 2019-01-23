@@ -1,8 +1,1 @@
 /* uber styles */
-
-.scrollable-flex-column {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}

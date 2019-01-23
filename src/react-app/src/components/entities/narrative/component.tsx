@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as narrativeModel from '../../../data/models/narrative'
 import { Tooltip, Icon } from 'antd';
 import './component.css'
+import User from '../UserContainer';
 
 export interface NarrativeProps {
     narrative: narrativeModel.Narrative
@@ -150,7 +151,8 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                         {this.renderUserPermission(narrative)}
                     </div>
                     <div>
-                        <span className="field-label">owner</span>{narrative.owner}
+                        <span className="field-label">owner</span>
+                        <div style={{ display: 'inline-block' }}><User avatarSize={20} userId={narrative.owner} /></div>
                     </div>
                     <div>
                         <span className="field-label">last saved</span>{Intl.DateTimeFormat('en-US', {

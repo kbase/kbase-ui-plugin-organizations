@@ -77,6 +77,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
                     <div>
                         Request to join your organization
                         {orgInfo}
+                        {' '}
                         from
                         {' '}<UserInline userId={notification.from} avatarSize={20} />
                     </div>
@@ -101,6 +102,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
                         {' '}
                         <NarrativeInline workspaceId={workspaceId} />
                         {orgInfo}
+                        {' '}
                         from
                         {' '}
                         <UserInline userId={notification.from} avatarSize={20} />
@@ -236,11 +238,13 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
         }
         return (
             <React.Fragment>
-                <div className="Notifications-Header">
+                <div className="Notifications-header">
                     {this.renderHeader()}
                 </div>
-                <div className="Notifications-Body">
-                    {this.renderNotifications()}
+                <div className="Notifications-body scrollable-flex-column">
+                    <div className="Notifications-innerBody">
+                        {this.renderNotifications()}
+                    </div>
                 </div>
             </React.Fragment>
         )
@@ -248,7 +252,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
 
     render() {
         return (
-            <div className="Notifications">
+            <div className="Notifications scrollable-flex-column">
                 {this.renderMain()}
             </div>
         )

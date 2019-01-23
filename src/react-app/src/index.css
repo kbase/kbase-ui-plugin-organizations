@@ -154,3 +154,10 @@ a:hover {
 .slimCard.ant-card .ant-card-body {
     padding: 6px
 }
+
+.scrollable-flex-column {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}

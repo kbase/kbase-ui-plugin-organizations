@@ -4,16 +4,18 @@
     flex-direction: column;
     min-height: 0;
     /* max-height: 30em; */
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 
-.Notifications>.Notifications-Header {
+.Notifications-header {
     flex: 0 0 auto;
 }
 
-.Notifications>.Notifications-Body {
+.Notifications-body {
     flex: 1 1 0px;
-    display: block;
+}
+
+.Notifications-innerBody {
     overflow-y: auto;
 }
 

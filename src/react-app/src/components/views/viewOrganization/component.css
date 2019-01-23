@@ -12,7 +12,7 @@
 }
 
 .ViewOrganization .mainRow>.mainColumn {
-    flex: 2 1 0px;
+    flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     margin-right: 10px;
@@ -67,10 +67,16 @@ padding:4px; */
 }
 
 .ViewOrganization .mainRow>.infoColumn {
-    flex: 1 1 0px;
+    /* flex: 1 1 0px; */
+    /* flex: 0 0 400px; */
+    /* width: 15em; */
     display: flex;
     flex-direction: column;
     margin-left: 10px;
+    min-height: 0;
+    width: 30em;
+    /* min-width: 15em;
+max-width: 30em; */
     /* overflow-y: auto; */
 }
 
@@ -78,10 +84,11 @@ padding:4px; */
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 }
 
 .ViewOrganization .infoTable>.row {
-    flex: 1 1 0px;
+    flex: 0 0 auto;
     min-height: 20px;
     display: flex;
     flex-direction: row;
@@ -265,4 +272,55 @@ padding:4px; */
 .ViewOrganization .message {
     text-align: center;
     font-style: italic;
+}
+
+.ViewOrganization-tabs.ant-tabs {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.ViewOrganization-tabs .ant-tabs-content {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* WTF yuck! ant design sets the flex direction within tab content to row, for some reason. 
+   No direct method to override?
+*/
+
+.ViewOrganization-tabs.ant-tabs .ant-tabs-top-content.ant-tabs-content-animated {
+    flex-direction: column;
+}
+
+.ViewOrganization-tabs .ant-tabs-tabpane.ant-tabs-tabpane-active {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.ViewOrganization-tabCount {
+    color: rgba(200, 200, 200, 1);
+}
+
+.ViewOrganization-tabPaneHeader {
+    font-weight: bold;
+    color: rgba(150, 150, 150, 1);
+    border-bottom: 2px rgba(150, 150, 150, 0.5) solid;
+}
+
+.ViewOrganization-tabs.ant-tabs .ant-tabs-small-bar .ant-tabs-tab {
+    padding: 4px;
+}
+
+.ViewOrganization-tabPaneToolbar {
+    background-color: rgba(200, 200, 200, 0.2);
+    text-align: right;
+    padding: 2px;
+    margin-bottom: 4px;
+    height: 2em;
 }
