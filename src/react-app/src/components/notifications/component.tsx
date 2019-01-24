@@ -4,7 +4,7 @@ import './component.css'
 import UserInline from './UserInlineContainer';
 import OrganizationInline from './OrganizationInlineContainer';
 import { Button } from 'antd';
-import NarrativeInline from './NarrativeInlineContainer';
+import NarrativeInline from '../entities/narrativeInline/reduxAdapter';
 import { niceElapsed } from '../../lib/time';
 
 export interface NotificationsProps {

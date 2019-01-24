@@ -324,3 +324,9 @@ max-width: 30em; */
     margin-bottom: 4px;
     height: 2em;
 }
+
+.ViewOrganization-org {}
+
+.ViewOrganization-org-description {
+    overflow-y: auto;
+}

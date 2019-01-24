@@ -6,6 +6,8 @@
     /* margin-top: 10px; */
     padding: 10px;
     border: 1px rgba(150, 150, 150, 0.5) solid;
+    border-radius: 4px;
+    margin: 10px;
 }
 
 .OrganizationHeader .avatar {

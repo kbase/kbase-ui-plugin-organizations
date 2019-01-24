@@ -77,8 +77,7 @@ export function appStart() {
                     const path = '/viewOrganization/' + iframeParams.params.viewParams.id
                     window.history.pushState(null, 'test', path)
                 default:
-                    console.log('hmm, defaulting to dashboard??')
-                    window.history.pushState(null, 'dashboard', '/dashboard')
+                    window.history.pushState(null, 'organizations', '/organizations')
             }
         } else {
             iframeParams = new IFrameSimulator().getParamsFromIFrame()

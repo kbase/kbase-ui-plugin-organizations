@@ -1,6 +1,6 @@
 import * as React from 'react'
-import * as narrativeModel from '../../data/models/narrative'
-import Narrative from './NarrativeInline'
+import * as narrativeModel from '../../../data/models/narrative'
+import Narrative from './component'
 
 interface LoaderProps {
     workspaceId: narrativeModel.WorkspaceID
@@ -42,8 +42,8 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
 
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
-import { StoreState } from '../../types'
-import * as actions from '../../redux/actions/entities'
+import { StoreState } from '../../../types'
+import * as actions from '../../../redux/actions/entities'
 
 export interface OwnProps {
     workspaceId: narrativeModel.WorkspaceID

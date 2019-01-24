@@ -170,6 +170,18 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                                     }).format(org.createdAt)}</span>
                                 </div>
                             </div>
+                            <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                                <div className="BriefOrganization-infoTableCol1">
+                                    <span className="field-label">last changed</span>
+                                </div>
+                                <div className="BriefOrganization-infoTableCol2">
+                                    <span >{Intl.DateTimeFormat('en-US', {
+                                        month: 'short',
+                                        day: 'numeric',
+                                        year: 'numeric'
+                                    }).format(org.modifiedAt)}</span>
+                                </div>
+                            </div>
                             <div className="BriefOrganization-infoTableRow">
                                 <a onClick={this.onToggleView.bind(this)}
                                     className={`linkButton ${this.state.view === ComponentView.NORMAL ? "pressed" : ""}`}
@@ -245,6 +257,18 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                                         day: 'numeric',
                                         year: 'numeric'
                                     }).format(org.createdAt)}</span>
+                                </div>
+                            </div>
+                            <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                                <div className="BriefOrganization-infoTableCol1">
+                                    <span className="field-label">last changed</span>
+                                </div>
+                                <div className="BriefOrganization-infoTableCol2">
+                                    <span >{Intl.DateTimeFormat('en-US', {
+                                        month: 'short',
+                                        day: 'numeric',
+                                        year: 'numeric'
+                                    }).format(org.modifiedAt)}</span>
                                 </div>
                             </div>
                             <div className="BriefOrganization-infoTableRow">

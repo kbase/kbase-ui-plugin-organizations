@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Marked, Renderer, MarkedOptions } from 'marked-ts'
+import { Marked } from 'marked-ts'
 import { NavLink, Redirect } from 'react-router-dom'
 
 import './component.css'
@@ -163,7 +163,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         if (this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
             this.props.relation.type === orgModel.UserRelationToOrganization.OWNER) {
             return (
-                <NavLink to={`/editOrganization/${this.props.organization!.id}`}><Button icon="edit">Edit</Button></NavLink>
+                <NavLink to={`/editOrganization/${this.props.organization!.id}`}><Button icon="edit">Edit This Organization</Button></NavLink>
             )
         }
     }
@@ -174,8 +174,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             return
         }
         return (
-            <div className="org">
-                <div className="description"
+            <div className="ViewOrganization-org-description-org scrollable-flex-column">
+                <div className="ViewOrganization-org-description"
                     dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.organization.description || '') })}
                 />
             </div>
@@ -296,7 +296,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         let members: JSX.Element | Array<JSX.Element>
         const message = (
             <div style={{ fontStyle: 'italic', textAlign: 'center' }}>
-                No members, yet; what is an Organization without people?
+                No members.
             </div>
         )
         if (this.props.organization.members.length === 0) {
@@ -610,9 +610,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     {this.props.organization && this.props.organization.name}
                     "
                 </span> */}
-                <span>
+                {/* <span>
                     {this.props.organization && this.props.organization.name}
-                </span>
+                </span> */}
             </div>
         )
         const buttons = (
@@ -804,6 +804,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         const extras = [
             (
                 <Button
+                    key="feeds"
                     size="small"
                     href="/#feeds"
                     target=" _blank">
@@ -925,7 +926,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         ]
 
         let inbox
-        console.log('hmm', this.props.requestInbox)
         if (this.props.requestInbox.length === 0) {
             inbox = (
                 <div className="message">
@@ -1166,25 +1166,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
-    onComboTabSelect(key: string) {
-        console.log('selected ', key)
-    }
-
-    renderNewsTab() {
-        return (
-            <div>
-                No news yet...
-            </div>
-        )
-    }
-
     renderCombo() {
         const isAdmin = (this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
             this.props.relation.type === orgModel.UserRelationToOrganization.OWNER)
 
         const isMember = this.props.organization.isMember
-
-        const tabs = []
 
         if (!isMember) {
             return (
@@ -1194,11 +1180,22 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             )
         }
 
-        // tabs.push((
-        //     <Tabs.TabPane tab={<span><Icon type="book" />News</span>} key="news" style={{ flexDirection: 'column' }}>
-        //         {this.renderNewsTab()}
-        //     </Tabs.TabPane>
-        // ))
+        const tabs = []
+
+        let memberCount
+        if (this.props.organization.memberCount - 1) {
+            memberCount = String(this.props.organization.memberCount - 1)
+        } else {
+            memberCount = 'Ø'
+        }
+        tabs.push((
+            <Tabs.TabPane
+                tab={<span><Icon type="team" />Members <span className="ViewOrganization-tabCount">({memberCount})</span></span>}
+                key="members"
+                style={{ flexDirection: 'column' }}>
+                {this.renderMembersTab()}
+            </Tabs.TabPane>
+        ))
 
         // tabs.push((
         //     <Tabs.TabPane tab={<span><Icon type="notification" />Feed</span>} key="feed" style={{ flexDirection: 'column' }}>
@@ -1207,11 +1204,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         // ))
 
 
-        tabs.push((
-            <Tabs.TabPane tab={<span><Icon type="notification" />Feed</span>} key="news" style={{ flexDirection: 'column' }}>
-                {this.renderFeedTab()}
-            </Tabs.TabPane>
-        ))
+        // tabs.push((
+        //     <Tabs.TabPane tab={<span><Icon type="notification" />Feed</span>} key="news" style={{ flexDirection: 'column' }}>
+        //         {this.renderFeedTab()}
+        //     </Tabs.TabPane>
+        // ))
 
         if (isMember) {
             if (isAdmin) {
@@ -1240,20 +1237,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             }
         }
 
-        let memberCount
-        if (this.props.organization.memberCount - 1) {
-            memberCount = String(this.props.organization.memberCount - 1)
-        } else {
-            memberCount = 'Ø'
-        }
-        tabs.push((
-            <Tabs.TabPane
-                tab={<span><Icon type="team" />Members <span className="ViewOrganization-tabCount">({memberCount})</span></span>}
-                key="members"
-                style={{ flexDirection: 'column' }}>
-                {this.renderMembersTab()}
-            </Tabs.TabPane>
-        ))
+
 
         return (
             <Tabs
@@ -1262,7 +1246,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 animated={false}
                 size="small"
                 tabPosition="top"
-                onChange={this.onComboTabSelect.bind(this)}>
+            >
                 {tabs}
             </Tabs>
         )
@@ -1312,11 +1296,12 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         if (typeof this.props.organization !== 'undefined') {
             return (
                 <div className="ViewOrganization  scrollable-flex-column">
-                    {this.renderHeader()}
                     {this.renderOrgHeader()}
+                    {this.renderHeader()}
+
                     <div className="mainRow scrollable-flex-column">
                         <div className="mainColumn  scrollable-flex-column">
-                            <div className="orgRow">
+                            <div className="orgRow" style={{ minHeight: '0px' }}>
                                 {this.renderOrg()}
                             </div>
                             <div className="narrativesRow scrollable-flex-column">

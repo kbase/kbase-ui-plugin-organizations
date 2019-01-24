@@ -163,8 +163,6 @@ export class FeedsClient {
             count: 100
         })
 
-        console.log('notifications', notifications)
-
         return notifications.user.feed
             .filter(({ actor, source }) => {
                 return (

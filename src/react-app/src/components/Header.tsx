@@ -82,11 +82,11 @@ class Header extends React.Component<HeaderProps, HeaderState> {
                 selectedKeys={[this.state.currentMenuItem]}
                 mode="horizontal"
             >
-                <Menu.Item key="myorgs">
+                {/* <Menu.Item key="myorgs">
                     My Organizations
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item key="allorgs">
-                    All Organizations
+                    Organizations
                 </Menu.Item>
             </Menu>
         )
@@ -181,15 +181,15 @@ class Header extends React.Component<HeaderProps, HeaderState> {
     renderMenu5() {
         return (
             <React.Fragment>
-                <span style={{ padding: '4px', marginRight: '4px' }}>
+                {/* <span style={{ padding: '4px', marginRight: '4px' }}>
                     <NavLink to="/">
                         <span data-test="orgs-label">My Organizations</span>
                     </NavLink>
 
-                </span>
+                </span> */}
                 <span style={{ padding: '4px', marginRight: '4px', marginLeft: '4px' }}>
                     <NavLink to="/organizations">
-                        <span data-test="orgs-label">All Organizations</span>
+                        <span data-test="orgs-label">Organizations</span>
                     </NavLink>
                 </span>
                 <span style={{ padding: '4px', marginRight: '4px', marginLeft: '4px' }}>
@@ -205,16 +205,13 @@ class Header extends React.Component<HeaderProps, HeaderState> {
         return (
             <div className="Header">
                 <div className="Header-contextual">
-
                     <div className="Header-userColumn">
-
                         <div className="Header-breadcrumbs">
                             {this.props.breadcrumbs}
                         </div>
                         <div className="Header-buttons">
                             {this.props.buttons}
                         </div>
-
                         {/* {this.props.children} */}
                     </div>
                 </div>

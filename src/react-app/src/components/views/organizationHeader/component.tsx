@@ -180,7 +180,6 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
         )
     }
 
-
     renderRelation() {
         const org = this.props.organization
         switch (this.relation.type) {
@@ -380,6 +379,21 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
         }
     }
 
+    renderHomeUrl(org: orgModel.Organization) {
+        if (!org.homeUrl) {
+            return
+        }
+        return (
+            <div className="homeUrl">
+                <a href={org.homeUrl} target="_blank">
+                    <Icon type="home" />
+                    {' '}
+                    {org.homeUrl}
+                </a>
+            </div>
+        )
+    }
+
     renderOrgInfo() {
         const org = this.props.organization
         return (
@@ -387,13 +401,41 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                 <div className="name">
                     {org.name}
                 </div>
+                <div>
+                    <div style={{ display: 'inline-block', width: '50%', verticalAlign: 'top' }}>
+                        <div>
+                            {this.renderHomeUrl(org)}
+                        </div>
+                        <div className="owner">
+                            <Owner username={org.owner.username} avatarSize={20} />
+                        </div>
+                    </div>
+                    <div style={{ display: 'inline-block', width: '50%', verticalAlign: 'top' }}>
+                        <div>
+                            <span className="field-label">established</span>
+                            <span className="field-value">{Intl.DateTimeFormat('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(org.createdAt)}</span>
+                        </div>
+                        <div>
+                            <span className="field-label">last modified</span>
+                            <span className="field-value">{Intl.DateTimeFormat('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(org.modifiedAt)}</span>
+                        </div>
+                    </div>
+                </div>
+
+
                 {/* <div className="id">
                     <span className="label">permalink</span>{' '}
                     <span className="permalinkBase">https:/narrative.kbase.us#orgs/</span>{org.id}
                 </div> */}
-                <div className="owner">
-                    <Owner username={org.owner.username} avatarSize={20} />
-                </div>
+
 
                 {/* <div className="owner">
                     <span className="field-label">owner</span>

@@ -112,7 +112,7 @@ class App extends Component {
                     <div className="App-body scrollable-flex-column">
                       <MainMenu />
                       <Switch>
-                        <Route path="/dashboard" exact={true} component={DashboardView} />
+                        {/* <Route path="/dashboard" exact={true} component={DashboardView} /> */}
                         <Route path="/organizations" component={OrganizationsBrowser} />
                         <Route path="/newOrganization" component={NewOrganization} />
                         {/* The destructuring below is ugly, but effective */}
@@ -123,7 +123,7 @@ class App extends Component {
                         <Route path="/inviteUser/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<InviteUser organizationId={id} />)} />
                         <Route path="/membership/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<ManageMembership organizationId={id} />)} />
                         <Route path="/requestAddNarrative/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => (<RequestAddNarrative organizationId={id} />)} />
-                        <Redirect from="/" to="/dashboard" exact={true} />
+                        <Redirect from="/" to="/organizations" exact={true} />
                       </Switch>
                     </div>
                   </div>

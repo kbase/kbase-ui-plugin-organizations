@@ -100,6 +100,22 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         this.props.onSortOrgs(value, this.props.sortDirection)
     }
 
+    onSortByChange3(value: string) {
+        switch (value) {
+            case 'owner':
+                this.props.onSortOrgs('owner', SortDirection.ASCENDING)
+                break
+            case 'name':
+                this.props.onSortOrgs('name', SortDirection.ASCENDING)
+                break
+            case 'recentlyAdded':
+                this.props.onSortOrgs('created', SortDirection.DESCENDING)
+                break
+            case 'recentlyChanged':
+                this.props.onSortOrgs('changed', SortDirection.DESCENDING)
+                break
+        }
+    }
 
     onSortDirectionChange(e: RadioChangeEvent) {
         this.props.onSortOrgs(this.props.sortBy, e.target.value)
@@ -233,7 +249,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         )
         const buttons = (
             <React.Fragment>
-                <NavLink to="/newOrganization"><Button icon="plus-circle">Create Organization</Button></NavLink>
+                {/* <NavLink to="/newOrganization"><Button icon="plus-circle">Create Organization</Button></NavLink> */}
                 <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
             </React.Fragment>
         )
@@ -246,7 +262,19 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         return (
             <div>
                 <span className="field-label">sort by</span>
-                <Select onChange={this.onSortByChange2.bind(this)}
+                <Select
+                    onChange={this.onSortByChange3.bind(this)}
+                    defaultValue={this.props.sortBy}
+                    dropdownMatchSelectWidth={true}
+                    style={{ width: '10em' }}>
+                    <Select.Option value="name" key="name">Org Name</Select.Option>
+                    {/* <Select.Option value="owner" key="owner">Org owner</Select.Option> */}
+                    <Select.Option value="recentlyAdded" key="recent">Date Added</Select.Option>
+                    <Select.Option value="recentlyChanged" key="changed">Date Changed</Select.Option>
+                    <Select.Option value="newFirst" key="newFirst">New Activity</Select.Option>
+
+                </Select>
+                {/* <Select onChange={this.onSortByChange2.bind(this)}
                     defaultValue={this.props.sortBy}
                     style={{ width: '8em' }}
                     dropdownMatchSelectWidth={true}>
@@ -260,17 +288,22 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     defaultValue={this.props.sortDirection}>
                     <Select.Option value={SortDirection.ASCENDING} key="name"><Icon type="sort-ascending" />Ascending</Select.Option>
                     <Select.Option value={SortDirection.DESCENDING} key="owner"><Icon type="sort-descending" />Descending</Select.Option>
-                </Select>
+                </Select> */}
                 <span className="field-label" style={{ marginLeft: '10px' }}>filter</span>
                 <Select onChange={this.onFilterChange2.bind(this)}
                     defaultValue={this.props.filter}
                     style={{ width: '16em' }}
                     dropdownMatchSelectWidth={true}>
                     <Select.Option value="all" key="all">All</Select.Option>
+
                     <Select.Option value="memberOf" key="memberOf">You are a member of</Select.Option>
                     <Select.Option value="notMemberOf" key="memberOf">You are not a member of</Select.Option>
+
                     <Select.Option value="owned" key="owned">Owned by you</Select.Option>
-                    <Select.Option value="notOwned" key="notOwned">Not owned by you</Select.Option>
+                    {/* <Select.Option value="notOwned" key="notOwned">Not owned by you</Select.Option> */}
+
+                    <Select.Option value="adminOf" key="adminOf">You administer</Select.Option>
+
                     {/* <Select.Option value="pending" key="pending">Pending request or invitation</Select.Option>
                     <Select.Option value="groupPending" key="groupPending">Pending group requests</Select.Option> */}
                 </Select>

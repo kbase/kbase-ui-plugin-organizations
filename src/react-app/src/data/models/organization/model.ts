@@ -381,10 +381,11 @@ function applySort(organizations: Array<BriefOrganization>, sortBy: string, sort
             return organizations.slice().sort((a, b) => {
                 return direction * (a.createdAt.getTime() - b.createdAt.getTime())
             })
-        // case 'modifiedAt':
-        //     return organizations.slice().sort((a, b) => {
-        //         return direction * (a.modifiedAt.getTime() - b.modifiedAt.getTime())
-        //     })
+        case 'modified':
+        case 'changed':
+            return organizations.slice().sort((a, b) => {
+                return direction * (a.modifiedAt.getTime() - b.modifiedAt.getTime())
+            })
         case 'name':
             return organizations.slice().sort((a, b) => {
                 return direction * a.name.localeCompare(b.name)
@@ -427,6 +428,10 @@ function applyFilter(organizations: Array<BriefOrganization>, filter: string, us
             return organizations.filter((org) => (org.relation === UserRelationToOrganization.OWNER))
         case 'notOwned':
             return organizations.filter((org) => (org.relation !== UserRelationToOrganization.OWNER))
+        case 'adminOf':
+            return organizations.filter((org) => (org.relation === UserRelationToOrganization.OWNER ||
+                org.relation === UserRelationToOrganization.ADMIN))
+
         // TODO: re-enable when have relation again...
         // case 'pending':
         //     return organizations.filter((org) => (

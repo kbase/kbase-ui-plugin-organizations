@@ -1,7 +1,7 @@
 import * as React from 'react'
-import * as narrativeModel from '../../data/models/narrative'
+import * as narrativeModel from '../../../data/models/narrative'
 import { Tooltip, Icon } from 'antd';
-import './NarrativeInline.css'
+import './component.css'
 
 export interface NarrativeProps {
     narrative: narrativeModel.Narrative

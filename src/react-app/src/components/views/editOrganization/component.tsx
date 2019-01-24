@@ -488,10 +488,10 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         const breadcrumbs = (
             <React.Fragment>
                 <span>
-                    {this.renderOrgName(this.props.editedOrganization.name.value)}
+                    {/* {this.renderOrgName(this.props.editedOrganization.name.value)} */}
 
 
-                    <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
+                    {/* <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} /> */}
 
                     <Icon type="tool" />
                     {' '}
@@ -565,8 +565,10 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
 
         return (
             <div className="EditOrganization">
-                {this.renderHeader()}
+
                 {this.renderOrgHeader()}
+                {this.renderHeader()}
+
                 {this.renderEditor()}
             </div>
         )

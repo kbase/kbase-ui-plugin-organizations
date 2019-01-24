@@ -151,11 +151,11 @@ class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                         selectedKeys={selectedKeys}
                         mode="horizontal"
                     >
-                        <Menu.Item key="myorgs">
+                        {/* <Menu.Item key="myorgs">
                             <Link to="/dashboard">My Organizations</Link>
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item key="allorgs">
-                            <Link to="/organizations">All Organizations</Link>
+                            <Link to="/organizations">Organizations</Link>
                         </Menu.Item>
                         <Menu.Item key="neworg">
                             <Link to="/newOrganization">Create New Organization</Link>
@@ -169,15 +169,15 @@ class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
     renderMenu5() {
         return (
             <React.Fragment>
-                <span style={{ padding: '4px', marginRight: '4px' }}>
+                {/* <span style={{ padding: '4px', marginRight: '4px' }}>
                     <NavLink to="/">
                         <span data-test="orgs-label">My Organizations</span>
                     </NavLink>
 
-                </span>
+                </span> */}
                 <span style={{ padding: '4px', marginRight: '4px', marginLeft: '4px' }}>
                     <NavLink to="/organizations">
-                        <span data-test="orgs-label">All Organizations</span>
+                        <span data-test="orgs-label">Organizations</span>
                     </NavLink>
                 </span>
                 <span style={{ padding: '4px', marginRight: '4px', marginLeft: '4px' }}>

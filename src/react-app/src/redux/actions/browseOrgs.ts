@@ -179,7 +179,7 @@ export function load() {
             filteredCount: 0,
             sortBy: 'name',
             sortDirection: SortDirection.ASCENDING,
-            filter: 'all',
+            filter: 'memberOf',
             searchTerms: [],
             selectedOrganizationId: null,
             searching: false,

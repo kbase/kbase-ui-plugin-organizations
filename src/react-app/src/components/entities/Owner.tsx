@@ -72,10 +72,11 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                 <div className="infoCol">
                     <div className="name">
                         <a href={"/#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
+                        ({this.props.user.username})
                     </div>
-                    <div className="username">
+                    {/* <div className="username">
                         {this.props.user.username}
-                    </div>
+                    </div> */}
                 </div>
             </div>
         )
@@ -101,9 +102,9 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                     <div className="username">
                         {this.props.user.username}
                     </div>
-                    <div className="role">
+                    {/* <div className="role">
                         {this.renderRole()}
-                    </div>
+                    </div> */}
                     {/* <div className="joinedAt">
                         <span className="field-label">joined</span>{' '}{Intl.DateTimeFormat('en-US', {
                             month: 'short',

@@ -187,7 +187,6 @@ export function loadNarrative(workspaceId: narrativeModel.WorkspaceID) {
 
         try {
             const narrative = await narrativeClient.getNarrative(workspaceId)
-            console.log('ok, got narrative', workspaceId, narrative)
             dispatch({
                 type: ActionFlag.ENTITY_NARRATIVE_LOAD_SUCCESS,
                 narrative: narrative
