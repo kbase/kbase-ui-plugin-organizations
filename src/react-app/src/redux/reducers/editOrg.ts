@@ -8,7 +8,7 @@ import {
     EditOrgUpdateNameSuccess, EditOrgUpdateNameError,
     // EditOrgUpdateIdSuccess, EditOrgUpdateIdError,
     EditOrgUpdateDescriptionSuccess, EditOrgUpdateDescriptionError,
-    UpdateIsPrivateSuccess, EditOrgUpdateLogoUrlSuccess, EditOrgUpdateLogoUrlError, UpdateHomeUrlSuccess, UpdateHomeUrlError, UpdateResearchInterestsError, UpdateResearchInterestsSuccess
+    UpdateIsPrivateSuccess, EditOrgUpdateLogoUrlSuccess, EditOrgUpdateLogoUrlError, UpdateHomeUrlSuccess, UpdateHomeUrlError, UpdateResearchInterestsError, UpdateResearchInterestsSuccess, Unload
 } from '../actions/editOrg'
 import { StateInstances } from '../state';
 
@@ -18,7 +18,7 @@ import { StateInstances } from '../state';
 
 // Edit session loading
 
-export function loadStart(state: StoreState, action: LoadStart) {
+export function loadStart(state: StoreState, action: LoadStart): StoreState {
     return {
         ...state,
         views: {
@@ -41,7 +41,7 @@ function validationStateOk(): ValidationStateOk {
     return x
 }
 
-export function loadSuccess(state: StoreState, action: LoadSuccess) {
+export function loadSuccess(state: StoreState, action: LoadSuccess): StoreState {
     return {
         ...state,
         views: {
@@ -68,7 +68,7 @@ export function loadSuccess(state: StoreState, action: LoadSuccess) {
     }
 }
 
-export function loadError(state: StoreState, action: LoadError) {
+export function loadError(state: StoreState, action: LoadError): StoreState {
     return {
         ...state,
         views: {
@@ -78,6 +78,20 @@ export function loadError(state: StoreState, action: LoadError) {
                 error: action.error,
                 viewModel: null
 
+            }
+        }
+    }
+}
+
+export function unload(state: StoreState, action: Unload): StoreState {
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            editOrgView: {
+                loadingState: ComponentLoadingState.NONE,
+                error: null,
+                viewModel: null
             }
         }
     }
@@ -731,6 +745,10 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
             return loadSuccess(state, action as LoadSuccess)
         case ActionFlag.EDIT_ORG_LOAD_ERROR:
             return loadError(state, action as LoadError)
+
+        case ActionFlag.EDIT_ORG_UNLOAD:
+            return unload(state, action as Unload)
+
         case ActionFlag.EDIT_ORG_SAVE_START:
             return editOrgSaveStart(state, action as EditOrgSaveStart)
         case ActionFlag.EDIT_ORG_SAVE_SUCCESS:
