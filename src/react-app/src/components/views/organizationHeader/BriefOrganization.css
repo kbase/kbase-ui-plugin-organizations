@@ -32,6 +32,33 @@
     flex-direction: column;
 }
 
+.BriefOrganization-infoCol-row {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.BriefOrganization-infoCol-col1 {
+    flex: 1 1 0px;
+    /* margin-left: 10px; */
+    display: flex;
+    flex-direction: column;
+}
+
+.BriefOrganization-infoCol-col2 {
+    flex: 1 1 0px;
+    /* margin-left: 10px; */
+    display: flex;
+    flex-direction: column;
+}
+
+.BriefOrganization-infoCol-col3 {
+    flex: 1 1 0px;
+    /* margin-left: 10px; */
+    display: flex;
+    flex-direction: column;
+}
+
 .BriefOrganization-orgName {
     font-weight: bold;
     font-size: 120%;

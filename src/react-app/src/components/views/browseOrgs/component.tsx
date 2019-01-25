@@ -24,6 +24,7 @@ export interface OrganizationsBrowserProps {
 export interface OrganizationsBrowserState {
     searchInput: string
     showInfo: boolean
+    filterType: string
 }
 class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, OrganizationsBrowserState> {
 
@@ -38,7 +39,8 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
         this.state = {
             searchInput: '',
-            showInfo: false
+            showInfo: false,
+            filterType: 'myorgs'
         }
 
     }
@@ -249,26 +251,42 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         )
     }
 
-    renderSearchFilter() {
-
+    renderSortByControl() {
         return (
-            <div>
-                <span className="field-label">sort by</span>
-                <Select
-                    onChange={this.onSortByChange.bind(this)}
-                    defaultValue={this.props.sortBy}
-                    dropdownMatchSelectWidth={true}
-                    style={{ width: '10em' }}>
-                    <Select.Option value="name" key="name">Org Name</Select.Option>
-                    {/* <Select.Option value="owner" key="owner">Org owner</Select.Option> */}
-                    <Select.Option value="recentlyAdded" key="recent">Date Added</Select.Option>
-                    <Select.Option value="recentlyChanged" key="changed">Date Changed</Select.Option>
-                    <Select.Option value="newFirst" key="newFirst">New Activity</Select.Option>
+            <Select
+                onChange={this.onSortByChange.bind(this)}
+                defaultValue={this.props.sortBy}
+                dropdownMatchSelectWidth={true}
+                style={{ width: '10em' }}>
+                <Select.Option value="name" key="name">Org Name</Select.Option>
+                {/* <Select.Option value="owner" key="owner">Org owner</Select.Option> */}
+                <Select.Option value="recentlyAdded" key="recent">Date Added</Select.Option>
+                <Select.Option value="recentlyChanged" key="changed">Date Changed</Select.Option>
+                <Select.Option value="newFirst" key="newFirst">New Activity</Select.Option>
 
-                </Select>
-                <span className="field-label" style={{ marginLeft: '10px' }}>filter</span>
+            </Select>
+        )
+    }
+
+    onFilterTypeChange(e: RadioChangeEvent) {
+        this.setState({ filterType: e.target.value })
+        if (e.target.value === 'myorgs') {
+            this.props.onFilterOrgs('memberOf')
+        }
+    }
+
+    renderFilterControl() {
+        return (
+            <React.Fragment>
+                <Radio.Group
+                    onChange={this.onFilterTypeChange.bind(this)}
+                    value={this.state.filterType}>
+                    <Radio value="myorgs">My Orgs</Radio>
+                    <Radio value="filter">Custom Filter</Radio>
+                </Radio.Group>
                 <Select onChange={this.onFilterChange2.bind(this)}
-                    defaultValue={this.props.filter}
+                    value={this.props.filter}
+                    disabled={this.state.filterType !== 'filter'}
                     style={{ width: '16em' }}
                     dropdownMatchSelectWidth={true}>
                     <Select.Option value="all" key="all">All</Select.Option>
@@ -284,6 +302,18 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     {/* <Select.Option value="pending" key="pending">Pending request or invitation</Select.Option>
                     <Select.Option value="groupPending" key="groupPending">Pending group requests</Select.Option> */}
                 </Select>
+            </React.Fragment>
+        )
+    }
+
+    renderSearchFilter() {
+        return (
+            <div>
+                <span className="field-label">sort by</span>
+                {this.renderSortByControl()}
+
+                <span className="field-label" style={{ marginLeft: '10px' }}>filter</span>
+                {this.renderFilterControl()}
             </div>
         )
     }

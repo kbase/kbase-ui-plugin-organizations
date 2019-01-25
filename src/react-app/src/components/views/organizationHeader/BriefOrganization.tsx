@@ -146,80 +146,84 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         </NavLink>
                     </div>
                     <div className="BriefOrganization-infoCol">
-                        <div className="BriefOrganization-infoTable">
-                            <div className="BriefOrganization-orgName BriefOrganization-infoTableRow">
-                                <NavLink to={`/viewOrganization/${org.id}`}>
-                                    {org.name}
-                                </NavLink>
-                            </div>
-                            <div className="BriefOrganization-homeUrl BriefOrganization-infoTableRow">
-                                {this.renderHomeUrl(org)}
-                            </div>
-                            <div className="BriefOrganization-researchInterests BriefOrganization-infoTableRow">
-                                {org.researchInterests}
-                            </div>
-                            <div>
-                                {this.renderRelation(org)}
-                            </div>
-
-                            <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                <div className="BriefOrganization-infoTableCol1">
-                                    <span className="field-label">established</span>
-                                </div>
-                                <div className="BriefOrganization-infoTableCol2">
-                                    <span >{Intl.DateTimeFormat('en-US', {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric'
-                                    }).format(org.createdAt)}</span>
-                                </div>
-                            </div>
-                            <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                <div className="BriefOrganization-infoTableCol1">
-                                    <span className="field-label">last changed</span>
-                                </div>
-                                <div className="BriefOrganization-infoTableCol2">
-                                    <span >{Intl.DateTimeFormat('en-US', {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric'
-                                    }).format(org.modifiedAt)}</span>
-                                </div>
-                            </div>
-                            <div className="BriefOrganization-infoTableRow">
-                                <a onClick={this.onToggleView.bind(this)}
-                                    className={`linkButton ${this.state.view === ComponentView.NORMAL ? "pressed" : ""}`}
-                                >
-                                    <Icon type={`${this.state.view === ComponentView.NORMAL ? "up" : "down"}`} />
-                                </a>
-                            </div>
-                            <div className="BriefOrganization-orgOwner BriefOrganization-infoTableRow">
-                                <div className="BriefOrganization-infoTableCol1">
-                                    <span className="field-label">owner</span>
-                                </div>
-                                <div className="BriefOrganization-infoTableCol2">
-                                    {/* TODO: render as Member or Owner component */}
-                                    <Owner username={org.owner} avatarSize={30} />
-                                </div>
-                            </div>
-                            <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                <div className="BriefOrganization-infoTableCol1">
-                                    <span className="field-label">members</span>
-                                </div>
-                                <div className="BriefOrganization-infoTableCol2">
-                                    {this.renderMemberCount(org)}
-                                </div>
-                            </div>
-                            <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                <div className="BriefOrganization-infoTableCol1">
-                                    <span className="field-label">narratives</span>
-                                </div>
-                                <div className="BriefOrganization-infoTableCol2">
-                                    {this.renderNarrativeCount(org)}
+                        <div className="BriefOrganization-infoCol-row">
+                            <div className="BriefOrganization-infoCol-col1">
+                                <div className="BriefOrganization-orgName BriefOrganization-infoTableRow">
+                                    <NavLink to={`/viewOrganization/${org.id}`}>
+                                        {org.name}
+                                    </NavLink>
                                 </div>
                             </div>
                         </div>
+                        <div className="BriefOrganization-infoCol-row">
+                            <div className="BriefOrganization-infoCol-col1">
+                                <div className="BriefOrganization-homeUrl BriefOrganization-infoTableRow">
+                                    {this.renderHomeUrl(org)}
+                                </div>
+                                <div className="BriefOrganization-researchInterests BriefOrganization-infoTableRow">
+                                    {org.researchInterests}
+                                </div>
+                                <div>
+                                    {this.renderRelation(org)}
+                                </div>
+                            </div>
+                            <div className="BriefOrganization-infoCol-col2">
+                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                                    <div className="BriefOrganization-infoTableCol1">
+                                        <span className="field-label">established</span>
+                                    </div>
+                                    <div className="BriefOrganization-infoTableCol2">
+                                        <span >{Intl.DateTimeFormat('en-US', {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            year: 'numeric'
+                                        }).format(org.createdAt)}</span>
+                                    </div>
+                                </div>
+                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                                    <div className="BriefOrganization-infoTableCol1">
+                                        <span className="field-label">last changed</span>
+                                    </div>
+                                    <div className="BriefOrganization-infoTableCol2">
+                                        <span >{Intl.DateTimeFormat('en-US', {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            year: 'numeric'
+                                        }).format(org.modifiedAt)}</span>
+                                    </div>
+                                </div>
+                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                                    <div className="BriefOrganization-infoTableCol1">
+                                        <span className="field-label">members</span>
+                                    </div>
+                                    <div className="BriefOrganization-infoTableCol2">
+                                        {this.renderMemberCount(org)}
+                                    </div>
+                                </div>
+                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                                    <div className="BriefOrganization-infoTableCol1">
+                                        <span className="field-label">narratives</span>
+                                    </div>
+                                    <div className="BriefOrganization-infoTableCol2">
+                                        {this.renderNarrativeCount(org)}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="BriefOrganization-infoCol-col3">
+                                <div className="BriefOrganization-orgOwner BriefOrganization-infoTableRow">
+                                    <div className="BriefOrganization-infoTableCol1" style={{ flex: '0 0 4em' }}>
+                                        <span className="field-label">owner</span>
+                                    </div>
+                                    <div className="BriefOrganization-infoTableCol2">
+                                        {/* TODO: render as Member or Owner component */}
+                                        <Owner username={org.owner} avatarSize={30} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+
                 </div>
             </div >
         )
@@ -341,11 +345,6 @@ export default class BriefOrganization extends React.Component<BriefOrganization
     }
 
     render() {
-        switch (this.state.view) {
-            case ComponentView.NORMAL:
-                return this.renderNormal()
-            case ComponentView.COMPACT:
-                return this.renderCompact()
-        }
+        return this.renderNormal()
     }
 }

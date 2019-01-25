@@ -1175,7 +1175,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         if (!isMember) {
             return (
                 <p style={{ fontStyle: 'italic' }}>
-                    Feed, notifications, and membership access is only available to members.
+                    The membership list is only available to members.
                 </p>
             )
         }

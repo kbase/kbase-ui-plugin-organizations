@@ -58,7 +58,7 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
     renderCompact() {
         return (
             <div className="Owner View-COMPACT" >
-                <div className="controlCol">
+                <div className="Owner-controlCol">
                     <a onClick={this.onToggleView.bind(this)}
                         className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
                     >
@@ -66,17 +66,17 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                     </a>
                 </div>
 
-                <div className="avatarCol">
+                <div className="Owner-avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
-                <div className="infoCol">
-                    <div className="name">
+                <div className="Owner-infoCol">
+                    <div className="Owner-name">
                         <a href={"/#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
-                        ({this.props.user.username})
+
                     </div>
-                    {/* <div className="username">
+                    <div className="Owner-username">
                         {this.props.user.username}
-                    </div> */}
+                    </div>
                 </div>
             </div>
         )
@@ -85,21 +85,21 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
     renderNormal() {
         return (
             <div className="Owner View-NORMAL" >
-                <div className="controlCol">
+                <div className="Owner-controlCol">
                     <a onClick={this.onToggleView.bind(this)}
                         className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
                     >
                         <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
                     </a>
                 </div>
-                <div className="avatarCol">
+                <div className="Owner-avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
-                <div className="infoCol">
-                    <div className="name">
+                <div className="Owner-infoCol">
+                    <div className="Owner-name">
                         <a href={"/#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
                     </div>
-                    <div className="username">
+                    <div className="Owner-username">
                         {this.props.user.username}
                     </div>
                     {/* <div className="role">
@@ -112,13 +112,13 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                             year: 'numeric'
                         }).format(this.props.member.joinedAt)}
                     </div> */}
-                    <div className="title">
+                    <div className="Owner-title">
                         {this.props.user.title || <i>no title in user profile</i>}
                     </div>
-                    <div className="organization">
+                    <div className="Owner-organization">
                         {this.props.user.organization || <i>no organization in user profile</i>}
                     </div>
-                    <div className="location">
+                    <div className="Owner-location">
                         {[this.props.user.city, this.props.user.state, this.props.user.country].filter(x => x).join(', ') || <i>no location information in user profile</i>}
                     </div>
                 </div>

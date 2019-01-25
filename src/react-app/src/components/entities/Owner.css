@@ -4,25 +4,29 @@
     flex-direction: row;
 }
 
-.Owner .avatarCol {
+.Owner-avatarCol {
     flex: 0 0 auto;
     margin-right: 4px;
     padding-top: 4px;
 }
 
-.Owner .infoCol {
+.Owner-infoCol {
     flex: 1 1 0px;
 }
 
-.Owner .infoCol .name {
+.Owner-name {
     font-size: 100%;
     font-weight: bold;
 }
 
-.Owner .controlCol {
+.Owner-controlCol {
     flex: 0 0 auto;
 }
 
-.Owner .infoCol .location {}
+.Owner-location {}
 
-.Owner .infoCol .organization {}
+.Owner-organization {}
+
+.Owner-username {
+    font-style: italic;
+}
