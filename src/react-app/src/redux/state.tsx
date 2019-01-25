@@ -40,6 +40,9 @@ export class StateInstances {
                     // collections: {
                     //     byGroup: new Map()
                     // }
+                },
+                lastVisited: {
+                    byId: new Map()
                 }
             },
             views: {

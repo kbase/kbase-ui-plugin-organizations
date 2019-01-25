@@ -11,7 +11,9 @@ import * as orgModel from '../../data/models/organization/model'
 import * as requestModel from '../../data/models/requests'
 import * as uberModel from '../../data/models/uber'
 import * as feedsModel from '../../data/models/feeds'
-import { loadNarrative } from './entities';
+import * as userProfileModel from '../../data/models/profile'
+import { loadNarrative } from './entities'
+import * as dataServices from './dataServices'
 
 
 // Action Types
@@ -330,11 +332,7 @@ export function loadStart(): LoadStart {
     }
 }
 
-export function unload(): Unload {
-    return {
-        type: ActionFlag.VIEW_ORG_UNLOAD
-    }
-}
+
 
 export function loadSuccess(
     organization: orgModel.Organization,
@@ -449,6 +447,37 @@ export function rejectJoinInvitationError(error: AppError): RejectJoinInvitation
 // TODO
 
 // Thunks
+
+export function unload() {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config },
+            db: { notifications: { all, byId } },
+            views: { viewOrgView: { viewModel } }
+        } = getState()
+
+        if (!viewModel) {
+            throw new Error('view model not defined!?!')
+        }
+
+        const userProfileClient = new userProfileModel.UserProfile({
+            token, username,
+            userProfileServiceURL: config.services.UserProfile.url
+        })
+
+        await userProfileClient.setLastVisitedAt(viewModel.organization.id, new Date())
+
+        dispatch(dataServices.load())
+
+        // Update the user's profile to indicate that this org has been "viewed".
+
+        dispatch({
+            type: ActionFlag.VIEW_ORG_UNLOAD
+        })
+    }
+}
 
 export function load(organizationId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {

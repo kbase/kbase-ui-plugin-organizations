@@ -167,9 +167,10 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
             )
         }
         return this.props.viewModel.organizations.map((org) => {
+            // TODO: last visited at below is just to make it compile for now.
             return (
                 <div key={org.id} className="simpleCard" >
-                    <BriefOrganization organization={org} />
+                    <BriefOrganization organization={org} lastVisitedAt={new Date()} />
                 </div>
             )
         })

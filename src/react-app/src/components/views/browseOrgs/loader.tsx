@@ -49,7 +49,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
                 return this.renderError()
             case ComponentLoadingState.SUCCESS:
                 return (
-                    <Container />
+                    <Container sortBy="recentlyChanged" />
                 )
         }
     }

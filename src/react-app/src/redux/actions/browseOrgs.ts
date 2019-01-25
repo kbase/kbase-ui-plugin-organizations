@@ -61,13 +61,13 @@ export function unload(): Unload {
 
 export interface SortOrgs extends Action<ActionFlag.BROWSE_ORGS_SORT> {
     type: ActionFlag.BROWSE_ORGS_SORT,
-    sortBy: string,
+    sortField: string,
     sortDirection: SortDirection
 }
 
 export interface SortOrgsStart extends Action<ActionFlag.BROWSE_ORGS_SORT_START> {
     type: ActionFlag.BROWSE_ORGS_SORT_START,
-    sortBy: string,
+    sortField: string,
     sortDirection: SortDirection
 }
 
@@ -81,10 +81,10 @@ export interface SortOrgsError extends Action<ActionFlag.BROWSE_ORGS_SORT_ERROR>
 }
 
 
-export function sortOrgsStart(sortBy: string, sortDirection: SortDirection): SortOrgsStart {
+export function sortOrgsStart(sortField: string, sortDirection: SortDirection): SortOrgsStart {
     return {
         type: ActionFlag.BROWSE_ORGS_SORT_START,
-        sortBy: sortBy,
+        sortField: sortField,
         sortDirection: sortDirection
     }
 }
@@ -177,8 +177,8 @@ export function load() {
             organizations: [],
             totalCount: 0,
             filteredCount: 0,
-            sortBy: 'name',
-            sortDirection: SortDirection.ASCENDING,
+            sortField: 'changed',
+            sortDirection: SortDirection.DESCENDING,
             filter: 'memberOf',
             searchTerms: [],
             selectedOrganizationId: null,
@@ -209,7 +209,7 @@ export function searchOrgs(searchTerms: Array<string>) {
             return
         }
 
-        const { viewModel: { sortBy, sortDirection, filter } } = browseOrgsView
+        const { viewModel: { sortField, sortDirection, filter } } = browseOrgsView
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url
@@ -217,7 +217,7 @@ export function searchOrgs(searchTerms: Array<string>) {
 
         return orgClient.queryOrgs({
             searchTerms: searchTerms,
-            sortBy, sortDirection, filter, username
+            sortField, sortDirection, filter, username
         })
             .then(({ organizations, total }) => {
                 // TODO: also total.
@@ -233,9 +233,9 @@ export function searchOrgs(searchTerms: Array<string>) {
     }
 }
 
-export function sortOrgs(sortBy: string, sortDirection: SortDirection) {
+export function sortOrgs(sortField: string, sortDirection: SortDirection) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(sortOrgsStart(sortBy, sortDirection))
+        dispatch(sortOrgsStart(sortField, sortDirection))
 
         const {
             views: { browseOrgsView },
@@ -259,7 +259,7 @@ export function sortOrgs(sortBy: string, sortDirection: SortDirection) {
 
         return orgClient.queryOrgs({
             searchTerms,
-            sortBy, sortDirection, filter, username
+            sortField, sortDirection, filter, username
         })
             .then(({ organizations, total }) => {
                 // TODO: also total.
@@ -296,11 +296,11 @@ export function filterOrgs(filter: string) {
             return
         }
 
-        const { viewModel: { searchTerms, sortBy, sortDirection } } = browseOrgsView
+        const { viewModel: { searchTerms, sortField, sortDirection } } = browseOrgsView
 
         return orgClient.queryOrgs({
             searchTerms,
-            sortBy, sortDirection, filter, username
+            sortField, sortDirection, filter, username
         })
             .then(({ organizations, total }) => {
                 // TODO: also total.

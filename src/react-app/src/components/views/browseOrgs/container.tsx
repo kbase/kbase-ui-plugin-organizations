@@ -1,5 +1,5 @@
 import OrganizationsBrowser from './component'
-import { StoreState, SortDirection, BrowseOrgsState, AppError } from '../../../types'
+import { StoreState, SortDirection, AppError } from '../../../types'
 import * as actions from '../../../redux/actions/browseOrgs'
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
@@ -7,12 +7,14 @@ import * as orgModel from '../../../data/models/organization/model'
 //
 // Typing for the mapState and mapDispatch
 //
+
+export interface OwnProps {
+    sortBy: string
+}
 export interface LinkStateProps {
     organizations: Array<orgModel.BriefOrganization>
     totalCount: number
     filteredCount: number
-    sortBy: string
-    sortDirection: SortDirection
     filter: string
     searching: boolean,
     error: AppError | null
@@ -20,7 +22,7 @@ export interface LinkStateProps {
 
 export interface LinkDispatchProps {
     onSearchOrgs: (searchTerms: Array<string>) => void,
-    onSortOrgs: (sortBy: string, sortDirection: SortDirection) => void,
+    onSortOrgs: (sortField: string, sortDirection: SortDirection) => void,
     onFilterOrgs: (filter: string) => void
 }
 
@@ -34,8 +36,8 @@ export function mapStateToProps(storeState: StoreState): LinkStateProps {
         views: {
             browseOrgsView: {
                 viewModel: {
-                    organizations, error, searchTerms, selectedOrganizationId,
-                    totalCount, filteredCount, sortBy, sortDirection, filter, searching }
+                    organizations, error,
+                    totalCount, filteredCount, filter, searching }
             }
         }
     } = storeState
@@ -44,8 +46,6 @@ export function mapStateToProps(storeState: StoreState): LinkStateProps {
         organizations,
         totalCount,
         filteredCount,
-        sortBy,
-        sortDirection,
         filter,
         error,
         searching: searching

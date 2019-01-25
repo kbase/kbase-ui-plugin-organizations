@@ -379,7 +379,7 @@ export interface BrowseOrgsViewModel {
     organizations: Array<orgModel.BriefOrganization>
     totalCount: number
     filteredCount: number
-    sortBy: string
+    sortField: string
     sortDirection: SortDirection
     filter: string
     searchTerms: Array<string>
@@ -593,6 +593,10 @@ export interface EditOrgView {
     viewModel: EditOrgViewModel | null
 }
 
+export interface LastVisited {
+    lastVisitedAt: Date | null
+}
+
 export interface StoreState {
     // new!!
     entities: {
@@ -623,6 +627,9 @@ export interface StoreState {
             // collections: {
             //     byGroup: Map<orgModel.OrganizationID, Array<feedsModel.NotificationID>>
             // }
+        }
+        lastVisited: {
+            byId: Map<orgModel.OrganizationID, LastVisited>
         }
     }
 

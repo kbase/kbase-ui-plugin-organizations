@@ -13,12 +13,11 @@ export interface OrganizationsBrowserProps {
     totalCount: number;
     filteredCount: number;
     sortBy: string;
-    sortDirection: SortDirection;
     filter: string;
     searching: boolean;
     error: AppError | null;
     onSearchOrgs: (searchTerms: Array<string>) => void;
-    onSortOrgs: (sortBy: string, sortDirection: SortDirection) => void;
+    onSortOrgs: (sortField: string, sortDirection: SortDirection) => void;
     onFilterOrgs: (filter: string) => void;
 }
 
@@ -92,15 +91,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         this.doSearch()
     }
 
-    onSortByChange(e: RadioChangeEvent) {
-        this.props.onSortOrgs(e.target.value, this.props.sortDirection)
-    }
-
-    onSortByChange2(value: string) {
-        this.props.onSortOrgs(value, this.props.sortDirection)
-    }
-
-    onSortByChange3(value: string) {
+    onSortByChange(value: string) {
         switch (value) {
             case 'owner':
                 this.props.onSortOrgs('owner', SortDirection.ASCENDING)
@@ -259,11 +250,12 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
     }
 
     renderSearchFilter() {
+
         return (
             <div>
                 <span className="field-label">sort by</span>
                 <Select
-                    onChange={this.onSortByChange3.bind(this)}
+                    onChange={this.onSortByChange.bind(this)}
                     defaultValue={this.props.sortBy}
                     dropdownMatchSelectWidth={true}
                     style={{ width: '10em' }}>
@@ -274,21 +266,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     <Select.Option value="newFirst" key="newFirst">New Activity</Select.Option>
 
                 </Select>
-                {/* <Select onChange={this.onSortByChange2.bind(this)}
-                    defaultValue={this.props.sortBy}
-                    style={{ width: '8em' }}
-                    dropdownMatchSelectWidth={true}>
-                    <Select.Option value="name" key="name">Org name</Select.Option>
-                    <Select.Option value="owner" key="owner">Owner</Select.Option>
-                    <Select.Option value="created" key="created">Date created</Select.Option>
-                </Select>
-                <Select onChange={this.onSortDirectionChange2.bind(this)}
-                    style={{ width: '10em' }}
-                    dropdownMatchSelectWidth={true}
-                    defaultValue={this.props.sortDirection}>
-                    <Select.Option value={SortDirection.ASCENDING} key="name"><Icon type="sort-ascending" />Ascending</Select.Option>
-                    <Select.Option value={SortDirection.DESCENDING} key="owner"><Icon type="sort-descending" />Descending</Select.Option>
-                </Select> */}
                 <span className="field-label" style={{ marginLeft: '10px' }}>filter</span>
                 <Select onChange={this.onFilterChange2.bind(this)}
                     defaultValue={this.props.filter}

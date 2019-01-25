@@ -9,6 +9,7 @@ import { ComponentView } from '../../../types';
 
 export interface BriefOrganizationProps {
     organization: orgModel.BriefOrganization
+    lastVisitedAt: Date | null
 }
 
 interface BriefOrganizationState {
@@ -136,12 +137,15 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         return (
             <div className="BriefOrganization">
                 <div className="BriefOrganization-body">
-                    <div className="BriefOrganization-col2">
+                    <div className="BriefOrganization-freshnessCol">
+                        {this.renderFreshness(org)}
+                    </div>
+                    <div className="BriefOrganization-logoCol">
                         <NavLink to={`/viewOrganization/${org.id}`}>
                             {this.renderLogo(org)}
                         </NavLink>
                     </div>
-                    <div className="BriefOrganization-col1">
+                    <div className="BriefOrganization-infoCol">
                         <div className="BriefOrganization-infoTable">
                             <div className="BriefOrganization-orgName BriefOrganization-infoTableRow">
                                 <NavLink to={`/viewOrganization/${org.id}`}>
@@ -221,17 +225,68 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         )
     }
 
+    renderFreshness(org: orgModel.BriefOrganization) {
+        // FAKE - remove
+        const lastVisitedAt = this.props.lastVisitedAt
+
+        const isNew = lastVisitedAt && (org.modifiedAt.getTime() > lastVisitedAt.getTime())
+        let newAlert
+        if (isNew) {
+            const title = 'This org has changed since your last visit to it'
+            newAlert = (
+                <div>
+                    <Tooltip placement="topRight" title={title}>
+                        <span style={{ color: 'red' }}>
+                            ●
+                    </span>
+                    </Tooltip>
+                </div>
+            )
+        } else {
+            newAlert = (
+                <div>
+                    <span style={{ color: 'transparent' }}>
+                        ●
+                    </span>
+                </div>
+            )
+        }
+
+        const hasRequests = false
+
+        let requestsAlert
+        if (hasRequests) {
+            requestsAlert = (
+                <div>
+                    <Icon type="bulb" style={{ color: "blue" }} />
+                </div>
+            )
+        } else {
+            requestsAlert = null
+        }
+
+        return (
+            <div>
+                {newAlert}
+                {requestsAlert}
+            </div>
+        )
+    }
+
     renderCompact() {
         const org = this.props.organization
         return (
             <div className="BriefOrganization">
                 <div className="BriefOrganization-body">
-                    <div className="BriefOrganization-col2">
+                    <div className="BriefOrganization-freshnessCol">
+                        {this.renderFreshness(org)}
+                    </div>
+                    <div className="BriefOrganization-logoCol">
                         <NavLink to={`/viewOrganization/${org.id}`}>
                             {this.renderLogo(org)}
                         </NavLink>
                     </div>
-                    <div className="BriefOrganization-col1">
+                    <div className="BriefOrganization-infoCol">
                         <div className="BriefOrganization-infoTable">
                             <div className="BriefOrganization-orgName BriefOrganization-infoTableRow">
                                 <NavLink to={`/viewOrganization/${org.id}`}>

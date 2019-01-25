@@ -344,7 +344,7 @@ export interface QueryResults {
 export interface Query {
     searchTerms: Array<string>
     username: groupsApi.Username
-    sortBy: string
+    sortField: string
     sortDirection: SortDirection
     filter: string
 }
@@ -374,9 +374,9 @@ export function applyOrgSearch(orgs: Array<BriefOrganization>, searchTerms: Arra
     return filteredOrgs
 }
 
-function applySort(organizations: Array<BriefOrganization>, sortBy: string, sortDirection: SortDirection): Array<BriefOrganization> {
+function applySort(organizations: Array<BriefOrganization>, sortField: string, sortDirection: SortDirection): Array<BriefOrganization> {
     const direction = sortDirection === SortDirection.ASCENDING ? 1 : -1
-    switch (sortBy) {
+    switch (sortField) {
         case 'created':
             return organizations.slice().sort((a, b) => {
                 return direction * (a.createdAt.getTime() - b.createdAt.getTime())
@@ -397,7 +397,7 @@ function applySort(organizations: Array<BriefOrganization>, sortBy: string, sort
                 return direction * a.owner.localeCompare(b.owner)
             })
         default:
-            console.warn('unimplemented sort field: ' + sortBy)
+            console.warn('unimplemented sort field: ' + sortField)
             return organizations;
     }
 }
@@ -542,7 +542,7 @@ export class OrganizationModel {
 
         const filtered = applyFilter(orgs, query.filter, query.username)
         const searched = applyOrgSearch(filtered, query.searchTerms)
-        const sorted = applySort(searched, query.sortBy, query.sortDirection)
+        const sorted = applySort(searched, query.sortField, query.sortDirection)
 
         return {
             organizations: sorted,

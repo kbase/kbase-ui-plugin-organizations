@@ -9,6 +9,7 @@
 }
 
 */
+
 .BriefOrganization-body {
     padding: 4px;
     display: flex;
@@ -16,15 +17,19 @@
     flex-direction: row;
 }
 
-.BriefOrganization-col1 {
+.BriefOrganization-freshnessCol {
+    flex: 0 0 32px;
+}
+
+.BriefOrganization-logoCol {
+    flex: 0 0 64px;
+}
+
+.BriefOrganization-infoCol {
     flex: 1 1 0px;
     margin-left: 10px;
     display: flex;
     flex-direction: column;
-}
-
-.BriefOrganization-col2 {
-    flex: 0 0 64px;
 }
 
 .BriefOrganization-orgName {

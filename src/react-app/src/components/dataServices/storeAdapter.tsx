@@ -1,7 +1,8 @@
 import { Dispatch, Action } from 'redux'
 import { connect } from 'react-redux'
 import { StoreState } from '../../types';
-import * as actions from '../../redux/actions/notifications'
+// import * as actions from '../../redux/actions/notifications'
+import * as actions from '../../redux/actions/dataServices'
 import Component from './component'
 
 export interface OwnProps {

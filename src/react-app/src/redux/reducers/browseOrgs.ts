@@ -125,7 +125,7 @@ export function sortOrgsStart(state: BrowseOrgsView, action: actions.SortOrgsSta
         ...state,
         viewModel: {
             ...state.viewModel,
-            sortBy: action.sortBy,
+            sortField: action.sortField,
             sortDirection: action.sortDirection,
             searching: true
         }
@@ -136,7 +136,7 @@ export function sortOrgsStart(state: BrowseOrgsView, action: actions.SortOrgsSta
 interface Query {
     searchTerms: Array<string>,
     username: string,
-    sortBy: string,
+    sortField: string,
     sortDirection: SortDirection,
     filter: string
 }
@@ -166,7 +166,7 @@ function filterOrgsStart(state: BrowseOrgsView, action: actions.FilterOrgsStart)
 
 function loadSuccess(state: BrowseOrgsView, action: actions.LoadSuccess): BrowseOrgsView {
     const { defaultViewModel: {
-        rawOrganizations, organizations, searchTerms, sortBy, sortDirection, filter,
+        rawOrganizations, organizations, searchTerms, sortField, sortDirection, filter,
         totalCount, filteredCount, selectedOrganizationId, error, searching
     } } = action
 
@@ -175,7 +175,7 @@ function loadSuccess(state: BrowseOrgsView, action: actions.LoadSuccess): Browse
         loadingState: ComponentLoadingState.SUCCESS,
         error: null,
         viewModel: {
-            rawOrganizations, organizations, searchTerms, sortBy, sortDirection, filter,
+            rawOrganizations, organizations, searchTerms, sortField, sortDirection, filter,
             totalCount, filteredCount, selectedOrganizationId, error, searching
         }
     }

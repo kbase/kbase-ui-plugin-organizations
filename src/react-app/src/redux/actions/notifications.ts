@@ -3,7 +3,6 @@ import { ThunkDispatch } from 'redux-thunk'
 import { ActionFlag } from './index'
 import { AppError, StoreState } from '../../types'
 import * as feedsModel from '../../data/models/feeds';
-import { ActionButtonState } from 'antd/lib/modal/ActionButton';
 
 export interface Load extends Action<ActionFlag.NOTIFICATIONS_LOAD> {
     type: ActionFlag.NOTIFICATIONS_LOAD
@@ -139,4 +138,3 @@ export function read(notificationId: feedsModel.NotificationID) {
         }
     }
 }
-
