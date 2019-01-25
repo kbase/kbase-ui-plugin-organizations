@@ -145,7 +145,8 @@ export class StateInstances {
                         Auth: {
                             url: ''
                         }
-                    }
+                    },
+                    defaultPath: ''
                 }
             },
 

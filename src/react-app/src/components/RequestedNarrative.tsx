@@ -172,7 +172,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
         } else {
             return (
                 <React.Fragment>
-                    <div className="title"><a href={'https://ci.kbase.us/narrative/ws.' + narrative.workspaceId + '.obj.' + '1'} target="_blank">{narrative.title}</a></div>
+                    <div className="title"><a href={'/narrative/ws.' + narrative.workspaceId + '.obj.' + '1'} target="_blank">{narrative.title}</a></div>
                     <div>{this.renderPublicPermission(narrative)}</div>
                     <div>{this.renderNarrativePermission(narrative)}</div>
 

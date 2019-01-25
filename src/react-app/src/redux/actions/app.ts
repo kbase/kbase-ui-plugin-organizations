@@ -49,6 +49,17 @@ export function appStart() {
         let iframeParams = new IFrameIntegration().getParamsFromIFrame()
 
         if (iframeParams) {
+            let defaultPath
+            switch (iframeParams.params.view) {
+                case 'org':
+                    defaultPath = '/viewOrganization/' + iframeParams.params.viewParams.id
+                    window.history.pushState(null, 'test', defaultPath)
+                    break
+                default:
+                    defaultPath = '/organizations'
+                    window.history.pushState(null, 'organizations', '/organizations')
+                    break
+            }
             dispatch(appSuccess({
                 baseUrl: '',
                 services: {
@@ -70,15 +81,10 @@ export function appStart() {
                     Auth: {
                         url: iframeParams.params.authServiceURL
                     }
-                }
+                },
+                defaultPath: defaultPath
             }))
-            switch (iframeParams.params.view) {
-                case 'org':
-                    const path = '/viewOrganization/' + iframeParams.params.viewParams.id
-                    window.history.pushState(null, 'test', path)
-                default:
-                    window.history.pushState(null, 'organizations', '/organizations')
-            }
+
         } else {
             iframeParams = new IFrameSimulator().getParamsFromIFrame()
             dispatch(appSuccess({
@@ -102,7 +108,8 @@ export function appStart() {
                     Auth: {
                         url: iframeParams.params.authServiceURL
                     }
-                }
+                },
+                defaultPath: '/organizations'
             }))
         }
 

@@ -13,7 +13,6 @@ interface MainMenuState {
 }
 
 class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
-
     constructor(props: MainMenuProps, context: React.Context<any>) {
         super(props)
 
@@ -22,12 +21,11 @@ class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
         }
     }
 
-
     onMenuSelection(e: ClickParam) {
         // this.setState({
         //     currentMenuItem: e.key
         // })
-        console.log('here', e.key)
+        // console.log('here', e.key)
         // switch (e.key) {
         //     case 'myorgs':
         //         this.props.history.push('/dashboard')

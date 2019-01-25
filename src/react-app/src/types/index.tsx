@@ -739,6 +739,7 @@ export interface AppConfig {
             url: string
         }
     }
+    defaultPath: string
 }
 
 export interface AuthProps {
