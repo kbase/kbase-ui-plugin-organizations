@@ -299,6 +299,8 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
                     <Select.Option value="adminOf" key="adminOf">You administer</Select.Option>
 
+                    <Select.Option value="private" key="private">Private orgs</Select.Option>
+
                     {/* <Select.Option value="pending" key="pending">Pending request or invitation</Select.Option>
                     <Select.Option value="groupPending" key="groupPending">Pending group requests</Select.Option> */}
                 </Select>

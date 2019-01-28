@@ -52,12 +52,18 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         }
         return (
             <div className="BriefOrganization-homeUrl">
-                <a href={org.homeUrl} target="_blank">
-                    <Icon type="home" />
-                    {' '}
-                    {org.homeUrl}
-                </a>
-            </div>
+                <Tooltip
+                    placement="bottomRight"
+                    mouseEnterDelay={0.5}
+                    title="Home page for this Organization (external to KBase)"
+                >
+                    <a href={org.homeUrl} target="_blank">
+                        <Icon type="home" />
+                        {' '}
+                        {org.homeUrl}
+                    </a>
+                </Tooltip>
+            </div >
         )
     }
 
@@ -132,6 +138,37 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         }
     }
 
+    renderPrivacy() {
+        const org = this.props.organization
+        if (org.private) {
+            return (
+                <Tooltip
+                    placement="bottomRight"
+                    mouseEnterDelay={0.5}
+                    title="This organization is private - may only be viewed by members">
+                    <span>
+                        <Icon type="unlock" />
+                        {' '}
+                        <span>Private</span>
+                    </span>
+                </Tooltip>
+            )
+        } else {
+            return (
+                <Tooltip
+                    placement="bottomRight"
+                    mouseEnterDelay={0.5}
+                    title="This organization is public - may be viewed by any KBase user">
+                    <span>
+                        <Icon type="global" />
+                        {' '}
+                        <span>Public</span>
+                    </span>
+                </Tooltip>
+            )
+        }
+    }
+
     renderNormal() {
         const org = this.props.organization
         return (
@@ -157,11 +194,15 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         </div>
                         <div className="BriefOrganization-infoCol-row">
                             <div className="BriefOrganization-infoCol-col1">
+
+                                <div className="BriefOrganization-researchInterests BriefOrganization-infoTableRow">
+                                    {org.researchInterests}
+                                </div>
                                 <div className="BriefOrganization-homeUrl BriefOrganization-infoTableRow">
                                     {this.renderHomeUrl(org)}
                                 </div>
-                                <div className="BriefOrganization-researchInterests BriefOrganization-infoTableRow">
-                                    {org.researchInterests}
+                                <div className="BriefOrganization-privacy">
+                                    {this.renderPrivacy()}
                                 </div>
                                 <div>
                                     {this.renderRelation(org)}

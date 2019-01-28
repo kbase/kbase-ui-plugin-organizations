@@ -474,6 +474,10 @@ function applyFilter(organizations: Array<BriefOrganization>, filter: string, us
         case 'adminOf':
             return organizations.filter((org) => (org.relation === UserRelationToOrganization.OWNER ||
                 org.relation === UserRelationToOrganization.ADMIN))
+        case 'private':
+            return organizations.filter((org) => {
+                return org.private
+            })
 
         // TODO: re-enable when have relation again...
         // case 'pending':
