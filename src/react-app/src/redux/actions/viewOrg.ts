@@ -4,7 +4,7 @@ import { ThunkDispatch } from 'redux-thunk'
 import { ActionFlag } from './index'
 import {
     StoreState,
-    AppError, UIError, UIErrorType
+    AppError, UIError, UIErrorType, ViewOrgViewModelKind
 } from '../../types'
 
 import * as orgModel from '../../data/models/organization/model'
@@ -14,7 +14,6 @@ import * as feedsModel from '../../data/models/feeds'
 import * as userProfileModel from '../../data/models/profile'
 import { loadNarrative } from './entities'
 import * as dataServices from './dataServices'
-
 
 // Action Types
 
@@ -27,8 +26,19 @@ export interface LoadStart extends Action {
     type: ActionFlag.VIEW_ORG_LOAD_START
 }
 
-export interface LoadSuccess extends Action {
-    type: ActionFlag.VIEW_ORG_LOAD_SUCCESS
+// export interface LoadSuccess extends Action {
+//     type: ActionFlag.VIEW_ORG_LOAD_SUCCESS
+//     organization: orgModel.Organization
+//     relation: orgModel.Relation
+//     groupRequests: Array<requestModel.Request> | null
+//     groupInvitations: Array<requestModel.Request> | null
+//     requestInbox: Array<requestModel.Request>
+//     requestOutbox: Array<requestModel.Request>
+//     notifications: Array<feedsModel.OrganizationNotification>
+// }
+
+export interface LoadNormalSuccess extends Action {
+    type: ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS
     organization: orgModel.Organization
     relation: orgModel.Relation
     groupRequests: Array<requestModel.Request> | null
@@ -36,6 +46,13 @@ export interface LoadSuccess extends Action {
     requestInbox: Array<requestModel.Request>
     requestOutbox: Array<requestModel.Request>
     notifications: Array<feedsModel.OrganizationNotification>
+}
+
+export interface LoadInaccessiblePrivateSuccess extends Action {
+    type: ActionFlag.VIEW_ORG_LOAD_INACCESSIBLE_PRIVATE_SUCCESS
+    organization: orgModel.InaccessiblePrivateOrganization
+    relation: orgModel.Relation
+    requestOutbox: Array<requestModel.Request>
 }
 
 export interface LoadError extends Action {
@@ -281,21 +298,21 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
             return
         }
 
+        const viewModel = state.views.viewOrgView.viewModel
+        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+            dispatch(accessNarrativeError({
+                code: 'error',
+                message: 'Not NORMAL org'
+            }))
+            return
+        }
+
+        const { organization } = viewModel
+
         const {
             auth: { authorization: { token, username } },
             app: { config },
-            views: {
-                viewOrgView: {
-                    viewModel: {
-                        organization
-                    }
-                }
-            }
         } = state
-
-        if (!organization) {
-            return
-        }
 
         const groupId = organization.id
         const resourceId = String(narrative.workspaceId)
@@ -312,6 +329,15 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
             // the narrative in the list of narratives provided by the groups api is updated, but
             // there may be other elements of the group/org which have changed as well. So be it.
             const org = await orgClient.getOrg(groupId)
+
+            if (org.kind !== orgModel.OrganizationKind.NORMAL) {
+                dispatch(accessNarrativeError({
+                    code: 'error',
+                    message: 'Not a NORMAL org'
+                }))
+                return
+            }
+
             dispatch(loadNarrative(narrative.workspaceId))
             dispatch(accessNarrativeSuccess(org))
         } catch (ex) {
@@ -334,18 +360,44 @@ export function loadStart(): LoadStart {
 
 
 
-export function loadSuccess(
+// export function loadSuccess(
+//     organization: orgModel.Organization,
+//     relation: orgModel.Relation,
+//     groupRequests: Array<requestModel.Request> | null,
+//     groupInvitations: Array<requestModel.Request> | null,
+//     requestInbox: Array<requestModel.Request>,
+//     requestOutbox: Array<requestModel.Request>,
+//     notifications: Array<feedsModel.OrganizationNotification>): LoadSuccess {
+//     return {
+//         type: ActionFlag.VIEW_ORG_LOAD_SUCCESS,
+//         organization, relation, groupRequests, groupInvitations,
+//         requestInbox, requestOutbox, notifications
+//     }
+// }
+
+export function loadNormalSuccess(
     organization: orgModel.Organization,
     relation: orgModel.Relation,
     groupRequests: Array<requestModel.Request> | null,
     groupInvitations: Array<requestModel.Request> | null,
     requestInbox: Array<requestModel.Request>,
     requestOutbox: Array<requestModel.Request>,
-    notifications: Array<feedsModel.OrganizationNotification>): LoadSuccess {
+    notifications: Array<feedsModel.OrganizationNotification>): LoadNormalSuccess {
     return {
-        type: ActionFlag.VIEW_ORG_LOAD_SUCCESS,
+        type: ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS,
         organization, relation, groupRequests, groupInvitations,
         requestInbox, requestOutbox, notifications
+    }
+}
+
+export function loadInaccessiblePrivateSuccess(
+    organization: orgModel.InaccessiblePrivateOrganization,
+    relation: orgModel.Relation,
+    requestOutbox: Array<requestModel.Request>): LoadInaccessiblePrivateSuccess {
+    return {
+        type: ActionFlag.VIEW_ORG_LOAD_INACCESSIBLE_PRIVATE_SUCCESS,
+        organization, relation,
+        requestOutbox
     }
 }
 
@@ -504,6 +556,16 @@ export function load(organizationId: string) {
 
         try {
             const { organization, relation } = await uberClient.getOrganizationForUser(organizationId)
+            if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
+                // dispatch(loadError({
+                //     code: 'typeError',
+                //     message: 'Organization should be of kind "NORMAL"'
+                // }))
+                // return
+                const requestInbox = await requestClient.getRequestInboxForOrg(organizationId)
+                dispatch(loadInaccessiblePrivateSuccess(organization, relation, requestInbox))
+                return
+            }
             let orgRequests: Array<requestModel.Request> | null
             let orgInvitations: Array<requestModel.Request> | null
             if (relation.type === orgModel.UserRelationToOrganization.OWNER ||
@@ -515,20 +577,14 @@ export function load(organizationId: string) {
                 orgInvitations = null
             }
 
-            let requestInbox: Array<requestModel.Request>
-            let requestOutbox: Array<requestModel.Request>
-            // if (relation.type === orgModel.UserRelationToOrganization.OWNER ||
-            //     relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-            //     relation.type === orgModel.UserRelationToOrganization.MEMBER) {
-            requestInbox = await requestClient.getCombinedRequestInboxForOrg(organizationId)
-            requestOutbox = await requestClient.getRequestOutboxForOrg(organizationId)
-            // }
+            const requestInbox: Array<requestModel.Request> = await requestClient.getCombinedRequestInboxForOrg(organizationId)
+            const requestOutbox: Array<requestModel.Request> = await requestClient.getRequestOutboxForOrg(organizationId)
 
-            const notifications: Array<feedsModel.OrganizationNotification> = all.filter((notification) => {
-                return (notification.organizationId === organizationId)
-            })
+            // const notifications: Array<feedsModel.OrganizationNotification> = all.filter((notification) => {
+            //     return (notification.organizationId === organizationId)
+            // })
 
-            dispatch(loadSuccess(organization, relation, orgRequests, orgInvitations, requestInbox, requestOutbox, notifications))
+            dispatch(loadNormalSuccess(organization, relation, orgRequests, orgInvitations, requestInbox, requestOutbox, []))
         } catch (ex) {
             dispatch(loadError({
                 code: ex.name,

@@ -150,7 +150,6 @@ export function sendInvitationSuccess(state: types.StoreState, action: actions.S
         return user
     })
 
-
     return {
         ...state,
         views: {
@@ -186,7 +185,6 @@ export function sendInvitationError(state: types.StoreState, action: actions.Sen
         }
     }
 }
-
 
 function reducer(state: types.StoreState, action: Action): types.StoreState | null {
     switch (action.type) {

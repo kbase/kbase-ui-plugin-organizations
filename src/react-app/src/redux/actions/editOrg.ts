@@ -340,6 +340,9 @@ export function load(organizationId: string) {
 
         return orgClient.getOrg(organizationId)
             .then((org) => {
+                if (org.kind !== orgModel.OrganizationKind.NORMAL) {
+                    throw new Error('May not edit an inaccessible private org!')
+                }
                 const editableOrg: EditableOrganization = {
                     id: {
                         value: org.id,

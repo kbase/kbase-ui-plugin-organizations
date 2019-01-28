@@ -78,6 +78,13 @@ export function load(organizationId: string) {
 
         try {
             const org = await orgClient.getOrg(organizationId)
+            if (org.kind !== orgModel.OrganizationKind.NORMAL) {
+                dispatch(loadError({
+                    code: 'invalid state',
+                    message: 'Organization kind must be "NORMAL"'
+                }))
+                return
+            }
             dispatch(loadSuccess(org))
         } catch (ex) {
             dispatch(loadError({

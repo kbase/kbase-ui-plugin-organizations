@@ -52,6 +52,12 @@ export interface BriefGroup {
     }
 }
 
+export interface InaccessiblePrivateGroup {
+    id: string
+    private: boolean
+    role: Role
+}
+
 export interface Group {
     id: string
     private: boolean
@@ -311,7 +317,7 @@ export class GroupsClient {
     }
 
 
-    getGroups(): Promise<Array<Group>> {
+    getGroups(): Promise<Array<Group | InaccessiblePrivateGroup>> {
         return fetch(this.url + '/group', {
             headers: {
                 Authorization: this.token,
@@ -334,7 +340,7 @@ export class GroupsClient {
             })
     }
 
-    getGroupById(id: string): Promise<Group> {
+    getGroupById(id: string): Promise<Group | InaccessiblePrivateGroup> {
         return fetch(this.url + '/group/' + id, {
             headers: {
                 Authorization: this.token,

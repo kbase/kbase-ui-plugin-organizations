@@ -73,7 +73,7 @@ export function load(organizationId: string) {
 
         try {
             const [org, narratives, request, invitation] = await Promise.all([
-                orgClient.getOrg(organizationId),
+                orgClient.getOrganization(organizationId),
                 narrativeClient.getOwnNarratives(organizationId),
                 requestClient.getUserRequestForOrg(organizationId),
                 requestClient.getUserInvitationForOrg(organizationId)

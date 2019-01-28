@@ -75,6 +75,13 @@ export function load(organizationId: string) {
         // TODO: here is where we would hook into the store state entities for groups
         try {
             const org = await orgClient.getOrg(organizationId)
+            if (org.kind !== orgModel.OrganizationKind.NORMAL) {
+                dispatch(loadError(makeError({
+                    code: 'invalid state',
+                    message: 'Organization must be of kind "NORMAL"'
+                })))
+                return
+            }
 
             if (!org.isMember) {
                 dispatch(loadError(makeError({

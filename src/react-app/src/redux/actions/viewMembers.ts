@@ -80,6 +80,13 @@ export function load(organizationId: string) {
 
         try {
             const { organization, relation } = await uberClient.getOrganizationForUser(organizationId)
+            if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
+                dispatch(loadError({
+                    code: 'invalid state',
+                    message: 'Organization must be of kind "NORMAL"'
+                }))
+                return
+            }
             dispatch(loadSuccess(organization, relation))
 
         } catch (ex) {

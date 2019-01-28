@@ -287,6 +287,13 @@ export function load(organizationId: string) {
                 requestClient.getPendingOrganizationRequestsForOrg(organizationId),
                 requestClient.getOrganizationInvitationsForOrg(organizationId)
             ])
+            if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
+                dispatch(loadError({
+                    code: 'invalid state',
+                    message: 'Organization must be of kind "NORMAL"'
+                }))
+                return
+            }
             dispatch(loadSuccess(organization, requests, invitations))
         } catch (ex) {
             dispatch(loadError({

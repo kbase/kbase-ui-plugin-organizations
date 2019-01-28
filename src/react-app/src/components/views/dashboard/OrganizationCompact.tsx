@@ -9,7 +9,7 @@ import OrgLogo from '../../OrgLogo';
 import Owner from '../../entities/OwnerContainer';
 
 export interface OrganizationProps {
-    organization: orgModel.Organization
+    organization: orgModel.Organization | orgModel.InaccessiblePrivateOrganization
 }
 
 enum View {
@@ -66,8 +66,7 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
         )
     }
 
-    renderNormal() {
-        const org = this.props.organization
+    renderNormal(org: orgModel.Organization) {
         return (
             <div className="OrganizationCompact" key={org.id}>
                 <div className="controlCol">
@@ -109,8 +108,7 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
         )
     }
 
-    renderCompact() {
-        const org = this.props.organization
+    renderCompact(org: orgModel.Organization) {
         return (
             <div className="OrganizationCompact" key={org.id}>
                 <div className="controlCol">
@@ -137,17 +135,25 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
     }
 
     render() {
+        const org = this.props.organization
+        if (org.kind !== orgModel.OrganizationKind.NORMAL) {
+            return (
+                <div>
+                    Private Organization
+                </div>
+            )
+        }
         switch (this.state.view) {
             case View.COMPACT:
                 return (
                     <div className="User View-COMPACT">
-                        {this.renderCompact()}
+                        {this.renderCompact(org)}
                     </div>
                 )
             case View.NORMAL:
                 return (
                     <div className="User View-NORMAL">
-                        {this.renderNormal()}
+                        {this.renderNormal(org)}
                     </div>
                 )
         }

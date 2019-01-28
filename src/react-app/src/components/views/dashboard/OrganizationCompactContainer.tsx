@@ -4,7 +4,7 @@ import OrganizationCompact from './OrganizationCompact'
 
 interface LoaderProps {
     organizationId: orgModel.OrganizationID
-    organization: orgModel.Organization | undefined
+    organization: orgModel.Organization | orgModel.InaccessiblePrivateOrganization | undefined
     onLoad: (organizationId: orgModel.OrganizationID) => void
 }
 
@@ -49,7 +49,7 @@ export interface OwnProps {
 }
 
 interface StateProps {
-    organization: orgModel.Organization | undefined
+    organization: orgModel.Organization | orgModel.InaccessiblePrivateOrganization | undefined
 }
 
 interface DispatchProps {

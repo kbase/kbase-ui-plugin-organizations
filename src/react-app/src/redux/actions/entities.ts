@@ -78,9 +78,6 @@ export function userLoader(userId: userModel.Username) {
 }
 
 
-
-
-
 export interface OrganizationLoader extends EntityAction {
     type: ActionFlag.ENTITY_ORGANIZATION_LOADER,
     organizationId: orgModel.OrganizationID
@@ -92,7 +89,7 @@ export interface OrganizationLoaderStart extends EntityAction {
 
 export interface OrganizationLoaderSuccess extends EntityAction {
     type: ActionFlag.ENTITY_ORGANIZATION_LOADER_SUCCESS,
-    organization: orgModel.Organization
+    organization: orgModel.Organization | orgModel.InaccessiblePrivateOrganization
 }
 
 export interface OrganizationLoaderError extends EntityAction {
@@ -107,7 +104,7 @@ export function organizationLoaderStart(): OrganizationLoaderStart {
     }
 }
 
-export function organizationLoaderSuccess(organization: orgModel.Organization): OrganizationLoaderSuccess {
+export function organizationLoaderSuccess(organization: orgModel.Organization | orgModel.InaccessiblePrivateOrganization): OrganizationLoaderSuccess {
     return {
         type: ActionFlag.ENTITY_ORGANIZATION_LOADER_SUCCESS,
         organization: organization
@@ -287,6 +284,13 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
         try {
             await orgClient.grantNarrativeAccess(groupId, resourceId)
             const org = await orgClient.getOrg(groupId)
+            if (org.kind !== orgModel.OrganizationKind.NORMAL) {
+                dispatch(accessNarrativeError({
+                    code: 'invalid state',
+                    message: 'Cannot access a Narrative for an inaccessible Organization'
+                }))
+                return
+            }
             dispatch(accessNarrativeSuccess(org))
         } catch (ex) {
             dispatch(accessNarrativeError({

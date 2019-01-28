@@ -1,16 +1,16 @@
 import { Dispatch, Action } from 'redux'
 import { connect } from 'react-redux'
 
-import { StoreState } from '../../../types'
-import * as actions from '../../../redux/actions/viewOrg'
-import * as acceptInboxRequestActions from '../../../redux/actions/viewOrganization/acceptInboxRequest'
-import * as notificationActions from '../../../redux/actions/notifications'
+import { StoreState, ViewOrgViewModelKind } from '../../../../types'
+import * as actions from '../../../../redux/actions/viewOrg'
+import * as acceptInboxRequestActions from '../../../../redux/actions/viewOrganization/acceptInboxRequest'
+import * as notificationActions from '../../../../redux/actions/notifications'
 
 import ViewOrganization from './component'
 
-import * as orgModel from '../../../data/models/organization/model'
-import * as requestModel from '../../../data/models/requests'
-import * as feedsModel from '../../../data/models/feeds'
+import * as orgModel from '../../../../data/models/organization/model'
+import * as requestModel from '../../../../data/models/requests'
+import * as feedsModel from '../../../../data/models/feeds'
 
 // Props for this component
 
@@ -50,17 +50,17 @@ interface DispatchProps {
 
 
 function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
-    if (!state.views.viewOrgView.viewModel) {
+    const viewModel = state.views.viewOrgView.viewModel
+    if (!viewModel) {
         throw new Error('argh, view model missing')
     }
+    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+        throw new Error("argh, wrong org kind")
+    }
     const {
-        views: {
-            viewOrgView: {
-                viewModel: {
-                    organization, relation, groupRequests, groupInvitations, requestInbox, requestOutbox
-                }
-            }
-        },
+        organization, relation, groupRequests, groupInvitations, requestInbox, requestOutbox
+    } = viewModel
+    const {
         db: {
             notifications: { all }
         }

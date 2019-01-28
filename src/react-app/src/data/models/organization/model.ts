@@ -139,7 +139,20 @@ export interface BriefOrganization {
     narrativeCount: number
 }
 
+export enum OrganizationKind {
+    NORMAL = 0,
+    INACCESSIBLE_PRIVATE
+}
+
+export interface InaccessiblePrivateOrganization {
+    kind: OrganizationKind.INACCESSIBLE_PRIVATE
+    id: string
+    isPrivate: boolean
+    relation: UserRelationToOrganization
+}
+
 export interface Organization {
+    kind: OrganizationKind.NORMAL
     id: string
     name: string
     isPrivate: boolean
@@ -163,10 +176,29 @@ export interface Organization {
 }
 
 export function determineRelation(
-    org: Organization,
+    org: Organization | InaccessiblePrivateOrganization,
     username: userModel.Username,
     request: requestModel.UserRequest | null,
     invitation: requestModel.UserInvitation | null): Relation {
+
+    if (org.kind === OrganizationKind.INACCESSIBLE_PRIVATE) {
+        if (request && request.user === username) {
+            return {
+                type: UserRelationToOrganization.MEMBER_REQUEST_PENDING,
+                requestId: request.id
+            } as MembershipRequestPendingRelation
+        } else if (invitation && invitation.user === username) {
+            return {
+                type: UserRelationToOrganization.MEMBER_INVITATION_PENDING,
+                requestId: invitation.id
+            } as MembershipInvitationPendingRelation
+        } else {
+            return {
+                type: UserRelationToOrganization.NONE
+            } as NoRelation
+        }
+    }
+
     if (username === org.owner.username) {
         return {
             type: UserRelationToOrganization.OWNER
@@ -230,7 +262,7 @@ function groupPermissionToWorkspacePermission(groupsPermission: string): UserWor
 }
 
 export function groupToOrganization(group: groupsApi.Group, currentUser: Username): Organization {
-
+    console.log('group?', group)
     const owner: Member = {
         username: group.owner.name,
         joinedAt: new Date(group.owner.joined),
@@ -269,6 +301,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
 
 
     return {
+        kind: OrganizationKind.NORMAL,
         id: group.id,
         name: group.name,
         isPrivate: group.private,
@@ -288,6 +321,16 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         memberCount: group.memcount,
         narrativeCount: group.rescount.workspace || 0,
         appCount: group.rescount.catalogmethod || 0
+    }
+}
+
+export function groupToPrivateOrganization(group: groupsApi.InaccessiblePrivateGroup, currentUser: Username): InaccessiblePrivateOrganization {
+    return {
+        kind: OrganizationKind.INACCESSIBLE_PRIVATE,
+        id: group.id,
+        isPrivate: group.private,
+        // isMember: false,
+        relation: groupRoleToUserRelation(group.role)
     }
 }
 
@@ -454,7 +497,7 @@ export class OrganizationModel {
 
     params: ConstructorParams
     groupsClient: groupsApi.GroupsClient
-    organizations: Map<OrganizationID, Organization>
+    organizations: Map<OrganizationID, Organization | InaccessiblePrivateOrganization>
 
     constructor(params: ConstructorParams) {
         this.params = params
@@ -465,25 +508,51 @@ export class OrganizationModel {
         this.organizations = new Map<OrganizationID, Organization>()
     }
 
-    async getOrg(id: OrganizationID): Promise<Organization> {
+    async getOrg(id: OrganizationID): Promise<Organization | InaccessiblePrivateOrganization> {
         if (this.organizations.has(id)) {
             return this.organizations.get(id)!
         }
         return this.groupsClient.getGroupById(id)
             .then((group) => {
-                const org = groupToOrganization(group, this.params.username)
+                let org: Organization | InaccessiblePrivateOrganization
+                if (group.role === "none" && group.private) {
+                    org = groupToPrivateOrganization(group as groupsApi.InaccessiblePrivateGroup, this.params.username)
+                } else {
+                    org = groupToOrganization(group as groupsApi.Group, this.params.username)
+                }
                 this.organizations.set(id, org)
                 return org
             })
     }
 
-    async getOrgs(ids: Array<OrganizationID>): Promise<Array<Organization>> {
+    async getOrganization(id: OrganizationID): Promise<Organization> {
+        if (this.organizations.has(id)) {
+            const org = this.organizations.get(id)!
+            if (org.kind !== OrganizationKind.NORMAL) {
+                throw new Error('Inaccessible Organization')
+            }
+            return org
+        }
+        return this.groupsClient.getGroupById(id)
+            .then((group) => {
+
+                if (group.role === "none" && group.private) {
+                    throw new Error('Inaccessible Organization')
+                }
+
+                const org = groupToOrganization(group as groupsApi.Group, this.params.username)
+                this.organizations.set(id, org)
+                return org
+            })
+    }
+
+    async getOrgs(ids: Array<OrganizationID>): Promise<Array<Organization | InaccessiblePrivateOrganization>> {
         return Promise.all(ids.map((id) => {
             return this.getOrg(id)
         }))
     }
 
-    async getAllOrgs(): Promise<Array<Organization>> {
+    async getAllOrgs(): Promise<Array<Organization | InaccessiblePrivateOrganization>> {
         const groups = await this.groupsClient.getGroups()
         const ids = groups.map((group) => {
             return group.id

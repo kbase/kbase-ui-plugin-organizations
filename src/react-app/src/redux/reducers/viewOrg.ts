@@ -3,6 +3,7 @@ import * as actions from '../actions/viewOrg'
 import * as types from '../../types'
 import { ActionFlag } from '../actions'
 import acceptInboxRequest from './viewOrganization/acceptInboxRequest'
+import * as orgModel from '../../data/models/organization/model'
 
 export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
     return {
@@ -18,7 +19,7 @@ export function loadStart(state: types.StoreState, action: actions.LoadStart): t
     }
 }
 
-export function loadSuccess(state: types.StoreState, action: actions.LoadSuccess): types.StoreState {
+export function loadNormalSuccess(state: types.StoreState, action: actions.LoadNormalSuccess): types.StoreState {
     return {
         ...state,
         views: {
@@ -27,13 +28,33 @@ export function loadSuccess(state: types.StoreState, action: actions.LoadSuccess
                 loadingState: types.ComponentLoadingState.SUCCESS,
                 error: null,
                 viewModel: {
+                    kind: types.ViewOrgViewModelKind.NORMAL,
                     organization: action.organization,
                     relation: action.relation,
                     groupRequests: action.groupRequests,
                     groupInvitations: action.groupInvitations,
                     requestInbox: action.requestInbox,
                     requestOutbox: action.requestOutbox
-                }
+                } as types.ViewOrgViewModel
+            }
+        }
+    }
+}
+
+export function loadInaccessiblePrivateSuccess(state: types.StoreState, action: actions.LoadInaccessiblePrivateSuccess): types.StoreState {
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            viewOrgView: {
+                loadingState: types.ComponentLoadingState.SUCCESS,
+                error: null,
+                viewModel: {
+                    kind: types.ViewOrgViewModelKind.PRIVATE_INACCESSIBLE,
+                    organization: action.organization,
+                    relation: action.relation,
+                    requestOutbox: action.requestOutbox
+                } as types.ViewInaccessiblePrivateOrgViewModel
             }
         }
     }
@@ -71,6 +92,10 @@ export function removeNarrativeSuccess(state: types.StoreState, action: actions.
     if (!state.views.viewOrgView.viewModel) {
         return state
     }
+    // Argh!@
+    if (state.views.viewOrgView.viewModel.kind !== types.ViewOrgViewModelKind.NORMAL) {
+        return state
+    }
     const newNarratives = state.views.viewOrgView.viewModel.organization.narratives.filter((narrative) => {
         return (narrative.workspaceId !== action.narrative.workspaceId)
     })
@@ -96,7 +121,9 @@ export function accessNarrativeSuccess(state: types.StoreState, action: actions.
     if (!state.views.viewOrgView.viewModel) {
         return state
     }
-
+    if (state.views.viewOrgView.viewModel.kind !== types.ViewOrgViewModelKind.NORMAL) {
+        return state
+    }
     return {
         ...state,
         views: {
@@ -119,8 +146,10 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
     switch (action.type) {
         case ActionFlag.VIEW_ORG_LOAD_START:
             return loadStart(state, action as actions.LoadStart)
-        case ActionFlag.VIEW_ORG_LOAD_SUCCESS:
-            return loadSuccess(state, action as actions.LoadSuccess)
+        case ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS:
+            return loadNormalSuccess(state, action as actions.LoadNormalSuccess)
+        case ActionFlag.VIEW_ORG_LOAD_INACCESSIBLE_PRIVATE_SUCCESS:
+            return loadInaccessiblePrivateSuccess(state, action as actions.LoadInaccessiblePrivateSuccess)
         case ActionFlag.VIEW_ORG_LOAD_ERROR:
             return loadError(state, action as actions.LoadError)
         case ActionFlag.VIEW_ORG_UNLOAD:

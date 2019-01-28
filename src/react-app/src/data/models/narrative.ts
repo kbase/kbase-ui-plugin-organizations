@@ -114,6 +114,10 @@ export class NarrativeModel {
             requestClient.getPendingRequestsForOrg(organizationId)
         ])
 
+        if (organization.kind === orgModel.OrganizationKind.INACCESSIBLE_PRIVATE) {
+            throw new Error('Cannot get own narratives for private inaccessible organization')
+        }
+
         const workspacesInOrg = organization.narratives.map((narrative) => {
             return narrative.workspaceId
         })

@@ -5,7 +5,7 @@ import './OrganizationInline.css'
 import OrgLogo from '../OrgLogo';
 
 export interface OrganizationProps {
-    organization: orgModel.Organization
+    organization: orgModel.Organization | orgModel.InaccessiblePrivateOrganization
 }
 
 interface OrganizationState {
@@ -23,6 +23,13 @@ export default class OrganizationCompact extends React.Component<OrganizationPro
     }
 
     render() {
+        if (this.props.organization.kind === orgModel.OrganizationKind.INACCESSIBLE_PRIVATE) {
+            return (
+                <div>
+                    Private Organization
+                </div>
+            )
+        }
         return (
             <span className="OrganizationInline">
                 <NavLink to={`/viewOrganization/${this.props.organization.id}`}>

@@ -73,8 +73,7 @@ export default class Organization extends React.Component<OrganizationProps, Org
         return singular
     }
 
-    renderMemberCount() {
-        const org = this.props.organization.organization
+    renderMemberCount(org: orgModel.Organization) {
         return (
             <div className="memberCount">
                 {org.members.length > 0 ? org.members.length : 'no'} {this.pluralize(org.members.length, 'member', 'members')}
@@ -83,6 +82,10 @@ export default class Organization extends React.Component<OrganizationProps, Org
     }
 
     renderRelationInfo() {
+        const org = this.props.organization
+        if (org.organization.kind === orgModel.OrganizationKind.INACCESSIBLE_PRIVATE) {
+            return
+        }
         switch (this.props.organization.relation.type) {
             case orgModel.UserRelationToOrganization.NONE:
                 return (
@@ -99,7 +102,7 @@ export default class Organization extends React.Component<OrganizationProps, Org
             case orgModel.UserRelationToOrganization.MEMBER:
                 return (
                     <div>
-                        {this.renderMemberCount()}
+                        {this.renderMemberCount(org.organization)}
                     </div>
                 )
                 break
@@ -118,14 +121,14 @@ export default class Organization extends React.Component<OrganizationProps, Org
             case orgModel.UserRelationToOrganization.ADMIN:
                 return (
                     <div>
-                        {this.renderMemberCount()}
+                        {this.renderMemberCount(org.organization)}
                     </div>
                 )
                 break
             case orgModel.UserRelationToOrganization.OWNER:
                 return (
                     <div>
-                        {this.renderMemberCount()}
+                        {this.renderMemberCount(org.organization)}
                     </div>
                 )
                 break
@@ -217,6 +220,12 @@ export default class Organization extends React.Component<OrganizationProps, Org
     }
 
     render() {
+        // FORNOW
+
+
+        if (this.props.organization.organization.kind === orgModel.OrganizationKind.INACCESSIBLE_PRIVATE) {
+            return
+        }
         const org = this.props.organization.organization
         return (
             <div className="Organization" key={org.id}>

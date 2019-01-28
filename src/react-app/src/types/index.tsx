@@ -563,7 +563,13 @@ export interface OrganizationCentricViewModel {
     relation: orgModel.Relation
 }
 
+export enum ViewOrgViewModelKind {
+    NORMAL = 0,
+    PRIVATE_INACCESSIBLE
+}
+
 export interface ViewOrgViewModel {
+    kind: ViewOrgViewModelKind.NORMAL,
     organization: orgModel.Organization
     relation: orgModel.Relation
     groupRequests: Array<requestModel.Request> | null
@@ -572,10 +578,17 @@ export interface ViewOrgViewModel {
     requestInbox: Array<requestModel.Request>
 }
 
+export interface ViewInaccessiblePrivateOrgViewModel {
+    kind: ViewOrgViewModelKind.PRIVATE_INACCESSIBLE,
+    organization: orgModel.InaccessiblePrivateOrganization
+    relation: orgModel.Relation
+    requestOutbox: Array<requestModel.Request>
+}
+
 export interface ViewOrgView {
     loadingState: ComponentLoadingState
     error: AppError | null
-    viewModel: ViewOrgViewModel | null
+    viewModel: ViewOrgViewModel | ViewInaccessiblePrivateOrgViewModel | null
 }
 
 export interface EditOrgViewModel {
@@ -605,7 +618,7 @@ export interface StoreState {
             all: Array<string>
         }
         orgs: {
-            byId: Map<orgModel.OrganizationID, orgModel.Organization>
+            byId: Map<orgModel.OrganizationID, orgModel.Organization | orgModel.InaccessiblePrivateOrganization>
             all: Array<string>
         }
         requests: {

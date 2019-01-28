@@ -3,7 +3,7 @@ import * as orgModel from './organization/model'
 import { RequestType } from '../../types';
 
 export interface UberOrganization {
-    organization: orgModel.Organization
+    organization: orgModel.Organization | orgModel.InaccessiblePrivateOrganization
     request: requestModel.UserRequest | null
     invitation: requestModel.UserInvitation | null
     relation: orgModel.Relation,

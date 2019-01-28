@@ -1,6 +1,7 @@
 import * as React from 'react'
 
-import Container from './container'
+import AccessibleContainer from './accessible/container'
+import InaccessibleContainer from './inaccessible/container'
 import { Spin, Alert } from 'antd';
 
 export interface Props {
@@ -47,7 +48,6 @@ class Loader extends React.Component<Props, State> {
     }
 
     render() {
-
         switch (this.props.view.loadingState) {
             case types.ComponentLoadingState.NONE:
                 return this.renderLoading()
@@ -63,8 +63,23 @@ class Loader extends React.Component<Props, State> {
                     })
                 }
             default:
+                if (this.props.view.viewModel === null) {
+                    return this.renderError({
+                        code: 'Null Error',
+                        message: 'The view model is missing, but should be available'
+                    })
+                }
+                if (this.props.view.viewModel.organization.kind === OrganizationKind.INACCESSIBLE_PRIVATE) {
+                    return (
+                        <InaccessibleContainer />
+                    )
+                    // return this.renderError({
+                    //     code: 'Unsupported',
+                    //     message: 'Private orgs are not currently supported'
+                    // })
+                }
                 return (
-                    <Container />
+                    <AccessibleContainer />
                 )
         }
     }
@@ -88,6 +103,7 @@ import { connect } from 'react-redux'
 
 import * as types from '../../../types'
 import * as actions from '../../../redux/actions/viewOrg'
+import { OrganizationKind } from '../../../data/models/organization/model';
 
 export interface OwnProps {
     organizationId: string

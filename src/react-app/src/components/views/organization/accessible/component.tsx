@@ -4,18 +4,18 @@ import { NavLink, Redirect } from 'react-router-dom'
 
 import './component.css'
 
-import { } from '../../../types'
+import { } from '../../../../types'
 import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu, Alert, Tabs } from 'antd'
-import Header from '../../Header'
-import Member from '../../entities/MemberContainer'
-import OrganizationHeader from '../organizationHeader/loader'
-import * as orgModel from '../../../data/models/organization/model'
-import * as requestModel from '../../../data/models/requests'
-import * as feedsModel from '../../../data/models/feeds'
-import OrganizationNarrative from '../../OrganizationNarrative'
-import InboxRequest from '../dashboard/InboxRequestContainer'
-import OutboxRequest from '../dashboard/OutboxRequestContainer'
-import Notifications from '../../notifications/component'
+import Header from '../../../Header'
+import Member from '../../../entities/MemberContainer'
+import OrganizationHeader from '../../organizationHeader/loader'
+import * as orgModel from '../../../../data/models/organization/model'
+import * as requestModel from '../../../../data/models/requests'
+import * as feedsModel from '../../../../data/models/feeds'
+import OrganizationNarrative from '../../../OrganizationNarrative'
+import InboxRequest from '../../dashboard/InboxRequestContainer'
+import OutboxRequest from '../../dashboard/OutboxRequestContainer'
+import Notifications from '../../../notifications/component'
 
 enum NavigateTo {
     NONE = 0,
@@ -63,7 +63,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     onViewMembers() {
-
     }
 
     onJoinClick() {
@@ -117,7 +116,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             width: '50em',
             content: (
                 <div>
-                    <p>This is the organizations viewer...</p>
+                    Organization help here...
                 </div>
             )
         })

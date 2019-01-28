@@ -48,11 +48,11 @@ export function loadSuccess({
     pendingJoinInvitation,
     relation
 }: {
-        organization: orgModel.Organization,
-        pendingJoinRequest: requestModel.UserRequest | null,
-        pendingJoinInvitation: requestModel.UserInvitation | null,
-        relation: orgModel.Relation
-    }
+    organization: orgModel.Organization,
+    pendingJoinRequest: requestModel.UserRequest | null,
+    pendingJoinInvitation: requestModel.UserInvitation | null,
+    relation: orgModel.Relation
+}
 ): LoadSuccess {
     return {
         type: ActionFlag.ORGANIZATION_CENTRIC_VIEW_LOAD_SUCCESS,
@@ -97,6 +97,13 @@ export function load(organizationId: orgModel.OrganizationID) {
         try {
             // get org
             const organization = await orgClient.getOrg(organizationId)
+            if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
+                dispatch(loadError({
+                    code: 'invalid state',
+                    message: 'Organization must be of kind "NORMAL"'
+                }))
+                return
+            }
 
             // get pending requests
             const request = await requestClient.getUserRequestForOrg(organizationId)
