@@ -73,34 +73,29 @@ class Member extends React.Component<MemberProps, MemberState> {
     renderCompact() {
         return (
             <div className="Member View-COMPACT" >
-                <div className="controlCol">
+                <div className="Member-controlCol">
                     <a onClick={this.onToggleView.bind(this)}
                         className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
                     >
                         <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
                     </a>
                 </div>
-                <div className="avatarCol">
+                <div className="Member-avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
-                <div className="infoCol">
-                    <div className="name">
+                <div className="Member-infoCol">
+                    <div className="Member-name">
                         <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
                         {' '}
                         ❨{this.props.user.username}❩
                     </div>
-                    <div className="role">
+                    <div className="Member-role">
                         {this.renderRole()}
                     </div>
-                    <div className="joinedAt">
-                        <span className="field-label">joined</span>{' '}{Intl.DateTimeFormat('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(this.props.member.joinedAt)}
+                    <div className="Member-title">
+                        {this.props.member.title || this.props.user.title}
                     </div>
                 </div>
-
             </div>
         )
     }
@@ -108,39 +103,40 @@ class Member extends React.Component<MemberProps, MemberState> {
     renderNormal() {
         return (
             <div className="Member View-NORMAL" >
-                <div className="controlCol">
+                <div className="Member-controlCol">
                     <a onClick={this.onToggleView.bind(this)}
                         className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
                     >
                         <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
                     </a>
                 </div>
-                <div className="avatarCol">
+                <div className="Member-avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
-                <div className="infoCol">
-                    <div className="name">
+                <div className="Member-infoCol">
+                    <div className="Member-name">
                         <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
                         {' '}
                         ❨{this.props.user.username}❩
                     </div>
-                    <div className="role">
+                    <div className="Member-role">
                         {this.renderRole()}
                     </div>
-                    <div className="joinedAt">
+                    <div className="Member-title">
+                        {this.props.member.title || this.props.user.title}
+                    </div>
+                    <div className="Member-joinedAt">
                         <span className="field-label">joined</span>{' '}{Intl.DateTimeFormat('en-US', {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric'
                         }).format(this.props.member.joinedAt)}
                     </div>
-                    <div className="title">
-                        {this.props.user.title || <i>no title in user profile</i>}
-                    </div>
-                    <div className="organization">
+
+                    <div className="Member-organization">
                         {this.props.user.organization || <i>no organization in user profile</i>}
                     </div>
-                    <div className="location">
+                    <div className="Member-location">
                         {[this.props.user.city, this.props.user.state, this.props.user.country].filter(x => x).join(', ') || <i>no location information in user profile</i>}
                     </div>
                 </div>
@@ -158,39 +154,6 @@ class Member extends React.Component<MemberProps, MemberState> {
                 return this.renderNormal()
         }
     }
-
-    // render() {
-    //     return (
-    //         <div className="Member" >
-    //             <div className="role">
-    //                 {this.renderRole()}
-    //             </div>
-
-    //             <User userId={this.props.member.username} avatarSize={this.props.avatarSize || 30} />
-
-    //             {/* <div className="avatarCol">
-    //                 <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
-    //             </div>
-    //             <div className="infoCol">
-    //                 <div className="name">
-    //                     <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
-    //                     {' '}
-    //                     ❨{this.props.user.username}❩
-    //                 </div>
-
-    //                 <div className="title">
-    //                     {this.props.user.title || <i>no title in user profile</i>}
-    //                 </div>
-    //                 <div className="organization">
-    //                     {this.props.user.organization || <i>no organization in user profile</i>}
-    //                 </div>
-    //                 <div className="location">
-    //                     {[this.props.user.city, this.props.user.state, this.props.user.country].filter(x => x).join(', ') || <i>no location information in user profile</i>}
-    //                 </div>
-    //             </div> */}
-    //         </div>
-    //     )
-    // }
 }
 
 export default Member

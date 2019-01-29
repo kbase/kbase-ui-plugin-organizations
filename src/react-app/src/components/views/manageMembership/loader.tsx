@@ -18,6 +18,14 @@ class Loader extends React.Component<Props, State> {
         super(props)
     }
 
+    renderLoadingNone() {
+        return (
+            <div>
+                Loading membership editor (none)...
+            </div>
+        )
+    }
+
     renderLoading() {
         return (
             <div>
@@ -35,7 +43,7 @@ class Loader extends React.Component<Props, State> {
     render() {
         switch (this.props.view.loadingState) {
             case ComponentLoadingState.NONE:
-                return this.renderLoading()
+                return this.renderLoadingNone()
             case ComponentLoadingState.LOADING:
                 return this.renderLoading()
             case ComponentLoadingState.ERROR:

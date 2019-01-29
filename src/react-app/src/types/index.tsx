@@ -435,6 +435,9 @@ export interface InviteUserView {
 export interface ManageMembershipViewModel {
     organization: orgModel.Organization
     editableMemberProfile: orgModel.EditableMemberProfile
+    editState: EditState
+    saveState: SaveState
+    validationState: ValidationState
 }
 
 export interface ManageMembershipView {

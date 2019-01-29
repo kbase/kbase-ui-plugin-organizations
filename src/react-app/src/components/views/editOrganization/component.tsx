@@ -12,7 +12,6 @@ import Header from '../../Header';
 import OrganizationHeader from '../organizationHeader/loader';
 import * as orgModel from '../../../data/models/organization/model'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import OrgLogo from '../../OrgLogo'
 import TextArea from 'antd/lib/input/TextArea';
 
 export interface EditOrganizationProps {
@@ -129,18 +128,18 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     }
 
     onSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        this.props.onEditOrgSave();
+        e.preventDefault()
+        this.props.onEditOrgSave()
     }
 
     onNameChange(e: React.ChangeEvent<HTMLInputElement>) {
-        e.persist();
-        this.props.onUpdateName(e.target.value);
+        e.persist()
+        this.props.onUpdateName(e.target.value)
     }
 
     onDescriptionChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
         e.persist()
-        this.props.onUpdateDescription(e.target.value);
+        this.props.onUpdateDescription(e.target.value)
     }
 
     onIdChange(e: React.ChangeEvent<HTMLInputElement>) {

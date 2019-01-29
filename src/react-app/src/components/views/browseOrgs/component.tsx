@@ -289,9 +289,13 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     disabled={this.state.filterType !== 'filter'}
                     style={{ width: '16em' }}
                     dropdownMatchSelectWidth={true}>
+
                     <Select.Option value="all" key="all">All</Select.Option>
 
                     <Select.Option value="memberOf" key="memberOf">You are a member of</Select.Option>
+
+                    <Select.Option value="onlyMemberOf" key="onlyMemberOf">Member of, not admin</Select.Option>
+
                     <Select.Option value="notMemberOf" key="memberOf">You are not a member of</Select.Option>
 
                     <Select.Option value="owned" key="owned">Owned by you</Select.Option>

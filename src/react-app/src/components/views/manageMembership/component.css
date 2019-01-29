@@ -4,44 +4,90 @@
     flex-direction: column;
 }
 
-.ManageMembership .body {
+.ManageMembership-body {
     flex: 0 0 auto;
     display: flex;
     flex-direction: row;
 }
 
-.ManageMembership .body .col1 {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: column;
-    border: 1px red solid;
-    margin-right: 5px;
-}
-
-.ManageMembership .body .col2 {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: column;
-    border: 1px red solid;
-    margin-left: 5px;
-}
-
-.ManageMembership .editorTable {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: column;
-}
-
-.ManageMembership .editorTable-row {
-    flex: 1 1 0px;
+.ManageMembership-editCell {
     display: flex;
     flex-direction: row;
 }
 
-.ManageMembership .editorTable .editorTable-row .editorTable-labelCol {
-    flex: 0 0 10em;
+.ManageMembership-previewCell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.ManageMembership .editorTable .editorTable-row .editorTable-controlCol {
+.ManageMembership-editCol {
     flex: 1 1 0px;
+    margin-right: 5px;
+}
+
+.ManageMembership-previewCol {
+    flex: 1 1 0px;
+    margin-left: 5px;
+}
+
+.ManageMembership-editorTable {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ManageMembership-editorTable-row {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.ManageMembership-editorTable-labelCol {
+    flex: 0 0 10em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.ManageMembership-editorTable-controlCol {
+    flex: 1 1 0px;
+}
+
+.ManageMembership-validation-ok {
+    border: 1px transparent solid;
+}
+
+.ManageMembership-validation-error {
+    border: 1px red solid;
+}
+
+.ManageMembership-sync-dirty {
+    border: 1px orange solid;
+}
+
+.ManageMembership-titleLabel {}
+
+.ManageMembership-titlePreview {}
+
+.ManageMembership-editorFooter {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.ManageMembership-headerRow {
+    margin-bottom: 10px;
+    /* border-bottom: 1px rgba(150, 150, 150, 1) solid; */
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.ManageMembership-headerCol {
+    padding: 8px;
+    border-bottom: 2px rgba(200, 200, 200, 0.8) solid;
+    text-align: center;
+    font-style: bold;
+    font-size: 120%;
+    color: rgba(150, 150, 150, 1)
 }

@@ -387,13 +387,16 @@ export class GroupsClient {
                         default:
                             throw new Error('Unexpected content type: ' + response.headers.get('Content-Type'))
                     }
-                } else if (response.status !== 200) {
-                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
-                } else {
+                } else if (response.status === 200) {
                     return response.json()
                         .then((result) => {
                             return result as T
                         })
+                } else if (response.status === 204) {
+                    const result = null as unknown
+                    return result as T
+                } else {
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
                 }
             })
     }
@@ -807,6 +810,14 @@ export class GroupsClient {
             })
     }
 
+    updateMember({ groupId, memberUsername, update }: { groupId: string, memberUsername: string, update: any }): Promise<void> {
+        const path = [
+            'group', groupId, 'user', memberUsername, 'update'
+        ]
+
+        return this.put<void>(path, { custom: update })
+    }
+
     removeMember({ groupId, member }: { groupId: string, member: string }): Promise<void> {
         const url = [
             this.url, 'group', groupId, 'user', member
@@ -823,7 +834,6 @@ export class GroupsClient {
                 if (response.status !== 204) {
                     throw new Error('Unexpected response: ' + response.status + ':' + response.statusText)
                 }
-
             })
     }
 

@@ -31,18 +31,6 @@ export interface User {
     gravatarDefault: string | null
 }
 
-export enum MemberType {
-    MEMBER = 0,
-    ADMIN,
-    OWNER
-}
-export interface Member {
-    username: groupsApi.Username,
-    joinedAt: Date
-    type: MemberType
-    title: string
-}
-
 export interface EditableMemberProfile {
     title: EditableString
 }
@@ -94,9 +82,20 @@ export type Relation = NoRelation | ViewRelation | MembershipRequestPendingRelat
 
 export type Username = string
 
+export enum MemberType {
+    MEMBER = 0,
+    ADMIN,
+    OWNER
+}
 export interface Member {
-    username: Username
+    username: groupsApi.Username,
+    joinedAt: Date
     type: MemberType
+    title: string
+}
+
+export interface MemberUpdate {
+    title?: string
 }
 
 export enum UserWorkspacePermission {
@@ -262,7 +261,7 @@ function groupPermissionToWorkspacePermission(groupsPermission: string): UserWor
 }
 
 export function groupToOrganization(group: groupsApi.Group, currentUser: Username): Organization {
-    console.log('group?', group)
+
     const owner: Member = {
         username: group.owner.name,
         joinedAt: new Date(group.owner.joined),
@@ -271,7 +270,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
     }
 
     // We join admins and members, since they are all members, just different privileges in the org
-    const members: Array<Member> = (<Array<Member>>[
+    const members = (<Array<Member>>[
         // owner
     ]).concat(group.admins.map((admin) => {
         return {
@@ -466,6 +465,10 @@ function applyFilter(organizations: Array<BriefOrganization>, filter: string, us
         case 'memberOf':
             return organizations.filter((org) => {
                 return (org.relation !== UserRelationToOrganization.NONE)
+            })
+        case 'onlyMemberOf':
+            return organizations.filter((org) => {
+                return (org.relation === UserRelationToOrganization.MEMBER)
             })
         case 'owned':
             return organizations.filter((org) => (org.relation === UserRelationToOrganization.OWNER))
@@ -821,7 +824,7 @@ export class OrganizationModel {
         }
     }
 
-    memberToAdmin(groupId: string, member: string): Promise<void> {
+    async memberToAdmin(groupId: string, member: string): Promise<void> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
@@ -833,7 +836,7 @@ export class OrganizationModel {
         })
     }
 
-    adminToMember(groupId: string, member: string): Promise<void> {
+    async adminToMember(groupId: string, member: string): Promise<void> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
@@ -844,7 +847,7 @@ export class OrganizationModel {
             member
         })
     }
-    removeMember(groupId: string, member: string): Promise<void> {
+    async removeMember(groupId: string, member: string): Promise<void> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
@@ -856,6 +859,14 @@ export class OrganizationModel {
         })
     }
 
+    async updateMember(groupId: string, memberUsername: string, update: MemberUpdate) {
+        const groupsClient = new groupsApi.GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        return groupsClient.updateMember({ groupId, memberUsername, update })
+    }
 }
 
 

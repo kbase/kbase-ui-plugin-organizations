@@ -1,48 +1,76 @@
 import * as React from 'react'
 import Header from '../../Header';
 import { Icon, Button, Modal, Input } from 'antd';
-import { Redirect, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import './component.css'
 import OrganizationHeader from '../organizationHeader/loader';
 import * as orgModel from '../../../data/models/organization/model'
 import * as userModel from '../../../data/models/user'
+import { Editable, ValidationErrorType, SyncState, EditState, SaveState, ValidationState } from '../../../types';
 
 export interface ManageMembershipProps {
     username: userModel.Username
     organization: orgModel.Organization
+    editableMemberProfile: orgModel.EditableMemberProfile
+    editState: EditState
+    saveState: SaveState
+    validationState: ValidationState
     onLeaveOrganization: (organizationId: string) => void
+    onUpdateTitle: (title: string) => void
+    onSave: () => void
 }
 
 interface MangeMembershipState {
-    cancelToBrowser: boolean
-    cancelToViewer: boolean
 }
 
 class ManageMembership extends React.Component<ManageMembershipProps, MangeMembershipState> {
     constructor(props: ManageMembershipProps) {
         super(props)
-
-        this.state = {
-            cancelToBrowser: false,
-            cancelToViewer: false
-        }
-    }
-
-    doCancelToViewer() {
-        this.setState({ cancelToViewer: true })
-    }
-
-    doCancelToBrowser() {
-        this.setState({ cancelToBrowser: true })
     }
 
     doLeaveOrg() {
+        // alert('this will leave you the org')
+        // this.props.onLeaveOrganization(this.props.organization.id)
+        const confirmed = (() => {
+            this.doLeaveOrgConfirmed()
+        }).bind(this)
+        Modal.confirm({
+            title: 'Really leave this organization?',
+            content: (
+                <p>
+                    This is not reversible.
+                </p>
+            ),
+            width: '50em',
+            onOk: () => {
+                confirmed()
+            }
+        })
+    }
+
+    doLeaveOrgConfirmed() {
         // alert('this will leave you the org')
         this.props.onLeaveOrganization(this.props.organization.id)
     }
 
     canSave() {
-        return false
+        return (
+            this.props.editState === EditState.EDITED &&
+            this.props.validationState.type === ValidationErrorType.OK &&
+            (this.props.saveState === SaveState.NEW ||
+                this.props.saveState === SaveState.READY ||
+                this.props.saveState === SaveState.SAVED)
+        )
+    }
+
+    onSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+        this.props.onSave()
+    }
+
+    onTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        e.persist()
+        this.props.onUpdateTitle(e.target.value)
     }
 
     doShowInfo() {
@@ -96,13 +124,7 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                     onClick={this.doCancelToViewer.bind(this)}>
                     Return to this Org
                 </Button> */}
-                <Button icon="save"
-                    form="editMembershipForm"
-                    key="submit"
-                    disabled={!this.canSave.call(this)}
-                    htmlType="submit">
-                    Save
-                </Button>
+
                 <Button
                     // shape="circle"
                     type="danger"
@@ -110,6 +132,7 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                     onClick={this.doLeaveOrg.bind(this)}>
                     Leave Organization...
                 </Button>
+                {' '}
                 <Button
                     shape="circle"
                     icon="info"
@@ -132,57 +155,82 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         )
     }
 
-    render() {
-
-        if (this.state.cancelToBrowser) {
-            return <Redirect push to="/organizations" />
+    calcFieldClass(field: Editable) {
+        switch (field.validationState.type) {
+            // case (ValidationErrorType.OK):
+            //     return 'validation-ok'
+            case (ValidationErrorType.ERROR):
+                return 'ManageMembership-validation-error'
+            case (ValidationErrorType.REQUIRED_MISSING):
+                return 'ManageMembership-validation-error'
         }
 
-        if (this.state.cancelToViewer) {
-            return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
+        switch (field.syncState) {
+            case (SyncState.DIRTY):
+                return 'ManageMembership-sync-dirty'
+            default:
+                return 'ManageMembership-validation-ok'
         }
+    }
 
+    renderEditor() {
         return (
-            <div className="ManageMembership">
-                {this.renderHeader()}
-                {this.renderOrgHeader()}
-                <h3>
-                    Edit Organization Profile
-                </h3>
-                <div className="body">
-                    <div className="col1">
-                        <div className="editorTable">
-                            <div className="editorTable-row">
-                                <div className="editorTable-labelCol">
-                                    <span className="field-label">
-                                        title
-                                    </span>
-                                </div>
-                                <div className="editorTable-controlCol">
-                                    <Input />
-                                </div>
-                            </div>
-
+            <form id="editMembership"
+                className="ManageMembership-editorTable"
+                onSubmit={this.onSubmit.bind(this)}>
+                <div className="ManageMembership-headerRow">
+                    <div className="ManageMembership-editCol ManageMembership-headerCol">
+                        Edit
+                    </div>
+                    <div className="ManageMembership-editCol ManageMembership-headerCol">
+                        Preview
+                    </div>
+                </div>
+                <div className="ManageMembership-editorTable-row">
+                    <div className="ManageMembership-editCol ManageMembership-editCell">
+                        <div className="ManageMembership-editorTable-labelCol">
+                            <span className="field-label ManageMembership-titleLabel">
+                                title
+                            </span>
+                        </div>
+                        <div className="ManageMembership-editorTable-controlCol">
+                            <Input value={this.props.editableMemberProfile.title.value || ''}
+                                className={this.calcFieldClass(this.props.editableMemberProfile.title)}
+                                onChange={this.onTitleChange.bind(this)} />
                         </div>
                     </div>
-                    <div className="col2">
-                        <div>
-                            org user profile here
+                    <div className="ManageMembership-previewCol ManageMembership-previewCell">
+                        <div className="ManageMembership-titlePreview">
+                            {this.props.editableMemberProfile.title.value}
                         </div>
                     </div>
                 </div>
+                <div className="ManageMembership-editorFooter">
+                    <Button icon="save"
+                        form="editMembership"
+                        key="submit"
+                        disabled={!this.canSave.call(this)}
+                        htmlType="submit">
+                        Save
+                </Button>
+                </div>
+            </form>
+        )
+    }
+
+    render() {
+        return (
+            <div className="ManageMembership">
+                {this.renderOrgHeader()}
+                {this.renderHeader()}
                 <h3>
-                    User Profile
+                    Edit Your Membership Profile
                 </h3>
-                <p>
-                    Your user profile is ...
-                </p>
-                {/* <h3>
-                    Leave Org
-                </h3>
-                <Button>
-                    Leave This Org
-                </Button> */}
+
+                <div className="ManageMembership-body">
+                    {this.renderEditor()}
+                </div>
+
             </div>
         )
     }

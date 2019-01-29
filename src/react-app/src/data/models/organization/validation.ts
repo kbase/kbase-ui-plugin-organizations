@@ -243,4 +243,21 @@ export default class Validation {
             }
         ]
     }
+
+    static validateMemberTitle(title: string): [string, ValidationState] {
+        const maxTitleLength = 100
+        if (title.length > maxTitleLength) {
+            return [
+                title, {
+                    type: ValidationErrorType.ERROR,
+                    message: `member title may not be longer than ${maxTitleLength} characters`,
+                    validatedAt: new Date()
+                }]
+        }
+        return [
+            title, {
+                type: ValidationErrorType.OK,
+                validatedAt: new Date()
+            }]
+    }
 }
