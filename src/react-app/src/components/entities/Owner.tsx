@@ -3,7 +3,7 @@ import './Owner.css'
 
 import Avatar from './Avatar'
 import { } from '../../types';
-import { Icon } from 'antd';
+import { Icon, Tooltip } from 'antd';
 import * as orgModel from '../../data/models/organization/model'
 import * as userModel from '../../data/models/user'
 import User from './UserContainer'
@@ -57,26 +57,30 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
 
     renderCompact() {
         return (
-            <div className="Owner View-COMPACT" >
-                <div className="Owner-controlCol">
+            <div className="Owner-owner" >
+                {/* <div className="Owner-controlCol">
                     <a onClick={this.onToggleView.bind(this)}
                         className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
                     >
                         <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
                     </a>
-                </div>
+                </div> */}
 
                 <div className="Owner-avatarCol">
                     <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
                 </div>
                 <div className="Owner-infoCol">
                     <div className="Owner-name">
-                        <a href={"/#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
+                        <Tooltip
+                            placement="bottomRight"
+                            title={this.props.user.username}>
+                            <a href={"/#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
+                        </Tooltip>
 
                     </div>
-                    <div className="Owner-username">
+                    {/* <div className="Owner-username">
                         {this.props.user.username}
-                    </div>
+                    </div> */}
                 </div>
             </div>
         )
@@ -128,46 +132,14 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
     }
 
     render() {
-        switch (this.state.view) {
-            case View.COMPACT:
-                return this.renderCompact()
+        return this.renderCompact()
+        // switch (this.state.view) {
+        //     case View.COMPACT:
+        //         return this.renderCompact()
 
-            case View.NORMAL:
-                return this.renderNormal()
-        }
+        //     case View.NORMAL:
+        //         return this.renderNormal()
+        // }
     }
-
-    // render() {
-    //     return (
-    //         <div className="Member" >
-    //             <div className="role">
-    //                 {this.renderRole()}
-    //             </div>
-
-    //             <User userId={this.props.member.username} avatarSize={this.props.avatarSize || 30} />
-
-    //             {/* <div className="avatarCol">
-    //                 <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
-    //             </div>
-    //             <div className="infoCol">
-    //                 <div className="name">
-    //                     <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
-    //                     {' '}
-    //                     ❨{this.props.user.username}❩
-    //                 </div>
-
-    //                 <div className="title">
-    //                     {this.props.user.title || <i>no title in user profile</i>}
-    //                 </div>
-    //                 <div className="organization">
-    //                     {this.props.user.organization || <i>no organization in user profile</i>}
-    //                 </div>
-    //                 <div className="location">
-    //                     {[this.props.user.city, this.props.user.state, this.props.user.country].filter(x => x).join(', ') || <i>no location information in user profile</i>}
-    //                 </div>
-    //             </div> */}
-    //         </div>
-    //     )
-    // }
 }
 

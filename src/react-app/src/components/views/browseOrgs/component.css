@@ -139,3 +139,20 @@
     display: block;
     margin-bottom: 4px;
 }
+
+.OrganizationsBrowser-hover {
+    padding: 3px;
+}
+
+.OrganizationsBrowser-hover:hover {
+    background-color: rgba(200, 200, 200, 0.5)
+}
+
+.OrganizationsBrowser-hover-pressed {
+    padding: 3px;
+    background-color: rgba(200, 200, 200, 1)
+}
+
+.OrganizationsBrowser-hover-pressed:hover {
+    background-color: rgba(200, 200, 200, 0.5)
+}

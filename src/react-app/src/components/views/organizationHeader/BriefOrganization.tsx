@@ -212,6 +212,35 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                             <div className="BriefOrganization-infoCol-col2">
                                 <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
                                     <div className="BriefOrganization-infoTableCol1">
+                                        <span className="field-label">members</span>
+                                    </div>
+                                    <div className="BriefOrganization-infoTableCol2">
+                                        {this.renderMemberCount(org)}
+                                    </div>
+                                </div>
+                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                                    <div className="BriefOrganization-infoTableCol1">
+                                        <span className="field-label">narratives</span>
+                                    </div>
+                                    <div className="BriefOrganization-infoTableCol2">
+                                        {this.renderNarrativeCount(org)}
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div className="BriefOrganization-infoCol-col3">
+                                <div className="BriefOrganization-orgOwner BriefOrganization-infoTableRow">
+                                    <div className="BriefOrganization-infoTableCol1">
+                                        <span className="field-label">owner</span>
+                                    </div>
+                                    <div className="BriefOrganization-infoTableCol2">
+                                        {/* TODO: render as Member or Owner component */}
+                                        <Owner username={org.owner} avatarSize={16} />
+                                    </div>
+                                </div>
+                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                                    <div className="BriefOrganization-infoTableCol1">
                                         <span className="field-label">established</span>
                                     </div>
                                     <div className="BriefOrganization-infoTableCol2">
@@ -232,33 +261,6 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                                             day: 'numeric',
                                             year: 'numeric'
                                         }).format(org.modifiedAt)}</span>
-                                    </div>
-                                </div>
-                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                    <div className="BriefOrganization-infoTableCol1">
-                                        <span className="field-label">members</span>
-                                    </div>
-                                    <div className="BriefOrganization-infoTableCol2">
-                                        {this.renderMemberCount(org)}
-                                    </div>
-                                </div>
-                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                    <div className="BriefOrganization-infoTableCol1">
-                                        <span className="field-label">narratives</span>
-                                    </div>
-                                    <div className="BriefOrganization-infoTableCol2">
-                                        {this.renderNarrativeCount(org)}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="BriefOrganization-infoCol-col3">
-                                <div className="BriefOrganization-orgOwner BriefOrganization-infoTableRow">
-                                    <div className="BriefOrganization-infoTableCol1" style={{ flex: '0 0 4em' }}>
-                                        <span className="field-label">owner</span>
-                                    </div>
-                                    <div className="BriefOrganization-infoTableCol2">
-                                        {/* TODO: render as Member or Owner component */}
-                                        <Owner username={org.owner} avatarSize={30} />
                                     </div>
                                 </div>
                             </div>

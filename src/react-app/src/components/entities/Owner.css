@@ -7,7 +7,6 @@
 .Owner-avatarCol {
     flex: 0 0 auto;
     margin-right: 4px;
-    padding-top: 4px;
 }
 
 .Owner-infoCol {
@@ -29,4 +28,11 @@
 
 .Owner-username {
     font-style: italic;
+}
+
+.Owner-owner {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }

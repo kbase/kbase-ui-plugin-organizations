@@ -334,11 +334,31 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         )
     }
 
-    onToggleAdvanced(checked: boolean) {
-        this.setState({ showAdvancedControls: !this.state.showAdvancedControls })
+    // onToggleAdvanced(checked: boolean) {
+    //     this.setState({ showAdvancedControls: !this.state.showAdvancedControls })
+    //     // When switching back to basic filter mode, we need to ensure that advanced 
+    //     // filtering is removed.
+    //     if (!checked) {
+    //         let { roleType, roles, privacy } = this.props.filter
+    //         if (!['myorgs', 'all'].includes(roleType)) {
+    //             roleType = 'myorgs'
+    //             this.setState({ filterByRoleType: 'myorgs' })
+    //         }
+    //         this.setState({ filterByRole: [], filterByPrivacy: 'any' })
+    //         roles = []
+    //         privacy = 'any'
+    //         this.props.onFilterOrgs({
+    //             roleType, roles, privacy
+    //         })
+    //     }
+    // }
+
+    onToggleAdvanced() {
+        // this.setState({ showAdvancedControls: !this.state.showAdvancedControls })
         // When switching back to basic filter mode, we need to ensure that advanced 
         // filtering is removed.
-        if (!checked) {
+        if (this.state.showAdvancedControls) {
+            this.setState({ showAdvancedControls: false })
             let { roleType, roles, privacy } = this.props.filter
             if (!['myorgs', 'all'].includes(roleType)) {
                 roleType = 'myorgs'
@@ -350,29 +370,49 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
             this.props.onFilterOrgs({
                 roleType, roles, privacy
             })
+        } else {
+            this.setState({ showAdvancedControls: true })
         }
     }
 
+    // renderAdvancedToggle() {
+    //     return (
+    //         <Switch
+    //             checked={this.state.showAdvancedControls}
+    //             onChange={this.onToggleAdvanced.bind(this)}
+    //             unCheckedChildren={<span>Click for Advanced</span>}
+    //             checkedChildren={<span>Advanced</span>}>
+
+    //         </Switch>
+    //     )
+    //     // if (this.state.showAdvancedControls) {
+    //     //     return (
+
+    //     //         <Icon type="up" onClick={this.onToggleAdvanced.bind(this)} />
+    //     //     )
+    //     // } else {
+    //     //     return (
+    //     //         <Icon type="down" onClick={this.onToggleAdvanced.bind(this)} />
+    //     //     )
+    //     // }
+    // }
+
     renderAdvancedToggle() {
-        return (
-            <Switch
-                checked={this.state.showAdvancedControls}
-                onChange={this.onToggleAdvanced.bind(this)}
-                unCheckedChildren={<span>Click for Advanced</span>}
-                checkedChildren={<span>Advanced</span>}>
-
-            </Switch>
-        )
-        // if (this.state.showAdvancedControls) {
-        //     return (
-
-        //         <Icon type="up" onClick={this.onToggleAdvanced.bind(this)} />
-        //     )
-        // } else {
-        //     return (
-        //         <Icon type="down" onClick={this.onToggleAdvanced.bind(this)} />
-        //     )
-        // }
+        if (this.state.showAdvancedControls) {
+            return (
+                <Icon
+                    type="ellipsis"
+                    className="OrganizationsBrowser-hover-pressed"
+                    onClick={this.onToggleAdvanced.bind(this)} />
+            )
+        } else {
+            return (
+                <Icon
+                    type="ellipsis"
+                    className="OrganizationsBrowser-hover"
+                    onClick={this.onToggleAdvanced.bind(this)} />
+            )
+        }
     }
 
     renderFilterByRole() {
@@ -391,9 +431,11 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
                         <Radio value="myorgs" style={radioStyle}>My Orgs</Radio>
                         <Radio value="all" style={radioStyle}>All Orgs</Radio>
+                        {this.renderAdvancedToggle()}
                         <Radio value="notmyorgs" style={radioStyle}>Not My Orgs</Radio>
                         <Radio value="select" style={radioStyle}>Specific Role</Radio>
                     </Radio.Group>
+
                     <Checkbox.Group
                         options={this.filterByRoleValues}
                         value={this.state.filterByRole}
@@ -410,6 +452,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
                         <Radio value="myorgs" style={radioStyle}>My Orgs</Radio>
                         <Radio value="all" style={radioStyle}>All Orgs</Radio>
+                        {this.renderAdvancedToggle()}
                     </Radio.Group>
                 </React.Fragment>
             )
@@ -463,14 +506,13 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
     renderFilterColumn() {
         return (
             <React.Fragment>
-                {this.renderAdvancedToggle()}
+
 
                 <div className="field-label">sort by</div>
                 {this.renderSortByControl()}
 
                 <div className="field-label" style={{ marginTop: '10px' }}>filter</div>
 
-                <div className="field-label">by role</div>
                 {this.renderFilterByRole()}
 
                 {this.state.showAdvancedControls ? (
