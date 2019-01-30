@@ -21,7 +21,7 @@ export type RawWorkspaceInfo = [
     string, // moddate - iso8601 timestamp when last modified
     number, // max_objid - last object id assigned to object in workspace
     string, // user_permission - permission of user who made reqeust wrt workspace
-    number, // globalread - int bool whether this workspace is shared globally
+    string, // globalread - int bool whether this workspace is shared globally
     string, // lockstat - status of the workspace lock
     Metadata // metadata
 ]
@@ -79,7 +79,7 @@ export function workspaceInfoToObject(wsInfo: RawWorkspaceInfo): WorkspaceInfo {
         modifiedAt: iso8601ToDate(wsInfo[3]),
         objectCount: wsInfo[4],
         userPermission: wsInfo[5],
-        globalReadPermission: wsInfo[6] === 1 ? true : false,
+        globalReadPermission: wsInfo[6] === 'r' ? true : false,
         lockStatus: wsInfo[7],
         metadata: wsInfo[8]
     }

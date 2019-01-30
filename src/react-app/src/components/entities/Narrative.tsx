@@ -43,11 +43,12 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
     }
 
     renderPublicPermission(narrative: narrativeModel.AccessibleNarrative) {
+        console.log('narr', narrative)
         if (narrative.isPublic) {
             return (
                 <Tooltip title="This narrative is viewable by all KBase users" placement="right">
                     <span style={{ cursor: 'help' }}>
-                        <Icon type="globe" /> Public Narrative
+                        <Icon type="global" /> Public Narrative
                     </span>
                 </Tooltip>
             )
