@@ -104,7 +104,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     <span>
                         <Icon type="stop" />
                         {' '}
-                        You are <b>not a member</b> of this organization
+                        You are <b>not a member</b>
                     </span>
                 )
             case (orgModel.UserRelationToOrganization.VIEW):
@@ -122,9 +122,9 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
                 return (<span><Icon type="user" style={{ color: 'blue' }} /> You have been <b>invited</b> to join</span>)
             case (orgModel.UserRelationToOrganization.MEMBER):
-                return (<span><Icon type="user" /> You are a <b>member</b> of this organization</span>)
+                return (<span><Icon type="user" /> You are a <b>member</b></span>)
             case (orgModel.UserRelationToOrganization.ADMIN):
-                return (<span><Icon type="unlock" /> You are an <b>admin</b> of this organization</span>)
+                return (<span><Icon type="unlock" /> You are an <b>admin</b></span>)
             case (orgModel.UserRelationToOrganization.OWNER):
                 return (
                     <Tooltip
@@ -132,7 +132,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         mouseEnterDelay={0.5}
                         title="You own this org"
                     >
-                        <span><Icon type="crown" /> You are the <b>owner</b> of this Organization</span>
+                        <span><Icon type="crown" /> You are the <b>owner</b></span>
                     </Tooltip>
                 )
         }
@@ -174,13 +174,14 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         return (
             <div className="BriefOrganization">
                 <div className="BriefOrganization-body">
-                    <div className="BriefOrganization-freshnessCol">
+                    {/* <div className="BriefOrganization-freshnessCol">
                         {this.renderFreshness(org)}
-                    </div>
+                    </div> */}
                     <div className="BriefOrganization-logoCol">
                         <NavLink to={`/viewOrganization/${org.id}`}>
                             {this.renderLogo(org)}
                         </NavLink>
+                        {this.renderFreshness(org)}
                     </div>
                     <div className="BriefOrganization-infoCol">
                         <div className="BriefOrganization-infoCol-row">

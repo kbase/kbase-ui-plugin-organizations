@@ -15,7 +15,7 @@ export interface LinkStateProps {
     organizations: Array<orgModel.BriefOrganization>
     totalCount: number
     filteredCount: number
-    filter: string
+    filter: orgModel.Filter
     searching: boolean,
     error: AppError | null
 }
@@ -23,7 +23,7 @@ export interface LinkStateProps {
 export interface LinkDispatchProps {
     onSearchOrgs: (searchTerms: Array<string>) => void,
     onSortOrgs: (sortField: string, sortDirection: SortDirection) => void,
-    onFilterOrgs: (filter: string) => void
+    onFilterOrgs: (filter: orgModel.Filter) => void
 }
 
 // note second arg is the component props, but we don't have any component props to merge in.
@@ -63,7 +63,7 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.SearchOrgs | actio
             // TODO proper typing here
             dispatch(actions.sortOrgs(sortBy, sortDirection) as any)
         },
-        onFilterOrgs: (filter: string) => {
+        onFilterOrgs: (filter: orgModel.Filter) => {
             dispatch(actions.filterOrgs(filter) as any)
         }
     }

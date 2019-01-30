@@ -381,7 +381,7 @@ export interface BrowseOrgsViewModel {
     filteredCount: number
     sortField: string
     sortDirection: SortDirection
-    filter: string
+    filter: orgModel.Filter
     searchTerms: Array<string>
     selectedOrganizationId: string | null,
     // TODO: let's make a new interface for running operations...

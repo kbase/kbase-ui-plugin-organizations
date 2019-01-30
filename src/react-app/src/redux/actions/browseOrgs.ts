@@ -156,11 +156,11 @@ export interface FilterOrgs extends Action<ActionFlag.BROWSE_ORGS_FILTER> {
 
 export interface FilterOrgsStart extends Action<ActionFlag.BROWSE_ORGS_FILTER_START> {
     type: ActionFlag.BROWSE_ORGS_FILTER_START,
-    filter: string
+    filter: orgModel.Filter
 }
 
 
-export function filterOrgsStart(filter: string): FilterOrgsStart {
+export function filterOrgsStart(filter: orgModel.Filter): FilterOrgsStart {
     return {
         type: ActionFlag.BROWSE_ORGS_FILTER_START,
         filter: filter
@@ -179,7 +179,7 @@ export function load() {
             filteredCount: 0,
             sortField: 'changed',
             sortDirection: SortDirection.DESCENDING,
-            filter: 'memberOf',
+            filter: { roleType: 'myorgs', roles: [], privacy: 'any' },
             searchTerms: [],
             selectedOrganizationId: null,
             searching: false,
@@ -274,7 +274,7 @@ export function sortOrgs(sortField: string, sortDirection: SortDirection) {
     }
 }
 
-export function filterOrgs(filter: string) {
+export function filterOrgs(filter: orgModel.Filter) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(filterOrgsStart(filter))
 

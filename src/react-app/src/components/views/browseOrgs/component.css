@@ -4,7 +4,7 @@
     flex-direction: column;
 }
 
-.OrganizationsBrowser>.searchBarRow {
+.OrganizationsBrowser-searchBarRow {
     flex: 0 0 auto;
     display: flex;
     flex-direction: row;
@@ -13,27 +13,41 @@
     border-bottom: 1px rgba(200, 200, 200, 0.5) solid;
 }
 
-.OrganizationsBrowser>.bodyRow {
+.OrganizationsBrowser-bodyRow {
     flex: 1 1 0px;
     display: flex;
     flex-direction: row;
+    min-height: 0;
 }
 
-.OrganizationsBrowser>*>.col1 {
+.OrganizationsBrowser-filterCol {
+    flex: 0 0 12em;
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.OrganizationsBrowser-bodyCol {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.OrganizationsBrowser-col1 {
     flex: 0 0 14em;
     margin: 0 0 0 10px;
     display: flex;
     flex-direction: column;
 }
 
-.OrganizationsBrowser>*>.col2 {
+.OrganizationsBrowser-col2 {
     flex: 1 1 0px;
     margin: 0 0 0 0;
     display: flex;
     flex-direction: column;
 }
 
-.OrganizationsBrowser>*>.sortCol {
+.OrganizationsBrowser-sortCol {
     flex: 1.5 1 0px;
     margin: 0 0 0 10px;
     display: flex;
@@ -41,7 +55,7 @@
     align-items: flex-end;
 }
 
-.OrganizationsBrowser>*>.searchBarCol {
+.OrganizationsBrowser-searchBarCol {
     flex: 1 1 0px;
     margin: 0 10px 0 0;
     display: flex;
@@ -50,19 +64,19 @@
 
 .OrganizationsBrowser-controlArea {}
 
-.OrganizationsBrowser-controlArea>.controlGroup {
+.OrganizationsBrowser-controlGroup {
     border: 1px rgba(200, 200, 200, 0.5) solid;
     margin-bottom: 14px;
     padding: 4px;
     border-radius: 8px;
 }
 
-.OrganizationsBrowser-controlArea>.controlGroup .radio {
+.OrganizationsBrowser-controlGroup-radio {
     display: block;
     height: 1.8em;
 }
 
-.OrganizationsBrowser-controlArea>.controlGroup>.header {
+.OrganizationsBrowser-controlArea-controlGroup-header {
     font-weight: bold;
     color: rgba(150, 150, 150, 1);
     text-align: center;
@@ -113,4 +127,15 @@
 .OrganizationsBrowser-searchBar .message {
     display: inline-block;
     margin-left: 1em;
+}
+
+.OrganizationsBrowser-checkboxGroup.ant-checkbox-group {
+    display: block;
+    margin-left: 8px;
+}
+
+.OrganizationsBrowser-checkboxGroup .ant-checkbox-group-item,
+.OrganizationsBrowser-checkboxGroup .ant-checkbox-group-item+.ant-checkbox-group-item {
+    display: block;
+    margin-bottom: 4px;
 }

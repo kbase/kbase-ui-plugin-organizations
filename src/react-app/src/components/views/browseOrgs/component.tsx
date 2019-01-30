@@ -1,35 +1,45 @@
 import * as React from 'react';
-import { NavLink } from 'react-router-dom'
 
 import Organizations from '../../organizations/container';
 import { SortDirection, AppError } from '../../../types';
 
 import './component.css';
-import { Button, Icon, Radio, Select, Modal, Alert } from 'antd'
+import { Button, Icon, Radio, Select, Modal, Alert, Checkbox, Switch } from 'antd'
 import Header from '../../Header';
 import { RadioChangeEvent } from 'antd/lib/radio';
+import { CheckboxValueType } from 'antd/lib/checkbox/Group';
+import { Filter } from '../../../data/models/organization/model';
 
 export interface OrganizationsBrowserProps {
     totalCount: number;
     filteredCount: number;
     sortBy: string;
-    filter: string;
+    filter: Filter;
     searching: boolean;
     error: AppError | null;
     onSearchOrgs: (searchTerms: Array<string>) => void;
     onSortOrgs: (sortField: string, sortDirection: SortDirection) => void;
-    onFilterOrgs: (filter: string) => void;
+    onFilterOrgs: (filter: Filter) => void;
 }
 
 export interface OrganizationsBrowserState {
     searchInput: string
     showInfo: boolean
-    filterType: string
+    filterByRoleType: string
+    filterByRole: Array<CheckboxValueType>
+    filterByPrivacy: string
+    showAdvancedControls: boolean
+    // filterByPrivacyType: Array<CheckboxValueType>
 }
+
+type CBVT = CheckboxValueType
+
 class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, OrganizationsBrowserState> {
 
     searchInput: React.RefObject<HTMLInputElement>;
     searchButton: React.RefObject<Button>;
+    filterByRoleValues: Array<any>
+
 
     constructor(props: OrganizationsBrowserProps) {
         super(props)
@@ -37,12 +47,29 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         this.searchInput = React.createRef()
         this.searchButton = React.createRef()
 
+        this.filterByRoleValues = [
+            {
+                label: 'Member',
+                value: 'member'
+            },
+            {
+                label: 'Admin',
+                value: 'admin'
+            },
+            {
+                label: 'Owner',
+                value: 'owner'
+            }
+        ]
+
         this.state = {
             searchInput: '',
             showInfo: false,
-            filterType: 'myorgs'
+            filterByRoleType: 'myorgs',
+            filterByRole: [],
+            filterByPrivacy: 'any',
+            showAdvancedControls: false
         }
-
     }
 
     // https://reactjs.org/docs/react-component.html#componentdidmount
@@ -114,16 +141,54 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         this.props.onSortOrgs(this.props.sortBy, e.target.value)
     }
 
-    onSortDirectionChange2(value: string) {
-        this.props.onSortOrgs(this.props.sortBy, value as SortDirection)
+    onFilterByRoleTypeChange(e: RadioChangeEvent) {
+        let newFilter: Filter
+        this.setState({ filterByRoleType: e.target.value })
+        if (e.target.value === 'select') {
+            this.setState({ filterByRole: [] })
+            newFilter = {
+                ...this.props.filter,
+                roleType: e.target.value
+            }
+        } else {
+            newFilter = {
+                ...this.props.filter,
+                roleType: e.target.value,
+                roles: []
+            }
+        }
+        this.props.onFilterOrgs(newFilter)
     }
 
-    onFilterChange(e: RadioChangeEvent) {
-        this.props.onFilterOrgs(e.target.value)
+    onFilterByRoleChange(checkedValues: CheckboxValueType[]) {
+        let newFilter: Filter
+        this.setState({ filterByRole: checkedValues })
+        if (checkedValues.length === 0) {
+            this.setState({ filterByRoleType: 'myorgs' })
+            newFilter = {
+                ...this.props.filter,
+                roleType: 'myorgs',
+                roles: checkedValues
+            } as Filter
+        } else {
+            this.setState({ filterByRoleType: 'select' })
+            newFilter = {
+                ...this.props.filter,
+                roleType: 'select',
+                roles: checkedValues
+            } as Filter
+        }
+
+        this.props.onFilterOrgs(newFilter)
     }
 
-    onFilterChange2(value: string) {
-        this.props.onFilterOrgs(value)
+    onFilterByPrivacyChange(e: RadioChangeEvent) {
+        this.setState({ filterByPrivacy: e.target.value })
+        const newFilter = {
+            ...this.props.filter,
+            privacy: e.target.value
+        } as Filter
+        this.props.onFilterOrgs(newFilter)
     }
 
     onClearSearch() {
@@ -132,9 +197,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         }
         this.searchInput.current.value = ''
         this.onSearchInputChange()
-        // this.searchButton.current!.handleClick(new MouseEvent<HTMLButtonElement>('click'))
-        // const event = new Event('change', { bubbles: true })
-        // this.searchInput.current.dispatchEvent(event)
         this.doSearch()
     }
 
@@ -194,50 +256,55 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
     renderSearchBar() {
         return (
-            <form id="searchForm" className="OrganizationsBrowser-searchBar" onSubmit={this.onSubmit.bind(this)}>
-                <input
-                    placeholder="Search Organizations"
-                    onChange={this.onSearchInputChange.bind(this)}
-                    autoFocus
-                    ref={this.searchInput}></input>
-                {/* <Tooltip
+            <React.Fragment>
+                <form id="searchForm" className="OrganizationsBrowser-searchBar" onSubmit={this.onSubmit.bind(this)}>
+                    <input
+                        placeholder="Search Organizations"
+                        onChange={this.onSearchInputChange.bind(this)}
+                        autoFocus
+                        ref={this.searchInput}></input>
+                    {/* <Tooltip
                     title="Enter one or more words to search organizations by name or owner">
                     <Icon type="info-circle" theme="twoTone" style={{ alignSelf: 'end' }} />
                 </Tooltip> */}
-                <Button
-                    disabled={!this.haveSearchInput()}
-                    ref={this.searchButton}
-                    form="searchForm"
-                    key="submit"
-                    htmlType="submit">
-                    {this.renderSearchIcon()}
-                    {/* Search */}
-                </Button>
-                <Button
-                    onClick={this.onClearSearch.bind(this)}
-                    disabled={!this.haveSearchInput()}
-                    icon="close"
-                >
+                    <Button
+                        disabled={!this.haveSearchInput()}
+                        ref={this.searchButton}
+                        form="searchForm"
+                        key="submit"
+                        htmlType="submit">
+                        {this.renderSearchIcon()}
+                        {/* Search */}
+                    </Button>
+                    <Button
+                        onClick={this.onClearSearch.bind(this)}
+                        disabled={!this.haveSearchInput()}
+                        icon="close"
+                    >
 
-                    {/* Show all */}
-                </Button>
-                {/* <div className="message">
+                        {/* Show all */}
+                    </Button>
+                    {/* <div className="message">
                     {this.renderSearchFeedback()}
                 </div> */}
-            </form>
+                    <span style={{ marginLeft: '20px' }}>
+                        {this.renderSearchFeedback()}
+                    </span>
+                </form>
+            </React.Fragment>
         )
     }
 
     renderHeader() {
         const breadcrumbs = (
             <React.Fragment>
-                <span>
+                {/* <span>
                     Browse and Search Organizations
                         </span>
                 <Icon type="right" style={{ margin: '0 4px' }} />
                 <span style={{ fontWeight: 'normal', fontStyle: 'italic' }}>
                     {this.renderSearchFeedback()}
-                </span>
+                </span> */}
             </React.Fragment>
         )
         const buttons = (
@@ -258,69 +325,123 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                 defaultValue={this.props.sortBy}
                 dropdownMatchSelectWidth={true}
                 style={{ width: '10em' }}>
+                <Select.Option value="recentlyChanged" key="changed">Date Changed</Select.Option>
+                <Select.Option value="recentlyAdded" key="recent">Date Established</Select.Option>
                 <Select.Option value="name" key="name">Org Name</Select.Option>
                 {/* <Select.Option value="owner" key="owner">Org owner</Select.Option> */}
-                <Select.Option value="recentlyAdded" key="recent">Date Added</Select.Option>
-                <Select.Option value="recentlyChanged" key="changed">Date Changed</Select.Option>
-                <Select.Option value="newFirst" key="newFirst">New Activity</Select.Option>
-
+                {/* <Select.Option value=""newFirst key="newFirst">New Activity</Select.Option> */}
             </Select>
         )
     }
 
-    onFilterTypeChange(e: RadioChangeEvent) {
-        this.setState({ filterType: e.target.value })
-        if (e.target.value === 'myorgs') {
-            this.props.onFilterOrgs('memberOf')
+    onToggleAdvanced(checked: boolean) {
+        this.setState({ showAdvancedControls: !this.state.showAdvancedControls })
+        // When switching back to basic filter mode, we need to ensure that advanced 
+        // filtering is removed.
+        if (!checked) {
+            let { roleType, roles, privacy } = this.props.filter
+            if (!['myorgs', 'all'].includes(roleType)) {
+                roleType = 'myorgs'
+                this.setState({ filterByRoleType: 'myorgs' })
+            }
+            this.setState({ filterByRole: [], filterByPrivacy: 'any' })
+            roles = []
+            privacy = 'any'
+            this.props.onFilterOrgs({
+                roleType, roles, privacy
+            })
         }
     }
 
-    renderFilterControl() {
+    renderAdvancedToggle() {
+        return (
+            <Switch
+                checked={this.state.showAdvancedControls}
+                onChange={this.onToggleAdvanced.bind(this)}
+                unCheckedChildren={<span>Click for Advanced</span>}
+                checkedChildren={<span>Advanced</span>}>
+
+            </Switch>
+        )
+        // if (this.state.showAdvancedControls) {
+        //     return (
+
+        //         <Icon type="up" onClick={this.onToggleAdvanced.bind(this)} />
+        //     )
+        // } else {
+        //     return (
+        //         <Icon type="down" onClick={this.onToggleAdvanced.bind(this)} />
+        //     )
+        // }
+    }
+
+    renderFilterByRole() {
+        const radioStyle = {
+            display: 'block',
+            height: '30px',
+            lineHeight: '30px'
+        }
+
+        if (this.state.showAdvancedControls) {
+            return (
+                <React.Fragment>
+                    <Radio.Group
+                        onChange={this.onFilterByRoleTypeChange.bind(this)}
+                        value={this.state.filterByRoleType}>
+
+                        <Radio value="myorgs" style={radioStyle}>My Orgs</Radio>
+                        <Radio value="all" style={radioStyle}>All Orgs</Radio>
+                        <Radio value="notmyorgs" style={radioStyle}>Not My Orgs</Radio>
+                        <Radio value="select" style={radioStyle}>Specific Role</Radio>
+                    </Radio.Group>
+                    <Checkbox.Group
+                        options={this.filterByRoleValues}
+                        value={this.state.filterByRole}
+                        className="OrganizationsBrowser-checkboxGroup"
+                        onChange={this.onFilterByRoleChange.bind(this)} />
+                </React.Fragment>
+            )
+        } else {
+            return (
+                <React.Fragment>
+                    <Radio.Group
+                        onChange={this.onFilterByRoleTypeChange.bind(this)}
+                        value={this.state.filterByRoleType}>
+
+                        <Radio value="myorgs" style={radioStyle}>My Orgs</Radio>
+                        <Radio value="all" style={radioStyle}>All Orgs</Radio>
+                    </Radio.Group>
+                </React.Fragment>
+            )
+        }
+    }
+
+    renderFilterByPrivacy() {
+        if (!this.state.showAdvancedControls) {
+            return
+        }
+        const radioStyle = {
+            display: 'block',
+            height: '30px',
+            lineHeight: '30px',
+            margin: '0px'
+        }
+        const checkboxStyle = {
+            display: 'block',
+            height: '30px',
+            lineHeight: '30px',
+            margin: '0 0 0 6px'
+        }
         return (
             <React.Fragment>
                 <Radio.Group
-                    onChange={this.onFilterTypeChange.bind(this)}
-                    value={this.state.filterType}>
-                    <Radio value="myorgs">My Orgs</Radio>
-                    <Radio value="filter">Custom Filter</Radio>
+                    onChange={this.onFilterByPrivacyChange.bind(this)}
+                    value={this.state.filterByPrivacy}>
+                    <Radio value="any" style={radioStyle}>Any</Radio>
+                    <Radio value="public" style={radioStyle}>Public</Radio>
+                    <Radio value="private" style={radioStyle}>Private</Radio>
                 </Radio.Group>
-                <Select onChange={this.onFilterChange2.bind(this)}
-                    value={this.props.filter}
-                    disabled={this.state.filterType !== 'filter'}
-                    style={{ width: '16em' }}
-                    dropdownMatchSelectWidth={true}>
-
-                    <Select.Option value="all" key="all">All</Select.Option>
-
-                    <Select.Option value="memberOf" key="memberOf">You are a member of</Select.Option>
-
-                    <Select.Option value="onlyMemberOf" key="onlyMemberOf">Member of, not admin</Select.Option>
-
-                    <Select.Option value="notMemberOf" key="memberOf">You are not a member of</Select.Option>
-
-                    <Select.Option value="owned" key="owned">Owned by you</Select.Option>
-                    {/* <Select.Option value="notOwned" key="notOwned">Not owned by you</Select.Option> */}
-
-                    <Select.Option value="adminOf" key="adminOf">You administer</Select.Option>
-
-                    <Select.Option value="private" key="private">Private orgs</Select.Option>
-
-                    {/* <Select.Option value="pending" key="pending">Pending request or invitation</Select.Option>
-                    <Select.Option value="groupPending" key="groupPending">Pending group requests</Select.Option> */}
-                </Select>
-            </React.Fragment>
-        )
-    }
-
-    renderSearchFilter() {
-        return (
-            <div>
-                <span className="field-label">sort by</span>
-                {this.renderSortByControl()}
-
-                <span className="field-label" style={{ marginLeft: '10px' }}>filter</span>
-                {this.renderFilterControl()}
-            </div>
+            </React.Fragment >
         )
     }
 
@@ -339,27 +460,50 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         }
     }
 
+    renderFilterColumn() {
+        return (
+            <React.Fragment>
+                {this.renderAdvancedToggle()}
+
+                <div className="field-label">sort by</div>
+                {this.renderSortByControl()}
+
+                <div className="field-label" style={{ marginTop: '10px' }}>filter</div>
+
+                <div className="field-label">by role</div>
+                {this.renderFilterByRole()}
+
+                {this.state.showAdvancedControls ? (
+                    <div className="field-label" style={{ marginTop: '10px' }}>by privacy</div>
+
+                ) : (null)}
+                {this.renderFilterByPrivacy()}
+            </React.Fragment>
+        )
+    }
+
     render() {
         return (
             <div className="OrganizationsBrowser scrollable-flex-column">
                 {this.renderHeader()}
-                <div className="searchBarRow">
-                    <div className="searchBarCol">
+                <div className="OrganizationsBrowser-searchBarRow">
+                    <div className="OrganizationsBrowser-searchBarCol">
                         {this.renderSearchBar()}
                     </div>
-                    <div className="sortCol">
+                    {/* <div className="OrganizationsBrowser-sortCol">
                         {this.renderSearchFilter()}
-                    </div>
-                </div>
-                <div className="bodyRow scrollable-flex-column">
-
-                    <div className="col2 scrollable-flex-column">
-                        {this.renderOrganizations()}
-                    </div>
-                    {/* <div className="col1">
-                        {this.renderControlArea()}
                     </div> */}
                 </div>
+                <div className="OrganizationsBrowser-bodyRow">
+
+                    <div className="OrganizationsBrowser-bodyCol scrollable-flex-column">
+                        {this.renderOrganizations()}
+                    </div>
+                    <div className="OrganizationsBrowser-filterCol">
+                        {this.renderFilterColumn()}
+                    </div>
+                </div>
+
             </div>
         )
     }

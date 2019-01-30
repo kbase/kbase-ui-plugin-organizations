@@ -388,7 +388,7 @@ export interface Query {
     username: groupsApi.Username
     sortField: string
     sortDirection: SortDirection
-    filter: string
+    filter: Filter
 }
 
 
@@ -454,50 +454,129 @@ function groupRoleToUserRelation(role: groupsApi.Role): UserRelationToOrganizati
     }
 }
 
-function applyFilter(organizations: Array<BriefOrganization>, filter: string, username: groupsApi.Username): Array<BriefOrganization> {
-    switch (filter) {
-        case 'all':
-            return organizations
-        case 'notMemberOf':
-            return organizations.filter((org) => {
-                return (org.relation === UserRelationToOrganization.NONE)
-            })
-        case 'memberOf':
-            return organizations.filter((org) => {
-                return (org.relation !== UserRelationToOrganization.NONE)
-            })
-        case 'onlyMemberOf':
-            return organizations.filter((org) => {
-                return (org.relation === UserRelationToOrganization.MEMBER)
-            })
-        case 'owned':
-            return organizations.filter((org) => (org.relation === UserRelationToOrganization.OWNER))
-        case 'notOwned':
-            return organizations.filter((org) => (org.relation !== UserRelationToOrganization.OWNER))
-        case 'adminOf':
-            return organizations.filter((org) => (org.relation === UserRelationToOrganization.OWNER ||
-                org.relation === UserRelationToOrganization.ADMIN))
-        case 'private':
-            return organizations.filter((org) => {
-                return org.private
-            })
+export interface Filter {
+    roleType: string,
+    roles: Array<string>,
+    privacy: string
+}
 
-        // TODO: re-enable when have relation again...
-        // case 'pending':
-        //     return organizations.filter((org) => (
-        //         org.relation.type === UserRelationToOrganization.MEMBER_INVITATION_PENDING ||
-        //         org.relation.type === UserRelationToOrganization.MEMBER_REQUEST_PENDING
-        //     ))
-        // case 'groupPending':
-        //     return organizations.filter((org) => (
-        //         (org.relation.type === UserRelationToOrganization.ADMIN ||
-        //             org.relation.type === UserRelationToOrganization.OWNER) &&
-        //         (org.adminRequests && org.adminRequests.length > 0)
-        //     ))
-        default:
-            console.warn('unknown filter : ' + filter)
-            return organizations
+function applyFilter(organizations: Array<BriefOrganization>, { roleType, roles, privacy }: Filter, username: groupsApi.Username): Array<BriefOrganization> {
+    function applyRoleType(org: BriefOrganization) {
+        switch (roleType) {
+            case 'myorgs':
+                return [
+                    UserRelationToOrganization.MEMBER,
+                    UserRelationToOrganization.ADMIN,
+                    UserRelationToOrganization.OWNER
+                ].includes(org.relation)
+            case 'notmyorgs':
+                return ![
+                    UserRelationToOrganization.MEMBER,
+                    UserRelationToOrganization.ADMIN,
+                    UserRelationToOrganization.OWNER
+                ].includes(org.relation)
+            case 'all':
+            default:
+                return true
+        }
     }
+    function applyRole(org: BriefOrganization) {
+        if (roles.length === 0) {
+            return true
+        }
+        return roles.some((role) => {
+            switch (role) {
+                case 'member':
+                    return (org.relation === UserRelationToOrganization.MEMBER)
+                case 'admin':
+                    return (org.relation === UserRelationToOrganization.ADMIN)
+                case 'owner':
+                    return (org.relation === UserRelationToOrganization.OWNER)
+                default:
+                    return false
+            }
+        })
+    }
+    function applyPrivacy(org: BriefOrganization) {
+        switch (privacy) {
+            case 'public':
+                return !org.private
+            case 'private':
+                return org.private
+            case 'any':
+                return true
+            default:
+                return false
+        }
+    }
+    return organizations.filter((org) => {
+        return applyRoleType(org) && applyRole(org) && applyPrivacy(org)
+    })
+
+    // switch (filter) {
+    //     case 'role:all':
+    //         return organizations
+    //     case 'notMemberOf':
+    //         return organizations.filter((org) => {
+    //             return (org.relation === UserRelationToOrganization.NONE)
+    //         })
+    //     case 'memberOf':
+    //         return organizations.filter((org) => {
+    //             return (org.relation !== UserRelationToOrganization.NONE)
+    //         })
+    //     case 'role:member':
+    //         return organizations.filter((org) => {
+    //             return (org.relation === UserRelationToOrganization.MEMBER)
+    //         })
+    //     case 'role:myorgs':
+    //         return organizations.filter((org) => {
+    //             return [
+    //                 UserRelationToOrganization.MEMBER,
+    //                 UserRelationToOrganization.ADMIN,
+    //                 UserRelationToOrganization.OWNER
+    //             ].includes(org.relation)
+    //         })
+    //     case 'role:notmyorgs':
+    //         return organizations.filter((org) => {
+    //             return ![
+    //                 UserRelationToOrganization.MEMBER,
+    //                 UserRelationToOrganization.ADMIN,
+    //                 UserRelationToOrganization.OWNER
+    //             ].includes(org.relation)
+    //         })
+
+    //     case 'role:owner':
+    //         return organizations.filter((org) => (org.relation === UserRelationToOrganization.OWNER))
+    //     case 'role:notowner':
+    //         return organizations.filter((org) => (org.relation !== UserRelationToOrganization.OWNER))
+    //     case 'role:admin':
+    //         return organizations.filter((org) => (org.relation === UserRelationToOrganization.OWNER ||
+    //             org.relation === UserRelationToOrganization.ADMIN))
+    //     case 'privacy:private':
+    //         return organizations.filter((org) => {
+    //             return org.private
+    //         })
+    //     case 'privacy:public':
+    //         return organizations.filter((org) => {
+    //             return !org.private
+    //         })
+
+    //     // TODO: re-enable when have relation again...
+    //     // case 'pending':
+    //     //     return organizations.filter((org) => (
+    //     //         org.relation.type === UserRelationToOrganization.MEMBER_INVITATION_PENDING ||
+    //     //         org.relation.type === UserRelationToOrganization.MEMBER_REQUEST_PENDING
+    //     //     ))
+    //     // case 'groupPending':
+    //     //     return organizations.filter((org) => (
+    //     //         (org.relation.type === UserRelationToOrganization.ADMIN ||
+    //     //             org.relation.type === UserRelationToOrganization.OWNER) &&
+    //     //         (org.adminRequests && org.adminRequests.length > 0)
+    //     //     ))
+    //     default:
+    //         console.warn('unknown filter : ' + filter)
+    //         return organizations
+    // }
 }
 
 export class OrganizationModel {
