@@ -50,17 +50,24 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         if (!org.homeUrl) {
             return
         }
+        const tooltip = (
+            <React.Fragment>
+                <p>
+                    Home page for this Organization (external to KBase)
+                </p>
+            </React.Fragment>
+        )
         return (
             <div className="BriefOrganization-homeUrl">
                 <Tooltip
                     placement="bottomRight"
                     mouseEnterDelay={0.5}
-                    title="Home page for this Organization (external to KBase)"
+                    title={tooltip}
                 >
                     <a href={org.homeUrl} target="_blank">
                         <Icon type="home" />
                         {' '}
-                        {org.homeUrl}
+                        Home Page
                     </a>
                 </Tooltip>
             </div >
