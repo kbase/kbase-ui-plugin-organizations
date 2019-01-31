@@ -4,15 +4,13 @@ import { ThunkDispatch } from 'redux-thunk'
 import { ActionFlag } from '../index'
 import {
     StoreState,
-    AppError, UIError, UIErrorType
+    AppError
 } from '../../../types'
 
-import * as orgModel from '../../../data/models/organization/model'
 import * as requestModel from '../../../data/models/requests'
 import * as uberModel from '../../../data/models/uber'
 
 export interface AcceptRequestAction<T> extends Action<T> {
-
 }
 
 export interface AcceptRequest extends AcceptRequestAction<ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST> {
@@ -94,7 +92,6 @@ export function acceptInboxRequest(request: requestModel.Request) {
                 }
             })
         }
-
 
         // or error
     }

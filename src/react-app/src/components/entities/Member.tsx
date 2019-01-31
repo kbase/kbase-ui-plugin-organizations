@@ -1,12 +1,12 @@
 import * as React from 'react'
-import './Member.css'
 
 import Avatar from './Avatar'
 import { } from '../../types';
 import { Icon } from 'antd';
 import * as orgModel from '../../data/models/organization/model'
 import * as userModel from '../../data/models/user'
-import User from './UserContainer'
+
+import './Member.css'
 
 enum View {
     COMPACT = 0,

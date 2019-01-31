@@ -4,12 +4,10 @@ import { ThunkDispatch } from 'redux-thunk'
 import { ActionFlag } from '../index'
 import {
     StoreState,
-    AppError, UIError, UIErrorType
+    AppError
 } from '../../../types'
 
-import * as orgModel from '../../../data/models/organization/model'
 import * as requestModel from '../../../data/models/requests'
-import * as uberModel from '../../../data/models/uber'
 
 // Reject inbound request
 

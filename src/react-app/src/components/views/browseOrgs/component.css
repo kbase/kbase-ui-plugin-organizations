@@ -43,23 +43,45 @@
 .OrganizationsBrowser-col2 {
     flex: 1 1 0px;
     margin: 0 0 0 0;
+    margin: 0 0 0 10px;
     display: flex;
     flex-direction: column;
 }
 
 .OrganizationsBrowser-sortCol {
     flex: 1.5 1 0px;
-    margin: 0 0 0 10px;
+    margin: 5px 0 0 10px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
 }
 
-.OrganizationsBrowser-searchBarCol {
+.OrganizationsBrowser-searchBarCol1 {
     flex: 1 1 0px;
-    margin: 0 10px 0 0;
+    margin: 0 5px 0 0;
     display: flex;
     flex-direction: column;
+}
+
+.OrganizationsBrowser-searchBarCol2 {
+    flex: 0 0 auto;
+    margin: 0 5px 0 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.OrganizationsBrowser-searchBarCol3 {
+    flex: 1 1 0px;
+    margin: 0 0 0 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.OrganizationsBrowser-searchInput {
+    width: 15em;
+    height: 100%;
 }
 
 .OrganizationsBrowser-controlArea {}
@@ -114,11 +136,6 @@
     text-align: right;
 }
 
-.OrganizationsBrowser-searchBar input {
-    width: 20em;
-    height: 100%;
-}
-
 .OrganizationsBrowser-searchBar button {
     height: 100%;
     padding: 4px;
@@ -138,21 +155,4 @@
 .OrganizationsBrowser-checkboxGroup .ant-checkbox-group-item+.ant-checkbox-group-item {
     display: block;
     margin-bottom: 4px;
-}
-
-.OrganizationsBrowser-hover {
-    padding: 3px;
-}
-
-.OrganizationsBrowser-hover:hover {
-    background-color: rgba(200, 200, 200, 0.5)
-}
-
-.OrganizationsBrowser-hover-pressed {
-    padding: 3px;
-    background-color: rgba(200, 200, 200, 1)
-}
-
-.OrganizationsBrowser-hover-pressed:hover {
-    background-color: rgba(200, 200, 200, 0.5)
 }

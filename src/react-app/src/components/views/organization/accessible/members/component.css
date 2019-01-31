@@ -1,0 +1,27 @@
+.ViewOrganization .infoTable>.row {
+    flex: 0 0 auto;
+    min-height: 20px;
+    display: flex;
+    flex-direction: row;
+    /* height: 30px; */
+    margin-bottom: 8px;
+}
+
+.ViewOrganization .infoTable>.row>.col0 {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.Members-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.Members-member {
+    flex: 1 1 0px;
+}
+
+.Members-menu {
+    flex: 0 0 2em;
+}

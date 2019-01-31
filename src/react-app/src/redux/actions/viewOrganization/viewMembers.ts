@@ -1,48 +1,48 @@
 import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
-import { ActionFlag } from './index'
+import { ActionFlag } from '../index'
 
-import { AppError, StoreState } from '../../types'
-import * as orgModel from '../../data/models/organization/model'
-import * as uberModel from '../../data/models/uber'
+import { AppError, StoreState } from '../../../types'
+import * as orgModel from '../../../data/models/organization/model'
+import * as uberModel from '../../../data/models/uber'
 
 // LOADING
 
 export interface Load extends Action {
-    type: ActionFlag.VIEW_MEMBERS_LOAD,
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_LOAD,
     organizationId: string
 }
 
 export interface LoadStart extends Action {
-    type: ActionFlag.VIEW_MEMBERS_LOAD_START
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_LOAD_START
 }
 
 export interface Unload extends Action {
-    type: ActionFlag.VIEW_MEMBERS_UNLOAD
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_UNLOAD
 }
 
 export interface LoadSuccess extends Action {
-    type: ActionFlag.VIEW_MEMBERS_LOAD_SUCCESS
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_LOAD_SUCCESS
     organization: orgModel.Organization
     relation: orgModel.Relation
 }
 
 export interface LoadError extends Action {
-    type: ActionFlag.VIEW_MEMBERS_LOAD_ERROR
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_LOAD_ERROR
     error: AppError
 }
 
 
 export function loadStart(): LoadStart {
     return {
-        type: ActionFlag.VIEW_MEMBERS_LOAD_START
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_LOAD_START
     }
 }
 
 export function loadSuccess(organization: orgModel.Organization, relation: orgModel.Relation): LoadSuccess {
     return {
-        type: ActionFlag.VIEW_MEMBERS_LOAD_SUCCESS,
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_LOAD_SUCCESS,
         organization: organization,
         relation: relation
     }
@@ -50,14 +50,14 @@ export function loadSuccess(organization: orgModel.Organization, relation: orgMo
 
 export function loadError(error: AppError): LoadError {
     return {
-        type: ActionFlag.VIEW_MEMBERS_LOAD_ERROR,
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_LOAD_ERROR,
         error: error
     }
 }
 
 export function unload(): Unload {
     return {
-        type: ActionFlag.VIEW_MEMBERS_UNLOAD
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_UNLOAD
     }
 }
 
@@ -68,6 +68,7 @@ export function load(organizationId: string) {
         const {
             auth: { authorization: { token, username } },
             app: { config } } = getState()
+
 
         const uberClient = new uberModel.UberModel({
             token, username,
@@ -100,40 +101,41 @@ export function load(organizationId: string) {
 // Promoting member to admin
 
 export interface PromoteToAdmin extends Action {
-    type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN,
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_PROMOTE_TO_ADMIN,
     memberUsername: string
 }
 
 export interface PromoteToAdminStart extends Action {
-    type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_START
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_PROMOTE_TO_ADMIN_START
 }
 
 export interface PromoteToAdminSuccess extends Action {
-    type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_SUCCESS,
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_PROMOTE_TO_ADMIN_SUCCESS,
     memberUsername: string
 }
 
 export interface PromoteToAdminError extends Action {
-    type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_ERROR,
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_PROMOTE_TO_ADMIN_ERROR,
     error: AppError
 }
 
+
 export function promoteToAdminStart(): PromoteToAdminStart {
     return {
-        type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_START
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_PROMOTE_TO_ADMIN_START
     }
 }
 
 export function promoteToAdminSuccess(memberUsername: string): PromoteToAdminSuccess {
     return {
-        type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_SUCCESS,
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_PROMOTE_TO_ADMIN_SUCCESS,
         memberUsername
     }
 }
 
 export function promoteToAdminError(error: AppError): PromoteToAdminError {
     return {
-        type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_ERROR,
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_PROMOTE_TO_ADMIN_ERROR,
         error: error
     }
 }
@@ -146,7 +148,7 @@ export function promoteToAdmin(memberUsername: string) {
             auth: { authorization: { token, username } },
             app: { config },
             views: {
-                viewMembersView: { viewModel }
+                viewOrgView: { viewModel }
             }
         } = getState()
         if (viewModel === null) {
@@ -160,20 +162,6 @@ export function promoteToAdmin(memberUsername: string) {
         orgClient.memberToAdmin(viewModel.organization.id, memberUsername)
             .then((org) => {
                 dispatch(promoteToAdminSuccess(memberUsername))
-
-                // Brute force, update the in-store organization
-                // const { viewMembersView: { view } } = getState()
-
-                // if (!view) {
-                //     dispatch(viewMembersPromoteToAdminError({
-                //         code: 'NoView',
-                //         message: 'No view for viewMembers'
-                //     }))
-                //     return
-                // }
-
-
-                // dispatch(viewMembersLoad(view.organization.id))
             })
             .catch((err: Error) => {
                 dispatch(promoteToAdminError({
@@ -187,41 +175,41 @@ export function promoteToAdmin(memberUsername: string) {
 // Demote admin to member
 
 export interface DemoteToMember extends Action {
-    type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER,
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_DEMOTE_TO_MEMBER,
     memberUsername: string
 }
 
 export interface DemoteToMemberStart extends Action {
-    type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_START
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_DEMOTE_TO_MEMBER_START
 }
 
 export interface DemoteToMemberSuccess extends Action {
-    type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_SUCCESS,
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_DEMOTE_TO_MEMBER_SUCCESS,
     memberUsername: string
 }
 
 export interface DemoteToMemberError extends Action {
-    type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_ERROR,
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_DEMOTE_TO_MEMBER_ERROR,
     error: AppError
 }
 
 
 export function demoteToMemberStart(): DemoteToMemberStart {
     return {
-        type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_START
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_DEMOTE_TO_MEMBER_START
     }
 }
 
 export function demoteToMemberSuccess(memberUsername: string): DemoteToMemberSuccess {
     return {
-        type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_SUCCESS,
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_DEMOTE_TO_MEMBER_SUCCESS,
         memberUsername: memberUsername
     }
 }
 
 export function demoteToMemberError(error: AppError): DemoteToMemberError {
     return {
-        type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_ERROR,
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_DEMOTE_TO_MEMBER_ERROR,
         error: error
     }
 }
@@ -234,7 +222,7 @@ export function demoteToMember(memberUsername: string) {
             auth: { authorization: { token, username } },
             app: { config },
             views: {
-                viewMembersView: { viewModel }
+                viewOrgView: { viewModel }
             }
         } = getState()
 
@@ -263,38 +251,40 @@ export function demoteToMember(memberUsername: string) {
 // Remove a member
 
 export interface RemoveMember extends Action {
-    type: ActionFlag.VIEW_MEMBERS_REMOVE_MEMBER,
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_REMOVE_MEMBER,
     memberUsername: string
 }
 
 interface RemoveMemberStart extends Action {
-    type: ActionFlag.VIEW_MEMBERS_REMOVE_MEMBER_START
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_REMOVE_MEMBER_START
 }
 
-interface RemoveMemberSuccess extends Action {
-    type: ActionFlag.VIEW_MEMBERS_REMOVE_MEMBER_SUCCESS
+export interface RemoveMemberSuccess extends Action {
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_REMOVE_MEMBER_SUCCESS,
+    memberUsername: orgModel.Username
 }
 
 interface RemoveMemberError extends Action {
-    type: ActionFlag.VIEW_MEMBERS_REMOVE_MEMBER_ERROR,
+    type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_REMOVE_MEMBER_ERROR,
     error: AppError
 }
 
 function removeMemberStart(): RemoveMemberStart {
     return {
-        type: ActionFlag.VIEW_MEMBERS_REMOVE_MEMBER_START
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_REMOVE_MEMBER_START
     }
 }
 
-function removeMemberSuccess(): RemoveMemberSuccess {
+function removeMemberSuccess(memberUsername: orgModel.Username): RemoveMemberSuccess {
     return {
-        type: ActionFlag.VIEW_MEMBERS_REMOVE_MEMBER_SUCCESS
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_REMOVE_MEMBER_SUCCESS,
+        memberUsername
     }
 }
 
 function removeMemberError(error: AppError): RemoveMemberError {
     return {
-        type: ActionFlag.VIEW_MEMBERS_REMOVE_MEMBER_ERROR,
+        type: ActionFlag.VIEW_ORG_VIEW_MEMBERS_REMOVE_MEMBER_ERROR,
         error: error
     }
 }
@@ -307,7 +297,7 @@ export function removeMember(memberUsername: string) {
             auth: { authorization: { token, username } },
             app: { config },
             views: {
-                viewMembersView: { viewModel }
+                viewOrgView: { viewModel }
             }
         } = getState()
         if (viewModel === null) {
@@ -321,8 +311,8 @@ export function removeMember(memberUsername: string) {
 
         orgClient.removeMember(viewModel.organization.id, memberUsername)
             .then(() => {
-                dispatch(removeMemberSuccess())
-                dispatch(load(viewModel.organization.id))
+                dispatch(removeMemberSuccess(memberUsername))
+                // dispatch(load(viewModel.organization.id))
             })
             .catch((err: Error) => {
                 dispatch(removeMemberError({

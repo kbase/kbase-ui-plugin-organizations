@@ -1,7 +1,8 @@
 .MainMenu {
     flex: 0 0 auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    background-color: rgba(200, 200, 200, 0.3);
 }
 
 .MainMenu-menu {
@@ -22,8 +23,6 @@
     /* border-bottom: 1px rgba(150, 150, 150, 0.5) solid; */
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
 }
 
 .MainMenu-defaultCrumbs {
@@ -46,5 +45,9 @@
 }
 
 .MainMenu-buttons {
-    flex: 0 0 auto
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
 }

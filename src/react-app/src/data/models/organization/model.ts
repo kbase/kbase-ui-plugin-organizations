@@ -602,6 +602,7 @@ export class OrganizationModel {
             .then((group) => {
                 let org: Organization | InaccessiblePrivateOrganization
                 if (group.role === "none" && group.private) {
+                    console.log('PRIVATE?', group)
                     org = groupToPrivateOrganization(group as groupsApi.InaccessiblePrivateGroup, this.params.username)
                 } else {
                     org = groupToOrganization(group as groupsApi.Group, this.params.username)

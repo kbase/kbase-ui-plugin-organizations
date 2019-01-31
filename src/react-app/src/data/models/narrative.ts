@@ -281,7 +281,7 @@ export class NarrativeModel {
                 default:
                     throw new Error('Unknown workspace permission: ' + workspaceInfo.userPermission)
             }
-            console.log('workspaceInfo', workspaceInfo)
+
             return {
                 workspaceId: workspaceInfo.id,
                 access: access,

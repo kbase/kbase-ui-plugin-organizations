@@ -110,7 +110,7 @@ class App extends Component {
                 <BrowserRouter basename="/" >
                   <div className="App scrollable-flex-column">
                     <div className="App-body scrollable-flex-column">
-                      <MainMenu />
+                      {/* <MainMenu /> */}
                       <Switch>
                         {/* <Route path="/dashboard" exact={true} component={DashboardView} /> */}
                         <Route path="/organizations" component={OrganizationsBrowser} />

@@ -90,7 +90,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
     }
 
     renderMemberCount(org: orgModel.BriefOrganization) {
-        if (!org.memberCount) {
+        if (org.memberCount == 1) {
             return (
                 <span style={{ color: 'gray' }}>
                     Ø
@@ -99,7 +99,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         }
         return (
             <span>
-                {org.memberCount}
+                {org.memberCount - 1}
             </span>
         )
     }

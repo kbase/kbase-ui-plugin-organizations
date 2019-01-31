@@ -5,7 +5,7 @@ import { Icon, Menu } from 'antd';
 import { ClickParam } from 'antd/lib/menu'
 
 interface MainMenuProps {
-    // currentItem: string
+    buttons?: JSX.Element
 }
 
 interface MainMenuState {
@@ -147,6 +147,7 @@ class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                     <Menu
                         // onClick={(e: ClickParam) => { doNavigate(e.key) }}
                         selectedKeys={selectedKeys}
+                        style={{ backgroundColor: 'transparent' }}
                         mode="horizontal"
                     >
                         {/* <Menu.Item key="myorgs">
@@ -192,6 +193,9 @@ class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
             <div className="MainMenu">
                 <div className="MainMenu-menu">
                     {this.renderMenu6()}
+                </div>
+                <div className="MainMenu-buttons">
+                    {this.props.buttons}
                 </div>
             </div>
         )

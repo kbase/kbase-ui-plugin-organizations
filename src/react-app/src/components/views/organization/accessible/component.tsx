@@ -16,6 +16,8 @@ import OrganizationNarrative from '../../../OrganizationNarrative'
 import InboxRequest from '../../dashboard/InboxRequestContainer'
 import OutboxRequest from '../../dashboard/OutboxRequestContainer'
 import Notifications from '../../../notifications/component'
+import MainMenu from '../../../menu/component';
+import Members from './members/reduxAdapter'
 
 enum NavigateTo {
     NONE = 0,
@@ -292,32 +294,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </p>
             )
         }
-        let members: JSX.Element | Array<JSX.Element>
-        const message = (
-            <div style={{ fontStyle: 'italic', textAlign: 'center' }}>
-                No members.
-            </div>
-        )
-        if (this.props.organization.members.length === 0) {
-            members = (
-                <Alert type="info" message={message} />
-            )
-        } else {
-            members = this.props.organization.members.map((member) => {
-                return (
-                    <div className="row" key={member.username}>
-                        <div className="col0">
-                            <Member member={member} avatarSize={50} />
-                        </div>
-                    </div>
-                )
-            })
-        }
         return (
-            <div className="infoTable">
-                {members}
-            </div>
+            <Members organization={this.props.organization} relation={this.props.relation} />
         )
+
     }
 
     renderInfo() {
@@ -686,23 +666,23 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderMembersTab() {
-        const extras = [
-            (
-                <NavLink
-                    key="viewMembers"
-                    to={`/viewMembers/${this.props.organization!.id}`}>
-                    <Button
-                        onClick={this.onViewMembers.bind(this)}
-                        size="small"
-                        icon="team"></Button>
-                </NavLink>
-            )
-        ]
+        // const extras = [
+        //     (
+        //         <NavLink
+        //             key="viewMembers"
+        //             to={`/viewMembers/${this.props.organization!.id}`}>
+        //             <Button
+        //                 onClick={this.onViewMembers.bind(this)}
+        //                 size="small"
+        //                 icon="team"></Button>
+        //         </NavLink>
+        //     )
+        // ]
 
         return (
             <div className="scrollable-flex-column">
                 <div className="ViewOrganization-tabPaneToolbar">
-                    {extras}
+                    {this.renderMembersToolbar()}
                 </div>
                 {this.renderMembers()}
             </div>
@@ -1072,9 +1052,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         }
         return (
             <Dropdown overlay={menu} trigger={['click']}>
-                <Button shape="circle">
-                    <Icon type="setting" theme="filled" style={{ fontSize: '120%' }} />
-                </Button>
+                <Icon type="ellipsis" className="IconButton-hover" />
             </Dropdown>
         )
     }
@@ -1165,6 +1143,41 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
+    renderMembersToolbar() {
+        switch (this.props.relation.type) {
+            case orgModel.UserRelationToOrganization.NONE:
+                return (
+                    <div className="toolbar">
+                    </div>
+                )
+
+            case orgModel.UserRelationToOrganization.MEMBER:
+                return (
+                    <div className="toolbar">
+                    </div>
+                )
+
+            case orgModel.UserRelationToOrganization.ADMIN:
+                return (
+                    <div className="toolbar">
+                        <NavLink to={"/inviteUser/" + this.props.organization.id}>
+                            <Button size="small"><Icon type="mail" /> Invite a User</Button>
+                        </NavLink>
+                    </div>
+                )
+
+            case orgModel.UserRelationToOrganization.OWNER:
+                return (
+                    <div className="toolbar">
+                        <NavLink to={"/inviteUser/" + this.props.organization.id}>
+                            <Button size="small"><Icon type="mail" /> Invite a User</Button>
+                        </NavLink>
+                    </div>
+                )
+
+        }
+    }
+
     renderCombo() {
         const isAdmin = (this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
             this.props.relation.type === orgModel.UserRelationToOrganization.OWNER)
@@ -1251,6 +1264,15 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
+    renderMenuButtons() {
+        return (
+            <React.Fragment>
+                {this.renderEditButton()}
+                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+            </React.Fragment>
+        )
+    }
+
     render() {
         switch (this.state.navigateTo) {
             case NavigateTo.REQUEST_ADD_NARRATIVE:
@@ -1295,8 +1317,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         if (typeof this.props.organization !== 'undefined') {
             return (
                 <div className="ViewOrganization  scrollable-flex-column">
+                    <MainMenu buttons={this.renderMenuButtons()} />
                     {this.renderOrgHeader()}
-                    {this.renderHeader()}
+                    {/* {this.renderHeader()} */}
 
                     <div className="mainRow scrollable-flex-column">
                         <div className="mainColumn  scrollable-flex-column">

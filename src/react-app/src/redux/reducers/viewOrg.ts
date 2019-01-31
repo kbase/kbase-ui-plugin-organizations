@@ -3,7 +3,7 @@ import * as actions from '../actions/viewOrg'
 import * as types from '../../types'
 import { ActionFlag } from '../actions'
 import acceptInboxRequest from './viewOrganization/acceptInboxRequest'
-import * as orgModel from '../../data/models/organization/model'
+import viewMembers from './viewOrganization/viewMembers'
 
 export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
     return {
@@ -160,7 +160,9 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
             return accessNarrativeSuccess(state, action as actions.AccessNarrativeSuccess)
     }
 
-    return acceptInboxRequest(state, action)
+    return acceptInboxRequest(state, action) ||
+        viewMembers(state, action)
+
 }
 
 export default reducer

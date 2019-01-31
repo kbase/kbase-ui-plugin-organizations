@@ -9,6 +9,7 @@ import Header from '../../Header';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { Filter } from '../../../data/models/organization/model';
+import MainMenu from '../../menu/component';
 
 export interface OrganizationsBrowserProps {
     totalCount: number;
@@ -224,25 +225,21 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
             return (
                 <span>
                     Showing all
-                {' '}
-                    {this.props.totalCount}
                     {' '}
-                    organizations
+                    {this.props.totalCount}
                 </span>
             )
         }
 
         return (
             <span>
-                Showing
+                Found
                 {' '}
                 {this.props.filteredCount}
                 {' '}
                 out of
                 {' '}
                 {this.props.totalCount}
-                {' '}
-                organizations
             </span>
         )
     }
@@ -254,57 +251,58 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         return (<Icon type="search" />)
     }
 
-    renderSearchBar() {
+    renderSearchForm() {
         return (
-            <React.Fragment>
-                <form id="searchForm" className="OrganizationsBrowser-searchBar" onSubmit={this.onSubmit.bind(this)}>
-                    <input
-                        placeholder="Search Organizations"
-                        onChange={this.onSearchInputChange.bind(this)}
-                        autoFocus
-                        ref={this.searchInput}></input>
-                    {/* <Tooltip
+            <form id="searchForm" className="OrganizationsBrowser-searchBar" onSubmit={this.onSubmit.bind(this)}>
+                <input
+                    className="OrganizationsBrowser-searchInput"
+                    placeholder="Search Organizations"
+                    onChange={this.onSearchInputChange.bind(this)}
+                    autoFocus
+                    ref={this.searchInput}></input>
+                {/* <Tooltip
                     title="Enter one or more words to search organizations by name or owner">
                     <Icon type="info-circle" theme="twoTone" style={{ alignSelf: 'end' }} />
                 </Tooltip> */}
-                    <Button
-                        disabled={!this.haveSearchInput()}
-                        ref={this.searchButton}
-                        form="searchForm"
-                        key="submit"
-                        htmlType="submit">
-                        {this.renderSearchIcon()}
-                        {/* Search */}
-                    </Button>
-                    <Button
-                        onClick={this.onClearSearch.bind(this)}
-                        disabled={!this.haveSearchInput()}
-                        icon="close"
-                    >
+                <Button
+                    disabled={!this.haveSearchInput()}
+                    ref={this.searchButton}
+                    form="searchForm"
+                    key="submit"
+                    htmlType="submit">
+                    {this.renderSearchIcon()}
+                    {/* Search */}
+                </Button>
+                <Button
+                    onClick={this.onClearSearch.bind(this)}
+                    disabled={!this.haveSearchInput()}
+                    icon="close"
+                >
+                </Button>
 
-                        {/* Show all */}
-                    </Button>
-                    {/* <div className="message">
+            </form>
+        )
+    }
+
+    renderSearchBar() {
+        return (
+            <div className="OrganizationsBrowser-searchBarRow">
+                <div className="OrganizationsBrowser-searchBarCol1">
+
+                </div>
+                <div className="OrganizationsBrowser-searchBarCol2">
+                    {this.renderSearchForm()}
+                </div>
+                <div className="OrganizationsBrowser-searchBarCol3">
                     {this.renderSearchFeedback()}
-                </div> */}
-                    <span style={{ marginLeft: '20px' }}>
-                        {this.renderSearchFeedback()}
-                    </span>
-                </form>
-            </React.Fragment>
+                </div>
+            </div>
         )
     }
 
     renderHeader() {
         const breadcrumbs = (
             <React.Fragment>
-                {/* <span>
-                    Browse and Search Organizations
-                        </span>
-                <Icon type="right" style={{ margin: '0 4px' }} />
-                <span style={{ fontWeight: 'normal', fontStyle: 'italic' }}>
-                    {this.renderSearchFeedback()}
-                </span> */}
             </React.Fragment>
         )
         const buttons = (
@@ -334,27 +332,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         )
     }
 
-    // onToggleAdvanced(checked: boolean) {
-    //     this.setState({ showAdvancedControls: !this.state.showAdvancedControls })
-    //     // When switching back to basic filter mode, we need to ensure that advanced 
-    //     // filtering is removed.
-    //     if (!checked) {
-    //         let { roleType, roles, privacy } = this.props.filter
-    //         if (!['myorgs', 'all'].includes(roleType)) {
-    //             roleType = 'myorgs'
-    //             this.setState({ filterByRoleType: 'myorgs' })
-    //         }
-    //         this.setState({ filterByRole: [], filterByPrivacy: 'any' })
-    //         roles = []
-    //         privacy = 'any'
-    //         this.props.onFilterOrgs({
-    //             roleType, roles, privacy
-    //         })
-    //     }
-    // }
-
     onToggleAdvanced() {
-        // this.setState({ showAdvancedControls: !this.state.showAdvancedControls })
         // When switching back to basic filter mode, we need to ensure that advanced 
         // filtering is removed.
         if (this.state.showAdvancedControls) {
@@ -375,41 +353,19 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         }
     }
 
-    // renderAdvancedToggle() {
-    //     return (
-    //         <Switch
-    //             checked={this.state.showAdvancedControls}
-    //             onChange={this.onToggleAdvanced.bind(this)}
-    //             unCheckedChildren={<span>Click for Advanced</span>}
-    //             checkedChildren={<span>Advanced</span>}>
-
-    //         </Switch>
-    //     )
-    //     // if (this.state.showAdvancedControls) {
-    //     //     return (
-
-    //     //         <Icon type="up" onClick={this.onToggleAdvanced.bind(this)} />
-    //     //     )
-    //     // } else {
-    //     //     return (
-    //     //         <Icon type="down" onClick={this.onToggleAdvanced.bind(this)} />
-    //     //     )
-    //     // }
-    // }
-
     renderAdvancedToggle() {
         if (this.state.showAdvancedControls) {
             return (
                 <Icon
                     type="ellipsis"
-                    className="OrganizationsBrowser-hover-pressed"
+                    className="IconButton-hover-pressed"
                     onClick={this.onToggleAdvanced.bind(this)} />
             )
         } else {
             return (
                 <Icon
                     type="ellipsis"
-                    className="OrganizationsBrowser-hover"
+                    className="IconButton-hover"
                     onClick={this.onToggleAdvanced.bind(this)} />
             )
         }
@@ -517,27 +473,25 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
                 {this.state.showAdvancedControls ? (
                     <div className="field-label" style={{ marginTop: '10px' }}>by privacy</div>
-
                 ) : (null)}
                 {this.renderFilterByPrivacy()}
             </React.Fragment>
         )
     }
 
+    renderMenuButtons() {
+        return (
+            <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+        )
+    }
+
     render() {
         return (
             <div className="OrganizationsBrowser scrollable-flex-column">
-                {this.renderHeader()}
-                <div className="OrganizationsBrowser-searchBarRow">
-                    <div className="OrganizationsBrowser-searchBarCol">
-                        {this.renderSearchBar()}
-                    </div>
-                    {/* <div className="OrganizationsBrowser-sortCol">
-                        {this.renderSearchFilter()}
-                    </div> */}
-                </div>
+                <MainMenu buttons={this.renderMenuButtons()} />
+                {/* {this.renderHeader()} */}
+                {this.renderSearchBar()}
                 <div className="OrganizationsBrowser-bodyRow">
-
                     <div className="OrganizationsBrowser-bodyCol scrollable-flex-column">
                         {this.renderOrganizations()}
                     </div>

@@ -128,7 +128,7 @@ class MemberRow extends React.Component<MemberRowProps, MemberRowState> {
         return (
             <div>
                 <Dropdown overlay={menu} trigger={['click']}>
-                    <Button icon="ellipsis" />
+                    <Icon type="ellipsis" />
                 </Dropdown>
             </div>
         )
