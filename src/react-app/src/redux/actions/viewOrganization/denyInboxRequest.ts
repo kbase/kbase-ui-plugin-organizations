@@ -4,7 +4,8 @@ import { ThunkDispatch } from 'redux-thunk'
 import { ActionFlag } from '../index'
 import {
     StoreState,
-    AppError
+    AppError,
+    ViewOrgViewModelKind
 } from '../../../types'
 
 import * as requestModel from '../../../data/models/requests'
@@ -33,18 +34,33 @@ interface RejectInboxRequestError extends RejectRequestAction<ActionFlag.VIEW_OR
     error: AppError
 }
 
-export function rejectInboxRequest(request: requestModel.Request) {
+export function denyRequest(requestId: requestModel.RequestID) {
     return async (dispatch: ThunkDispatch<StoreState, void, RejectRequestAction<any>>, getState: () => StoreState) => {
         const state = getState()
 
-        if (!state.views.dashboardView.viewModel) {
+        const viewModel = state.views.viewOrgView.viewModel
+
+        if (viewModel === null) {
             dispatch({
-                type: ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_ERROR,
+                type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR,
                 error: {
                     code: 'error',
                     message: 'No dashboard view model'
                 }
             })
+            return
+        }
+
+        // argh
+        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+            dispatch({
+                type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR,
+                error: {
+                    code: 'invalid state',
+                    message: 'Not the right kind of view model'
+                }
+            })
+            return
         }
 
         dispatch({
@@ -63,15 +79,15 @@ export function rejectInboxRequest(request: requestModel.Request) {
         })
 
         try {
-            const newRequest = await requestClient.denyRequest(request.id)
+            await requestClient.denyRequest(requestId)
 
-            // refetch the inbox
-            const outbox = await requestClient.getInboundRequests()
+            // refetch the outbox
+            const inbox = await requestClient.getRequestInboxForOrg(viewModel.organization.id)
 
             dispatch({
                 type: ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_SUCCESS,
-                requests: outbox
-            })
+                requests: inbox
+            } as RejectInboxRequestSuccess)
 
             // send the inbox in the success
         } catch (ex) {

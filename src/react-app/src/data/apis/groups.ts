@@ -29,7 +29,7 @@ export interface AppInfo {
     rid: string
 }
 
-export type Role = "none" | "member" | "admin" | "owner"
+export type Role = "None" | "Member" | "Admin" | "Owner"
 
 export interface BriefGroup {
     id: string

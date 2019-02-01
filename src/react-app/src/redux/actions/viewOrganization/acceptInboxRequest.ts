@@ -4,7 +4,8 @@ import { ThunkDispatch } from 'redux-thunk'
 import { ActionFlag } from '../index'
 import {
     StoreState,
-    AppError
+    AppError,
+    ViewOrgViewModelKind
 } from '../../../types'
 
 import * as requestModel from '../../../data/models/requests'
@@ -33,11 +34,13 @@ interface AcceptRequestError extends AcceptRequestAction<ActionFlag.VIEW_ORG_ACC
     error: AppError
 }
 
-export function acceptInboxRequest(request: requestModel.Request) {
+export function acceptRequest(requestId: requestModel.RequestID) {
     return async (dispatch: ThunkDispatch<StoreState, void, AcceptRequestAction<any>>, getState: () => StoreState) => {
         const state = getState()
 
-        if (!state.views.dashboardView.viewModel) {
+        const viewModel = state.views.viewOrgView.viewModel
+
+        if (viewModel === null) {
             dispatch({
                 type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR,
                 error: {
@@ -45,6 +48,19 @@ export function acceptInboxRequest(request: requestModel.Request) {
                     message: 'No dashboard view model'
                 }
             })
+            return
+        }
+
+        // argh
+        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+            dispatch({
+                type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR,
+                error: {
+                    code: 'invalid state',
+                    message: 'Not the right kind of view model'
+                }
+            })
+            return
         }
 
         dispatch({
@@ -62,20 +78,11 @@ export function acceptInboxRequest(request: requestModel.Request) {
             groupsServiceURL: config.services.Groups.url
         })
 
-        const uberClient = new uberModel.UberModel({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url,
-            workspaceServiceURL: config.services.Workspace.url,
-            serviceWizardURL: config.services.ServiceWizard.url
-        })
-
-
         try {
-            const newRequest = await requestClient.acceptRequest(request.id)
+            await requestClient.acceptRequest(requestId)
 
             // refetch the inbox
-            const inbox = await requestClient.getCombinedRequestInboxForOrg(request.organizationId)
+            const inbox = await requestClient.getCombinedRequestInboxForOrg(viewModel.organization.id)
 
             dispatch({
                 type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_SUCCESS,

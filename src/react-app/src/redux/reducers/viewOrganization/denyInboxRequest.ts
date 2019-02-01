@@ -1,15 +1,14 @@
 import { Action } from 'redux'
-import * as actions from '../../actions/viewOrganization/rejectInboxRequest'
+import * as actions from '../../actions/viewOrganization/denyInboxRequest'
 import { StoreState, ViewOrgViewModelKind } from '../../../types'
 import { ActionFlag } from '../../actions'
 
 
 export function rejectInboxRequestSuccess(state: StoreState, action: actions.RejectInboxRequestSuccess): StoreState {
-    const viewModel = state.views.viewOrgView.viewModel
-    if (!viewModel) {
+    if (!state.views.viewOrgView.viewModel) {
         return state
     }
-    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
         return state
     }
     return {
@@ -19,7 +18,7 @@ export function rejectInboxRequestSuccess(state: StoreState, action: actions.Rej
             viewOrgView: {
                 ...state.views.viewOrgView,
                 viewModel: {
-                    ...viewModel,
+                    ...state.views.viewOrgView.viewModel,
                     requestInbox: action.requests
                 }
             }
@@ -30,7 +29,7 @@ export function rejectInboxRequestSuccess(state: StoreState, action: actions.Rej
 export default function reducer(state: StoreState, action: Action): StoreState | null {
     switch (action.type) {
         case ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_SUCCESS:
-            rejectInboxRequestSuccess(state, action as actions.RejectInboxRequestSuccess)
+            return rejectInboxRequestSuccess(state, action as actions.RejectInboxRequestSuccess)
         default:
             return null
     }

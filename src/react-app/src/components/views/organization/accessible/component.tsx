@@ -13,11 +13,13 @@ import * as orgModel from '../../../../data/models/organization/model'
 import * as requestModel from '../../../../data/models/requests'
 import * as feedsModel from '../../../../data/models/feeds'
 import OrganizationNarrative from '../../../OrganizationNarrative'
-import InboxRequest from '../../dashboard/InboxRequestContainer'
+// import InboxRequest from '../../dashboard/InboxRequestContainer'
 import OutboxRequest from '../../dashboard/OutboxRequestContainer'
 import Notifications from '../../../notifications/component'
 import MainMenu from '../../../menu/component';
 import Members from './members/reduxAdapter'
+
+import Requests from './requests/container'
 
 enum NavigateTo {
     NONE = 0,
@@ -42,13 +44,13 @@ export interface ViewOrganizationProps {
     notifications: Array<feedsModel.OrganizationNotification>
     onViewOrg: (id: string) => void
     onJoinOrg: () => void
-    onCancelJoinRequest: (requestId: string) => void
-    onAcceptInvitation: (requestId: string) => void
-    onRejectInvitation: (requestId: string) => void
+    onCancelJoinRequest: (requestId: requestModel.RequestID) => void
+    onAcceptInvitation: (requestId: requestModel.RequestID) => void
+    onRejectInvitation: (requestId: requestModel.RequestID) => void
     onRemoveNarrative: (narrative: orgModel.NarrativeResource) => void
     onGetViewAccess: (narrative: orgModel.NarrativeResource) => void
-    onAcceptRequest: (request: requestModel.Request) => void
-    onReadNotification: (requestId: string) => void
+    onAcceptRequest: (requestId: requestModel.RequestID) => void
+    onReadNotification: (requestId: requestModel.RequestID) => void
 }
 
 class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrganizationState> {
@@ -806,134 +808,134 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     onAcceptRequest(request: requestModel.Request) {
-        this.props.onAcceptRequest(request)
+        this.props.onAcceptRequest(request.id)
     }
 
-    renderInboxCard() {
-        // only show the inbox for admin and owner.
-        if (!(this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-            this.props.relation.type === orgModel.UserRelationToOrganization.OWNER)) {
-            return
-        }
+    // renderInboxCard() {
+    //     // only show the inbox for admin and owner.
+    //     if (!(this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
+    //         this.props.relation.type === orgModel.UserRelationToOrganization.OWNER)) {
+    //         return
+    //     }
 
-        const extras: Array<JSX.Element> = []
-        const count = this.props.requestInbox.length
-        const title = (
-            <span>
-                <Icon type="inbox" />
-                inbox
-                <span className="titleCount">
-                    ({count})
-                </span>
-            </span>
-        )
-        let inbox
-        if (this.props.requestInbox.length === 0) {
-            inbox = (
-                <div className="message">
-                    No pending organization requests for you
-                </div>
-            )
-        } else {
-            const inboxItems = this.props.requestInbox.map((request) => {
-                return (
-                    <div key={request.id}>
-                        <InboxRequest
-                            request={request}
-                            showOrg={false}
-                            onAcceptInboxRequest={this.onAcceptRequest.bind(this)} />
-                    </div>
-                )
-            })
-            inbox = (
-                <div style={{ maxHeight: '30em', overflowY: 'auto' }}>
-                    {inboxItems}
-                </div>
-            )
-        }
-        return (
-            <Card className="slimCard outboxCard"
-                style={{ marginBottom: '10px' }}
-                headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                title={title}
-                extra={extras}>
-                {inbox}
-            </Card>
-        )
+    //     const extras: Array<JSX.Element> = []
+    //     const count = this.props.requestInbox.length
+    //     const title = (
+    //         <span>
+    //             <Icon type="inbox" />
+    //             inbox
+    //             <span className="titleCount">
+    //                 ({count})
+    //             </span>
+    //         </span>
+    //     )
+    //     let inbox
+    //     if (this.props.requestInbox.length === 0) {
+    //         inbox = (
+    //             <div className="message">
+    //                 No pending organization requests for you
+    //             </div>
+    //         )
+    //     } else {
+    //         const inboxItems = this.props.requestInbox.map((request) => {
+    //             return (
+    //                 <div key={request.id}>
+    //                     <InboxRequest
+    //                         request={request}
+    //                         showOrg={false}
+    //                         onAcceptInboxRequest={this.onAcceptRequest.bind(this)} />
+    //                 </div>
+    //             )
+    //         })
+    //         inbox = (
+    //             <div style={{ maxHeight: '30em', overflowY: 'auto' }}>
+    //                 {inboxItems}
+    //             </div>
+    //         )
+    //     }
+    //     return (
+    //         <Card className="slimCard outboxCard"
+    //             style={{ marginBottom: '10px' }}
+    //             headStyle={{ backgroundColor: 'gray', color: 'white' }}
+    //             title={title}
+    //             extra={extras}>
+    //             {inbox}
+    //         </Card>
+    //     )
 
-    }
+    // }
 
-    renderInboxTabHeader() {
-        const extras = [
-            (
-                <NavLink
-                    key="manageRequests"
-                    to={`/manageOrganizationRequests/${this.props.organization!.id}`}>
-                    <Button
-                        onClick={this.onViewMembers.bind(this)}
-                        size="small"
-                        icon="inbox">Manage Requests</Button>
-                </NavLink>
-            )
-        ]
-        return (
-            <div className="ViewOrganization-tabPaneToolbar">
-                {extras}
-            </div>
-        )
-    }
+    // renderInboxTabHeader() {
+    //     // const extras = [
+    //     //     (
+    //     //         <NavLink
+    //     //             key="manageRequests"
+    //     //             to={`/manageOrganizationRequests/${this.props.organization!.id}`}>
+    //     //             <Button
+    //     //                 onClick={this.onViewMembers.bind(this)}
+    //     //                 size="small"
+    //     //                 icon="inbox">Manage Requests</Button>
+    //     //         </NavLink>
+    //     //     )
+    //     // ]
+    //     return (
+    //         <div className="ViewOrganization-tabPaneToolbar">
+    //             {extras}
+    //         </div>
+    //     )
+    // }
 
 
-    renderInboxTab() {
-        // only show the inbox for admin and owner.
-        if (!(this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-            this.props.relation.type === orgModel.UserRelationToOrganization.OWNER)) {
-            return
-        }
+    // renderInboxTab() {
+    //     // only show the inbox for admin and owner.
+    //     if (!(this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
+    //         this.props.relation.type === orgModel.UserRelationToOrganization.OWNER)) {
+    //         return
+    //     }
 
-        const extras = [
-            (
-                <NavLink
-                    key="manageRequests"
-                    to={`/manageOrganizationRequests/${this.props.organization!.id}`}>
-                    <Button
-                        onClick={this.onViewMembers.bind(this)}
-                        size="small"
-                        icon="inbox">Manage Requests</Button>
-                </NavLink>
-            )
-        ]
+    //     const extras = [
+    //         (
+    //             <NavLink
+    //                 key="manageRequests"
+    //                 to={`/manageOrganizationRequests/${this.props.organization!.id}`}>
+    //                 <Button
+    //                     onClick={this.onViewMembers.bind(this)}
+    //                     size="small"
+    //                     icon="inbox">Manage Requests</Button>
+    //             </NavLink>
+    //         )
+    //     ]
 
-        let inbox
-        if (this.props.requestInbox.length === 0) {
-            inbox = (
-                <div className="message">
-                    No pending organization requests for you
-                </div>
-            )
-        } else {
-            const requests = this.props.requestInbox.map((request) => {
-                return (
-                    <div key={request.id}>
-                        <InboxRequest
-                            request={request}
-                            showOrg={false}
-                            onAcceptInboxRequest={this.onAcceptRequest.bind(this)} />
-                    </div>
-                )
-            })
-            inbox = (
-                <div style={{ overflowY: 'auto' }}>
-                    {requests}
-                </div>
-            )
-        }
-        return (
-            <React.Fragment>
-                {inbox}
-            </React.Fragment>
-        )
-    }
+    //     let inbox
+    //     if (this.props.requestInbox.length === 0) {
+    //         inbox = (
+    //             <div className="message">
+    //                 No pending organization requests for you
+    //             </div>
+    //         )
+    //     } else {
+    //         const requests = this.props.requestInbox.map((request) => {
+    //             return (
+    //                 <div key={request.id}>
+    //                     <InboxRequest
+    //                         request={request}
+    //                         showOrg={false}
+    //                         onAcceptInboxRequest={this.onAcceptRequest.bind(this)} />
+    //                 </div>
+    //             )
+    //         })
+    //         inbox = (
+    //             <div style={{ overflowY: 'auto' }}>
+    //                 {requests}
+    //             </div>
+    //         )
+    //     }
+    //     return (
+    //         <React.Fragment>
+    //             {inbox}
+    //         </React.Fragment>
+    //     )
+    // }
 
     renderOutboxCard() {
         // if (this.props.relation.type !== orgModel.UserRelationToOrganization.MEMBER) {
@@ -1224,11 +1226,20 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
         if (isMember) {
             if (isAdmin) {
+                const totalRequestCount = this.props.requestInbox.length + this.props.requestOutbox.length
+                const totalRequests = (
+                    <span className="ViewOrganization-tabCount">
+                        ({totalRequestCount || 'Ø'})
+                    </span>
+                )
                 tabs.push((
-                    <Tabs.TabPane tab={<span><Icon type="inbox" />Requests</span>} key="inbox" style={{ flexDirection: 'column' }}>
-                        {this.renderInboxTabHeader()}
-                        <div className="ViewOrganization-tabPaneHeader">inbox</div>
-                        {this.renderInboxTab()}
+                    <Tabs.TabPane tab={<span><Icon type="inbox" />Requests {totalRequests} </span>} key="inbox" style={{ flexDirection: 'column' }}>
+                        {/* {this.renderInboxTabHeader()} */}
+                        <Requests inbox={this.props.requestInbox} outbox={this.props.requestOutbox} />
+                        {/* // <div className="ViewOrganization-tabPaneHeader">inbox</div>
+                        // {this.renderInboxTab()}
+                        // <div className="ViewOrganization-tabPaneHeader">outbox</div>
+                        // {this.renderOutboxTab()} */}
                     </Tabs.TabPane>
                 ))
             } else {

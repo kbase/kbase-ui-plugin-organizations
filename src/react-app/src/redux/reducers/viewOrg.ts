@@ -4,6 +4,8 @@ import * as types from '../../types'
 import { ActionFlag } from '../actions'
 import acceptInboxRequest from './viewOrganization/acceptInboxRequest'
 import viewMembers from './viewOrganization/viewMembers'
+import denyInboxRequest from './viewOrganization/denyInboxRequest'
+import cancelOutboxRequest from './viewOrganization/cancelOutboxRequests'
 
 export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
     return {
@@ -161,8 +163,9 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
     }
 
     return acceptInboxRequest(state, action) ||
+        denyInboxRequest(state, action) ||
+        cancelOutboxRequest(state, action) ||
         viewMembers(state, action)
-
 }
 
 export default reducer

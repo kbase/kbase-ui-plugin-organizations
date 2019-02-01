@@ -304,7 +304,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         id: group.id,
         name: group.name,
         isPrivate: group.private,
-        isMember: (group.role !== "none"),
+        isMember: (group.role !== "None"),
         relation: groupRoleToUserRelation(group.role),
         logoUrl: group.custom.logourl || null,
         homeUrl: group.custom.homeurl || null,
@@ -446,10 +446,10 @@ function applySort(organizations: Array<BriefOrganization>, sortField: string, s
 
 function groupRoleToUserRelation(role: groupsApi.Role): UserRelationToOrganization {
     switch (role) {
-        case 'none': return UserRelationToOrganization.NONE
-        case 'member': return UserRelationToOrganization.MEMBER
-        case 'admin': return UserRelationToOrganization.ADMIN
-        case 'owner': return UserRelationToOrganization.OWNER
+        case 'None': return UserRelationToOrganization.NONE
+        case 'Member': return UserRelationToOrganization.MEMBER
+        case 'Admin': return UserRelationToOrganization.ADMIN
+        case 'Owner': return UserRelationToOrganization.OWNER
         default: throw new Error('Unknown role: ' + role)
     }
 }
@@ -601,7 +601,7 @@ export class OrganizationModel {
         return this.groupsClient.getGroupById(id)
             .then((group) => {
                 let org: Organization | InaccessiblePrivateOrganization
-                if (group.role === "none" && group.private) {
+                if (group.role === "None" && group.private) {
                     console.log('PRIVATE?', group)
                     org = groupToPrivateOrganization(group as groupsApi.InaccessiblePrivateGroup, this.params.username)
                 } else {
@@ -623,7 +623,7 @@ export class OrganizationModel {
         return this.groupsClient.getGroupById(id)
             .then((group) => {
 
-                if (group.role === "none" && group.private) {
+                if (group.role === "None" && group.private) {
                     throw new Error('Inaccessible Organization')
                 }
 

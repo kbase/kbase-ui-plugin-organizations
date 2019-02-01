@@ -243,8 +243,8 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                                 <Icon type="user" style={{ color: 'blue' }} />You have been <b>invited</b> to join this Organization
                             </div>
                             <div>
-                                <Button icon="check" type="default" onClick={this.onAcceptInvitation.bind(this)}>Accept Invitation</Button>
-                                <Button icon="stop" type="danger" onClick={this.onRejectInvitation.bind(this)}>Reject Invitation</Button>
+                                <Button icon="check" type="default" onClick={this.onAcceptInvitation.bind(this)}>Accept</Button>
+                                <Button icon="stop" type="danger" onClick={this.onRejectInvitation.bind(this)}>Reject</Button>
                             </div>
                         </div>
                     </Tooltip>
@@ -291,9 +291,9 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                         <Menu.Item key="viewMembers">
                             Members
                         </Menu.Item>
-                        <Menu.Item key="manageRequests">
+                        {/* <Menu.Item key="manageRequests">
                             Manage Requests
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item key="editOrg" >
                             Edit this Org
                         </Menu.Item>
@@ -336,9 +336,9 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                         <Menu.Item key="viewMembers" >
                             Members
                         </Menu.Item>
-                        <Menu.Item key="manageRequests">
+                        {/* <Menu.Item key="manageRequests">
                             Manage Requests
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item key="editOrg">
                             Edit this Org
                         </Menu.Item>
