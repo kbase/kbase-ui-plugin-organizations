@@ -13,6 +13,7 @@ import OrganizationHeader from '../organizationHeader/loader';
 import * as orgModel from '../../../data/models/organization/model'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import TextArea from 'antd/lib/input/TextArea';
+import MainMenu from '../../menu/component';
 
 export interface EditOrganizationProps {
     editState: EditState
@@ -545,11 +546,30 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-    render() {
-        if (this.state.cancelToBrowser) {
-            return <Redirect push to="/organizations" />
-        }
+    renderMenuButtons() {
+        return (
+            <React.Fragment>
+                <Button icon="save"
+                    form="editOrganizationForm"
+                    key="submit"
+                    disabled={!this.canSave.call(this)}
+                    htmlType="submit">
+                    {/* <Icon type="save" /> */}
+                    {/* <FaSave style={{ verticalAlign: 'center' }} /> */}
+                    Save
+                        </Button>
+                <Button icon="undo"
+                    type="danger"
+                    onClick={this.onClickCancelToViewer.bind(this)}>
+                    {/* <FaUndo style={{ verticalAlign: 'center' }} />  */}
+                    Cancel
+                        </Button>
+                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+            </React.Fragment>
+        )
+    }
 
+    render() {
         if (this.state.cancelToViewer) {
             return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
         }
@@ -564,9 +584,8 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
 
         return (
             <div className="EditOrganization">
-
+                <MainMenu buttons={this.renderMenuButtons()} />
                 {this.renderOrgHeader()}
-                {this.renderHeader()}
 
                 {this.renderEditor()}
             </div>

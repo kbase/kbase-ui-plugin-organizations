@@ -7,6 +7,7 @@ import Header from '../../Header';
 import { Icon, Button, Modal, Alert, Select } from 'antd';
 import './component.css'
 import * as orgModel from '../../../data/models/organization/model'
+import MainMenu from '../../menu/component';
 
 
 export interface Props {
@@ -368,6 +369,23 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         }
     }
 
+    renderMenuButtons() {
+        return (
+            <React.Fragment>
+                <Button icon="undo"
+                    type="danger"
+                    onClick={this.doCancelToViewer.bind(this)}>
+                    Return to this Org
+                </Button>
+                <Button
+                    shape="circle"
+                    icon="info"
+                    onClick={this.doShowInfo.bind(this)}>
+                </Button>
+            </React.Fragment>
+        )
+    }
+
     render() {
         switch (this.state.navigateTo) {
             case NavigateTo.BROWSER:
@@ -389,7 +407,8 @@ export class RequestAddNarrative extends React.Component<Props, State> {
 
         return (
             <div className="RequestNarrative scrollable-flex-column">
-                {this.renderHeader()}
+                <MainMenu buttons={this.renderMenuButtons()} />
+                {/* {this.renderHeader()} */}
                 {this.renderOrgHeader()}
                 <div className="body scrollable-flex-column">
                     <div className="selectNarrativeCol scrollable-flex-column">

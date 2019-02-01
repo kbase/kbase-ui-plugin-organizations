@@ -14,7 +14,7 @@ import * as requestModel from '../../../../data/models/requests'
 import * as feedsModel from '../../../../data/models/feeds'
 import OrganizationNarrative from '../../../OrganizationNarrative'
 // import InboxRequest from '../../dashboard/InboxRequestContainer'
-import OutboxRequest from '../../dashboard/OutboxRequestContainer'
+// import OutboxRequest from '../../dashboard/OutboxRequestContainer'
 import Notifications from '../../../notifications/component'
 import MainMenu from '../../../menu/component';
 import Members from './members/reduxAdapter'
@@ -583,31 +583,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
-    renderHeader() {
-        const breadcrumbs = (
-            <div style={{ flex: '0 0 auto' }}>
-                {/* <span>
-                    Viewing Org "
-                    {this.props.organization && this.props.organization.name}
-                    "
-                </span> */}
-                {/* <span>
-                    {this.props.organization && this.props.organization.name}
-                </span> */}
-            </div>
-        )
-        const buttons = (
-            <React.Fragment>
-                {this.renderEditButton()}
-                {this.renderJoinButton()}
-                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
-            </React.Fragment>
-        )
-        return (
-            <Header breadcrumbs={breadcrumbs} buttons={buttons} />
-        )
-    }
-
     renderLoadingHeader() {
         const breadcrumbs = (
             <span>
@@ -634,12 +609,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         if (!this.props.organization) {
             return
         }
-        // if (this.props.organization.relation.type === UserRelationToOrganization.OWNER ||
-        //     this.props.organization.relation.type === UserRelationToOrganization.ADMIN) {
-        //     extras.push((
-        //         <Button icon="setting"></Button>
-        //     ))
-        // }
+
         let memberCount
         if (this.isMember()) {
             memberCount = (
@@ -668,19 +638,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderMembersTab() {
-        // const extras = [
-        //     (
-        //         <NavLink
-        //             key="viewMembers"
-        //             to={`/viewMembers/${this.props.organization!.id}`}>
-        //             <Button
-        //                 onClick={this.onViewMembers.bind(this)}
-        //                 size="small"
-        //                 icon="team"></Button>
-        //         </NavLink>
-        //     )
-        // ]
-
         return (
             <div className="scrollable-flex-column">
                 <div className="ViewOrganization-tabPaneToolbar">
@@ -691,338 +648,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
-    onReadNotification(notificationId: string) {
-        this.props.onReadNotification(notificationId);
-    }
-
-    renderNotificationsCard() {
-        const count = (
-            <span className="titleCount">(0)</span>
-        )
-        const title = (
-            <span>
-                <Icon type="notification" />
-                notifications
-            </span>
-        )
-        let notifications
-        if (this.props.notifications.length === 0) {
-            notifications = (
-                <div className="message">No unread notifications</div>
-            )
-        } else {
-            notifications = (
-                <Notifications
-                    notifications={this.props.notifications}
-                    showOrg={false}
-                    onRead={this.onReadNotification.bind(this)} />
-            )
-        }
-        return (
-            <Card className="slimCard"
-                style={{ marginBottom: '10px' }}
-                headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                title={title}>
-                {notifications}
-            </Card>
-        )
-    }
-
-
-    renderNotificationsTab() {
-        const count = (
-            <span className="titleCount">(0)</span>
-        )
-        const title = (
-            <span>
-                <Icon type="notification" />
-                notifications
-            </span>
-        )
-        let notifications
-        if (this.props.notifications.length === 0) {
-            notifications = (
-                <div className="message">No unread notifications</div>
-            )
-        } else {
-            notifications = (
-                <Notifications
-                    notifications={this.props.notifications}
-                    showOrg={false}
-                    onRead={this.onReadNotification.bind(this)} />
-            )
-        }
-        return (
-            <React.Fragment>
-                {notifications}
-            </React.Fragment>
-        )
-    }
-
-    renderFeedTab() {
-        const count = (
-            <span className="titleCount">(0)</span>
-        )
-        const title = (
-            <span>
-                <Icon type="notification" />
-                notifications
-            </span>
-        )
-        let notifications
-        if (this.props.notifications.length === 0) {
-            notifications = (
-                <div className="message">No unread notifications</div>
-            )
-        } else {
-            notifications = (
-                <Notifications
-                    notifications={this.props.notifications}
-                    showOrg={false}
-                    onRead={this.onReadNotification.bind(this)} />
-            )
-        }
-        const extras = [
-            (
-                <Button
-                    key="feeds"
-                    size="small"
-                    href="/#feeds"
-                    target=" _blank">
-                    <Icon type="notification" />{' '}View All Your KBase Feeds
-                </Button>
-            )
-        ]
-        return (
-            <React.Fragment>
-                <div className="ViewOrganization-tabPaneToolbar">
-                    {extras}
-                </div>
-                <div className="ViewOrganization-tabPaneHeader">updates</div>
-                <p className="message">** org updates not yet available **</p>
-                <div className="ViewOrganization-tabPaneHeader">notifications</div>
-                {notifications}
-
-            </React.Fragment>
-        )
-    }
-
     onAcceptRequest(request: requestModel.Request) {
         this.props.onAcceptRequest(request.id)
-    }
-
-    // renderInboxCard() {
-    //     // only show the inbox for admin and owner.
-    //     if (!(this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-    //         this.props.relation.type === orgModel.UserRelationToOrganization.OWNER)) {
-    //         return
-    //     }
-
-    //     const extras: Array<JSX.Element> = []
-    //     const count = this.props.requestInbox.length
-    //     const title = (
-    //         <span>
-    //             <Icon type="inbox" />
-    //             inbox
-    //             <span className="titleCount">
-    //                 ({count})
-    //             </span>
-    //         </span>
-    //     )
-    //     let inbox
-    //     if (this.props.requestInbox.length === 0) {
-    //         inbox = (
-    //             <div className="message">
-    //                 No pending organization requests for you
-    //             </div>
-    //         )
-    //     } else {
-    //         const inboxItems = this.props.requestInbox.map((request) => {
-    //             return (
-    //                 <div key={request.id}>
-    //                     <InboxRequest
-    //                         request={request}
-    //                         showOrg={false}
-    //                         onAcceptInboxRequest={this.onAcceptRequest.bind(this)} />
-    //                 </div>
-    //             )
-    //         })
-    //         inbox = (
-    //             <div style={{ maxHeight: '30em', overflowY: 'auto' }}>
-    //                 {inboxItems}
-    //             </div>
-    //         )
-    //     }
-    //     return (
-    //         <Card className="slimCard outboxCard"
-    //             style={{ marginBottom: '10px' }}
-    //             headStyle={{ backgroundColor: 'gray', color: 'white' }}
-    //             title={title}
-    //             extra={extras}>
-    //             {inbox}
-    //         </Card>
-    //     )
-
-    // }
-
-    // renderInboxTabHeader() {
-    //     // const extras = [
-    //     //     (
-    //     //         <NavLink
-    //     //             key="manageRequests"
-    //     //             to={`/manageOrganizationRequests/${this.props.organization!.id}`}>
-    //     //             <Button
-    //     //                 onClick={this.onViewMembers.bind(this)}
-    //     //                 size="small"
-    //     //                 icon="inbox">Manage Requests</Button>
-    //     //         </NavLink>
-    //     //     )
-    //     // ]
-    //     return (
-    //         <div className="ViewOrganization-tabPaneToolbar">
-    //             {extras}
-    //         </div>
-    //     )
-    // }
-
-
-    // renderInboxTab() {
-    //     // only show the inbox for admin and owner.
-    //     if (!(this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-    //         this.props.relation.type === orgModel.UserRelationToOrganization.OWNER)) {
-    //         return
-    //     }
-
-    //     const extras = [
-    //         (
-    //             <NavLink
-    //                 key="manageRequests"
-    //                 to={`/manageOrganizationRequests/${this.props.organization!.id}`}>
-    //                 <Button
-    //                     onClick={this.onViewMembers.bind(this)}
-    //                     size="small"
-    //                     icon="inbox">Manage Requests</Button>
-    //             </NavLink>
-    //         )
-    //     ]
-
-    //     let inbox
-    //     if (this.props.requestInbox.length === 0) {
-    //         inbox = (
-    //             <div className="message">
-    //                 No pending organization requests for you
-    //             </div>
-    //         )
-    //     } else {
-    //         const requests = this.props.requestInbox.map((request) => {
-    //             return (
-    //                 <div key={request.id}>
-    //                     <InboxRequest
-    //                         request={request}
-    //                         showOrg={false}
-    //                         onAcceptInboxRequest={this.onAcceptRequest.bind(this)} />
-    //                 </div>
-    //             )
-    //         })
-    //         inbox = (
-    //             <div style={{ overflowY: 'auto' }}>
-    //                 {requests}
-    //             </div>
-    //         )
-    //     }
-    //     return (
-    //         <React.Fragment>
-    //             {inbox}
-    //         </React.Fragment>
-    //     )
-    // }
-
-    renderOutboxCard() {
-        // if (this.props.relation.type !== orgModel.UserRelationToOrganization.MEMBER) {
-        //     return
-        // }
-        const extras: Array<JSX.Element> = []
-        const count = this.props.requestOutbox.length
-        const title = (
-            <span>
-                <Icon type="export" />
-                outbox
-                <span className="titleCount">
-                    ({count})
-                </span>
-            </span>
-        )
-        let outbox
-        if (this.props.requestOutbox.length === 0) {
-            outbox = (
-                <div className="message">
-                    No pending organization requests from you
-                </div>
-            )
-        } else {
-            const outboxItems = this.props.requestOutbox.map((request) => {
-                return (
-                    <React.Fragment key={request.id}>
-                        <OutboxRequest request={request} showOrg={false} />
-                    </React.Fragment>
-                )
-            })
-            outbox = (
-                <div style={{ maxHeight: '30em', overflowY: 'auto' }}>
-                    {outboxItems}
-                </div>
-            )
-        }
-        return (
-            <Card className="slimCard outboxCard"
-                style={{ marginBottom: '10px' }}
-                headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                title={title}
-                extra={extras}>
-                {outbox}
-            </Card>
-        )
-
-    }
-
-    renderOutboxTabHeader() {
-        return (
-            <div className="ViewOrganization-tabPaneToolbar">
-                {' '}
-            </div>
-        )
-    }
-
-    renderOutboxTab() {
-        let outbox
-        if (this.props.requestOutbox.length === 0) {
-            outbox = (
-                <div className="message">
-                    No pending organization requests from you
-                </div>
-            )
-        } else {
-            const outboxItems = this.props.requestOutbox.map((request) => {
-                return (
-                    <React.Fragment key={request.id}>
-                        <OutboxRequest request={request} showOrg={false} />
-                    </React.Fragment>
-                )
-            })
-            outbox = (
-                <div style={{ overflowY: 'auto' }}>
-                    {outboxItems}
-                </div>
-            )
-        }
-        return (
-            <React.Fragment>
-                <div className="ViewOrganization-tabPageToolbar">
-
-                </div>
-                {outbox}
-            </React.Fragment>
-        )
     }
 
     renderNarrativeMenu(narrative: orgModel.NarrativeResource) {
@@ -1211,19 +838,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             </Tabs.TabPane>
         ))
 
-        // tabs.push((
-        //     <Tabs.TabPane tab={<span><Icon type="notification" />Feed</span>} key="feed" style={{ flexDirection: 'column' }}>
-        //         {this.renderNotificationsTab()}
-        //     </Tabs.TabPane>
-        // ))
-
-
-        // tabs.push((
-        //     <Tabs.TabPane tab={<span><Icon type="notification" />Feed</span>} key="news" style={{ flexDirection: 'column' }}>
-        //         {this.renderFeedTab()}
-        //     </Tabs.TabPane>
-        // ))
-
         if (isMember) {
             if (isAdmin) {
                 const totalRequestCount = this.props.requestInbox.length + this.props.requestOutbox.length
@@ -1234,12 +848,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 )
                 tabs.push((
                     <Tabs.TabPane tab={<span><Icon type="inbox" />Requests {totalRequests} </span>} key="inbox" style={{ flexDirection: 'column' }}>
-                        {/* {this.renderInboxTabHeader()} */}
-                        <Requests inbox={this.props.requestInbox} outbox={this.props.requestOutbox} />
-                        {/* // <div className="ViewOrganization-tabPaneHeader">inbox</div>
-                        // {this.renderInboxTab()}
-                        // <div className="ViewOrganization-tabPaneHeader">outbox</div>
-                        // {this.renderOutboxTab()} */}
+                        <Requests inbox={this.props.requestInbox} outbox={this.props.requestOutbox} relation={this.props.relation} />
                     </Tabs.TabPane>
                 ))
             } else {
@@ -1252,15 +861,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 }
                 tabs.push((
                     <Tabs.TabPane tab={<span><Icon type="inbox" />Requests <span className="ViewOrganization-tabCount">({titleCount})</span></span>} key="outbox" style={{ flexDirection: 'column' }}>
-                        {this.renderOutboxTabHeader()}
-                        <div className="ViewOrganization-tabPaneHeader">outbox</div>
-                        {this.renderOutboxTab()}
+                        <Requests inbox={[]} outbox={this.props.requestOutbox} relation={this.props.relation} />
                     </Tabs.TabPane>
                 ))
             }
         }
-
-
 
         return (
             <Tabs
@@ -1312,7 +917,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 relation.type === orgModel.UserRelationToOrganization.ADMIN ||
                 relation.type === orgModel.UserRelationToOrganization.OWNER
 
-            // another type narrowing hack 
             // TODO: restore this ... requestaccess component needs a container to load the username 
             // from the store
             // if (isMember) {
@@ -1330,8 +934,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 <div className="ViewOrganization  scrollable-flex-column">
                     <MainMenu buttons={this.renderMenuButtons()} />
                     {this.renderOrgHeader()}
-                    {/* {this.renderHeader()} */}
-
                     <div className="mainRow scrollable-flex-column">
                         <div className="mainColumn  scrollable-flex-column">
                             <div className="orgRow" style={{ minHeight: '0px' }}>
@@ -1342,13 +944,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                             </div>
                         </div>
                         <div className="infoColumn">
-                            {/* <div className={this.renderRelationClass(this.props.organization)}>
-                                {this.renderAdminTasks()}
-                            </div> */}
-                            {/* {this.renderAdminTasks()} */}
-                            {/* <div className="infoBox">
-                                    {this.renderInfo()}
-                                </div> */}
                             {this.renderCombo()}
                         </div>
                     </div>

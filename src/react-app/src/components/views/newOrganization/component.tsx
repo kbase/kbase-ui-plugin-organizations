@@ -12,6 +12,7 @@ import Header from '../../Header';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import OrgLogo from '../../OrgLogo';
 import TextArea from 'antd/lib/input/TextArea';
+import MainMenu from '../../menu/component';
 
 export interface NewOrganizationProps {
     editState: EditState,
@@ -581,6 +582,29 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         }
     }
 
+    renderMenuButtons() {
+        let errorButton
+        if (this.props.error) {
+            errorButton = (
+                <Button shape="circle" icon="exclamation" type="danger" onClick={this.toggleError.bind(this)}></Button>
+            )
+        }
+
+        return (
+            <React.Fragment>
+                <Button icon="save"
+                    form="newOrganizationForm"
+                    key="submit"
+                    disabled={!this.canSave.call(this)}
+                    htmlType="submit">
+                    Save
+                </Button>
+                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+                {errorButton}
+            </React.Fragment>
+        )
+    }
+
     render() {
         if (this.state.cancelToBrowser) {
             return <Redirect push to="/organizations" />
@@ -601,7 +625,8 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
         return (
             <div className="NewOrganization">
-                {this.renderHeader()}
+                <MainMenu buttons={this.renderMenuButtons()} />
+                {/* {this.renderHeader()} */}
                 {this.renderEditor()}
                 {this.renderError()}
             </div>

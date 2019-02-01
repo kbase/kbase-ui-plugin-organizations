@@ -157,6 +157,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                 roleType: e.target.value,
                 roles: []
             }
+            this.setState({ filterByRole: [] })
         }
         this.props.onFilterOrgs(newFilter)
     }

@@ -277,9 +277,6 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                                 </Dropdown>
                             </div>
                         </div>
-                        {/* <div style={{ textAlign: 'center' }}>
-                            <Button type="default">Manage your Profile</Button>
-                        </div> */}
                     </div>
                 )
             case (orgModel.UserRelationToOrganization.ADMIN):
@@ -288,12 +285,6 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                         <Menu.Item key="manageMyMembership">
                             Manage My Membership
                         </Menu.Item>
-                        <Menu.Item key="viewMembers">
-                            Members
-                        </Menu.Item>
-                        {/* <Menu.Item key="manageRequests">
-                            Manage Requests
-                        </Menu.Item> */}
                         <Menu.Item key="editOrg" >
                             Edit this Org
                         </Menu.Item>
@@ -322,23 +313,11 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                                 </Dropdown>
                             </div>
                         </div>
-                        {/* <div style={{ textAlign: 'center' }}>
-                            <Button type="default">Manage your Profile</Button>
-                        </div> */}
                     </div>
                 )
             case (orgModel.UserRelationToOrganization.OWNER):
                 const ownerMenu = (
                     <Menu onClick={this.onMenuClick.bind(this)}>
-                        {/* <Menu.Item key="manageMyMembership">
-                            Manage My Membership
-                        </Menu.Item> */}
-                        <Menu.Item key="viewMembers" >
-                            Members
-                        </Menu.Item>
-                        {/* <Menu.Item key="manageRequests">
-                            Manage Requests
-                        </Menu.Item> */}
                         <Menu.Item key="editOrg">
                             Edit this Org
                         </Menu.Item>
@@ -371,9 +350,6 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                                 </Dropdown>
                             </div>
                         </div>
-                        {/* <div style={{ textAlign: 'center' }}>
-                        <Button type="default">Manage your Profile</Button>
-                    </div> */}
                     </div>
                 )
         }

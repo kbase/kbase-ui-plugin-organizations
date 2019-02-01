@@ -6,16 +6,18 @@ import * as acceptActions from '../../../../../redux/actions/viewOrganization/ac
 import * as rejectActions from '../../../../../redux/actions/viewOrganization/denyInboxRequest'
 import * as cancelRequestActions from '../../../../../redux/actions/viewOrganization/cancelOutboxRequest'
 import * as requestModel from '../../../../../data/models/requests'
+import * as orgModel from '../../../../../data/models/organization/model'
 
 import Component from './component'
 
 export interface OwnProps {
     inbox: Array<requestModel.Request>
     outbox: Array<requestModel.Request>
+    relation: orgModel.Relation
 }
 
 interface StateProps {
-    // viewModel: types.ManageOrganizationRequestsViewModel
+
 }
 
 interface DispatchProps {
@@ -26,17 +28,6 @@ interface DispatchProps {
 }
 
 function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
-    // const {
-    //     views: {
-    //         manageOrganizationRequestsView
-    //     }
-    // } = state
-    // if (!manageOrganizationRequestsView.viewModel) {
-    //     throw new Error('view state not loaded!')
-    // }
-    // return {
-    //     viewModel: manageOrganizationRequestsView.viewModel
-    // }
     return {}
 }
 

@@ -9,6 +9,7 @@ import OrganizationHeader from '../organizationHeader/loader';
 import UserComponent from '../../User'
 import * as orgModel from '../../../data/models/organization/model'
 import * as userModel from '../../../data/models/user'
+import MainMenu from '../../menu/component';
 
 export interface InviteUserProps {
     organization: orgModel.Organization,
@@ -444,6 +445,23 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         return (<Icon type="search" />)
     }
 
+    renderMenuButtons() {
+        return (
+            <React.Fragment>
+                <Button icon="undo"
+                    type="danger"
+                    onClick={this.onClickCancelToViewer.bind(this)}>
+                    Return to this Org
+                </Button>
+                <Button
+                    shape="circle"
+                    icon="info"
+                    onClick={this.onShowInfo.bind(this)}>
+                </Button>
+            </React.Fragment >
+        )
+    }
+
     render() {
 
         if (this.state.cancelToViewMembers) {
@@ -460,7 +478,8 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
 
         return (
             <div className="InviteUser scrollable-flex-column">
-                {this.renderHeader()}
+                <MainMenu buttons={this.renderMenuButtons()} />
+                {/* {this.renderHeader()} */}
                 {this.renderOrgHeader()}
                 <div className="row scrollable-flex-column">
                     <div className="col1 firstCol users scrollable-flex-column">
