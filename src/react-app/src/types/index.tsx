@@ -377,6 +377,7 @@ export enum BrowseOrgsState {
 export interface BrowseOrgsViewModel {
     rawOrganizations: Array<orgModel.BriefOrganization>
     organizations: Array<orgModel.BriefOrganization>
+    openRequests: Map<orgModel.OrganizationID, orgModel.RequestStatus>
     totalCount: number
     filteredCount: number
     sortField: string

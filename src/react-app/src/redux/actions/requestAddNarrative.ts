@@ -279,7 +279,6 @@ export function sort(sort: narrativeModel.Sort) {
             workspaceServiceURL: config.services.Workspace.url
         })
 
-        // LEFT OFF HERE FOR SORTING
         try {
             const sorted = narrativeClient.sortOrganizationNarratives(viewModel.narratives, sort)
             dispatch({

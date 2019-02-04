@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import Organizations from '../../organizations/container';
+import Organizations from './organizations/container';
 import { SortDirection, AppError } from '../../../types';
 
 import './component.css';
-import { Button, Icon, Radio, Select, Modal, Alert, Checkbox, Switch } from 'antd'
+import { Button, Icon, Radio, Select, Modal, Alert, Checkbox } from 'antd'
 import Header from '../../Header';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';

@@ -51,7 +51,7 @@ export class UberModel {
 
         const invitation = await requestClient.getUserInvitationForOrg(organizationId) as requestModel.UserInvitation | null
 
-        // LEFT OFF HERE ... we should probably just keep the request ids rather than try to keep the whole request
+        // we should probably just keep the request ids rather than try to keep the whole request
         // and refactor the calls for the request events, which I just refactored (not much work) to use the 
         // whole request structure rather than just the id, to use the request id + the org id...
         const relation = orgModel.determineRelation(organization, this.params.username, request, invitation)

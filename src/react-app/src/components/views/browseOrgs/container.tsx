@@ -13,6 +13,7 @@ export interface OwnProps {
 }
 export interface LinkStateProps {
     organizations: Array<orgModel.BriefOrganization>
+    openRequests: Map<orgModel.OrganizationID, orgModel.RequestStatus>
     totalCount: number
     filteredCount: number
     filter: orgModel.Filter
@@ -36,7 +37,7 @@ export function mapStateToProps(storeState: StoreState): LinkStateProps {
         views: {
             browseOrgsView: {
                 viewModel: {
-                    organizations, error,
+                    organizations, openRequests, error,
                     totalCount, filteredCount, filter, searching }
             }
         }
@@ -44,6 +45,7 @@ export function mapStateToProps(storeState: StoreState): LinkStateProps {
 
     return {
         organizations,
+        openRequests,
         totalCount,
         filteredCount,
         filter,

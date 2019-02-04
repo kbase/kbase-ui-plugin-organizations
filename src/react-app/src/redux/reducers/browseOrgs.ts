@@ -166,7 +166,7 @@ function filterOrgsStart(state: BrowseOrgsView, action: actions.FilterOrgsStart)
 
 function loadSuccess(state: BrowseOrgsView, action: actions.LoadSuccess): BrowseOrgsView {
     const { defaultViewModel: {
-        rawOrganizations, organizations, searchTerms, sortField, sortDirection, filter,
+        rawOrganizations, organizations, openRequests, searchTerms, sortField, sortDirection, filter,
         totalCount, filteredCount, selectedOrganizationId, error, searching
     } } = action
 
@@ -175,7 +175,7 @@ function loadSuccess(state: BrowseOrgsView, action: actions.LoadSuccess): Browse
         loadingState: ComponentLoadingState.SUCCESS,
         error: null,
         viewModel: {
-            rawOrganizations, organizations, searchTerms, sortField, sortDirection, filter,
+            rawOrganizations, organizations, openRequests, searchTerms, sortField, sortDirection, filter,
             totalCount, filteredCount, selectedOrganizationId, error, searching
         }
     }

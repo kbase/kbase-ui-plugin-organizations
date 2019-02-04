@@ -111,15 +111,16 @@ export interface SearchOrgsStart extends Action<ActionFlag.BROWSE_ORGS_SEARCH_ST
 // Called upon successful completion of a search
 // Sets the organizations found
 export interface SearchOrgsSuccess extends Action<ActionFlag.BROWSE_ORGS_SEARCH_SUCCESS> {
-    type: ActionFlag.BROWSE_ORGS_SEARCH_SUCCESS,
-    organizations: Array<orgModel.BriefOrganization>,
+    type: ActionFlag.BROWSE_ORGS_SEARCH_SUCCESS
+    organizations: Array<orgModel.BriefOrganization>
     totalCount: number
+    openRequests: Map<orgModel.OrganizationID, orgModel.RequestStatus>
 }
 
 // Called upon a search error
 // Sets error state
 export interface SearchOrgsError extends Action<ActionFlag.BROWSE_ORGS_SEARCH_ERROR> {
-    type: ActionFlag.BROWSE_ORGS_SEARCH_ERROR,
+    type: ActionFlag.BROWSE_ORGS_SEARCH_ERROR
     error: AppError
 }
 
@@ -131,11 +132,12 @@ function searchOrgsStart(): SearchOrgsStart {
     }
 }
 
-function searchOrgsSuccess(organizations: Array<orgModel.BriefOrganization>, totalCount: number): SearchOrgsSuccess {
+function searchOrgsSuccess(organizations: Array<orgModel.BriefOrganization>, totalCount: number, openRequests: Map<orgModel.OrganizationID, orgModel.RequestStatus>): SearchOrgsSuccess {
     return {
         type: ActionFlag.BROWSE_ORGS_SEARCH_SUCCESS,
         organizations: organizations,
-        totalCount: totalCount
+        totalCount: totalCount,
+        openRequests: openRequests
     }
 }
 
@@ -175,6 +177,7 @@ export function load() {
         const defaultViewModel: BrowseOrgsViewModel = {
             rawOrganizations: [],
             organizations: [],
+            openRequests: new Map(),
             totalCount: 0,
             filteredCount: 0,
             sortField: 'changed',
@@ -192,7 +195,7 @@ export function load() {
 
 // TODO: proper typing here 
 export function searchOrgs(searchTerms: Array<string>) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(searchOrgsStart())
 
         const {
@@ -215,27 +218,44 @@ export function searchOrgs(searchTerms: Array<string>) {
             groupsServiceURL: config.services.Groups.url
         })
 
-        return orgClient.queryOrgs({
-            searchTerms: searchTerms,
-            sortField, sortDirection, filter, username
-        })
-            .then(({ organizations, total }) => {
-                console.log('orgs!', organizations)
-                // TODO: also total.
-                dispatch(searchOrgsSuccess(organizations, total))
+        try {
+            const { organizations, total } = await orgClient.queryOrgs({
+                searchTerms: searchTerms,
+                sortField, sortDirection, filter, username
             })
-            .catch((error) => {
-                console.error('Error querying orgs', error.name, error.message)
-                dispatch(searchOrgsError({
-                    code: error.name,
-                    message: error.message
-                }))
-            })
+
+            // LEFT OFF HERE
+            // NOW GET THE PENDING REQUESTS...
+            const adminOrgs = organizations
+                .filter((org) => {
+                    return (
+                        org.relation === orgModel.UserRelationToOrganization.ADMIN ||
+                        org.relation === orgModel.UserRelationToOrganization.OWNER
+                    )
+                })
+                .map((org) => {
+                    return org.id
+                })
+            let openRequests
+            if (adminOrgs.length > 0) {
+                openRequests = await orgClient.getOpenRequestsStatus({ organizationIds: adminOrgs })
+            } else {
+                openRequests = new Map()
+            }
+
+            dispatch(searchOrgsSuccess(organizations, total, openRequests))
+        } catch (ex) {
+            console.error('Error querying orgs', ex.name, ex.message)
+            dispatch(searchOrgsError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 
 export function sortOrgs(sortField: string, sortDirection: SortDirection) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(sortOrgsStart(sortField, sortDirection))
 
         const {
@@ -258,25 +278,44 @@ export function sortOrgs(sortField: string, sortDirection: SortDirection) {
 
         const { viewModel: { searchTerms, filter } } = browseOrgsView
 
-        return orgClient.queryOrgs({
-            searchTerms,
-            sortField, sortDirection, filter, username
-        })
-            .then(({ organizations, total }) => {
-                // TODO: also total.
-                dispatch(searchOrgsSuccess(organizations, total))
+        try {
+            const { organizations, total } = await orgClient.queryOrgs({
+                searchTerms, filter, username,
+                sortField, sortDirection,
             })
-            .catch((error) => {
-                dispatch(searchOrgsError({
-                    code: error.name,
-                    message: error.message
-                }))
-            })
+
+            // LEFT OFF HERE
+            // NOW GET THE PENDING REQUESTS...
+            const adminOrgs = organizations
+                .filter((org) => {
+                    return (
+                        org.relation === orgModel.UserRelationToOrganization.ADMIN ||
+                        org.relation === orgModel.UserRelationToOrganization.OWNER
+                    )
+                })
+                .map((org) => {
+                    return org.id
+                })
+            let openRequests
+            if (adminOrgs.length > 0) {
+                openRequests = await orgClient.getOpenRequestsStatus({ organizationIds: adminOrgs })
+            } else {
+                openRequests = new Map()
+            }
+
+            dispatch(searchOrgsSuccess(organizations, total, openRequests))
+        } catch (ex) {
+            console.error('Error querying orgs', ex.name, ex.message)
+            dispatch(searchOrgsError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }
 
 export function filterOrgs(filter: orgModel.Filter) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(filterOrgsStart(filter))
 
         const {
@@ -299,19 +338,38 @@ export function filterOrgs(filter: orgModel.Filter) {
 
         const { viewModel: { searchTerms, sortField, sortDirection } } = browseOrgsView
 
-        return orgClient.queryOrgs({
-            searchTerms,
-            sortField, sortDirection, filter, username
-        })
-            .then(({ organizations, total }) => {
-                // TODO: also total.
-                dispatch(searchOrgsSuccess(organizations, total))
+        try {
+            const { organizations, total } = await orgClient.queryOrgs({
+                searchTerms, filter, username,
+                sortField, sortDirection,
             })
-            .catch((error) => {
-                dispatch(searchOrgsError({
-                    code: error.name,
-                    message: error.message
-                }))
-            })
+
+            // LEFT OFF HERE
+            // NOW GET THE PENDING REQUESTS...
+            const adminOrgs = organizations
+                .filter((org) => {
+                    return (
+                        org.relation === orgModel.UserRelationToOrganization.ADMIN ||
+                        org.relation === orgModel.UserRelationToOrganization.OWNER
+                    )
+                })
+                .map((org) => {
+                    return org.id
+                })
+            let openRequests
+            if (adminOrgs.length > 0) {
+                openRequests = await orgClient.getOpenRequestsStatus({ organizationIds: adminOrgs })
+            } else {
+                openRequests = new Map()
+            }
+
+            dispatch(searchOrgsSuccess(organizations, total, openRequests))
+        } catch (ex) {
+            console.error('Error querying orgs', ex.name, ex.message)
+            dispatch(searchOrgsError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
     }
 }

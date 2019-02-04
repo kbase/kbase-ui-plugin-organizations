@@ -177,6 +177,11 @@ export interface Organization {
     appCount: number
 }
 
+export interface RequestStatus {
+    new: boolean,
+    old: boolean
+}
+
 export function determineRelation(
     org: Organization | InaccessiblePrivateOrganization,
     username: userModel.Username,
@@ -962,9 +967,24 @@ export class OrganizationModel {
         })
         return groupsClient.visitGroup({ groupId: organizationId })
     }
+
+    async getOpenRequestsStatus({ organizationIds }: { organizationIds: Array<OrganizationID> }): Promise<Map<OrganizationID, RequestStatus>> {
+        const groupsClient = new groupsApi.GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+        const openRequests = await groupsClient.getOpenRequests({ groupIds: organizationIds })
+        const result = new Map<OrganizationID, RequestStatus>()
+        for (const [groupId, status] of openRequests.entries()) {
+            const requestStatus: RequestStatus = {
+                old: status.new === 'Old',
+                new: status.new === 'New'
+            }
+            result.set(<OrganizationID>groupId, requestStatus)
+        }
+        return result
+    }
 }
-
-
 
 export function userPermissionToWorkspacePermission(userPermission: string, isOwner: boolean) {
     if (isOwner) {

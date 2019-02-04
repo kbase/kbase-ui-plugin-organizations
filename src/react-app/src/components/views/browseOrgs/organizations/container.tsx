@@ -1,5 +1,5 @@
 import { Organizations, OrganizationsProps } from './component';
-import { StoreState } from '../../types';
+import { StoreState } from '../../../../types';
 import { connect } from 'react-redux';
 
 export function mapStateToProps(state: StoreState): OrganizationsProps {

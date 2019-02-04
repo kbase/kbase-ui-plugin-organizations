@@ -4,7 +4,7 @@ import OrganizationHeader from '../organizationHeader/loader';
 import { Redirect, NavLink } from 'react-router-dom';
 import { NarrativeState } from '../../../types';
 import Header from '../../Header';
-import { Icon, Button, Modal, Alert, Select } from 'antd';
+import { Icon, Button, Modal, Alert, Select, Tooltip } from 'antd';
 import './component.css'
 import * as orgModel from '../../../data/models/organization/model'
 import * as narrativeModel from '../../../data/models/narrative'
@@ -198,13 +198,17 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 case NarrativeState.ASSOCIATED:
                     classNames.push('RequestNarrative-narrativeInOrg')
                     flag = (
-                        <Icon type="check" />
+                        <Tooltip title="This narrative is already associated with this organization">
+                            <Icon type="check" style={{ color: 'green' }} />
+                        </Tooltip>
                     )
                     break
                 case NarrativeState.REQUESTED:
                     classNames.push('RequestNarrative-narrativeInOrg')
                     flag = (
-                        <Icon type="loading" />
+                        <Tooltip title="You have already requested that this narrative be added to this organization">
+                            <Icon type="loading" style={{ color: 'orange' }} />
+                        </Tooltip>
                     )
                     break
                 default:

@@ -1,4 +1,5 @@
 import { AppException } from "../../types";
+import { string } from "prop-types";
 
 export interface GroupsServiceInfo {
     servname: string;
@@ -7,7 +8,8 @@ export interface GroupsServiceInfo {
     gitcommithash: string
 }
 
-export type Username = string;
+export type Username = string
+export type GroupID = string
 
 export interface Member {
     name: Username,
@@ -33,7 +35,7 @@ export interface AppInfo {
 export type Role = "None" | "Member" | "Admin" | "Owner"
 
 export interface BriefGroup {
-    id: string
+    id: GroupID
     name: string
     createdate: number
     moddate: number
@@ -55,13 +57,13 @@ export interface BriefGroup {
 }
 
 export interface InaccessiblePrivateGroup {
-    id: string
+    id: GroupID
     private: boolean
     role: Role
 }
 
 export interface Group {
-    id: string
+    id: GroupID
     private: boolean
     privatemembers: boolean
     name: string
@@ -242,6 +244,10 @@ export class GroupException extends AppException {
         this.name = 'GroupException'
         this.originalError = error
     }
+}
+
+export interface RequestStatus {
+    new: 'None' | 'New' | 'Old'
 }
 
 export class ServerException extends AppException {
@@ -885,10 +891,17 @@ export class GroupsClient {
     }
 
     async visitGroup({ groupId }: { groupId: string }): Promise<void> {
-        const path = [
-            'group', groupId, 'visit'
-        ]
+        const path = ['group', groupId, 'visit']
         return this.put<void>(path, null)
     }
 
+    async getOpenRequests({ groupIds }: { groupIds: Array<string> }): Promise<Map<GroupID, RequestStatus>> {
+        const path = ['request', 'groups', groupIds.join(','), 'new']
+        const result = await this.get<any>(path)
+        const requestStatuses = new Map<GroupID, RequestStatus>()
+        for (const [groupId, requestStatus] of Object.entries(result)) {
+            requestStatuses.set(groupId, <RequestStatus>requestStatus)
+        }
+        return requestStatuses
+    }
 }
