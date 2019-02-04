@@ -220,6 +220,7 @@ export function searchOrgs(searchTerms: Array<string>) {
             sortField, sortDirection, filter, username
         })
             .then(({ organizations, total }) => {
+                console.log('orgs!', organizations)
                 // TODO: also total.
                 dispatch(searchOrgsSuccess(organizations, total))
             })

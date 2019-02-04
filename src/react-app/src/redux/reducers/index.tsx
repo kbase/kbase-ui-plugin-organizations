@@ -11,7 +11,6 @@ import viewMembers from './viewMembers'
 import inviteUser from './inviteUser'
 import manageMembership from './manageMembership'
 import requestAddNarrative from './requestAddNarrative'
-import dashboard from './dashboard'
 import entities from './entities'
 import organizationCentric from './organizationCentric'
 import global from './global'
@@ -31,7 +30,6 @@ export function reducer(state: StoreState, action: Action): StoreState {
         inviteUser(state, action) ||
         manageMembership(state, action) ||
         requestAddNarrative(state, action) ||
-        dashboard(state, action) ||
         entities(state, action) ||
         organizationCentric(state, action) ||
         global(state, action) ||

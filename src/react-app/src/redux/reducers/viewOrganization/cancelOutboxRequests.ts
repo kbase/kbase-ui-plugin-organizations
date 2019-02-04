@@ -11,7 +11,7 @@ export function cancelRequestSuccess(state: StoreState, action: actions.CancelJo
     if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
         return state
     }
-    console.log('canceling...', action)
+
     return {
         ...state,
         views: {

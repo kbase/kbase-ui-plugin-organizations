@@ -452,7 +452,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                     type="danger"
                     onClick={this.onClickCancelToViewer.bind(this)}>
                     Return to this Org
-                </Button>
+            </Button>
                 <Button
                     shape="circle"
                     icon="info"

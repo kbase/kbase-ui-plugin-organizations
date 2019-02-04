@@ -7,6 +7,7 @@ import * as types from '../../../types'
 import Component from './component'
 import * as actions from '../../../redux/actions/requestAddNarrative'
 import * as orgModel from '../../../data/models/organization/model'
+import * as narrativeModel from '../../../data/models/narrative'
 
 export interface OwnProps {
 }
@@ -14,53 +15,54 @@ export interface OwnProps {
 interface StateProps {
     organization: orgModel.Organization
     relation: orgModel.Relation
-    narratives: Array<types.Narrative>
-    selectedNarrative: types.Narrative | null
+    narratives: Array<narrativeModel.OrganizationNarrative>
+    selectedNarrative: narrativeModel.OrganizationNarrative | null
     searching: boolean
     sortBy: string
-    sortDirection: types.SortDirection
+    // sortDirection: types.SortDirection
     filter: string
 }
 
 interface DispatchProps {
-    doSendRequest: (groupId: string, narrative: types.Narrative) => void
-    doSelectNarrative: (narrative: types.Narrative) => void
+    doSendRequest: (groupId: string, workspaceId: number) => void
+    doSelectNarrative: (narrative: narrativeModel.OrganizationNarrative) => void
+    doSortBy: (sortBy: narrativeModel.Sort) => void
 }
 
 function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
     if (state.views.requestNarrativeView.viewModel === null) {
         throw new Error('view value is not defined!')
     }
+
     const {
         views: {
             requestNarrativeView: {
                 viewModel: {
-                    organization, relation, narratives, selectedNarrative
+                    organization, relation, narratives, selectedNarrative,
                 }
             }
         }
     } = state
 
-
     return {
-        organization: organization,
-        relation: relation,
-        narratives: narratives,
-        selectedNarrative: selectedNarrative,
+        organization, relation, narratives, selectedNarrative,
         searching: false,
         sortBy: 'title',
-        sortDirection: types.SortDirection.ASCENDING,
+        // sortDirection: types.SortDirection.ASCENDING,
         filter: ''
     }
 }
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {
-        doSendRequest: (groupId: string, narrative: types.Narrative) => {
-            dispatch(actions.sendRequest(groupId, narrative) as any)
+        doSendRequest: (groupId: string, workspaceId: number) => {
+            dispatch(actions.sendRequest(groupId, workspaceId) as any)
         },
-        doSelectNarrative: (narrative: types.Narrative) => {
+        doSelectNarrative: (narrative: narrativeModel.OrganizationNarrative) => {
             dispatch(actions.selectNarrative(narrative) as any)
+        },
+        doSortBy: (sortBy: narrativeModel.Sort) => {
+            dispatch(actions.sort(sortBy) as any)
         }
     }
 }

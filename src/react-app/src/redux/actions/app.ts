@@ -112,18 +112,5 @@ export function appStart() {
                 defaultPath: '/organizations'
             }))
         }
-
-        // if (iframeParams.params.view) {
-        //     switch (iframeParams.params.view) {
-        //         case 'org':
-        //             const path = '/viewOrganization/' + iframeParams.params.viewParams.id
-        //             window.history.pushState(null, 'test', path)
-        //         default:
-        //             console.log('hmm, defaulting to dashboard??')
-        //             window.history.pushState(null, 'dashboard', '/dashboard')
-        //     }
-        // } else {
-        //     // for local dev, don't need to do anything fancy, just leave things alone.
-        // }
     }
 }

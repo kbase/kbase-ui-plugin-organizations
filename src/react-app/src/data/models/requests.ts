@@ -429,8 +429,6 @@ export class RequestsModel {
             sortDirection: groupsApi.SortDirection.DESCENDING
         })
 
-        console.log('targeted requests', grequests)
-
         const requests = grequests.map((request) => {
             return groupRequestToOrgRequest(request)
         })

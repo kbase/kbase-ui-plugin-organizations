@@ -453,12 +453,13 @@ export enum NarrativeState {
 }
 
 export interface Narrative {
-    workspaceId: number,
-    objectId: number,
-    title: string,
-    status: NarrativeState,
+    workspaceId: number
+    objectId: number
+    title: string
+    status: NarrativeState
     // inOrganization: boolean,
     // createdAt: Date,
+    owner: Username
     modifiedAt: Date
 }
 
@@ -491,8 +492,8 @@ export enum RequestNarrativeState {
 
 export interface RequestNarrativeViewModel {
     organization: orgModel.Organization
-    narratives: Array<Narrative>
-    selectedNarrative: Narrative | null
+    narratives: Array<narrativeModel.OrganizationNarrative>
+    selectedNarrative: narrativeModel.OrganizationNarrative | null
     relation: orgModel.Relation
     error: AppError | null
     saveState: SaveState
@@ -520,23 +521,6 @@ export interface AddOrgView {
 
 export interface Notification {
 
-}
-
-export interface DashboardViewModel {
-    organizations: Array<orgModel.BriefOrganization>
-    // organizations: Array<uberModel.UberOrganization>
-    // users: Map<userModel.Username, userModel.User>
-    refreshState: ComponentLoadingState
-    requestInbox: Array<requestModel.Request>
-    requestOutbox: Array<requestModel.Request>
-    pendingAdminRequests: Array<requestModel.Request>
-    // notifications: Array<Notification>
-}
-
-export interface DashboardView {
-    loadingState: ComponentLoadingState
-    error: SomeError | null
-    viewModel: DashboardViewModel | null
 }
 
 export interface UserEntity {
@@ -609,10 +593,6 @@ export interface EditOrgView {
     viewModel: EditOrgViewModel | null
 }
 
-export interface LastVisited {
-    lastVisitedAt: Date | null
-}
-
 export interface StoreState {
     // new!!
     entities: {
@@ -644,9 +624,6 @@ export interface StoreState {
             //     byGroup: Map<orgModel.OrganizationID, Array<feedsModel.NotificationID>>
             // }
         }
-        lastVisited: {
-            byId: Map<orgModel.OrganizationID, LastVisited>
-        }
     }
 
     auth: Authorization
@@ -668,7 +645,6 @@ export interface StoreState {
         inviteUserView: InviteUserView
         manageMembershipView: ManageMembershipView
         requestNarrativeView: RequestNarrativeView
-        dashboardView: DashboardView
         organizationCentricView: OrganizationCentricView
     }
     updateOrg: {

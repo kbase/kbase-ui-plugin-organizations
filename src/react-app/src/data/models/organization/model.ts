@@ -88,8 +88,9 @@ export enum MemberType {
     OWNER
 }
 export interface Member {
-    username: groupsApi.Username,
+    username: groupsApi.Username
     joinedAt: Date
+    lastVisitedAt: Date | null
     type: MemberType
     title: string
 }
@@ -129,10 +130,11 @@ export interface BriefOrganization {
     homeUrl: string | null
     researchInterests: string | null
     // TODO: we need researchInterests here
-    owner: Username,
-    relation: UserRelationToOrganization,
+    owner: Username
+    relation: UserRelationToOrganization
     createdAt: Date
     modifiedAt: Date
+    lastVisitedAt: Date | null
 
     memberCount: number
     narrativeCount: number
@@ -167,6 +169,7 @@ export interface Organization {
     // relation: UserOrgRelation
     createdAt: Date
     modifiedAt: Date
+    lastVisitedAt: Date | null
     narratives: Array<NarrativeInfo>
     apps: Array<AppInfo>
     memberCount: number
@@ -265,6 +268,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
     const owner: Member = {
         username: group.owner.name,
         joinedAt: new Date(group.owner.joined),
+        lastVisitedAt: group.owner.lastvisit ? new Date(group.owner.lastvisit) : null,
         type: MemberType.OWNER,
         title: 'Owner'
     }
@@ -276,6 +280,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         return {
             username: admin.name,
             joinedAt: new Date(admin.joined),
+            lastVisitedAt: admin.lastvisit ? new Date(admin.lastvisit) : null,
             type: MemberType.ADMIN,
             title: admin.custom.title
         }
@@ -283,6 +288,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         return {
             username: member.name,
             joinedAt: new Date(member.joined),
+            lastVisitedAt: member.lastvisit ? new Date(member.lastvisit) : null,
             type: MemberType.MEMBER,
             title: member.custom.title
         }
@@ -315,6 +321,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         members: members,
         modifiedAt: new Date(group.moddate),
         createdAt: new Date(group.createdate),
+        lastVisitedAt: group.lastvisit ? new Date(group.lastvisit) : null,
         narratives: narratives,
         apps: [],
         memberCount: group.memcount,
@@ -602,7 +609,6 @@ export class OrganizationModel {
             .then((group) => {
                 let org: Organization | InaccessiblePrivateOrganization
                 if (group.role === "None" && group.private) {
-                    console.log('PRIVATE?', group)
                     org = groupToPrivateOrganization(group as groupsApi.InaccessiblePrivateGroup, this.params.username)
                 } else {
                     org = groupToOrganization(group as groupsApi.Group, this.params.username)
@@ -679,6 +685,7 @@ export class OrganizationModel {
             relation: groupRoleToUserRelation(group.role),
             createdAt: new Date(group.createdate),
             modifiedAt: new Date(group.moddate),
+            lastVisitedAt: group.lastvisit ? new Date(group.lastvisit) : null,
             memberCount: group.memcount || 0,
             narrativeCount: group.rescount.workspace || 0
         }
@@ -946,6 +953,14 @@ export class OrganizationModel {
         })
 
         return groupsClient.updateMember({ groupId, memberUsername, update })
+    }
+
+    async visitOrg({ organizationId }: { organizationId: string }): Promise<void> {
+        const groupsClient = new groupsApi.GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+        return groupsClient.visitGroup({ groupId: organizationId })
     }
 }
 

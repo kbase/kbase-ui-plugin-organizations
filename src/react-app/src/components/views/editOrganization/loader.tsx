@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ComponentLoadingState, DashboardView, StoreState, EditOrgView } from '../../../types';
+import { ComponentLoadingState, StoreState, EditOrgView } from '../../../types';
 import Container from './container'
 import * as orgModel from '../../../data/models/organization/model'
 

@@ -13,9 +13,6 @@ import * as orgModel from '../../../../data/models/organization/model'
 import * as requestModel from '../../../../data/models/requests'
 import * as feedsModel from '../../../../data/models/feeds'
 import OrganizationNarrative from '../../../OrganizationNarrative'
-// import InboxRequest from '../../dashboard/InboxRequestContainer'
-// import OutboxRequest from '../../dashboard/OutboxRequestContainer'
-import Notifications from '../../../notifications/component'
 import MainMenu from '../../../menu/component';
 import Members from './members/reduxAdapter'
 

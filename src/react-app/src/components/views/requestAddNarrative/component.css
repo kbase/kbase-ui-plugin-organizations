@@ -4,48 +4,48 @@
     flex-direction: column;
 }
 
-.RequestNarrative .body {
+.RequestNarrative-body {
     flex: 1 1 0px;
     display: flex;
     flex-direction: row;
     margin-top: 10px;
 }
 
-.RequestNarrative .body .selectNarrativeCol {
+.RequestNarrative-selectNarrativeCol {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     margin-right: 5px;
 }
 
-.RequestNarrative .body .selectedNarrativeCol {
+.RequestNarrative-selectedNarrativeCol {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     margin-left: 5px;
 }
 
-.RequestNarrative .body .selectNarrativeCol .narrativeSelector {
+.RequestNarrative-selectNarrativeCol .RequestNarrative-narrativeSelector {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
 }
 
-.RequestNarrative .body .selectNarrativeCol .narrativeSelector .control {
+.RequestNarrative-control {
     flex: 0 0 auto;
 }
 
-.RequestNarrative .body .selectNarrativeCol .narrativeSelector .narratives {
+.RequestNarrative-narrativeSelector .RequestNarrative-narratives {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
 }
 
-.RequestNarrative .body .selectNarrativeCol .narrativeSelector .narratives .narrativesTable {
+.RequestNarrative-narrativeSelector .RequestNarrative-narratives .RequestNarrative-narrativesTable {
     overflow-y: auto;
 }
 
-.RequestNarrative .footer {
+.RequestNarrative-footer {
     flex: 0 0 auto;
     display: flex;
     flex-direction: row;
@@ -53,44 +53,51 @@
     justify-content: center;
 }
 
-.RequestNarrative .narrativesTable .narrative.narrativeInOrg {
+.RequestNarrative-narrativesTable .RequestNarrative-narrativeCell.RequestNarrative-narrativeInOrg {
     font-weight: normal;
     font-style: italic;
     color: rgba(100, 100, 100, 1)
 }
 
-.RequestNarrative .narrativesTable .narrative.selected {
-    background-color: rgba(200, 200, 200, 1);
+.RequestNarrative-narrativesTable .RequestNarrative-narrativeCell.RequestNarrative-selected {
+    background-color: rgba(200, 200, 200, 0.5);
 }
 
-.RequestNarrative .narrativesTable .narrative {
+.RequestNarrative-narrativeCell {
     /* border: 1px red solid; */
-    font-weight: bold;
+    /* font-weight: bold; */
     padding: 4px;
+    border: 1px rgba(200, 200, 200, 0.3) solid;
+    display: flex;
+    flex-direction: row;
 }
 
-.RequestNarrative .narrativesTable .narrative+.narrative {
+.RequestNarrative-narrativeCell+.RequestNarrative-narrativeCell {
     /* border: 1px red solid; */
     /* margin-top: 10px; */
 }
 
-.RequestNarrative .narrativesTable .narrative.narrativeInOrg:hover,
-.RequestNarrative .narrativesTable .narrative.narrativeNotInOrg:hover {
-    /* border: 1px red solid; */
+/* .RequestNarrative-narrativeCell.RequestNarrativeCell-narrativeInOrg:hover,
+.RequestNarrative-narrativeCell.RequestNarrativeCell-narrativeNotInOrg:hover {
+    background-color: rgba(200, 200, 200, 0.5);
+    cursor: pointer;
+} */
+
+.RequestNarrative-narrativeCell:hover {
     background-color: rgba(200, 200, 200, 0.5);
     cursor: pointer;
 }
 
-.RequestNarrative .body .selectedNarrative {
+.RequestNarrative-selectedNarrative {
     border: 1px silver solid;
     padding: 4px;
 }
 
-.RequestNarrative .body .selectedNarrative .title {
+.RequestNarrative-title {
     font-weight: bold;
 }
 
-.RequestNarrative .body .selectedNarrativeButtonBar {
+.RequestNarrative-selectedNarrativeButtonBar {
     margin-top: 10px;
     text-align: center
 }
@@ -99,28 +106,38 @@
     text-align: center;
 }
 
-.RequestNarrative .searchBar {
+.RequestNarrative-searchBar {
     display: flex;
     flex-direction: row;
 }
 
-.RequestNarrative .searchBar input {
+.RequestNarrative-feedbackBar {
+    flex: 0 0 2em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.RequestNarrative-searchBar input {
     width: 100%;
     max-width: 16em;
     min-width: 12em;
 }
 
-.RequestNarrative .searchBar .button {
+.RequestNarrative-searchBar .RequestNarrative-button {
     padding: 0 4px;
 }
 
-.RequestNarrative .filterSortBar {
+.RequestNarrative-filterSortBar {
     /* text-align: right; */
     margin-left: 10px;
 }
 
-.RequestNarrative .message {
-    font-style: italic;
-    text-align: center;
-    padding: 10px;
+.RequestNarrative-narrativeFlag {
+    flex: 0 0 1.5em;
+}
+
+.RequestNarrative-narrative {
+    flex: 1 1 0px;
 }

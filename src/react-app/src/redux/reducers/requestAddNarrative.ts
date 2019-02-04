@@ -1,10 +1,9 @@
 import { Action } from 'redux'
 import * as actions from '../actions/requestAddNarrative'
-import * as types from '../../types'
+import { StoreState, ComponentLoadingState, SaveState, NarrativeState } from '../../types'
 import { ActionFlag } from '../actions'
-import { OrganizationModel } from '../../data/models/organization/model';
 
-export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
+export function loadStart(state: StoreState, action: actions.LoadStart): StoreState {
     return {
         ...state,
         views: {
@@ -12,7 +11,7 @@ export function loadStart(state: types.StoreState, action: actions.LoadStart): t
 
             requestNarrativeView: {
                 ...state.views.requestNarrativeView,
-                loadingState: types.ComponentLoadingState.LOADING,
+                loadingState: ComponentLoadingState.LOADING,
                 error: null,
                 viewModel: null
             }
@@ -20,14 +19,14 @@ export function loadStart(state: types.StoreState, action: actions.LoadStart): t
     }
 }
 
-export function loadSuccess(state: types.StoreState, action: actions.LoadSuccess): types.StoreState {
+export function loadSuccess(state: StoreState, action: actions.LoadSuccess): StoreState {
     return {
         ...state,
         views: {
             ...state.views,
             requestNarrativeView: {
                 ...state.views.requestNarrativeView,
-                loadingState: types.ComponentLoadingState.SUCCESS,
+                loadingState: ComponentLoadingState.SUCCESS,
                 error: null,
                 viewModel: {
                     organization: action.organization,
@@ -35,21 +34,21 @@ export function loadSuccess(state: types.StoreState, action: actions.LoadSuccess
                     selectedNarrative: null,
                     relation: action.relation,
                     error: null,
-                    saveState: types.SaveState.SAVED
+                    saveState: SaveState.SAVED
                 }
             }
         }
     }
 }
 
-export function loadError(state: types.StoreState, action: actions.LoadError): types.StoreState {
+export function loadError(state: StoreState, action: actions.LoadError): StoreState {
     return {
         ...state,
         views: {
             ...state.views,
             requestNarrativeView: {
                 ...state.views.requestNarrativeView,
-                loadingState: types.ComponentLoadingState.ERROR,
+                loadingState: ComponentLoadingState.ERROR,
                 error: action.error,
                 viewModel: null
             }
@@ -57,8 +56,7 @@ export function loadError(state: types.StoreState, action: actions.LoadError): t
     }
 }
 
-export function sendRequestStart(state: types.StoreState, action: actions.SendRequestStart): types.StoreState {
-
+export function sendRequestStart(state: StoreState, action: actions.SendRequestStart): StoreState {
     if (!state.views.requestNarrativeView.viewModel) {
         throw new Error('view model missing')
     }
@@ -71,20 +69,19 @@ export function sendRequestStart(state: types.StoreState, action: actions.SendRe
                 ...state.views.requestNarrativeView,
                 viewModel: {
                     ...state.views.requestNarrativeView.viewModel,
-                    saveState: types.SaveState.SAVING
+                    saveState: SaveState.SAVING
                 }
             }
         }
     }
 }
 
-export function sendRequestSuccess(state: types.StoreState, action: actions.SendRequestSuccess): types.StoreState {
-
+export function sendRequestSuccess(state: StoreState, action: actions.SendRequestSuccess): StoreState {
     if (!state.views.requestNarrativeView.viewModel) {
         throw new Error('view model missing')
     }
 
-    const newState: types.StoreState = {
+    const newState: StoreState = {
         ...state,
         views: {
             ...state.views,
@@ -92,7 +89,7 @@ export function sendRequestSuccess(state: types.StoreState, action: actions.Send
                 ...state.views.requestNarrativeView,
                 viewModel: {
                     ...state.views.requestNarrativeView.viewModel,
-                    saveState: types.SaveState.SAVED
+                    saveState: SaveState.SAVED
                 }
             }
         }
@@ -109,26 +106,25 @@ export function sendRequestSuccess(state: types.StoreState, action: actions.Send
     // If the request is by an admin, it will be returned as true, not the request
     // (the api returns {complete: true})
     if (action.request === true) {
-        viewModel.narratives = viewModel.narratives.map((narrative) => {
-            if (narrative.workspaceId === selectedNarrative!.workspaceId) {
-                narrative.status = types.NarrativeState.ASSOCIATED
+        viewModel.narratives = viewModel.narratives.map((orgNarrative) => {
+            if (orgNarrative.narrative.workspaceId === selectedNarrative!.narrative.workspaceId) {
+                orgNarrative.status = NarrativeState.ASSOCIATED
             }
-            return narrative
+            return orgNarrative
         })
     } else {
-        viewModel.narratives = viewModel.narratives.map((narrative) => {
-            if (narrative.workspaceId === selectedNarrative!.workspaceId) {
-                narrative.status = types.NarrativeState.REQUESTED
+        viewModel.narratives = viewModel.narratives.map((orgNarrative) => {
+            if (orgNarrative.narrative.workspaceId === selectedNarrative!.narrative.workspaceId) {
+                orgNarrative.status = NarrativeState.REQUESTED
             }
-            return narrative
+            return orgNarrative
         })
     }
 
     return newState
 }
 
-export function sendRequestError(state: types.StoreState, action: actions.SendRequestError): types.StoreState {
-
+export function sendRequestError(state: StoreState, action: actions.SendRequestError): StoreState {
     if (!state.views.requestNarrativeView.viewModel) {
         throw new Error('view model missing')
     }
@@ -141,7 +137,7 @@ export function sendRequestError(state: types.StoreState, action: actions.SendRe
                 ...state.views.requestNarrativeView,
                 viewModel: {
                     ...state.views.requestNarrativeView.viewModel,
-                    saveState: types.SaveState.SAVE_ERROR,
+                    saveState: SaveState.SAVE_ERROR,
                     error: action.error
                 }
             }
@@ -149,7 +145,7 @@ export function sendRequestError(state: types.StoreState, action: actions.SendRe
     }
 }
 
-export function selectNarrativeSuccess(state: types.StoreState, action: actions.SelectNarrativeSuccess): types.StoreState {
+export function selectNarrativeSuccess(state: StoreState, action: actions.SelectNarrativeSuccess): StoreState {
     if (!state.views.requestNarrativeView.viewModel) {
         throw new Error('view model missing')
     }
@@ -170,13 +166,13 @@ export function selectNarrativeSuccess(state: types.StoreState, action: actions.
     }
 }
 
-export function unload(state: types.StoreState, action: actions.Unload): types.StoreState {
+export function unload(state: StoreState, action: actions.Unload): StoreState {
     return {
         ...state,
         views: {
             ...state.views,
             requestNarrativeView: {
-                loadingState: types.ComponentLoadingState.NONE,
+                loadingState: ComponentLoadingState.NONE,
                 error: null,
                 viewModel: null
             }
@@ -184,7 +180,27 @@ export function unload(state: types.StoreState, action: actions.Unload): types.S
     }
 }
 
-function reducer(state: types.StoreState, action: Action): types.StoreState | null {
+function sortSuccess(state: StoreState, action: actions.SortSuccess): StoreState {
+    const viewModel = state.views.requestNarrativeView.viewModel
+    if (viewModel === null) {
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            requestNarrativeView: {
+                ...state.views.requestNarrativeView,
+                viewModel: {
+                    ...viewModel,
+                    narratives: action.narratives
+                }
+            }
+        }
+    }
+}
+
+function reducer(state: StoreState, action: Action): StoreState | null {
     switch (action.type) {
         case ActionFlag.REQUEST_ADD_NARRATIVE_LOAD_START:
             return loadStart(state, action as actions.LoadStart)
@@ -202,6 +218,8 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
             return selectNarrativeSuccess(state, action as actions.SelectNarrativeSuccess)
         case ActionFlag.REQUEST_ADD_NARRATIVE_UNLOAD:
             return unload(state, action as actions.Unload)
+        case ActionFlag.REQUEST_ADD_NARRATIVE_SORT_SUCCESS:
+            return sortSuccess(state, action as actions.SortSuccess)
         default:
             return null
     }

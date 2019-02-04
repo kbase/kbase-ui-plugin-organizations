@@ -12,6 +12,7 @@ export type Username = string;
 export interface Member {
     name: Username,
     joined: number,
+    lastvisit: number | null,
     custom: {
         title: string
     }
@@ -36,6 +37,7 @@ export interface BriefGroup {
     name: string
     createdate: number
     moddate: number
+    lastvisit: number | null
     private: boolean
     role: Role
 
@@ -70,6 +72,7 @@ export interface Group {
     memcount: number
     createdate: number
     moddate: number
+    lastvisit: number
     resources: {
         workspace: Array<WorkspaceInfo>,
         catalogmethod: Array<AppInfo>
@@ -880,4 +883,12 @@ export class GroupsClient {
                 return result as Request
             })
     }
+
+    async visitGroup({ groupId }: { groupId: string }): Promise<void> {
+        const path = [
+            'group', groupId, 'visit'
+        ]
+        return this.put<void>(path, null)
+    }
+
 }

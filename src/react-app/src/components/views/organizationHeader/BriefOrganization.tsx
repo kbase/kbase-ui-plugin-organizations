@@ -9,7 +9,6 @@ import { ComponentView } from '../../../types';
 
 export interface BriefOrganizationProps {
     organization: orgModel.BriefOrganization
-    lastVisitedAt: Date | null
 }
 
 interface BriefOrganizationState {
@@ -281,10 +280,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
     }
 
     renderFreshness(org: orgModel.BriefOrganization) {
-        // FAKE - remove
-        const lastVisitedAt = this.props.lastVisitedAt
-
-        const isNew = lastVisitedAt && (org.modifiedAt.getTime() > lastVisitedAt.getTime())
+        const isNew = org.lastVisitedAt && (org.modifiedAt.getTime() > org.lastVisitedAt.getTime())
         let newAlert
         if (isNew) {
             const title = 'This org has changed since your last visit to it'

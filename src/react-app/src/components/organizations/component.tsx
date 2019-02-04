@@ -8,7 +8,7 @@ import BriefOrganization from '../views/organizationHeader/BriefOrganization';
 // component types.
 
 export interface OrganizationsProps {
-    organizations: Array<{ organization: orgModel.BriefOrganization, lastVisitedAt: Date | null }>
+    organizations: Array<orgModel.BriefOrganization>
 }
 
 export interface OrganizationsState {
@@ -42,10 +42,10 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
     renderOrgs() {
         if (this.props.organizations.length > 0) {
             return (
-                this.props.organizations.map(({ organization, lastVisitedAt }, index) => {
+                this.props.organizations.map((organization, index) => {
                     return (
                         <div key={String(index)} className="simpleCard">
-                            <BriefOrganization organization={organization} lastVisitedAt={lastVisitedAt} />
+                            <BriefOrganization organization={organization} />
                         </div>
                     )
                 })

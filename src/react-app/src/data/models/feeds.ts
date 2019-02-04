@@ -98,18 +98,15 @@ function convertNotificationType(notification: feedsApi.Notification): Organizat
             switch (target.type) {
                 case 'narrative':
                 case 'workspace':
-                    // console.log('narrative associated', notification)
                     return OrganizationNotificationType.NARRATIVE_ASSOCIATED
             }
         case 'accepted':
             switch (target.type) {
                 case 'narrative':
                 case 'workspace':
-                    // console.log('narrative accepted', notification)
                     return OrganizationNotificationType.NARRATIVE_ACCEPTED
                 case 'user':
                     // user request to join group has been accepted.
-                    // console.log('user accepted', notification)
                     return OrganizationNotificationType.USER_ACCEPTED
             }
         case 'invited':
@@ -118,7 +115,7 @@ function convertNotificationType(notification: feedsApi.Notification): Organizat
                     return OrganizationNotificationType.JOIN_INVITATION
             }
         default:
-            console.log('unknown??', notification);
+            console.warn('unknown', notification);
             return OrganizationNotificationType.UNKNOWN
     }
 

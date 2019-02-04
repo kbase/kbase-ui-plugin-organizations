@@ -506,7 +506,6 @@ export function unload() {
         const {
             auth: { authorization: { token, username } },
             app: { config },
-            db: { notifications: { all, byId } },
             views: { viewOrgView: { viewModel } }
         } = getState()
 
@@ -514,12 +513,14 @@ export function unload() {
             throw new Error('view model not defined!?!')
         }
 
-        const userProfileClient = new userProfileModel.UserProfile({
+        const orgClient = new orgModel.OrganizationModel({
             token, username,
-            userProfileServiceURL: config.services.UserProfile.url
+            groupsServiceURL: config.services.Groups.url
         })
 
-        await userProfileClient.setLastVisitedAt(viewModel.organization.id, new Date())
+        //  await userProfileClient.setLastVisitedAt(viewModel.organization.id, new Date())
+
+        await orgClient.visitOrg({ organizationId: viewModel.organization.id })
 
         dispatch(dataServices.load())
 

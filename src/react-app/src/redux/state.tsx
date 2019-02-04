@@ -40,9 +40,6 @@ export class StateInstances {
                     // collections: {
                     //     byGroup: new Map()
                     // }
-                },
-                lastVisited: {
-                    byId: new Map()
                 }
             },
             views: {
@@ -93,11 +90,6 @@ export class StateInstances {
                     viewModel: null
                 },
                 requestNarrativeView: {
-                    loadingState: ComponentLoadingState.NONE,
-                    error: null,
-                    viewModel: null
-                },
-                dashboardView: {
                     loadingState: ComponentLoadingState.NONE,
                     error: null,
                     viewModel: null

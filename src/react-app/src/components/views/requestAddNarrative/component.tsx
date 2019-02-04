@@ -2,25 +2,28 @@ import * as React from 'react'
 
 import OrganizationHeader from '../organizationHeader/loader';
 import { Redirect, NavLink } from 'react-router-dom';
-import { Narrative, NarrativeState, SortDirection } from '../../../types';
+import { NarrativeState } from '../../../types';
 import Header from '../../Header';
 import { Icon, Button, Modal, Alert, Select } from 'antd';
 import './component.css'
 import * as orgModel from '../../../data/models/organization/model'
+import * as narrativeModel from '../../../data/models/narrative'
 import MainMenu from '../../menu/component';
+import { OrganizationNarrative, AccessibleNarrative } from '../../../data/models/narrative';
 
 
 export interface Props {
     organization: orgModel.Organization
-    narratives: Array<Narrative>
+    narratives: Array<OrganizationNarrative>
     relation: orgModel.Relation
-    selectedNarrative: Narrative | null
+    selectedNarrative: OrganizationNarrative | null
     searching: boolean
     sortBy: string
-    sortDirection: string
+    // sortDirection: string
     filter: string
-    doSendRequest: (groupId: string, narrative: Narrative) => void
-    doSelectNarrative: (narrative: Narrative) => void
+    doSortBy: (sortBy: narrativeModel.Sort) => void
+    doSendRequest: (groupId: string, workspaceId: number) => void
+    doSelectNarrative: (narrative: OrganizationNarrative) => void
 }
 
 enum NavigateTo {
@@ -52,7 +55,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         this.setState({ navigateTo: NavigateTo.VIEWER })
     }
 
-    doSelectNarrative(narrative: Narrative) {
+    doSelectNarrative(narrative: OrganizationNarrative) {
         this.props.doSelectNarrative(narrative)
     }
 
@@ -74,7 +77,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
             console.warn('attempt to send request without selected narrative')
             return
         }
-        this.props.doSendRequest(this.props.organization.id, this.props.selectedNarrative)
+        this.props.doSendRequest(this.props.organization.id, this.props.selectedNarrative.narrative.workspaceId)
     }
 
     canSendRequest() {
@@ -145,6 +148,30 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         )
     }
 
+    renderNarrative(narrative: AccessibleNarrative) {
+        return (
+            <React.Fragment>
+                <div className="RequestNarrative-title">
+                    {narrative.title}
+                </div>
+                {/* <div className="RequestNarrative-owner">
+                    <span className="field-label">owner</span>
+                    <div style={{ display: 'inline-block' }}>
+                        <User userId={narrative.owner} avatarSize={20} />
+                    </div>
+                </div> */}
+                <div className="RequestNarrative-modifiedAt">
+                    <span className="field-label">Last saved</span>
+                    {Intl.DateTimeFormat('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                    }).format(narrative.lastSavedAt)}
+                </div>
+            </React.Fragment>
+        )
+    }
+
     renderNarratives() {
         if (this.props.narratives.length === 0) {
             return (
@@ -153,56 +180,50 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 </div>
             )
         }
-        return this.props.narratives.map((narrative, index) => {
+        return this.props.narratives.map((orgNarrative, index) => {
+            const { status, narrative } = orgNarrative
             let isSelected
             if (this.props.selectedNarrative &&
-                narrative.workspaceId === this.props.selectedNarrative.workspaceId) {
+                narrative.workspaceId === this.props.selectedNarrative.narrative.workspaceId) {
                 isSelected = true
             } else {
                 isSelected = false
             }
-            let classNames = ['narrative']
+            let classNames = ['RequestNarrative-narrativeCell']
             if (isSelected) {
-                classNames.push('selected')
+                classNames.push('RequestNarrative-selected')
             }
-            if (narrative.status === NarrativeState.ASSOCIATED) {
-                classNames.push('narrativeInOrg')
-                return (
-                    <div
-                        className={classNames.join(' ')}
-                        onClick={() => { this.doSelectNarrative.call(this, narrative) }}
-                        key={String(index)}>
-                        <div className="title">
-                            {narrative.title || 'n/a'} (associated)
-                        </div>
-                    </div>
-                )
-            } else if (narrative.status === NarrativeState.REQUESTED) {
-                classNames.push('narrativeInOrg')
-                return (
-                    <div
-                        className={classNames.join(' ')}
-                        onClick={() => { this.doSelectNarrative.call(this, narrative) }}
-                        key={String(index)}>
-                        <div className="title">
-                            {narrative.title || 'n/a'} (request pending)
-                        </div>
-                    </div>
-                )
-            } else {
-                classNames.push('narrativeNotInOrg')
-                return (
-                    <div
-                        className={classNames.join(' ')}
-                        onClick={() => { this.doSelectNarrative.call(this, narrative) }}
-                        key={String(index)}>
-                        <div className="title">
-                            {narrative.title || 'n/a'}
-                        </div>
-                    </div>
-                )
+            let flag
+            switch (status) {
+                case NarrativeState.ASSOCIATED:
+                    classNames.push('RequestNarrative-narrativeInOrg')
+                    flag = (
+                        <Icon type="check" />
+                    )
+                    break
+                case NarrativeState.REQUESTED:
+                    classNames.push('RequestNarrative-narrativeInOrg')
+                    flag = (
+                        <Icon type="loading" />
+                    )
+                    break
+                default:
+                    classNames.push('RequestNarrative-narrativeNotInOrg')
             }
 
+            return (
+                <div
+                    className={classNames.join(' ')}
+                    onClick={() => { this.doSelectNarrative.call(this, orgNarrative) }}
+                    key={String(index)}>
+                    <div className="RequestNarrative-narrativeFlag">
+                        {flag}
+                    </div>
+                    <div className="RequestNarrative-narrative">
+                        {this.renderNarrative(orgNarrative.narrative)}
+                    </div>
+                </div>
+            )
         })
     }
 
@@ -221,7 +242,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
     renderSearchBar() {
         return (
             <form id="searchForm"
-                className="searchBar"
+                className="RequestNarrative-searchBar"
                 onSubmit={this.onSearchSubmit.bind(this)}>
                 <input
                     placeholder="Search your Narratives"
@@ -236,7 +257,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 <Button
                     // disabled={!this.haveSearchInput()}
                     // ref={this.searchButton}
-                    className="button"
+                    className="RequestNarrative-button"
                     form="searchForm"
                     key="submit"
                     htmlType="submit">
@@ -251,8 +272,32 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         )
     }
 
-    onSortByChange() {
+    renderFeedbackBar() {
+        return (
+            <div>
+                Showing
+                {' '}
+                {
+                    Intl.NumberFormat('en-US', {
+                        style: 'decimal',
+                        useGrouping: true
+                    }).format(this.props.narratives.length)
+                }
+                {' '}
+                narratives
+            </div>
+        )
+    }
 
+    onSortByChange(value: string) {
+        switch (value) {
+            case 'title':
+                this.props.doSortBy(narrativeModel.Sort.TITLE)
+                break
+            case 'savedAt':
+                this.props.doSortBy(narrativeModel.Sort.LAST_SAVED)
+                break
+        }
     }
 
     onSortDirectionChange() {
@@ -265,7 +310,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
 
     renderFilterSortBar() {
         return (
-            <div className="filterSortBar">
+            <div className="RequestNarrative-filterSortBar">
                 <span className="field-label">sort by</span>
                 <Select onChange={this.onSortByChange.bind(this)}
                     defaultValue={this.props.sortBy}
@@ -274,13 +319,13 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     <Select.Option value="title" key="title">Title</Select.Option>
                     <Select.Option value="savedAt" key="savedAt">Last saved</Select.Option>
                 </Select>
-                <Select onChange={this.onSortDirectionChange.bind(this)}
+                {/* <Select onChange={this.onSortDirectionChange.bind(this)}
                     style={{ width: '4em' }}
                     dropdownMatchSelectWidth={true}
                     defaultValue={this.props.sortDirection}>
                     <Select.Option value={SortDirection.ASCENDING} key="name"><Icon type="sort-ascending" /></Select.Option>
                     <Select.Option value={SortDirection.DESCENDING} key="owner"><Icon type="sort-descending" /></Select.Option>
-                </Select>
+                </Select> */}
                 {/* <span className="field-label" style={{ marginLeft: '10px' }}>filter</span>
                 <Select onChange={this.onFilterChange.bind(this)}
                     defaultValue={this.props.filter}
@@ -296,17 +341,20 @@ export class RequestAddNarrative extends React.Component<Props, State> {
 
     renderNarrativeSelector() {
         return (
-            <div className="narrativeSelector scrollable-flex-column">
+            <div className="RequestNarrative-narrativeSelector scrollable-flex-column">
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <div style={{ flex: '0 0 10em' }}>
+                    {/* <div style={{ flex: '0 0 10em' }}>
                         {this.renderSearchBar()}
-                    </div>
+                    </div> */}
                     <div style={{ flex: '1 1 0px' }}>
                         {this.renderFilterSortBar()}
                     </div>
                 </div>
-                <div className="narratives scrollable-flex-column">
-                    <div className="narrativesTable">
+                <div className="RequestNarrative-feedbackBar">
+                    {this.renderFeedbackBar()}
+                </div>
+                <div className="RequestNarrative-narratives scrollable-flex-column">
+                    <div className="RequestNarrative-narrativesTable">
                         {this.renderNarratives()}
                     </div>
                 </div>
@@ -347,18 +395,18 @@ export class RequestAddNarrative extends React.Component<Props, State> {
     renderSelectedNarrative() {
         if (this.props.selectedNarrative) {
             return (
-                <div className="selectedNarrative">
-                    <div className="title">
-                        {this.props.selectedNarrative.title}
+                <div className="RequestNarrative-selectedNarrative">
+                    <div className="RequestNarrative-title">
+                        {this.props.selectedNarrative.narrative.title}
                     </div>
                     <div>
-                        <i>last modified</i>
+                        <span className="field-label">last saved</span>
                         {' '}
                         {Intl.DateTimeFormat('en-US', {
                             month: 'long',
                             day: 'numeric',
                             year: 'numeric'
-                        }).format(this.props.selectedNarrative.modifiedAt)}
+                        }).format(this.props.selectedNarrative.narrative.lastSavedAt)}
                     </div>
                 </div>
             )
@@ -410,20 +458,20 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 <MainMenu buttons={this.renderMenuButtons()} />
                 {/* {this.renderHeader()} */}
                 {this.renderOrgHeader()}
-                <div className="body scrollable-flex-column">
-                    <div className="selectNarrativeCol scrollable-flex-column">
+                <div className="RequestNarrative-body scrollable-flex-column">
+                    <div className="RequestNarrative-selectNarrativeCol scrollable-flex-column">
                         <h3>Select a Narrative</h3>
                         {this.renderNarrativeSelector()}
                     </div>
-                    <div className="selectedNarrativeCol">
+                    <div className="RequestNarrative-selectedNarrativeCol">
                         <h3>Selected Narrative</h3>
                         {this.renderSelectedNarrative()}
-                        <div className="selectedNarrativeButtonBar">
+                        <div className="RequestNarrative-selectedNarrativeButtonBar">
                             {this.renderSelectedNarrativeButton()}
                         </div>
                     </div>
                 </div>
-                <div className="footer">
+                <div className="RequestNarrative-footer">
                     {/* <Button
                         type="primary"
                         onClick={this.doSendRequest.bind(this)}

@@ -45,7 +45,7 @@ export function denyRequest(requestId: requestModel.RequestID) {
                 type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR,
                 error: {
                     code: 'error',
-                    message: 'No dashboard view model'
+                    message: 'No view model'
                 }
             })
             return

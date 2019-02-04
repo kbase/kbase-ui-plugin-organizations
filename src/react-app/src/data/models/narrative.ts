@@ -48,14 +48,20 @@ export interface AccessibleNarrative extends NarrativeBase {
 
 export type Narrative = AccessibleNarrative | InaccessibleNarrative
 
+// export interface OrganizationNarrativex {
+//     workspaceId: WorkspaceID
+//     objectId: ObjectID
+//     title: string
+//     status: NarrativeState
+//     // inOrganization: boolean
+//     // createdAt: Date
+//     owner: userModel.Username
+//     modifiedAt: Date
+// }
+
 export interface OrganizationNarrative {
-    workspaceId: WorkspaceID
-    objectId: ObjectID
-    title: string
     status: NarrativeState
-    // inOrganization: boolean
-    // createdAt: Date
-    modifiedAt: Date
+    narrative: AccessibleNarrative
 }
 
 export interface NarrativeWorkspaceInfo extends workspaceApi.WorkspaceInfo {
@@ -69,6 +75,11 @@ export interface NarrativeWorkspaceInfo extends workspaceApi.WorkspaceInfo {
 //     workspaceInfo: WorkspaceInfo
 //     objectInfo: ObjectInfo
 // }
+
+export enum Sort {
+    TITLE = 'TITLE',
+    LAST_SAVED = 'LAST_SAVED'
+}
 
 interface NarrativeModelParams {
     workspaceServiceURL: string
@@ -148,15 +159,22 @@ export class NarrativeModel {
                     status = NarrativeState.NONE
                 }
                 return {
-                    workspaceId: narrative.workspaceInfo.id,
-                    objectId: narrative.objectInfo.id,
-                    title: narrative.workspaceInfo.metadata.narrative_nice_name,
                     status: status,
-                    modifiedAt: narrative.workspaceInfo.modifiedAt
+                    narrative: {
+                        access: NarrativeAccess.OWNER,
+                        isPublic: narrative.workspaceInfo.globalReadPermission,
+                        workspaceId: narrative.workspaceInfo.id,
+                        objectId: narrative.objectInfo.id,
+                        title: narrative.workspaceInfo.metadata.narrative_nice_name,
+                        owner: narrative.workspaceInfo.owner,
+                        lastSavedAt: narrative.objectInfo.savedAt,
+                        lastSavedBy: narrative.objectInfo.savedBy
+                    } as AccessibleNarrative
+
                 }
             })
             .sort((a, b) => {
-                return (a.title.localeCompare(b.title))
+                return (a.narrative.title.localeCompare(b.narrative.title))
             })
     }
 
@@ -201,6 +219,33 @@ export class NarrativeModel {
             // console.warn('narrative not accessible', ex)
             return null
         }
+    }
+
+    getSorter(sort: Sort) {
+        switch (sort) {
+            case Sort.TITLE:
+                return (a: OrganizationNarrative, b: OrganizationNarrative) => {
+                    return a.narrative.title.localeCompare(b.narrative.title)
+                }
+            case Sort.LAST_SAVED:
+                return (a: OrganizationNarrative, b: OrganizationNarrative) => {
+                    return b.narrative.lastSavedAt.getTime() - a.narrative.lastSavedAt.getTime()
+                }
+            default:
+                throw new Error('invalid sort spec')
+        }
+    }
+
+    // sortNarratives(narratives: Array<AccessibleNarrative>, sort: Sort): Array<AccessibleNarrative> {
+    //     let sorter = this.getSorter(sort)
+
+    //     return narratives.sort(sorter)
+    // }
+
+    sortOrganizationNarratives(narratives: Array<OrganizationNarrative>, sort: Sort): Array<OrganizationNarrative> {
+        let sorter = this.getSorter(sort)
+
+        return narratives.sort(sorter).slice(0)
     }
 
     /*

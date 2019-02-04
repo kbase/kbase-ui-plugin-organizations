@@ -21,8 +21,6 @@ export interface DispatchProps {
 export function mapStateToProps(state: StoreState): StateProps {
     const { db: { notifications: { all } } } = state
 
-    // console.log('hmm', all)
-
     // const values = byId.values()
 
     // todo .. some processing

@@ -64,13 +64,8 @@ export class UserProfile {
             }
         })
 
-        // console.log('new profile will be', newProfile.toJSON())
-
         await this.userProfileClient.updateUserProfile(newProfile.toJSON())
 
-        // const updatedProfile = await this.getProfile(this.params.username)
-
-        // console.log('now profile is', updatedProfile)
         return
     }
 

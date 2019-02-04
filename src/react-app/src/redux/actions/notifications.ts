@@ -89,7 +89,6 @@ export function load() {
             // const groupNotifications = notifications.filter((notification) => {
             //     return (notification.source === 'groupsservice')
             // })
-            // console.log('loading notifications', notifications)
             dispatch(loadSuccess(notifications))
         } catch (ex) {
             console.error('error', ex)
@@ -121,7 +120,6 @@ export function read(notificationId: feedsModel.NotificationID) {
             // const groupNotifications = notifications.filter((notification) => {
             //     return (notification.source === 'groupsservice')
             // })
-            // console.log('loading notifications', notifications)
             dispatch({
                 type: ActionFlag.NOTIFICATIONS_READ_SUCCESS,
                 notificationId: notificationId
