@@ -89,6 +89,7 @@ export function searchOrgsSuccess(state: BrowseOrgsView, action: actions.SearchO
         viewModel: {
             ...state.viewModel,
             organizations: action.organizations,
+            openRequests: action.openRequests,
             totalCount: action.totalCount,
             filteredCount: action.organizations.length,
             searching: false

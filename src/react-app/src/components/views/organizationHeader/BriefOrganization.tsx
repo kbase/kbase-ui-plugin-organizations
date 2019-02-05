@@ -6,9 +6,12 @@ import OrgLogo from '../../OrgLogo';
 import { Icon, Tooltip } from 'antd';
 import Owner from '../../entities/OwnerContainer';
 import { ComponentView } from '../../../types';
+import { RequestStatus } from '../../../data/models/requests';
+import { niceElapsed } from '../../../lib/time';
 
 export interface BriefOrganizationProps {
     organization: orgModel.BriefOrganization
+    openRequestsStatus: orgModel.RequestStatus | null
 }
 
 interface BriefOrganizationState {
@@ -65,8 +68,6 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                 >
                     <a href={org.homeUrl} target="_blank">
                         <Icon type="home" />
-                        {' '}
-                        Home Page
                     </a>
                 </Tooltip>
             </div >
@@ -107,11 +108,15 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         switch (org.relation) {
             case (orgModel.UserRelationToOrganization.NONE):
                 return (
-                    <span>
-                        <Icon type="stop" />
-                        {' '}
-                        You are <b>not a member</b>
-                    </span>
+                    <Tooltip
+                        placement="bottomRight"
+                        mouseEnterDelay={0.5}
+                        title="You are not a member of this org, but you may access it; you may request membership"
+                    >
+                        <span>
+                            <Icon type="stop" />
+                        </span>
+                    </Tooltip>
                 )
             case (orgModel.UserRelationToOrganization.VIEW):
                 return (
@@ -120,25 +125,58 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         mouseEnterDelay={0.5}
                         title="You are not a member of this org, but you may access it; you may request membership"
                     >
-                        <span><Icon type="stop" /> You are not a member - view organization to join</span>
+                        <Icon type="stop" />
                     </Tooltip>
                 )
             case (orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
-                return (<span><Icon type="user" style={{ color: 'orange' }} /> Your membership <b>request</b> is pending</span>)
+                return (
+                    <Tooltip
+                        placement="bottomRight"
+                        mouseEnterDelay={0.5}
+                        title="Your membership request is pending"
+                    >
+                        <Icon type="user" style={{ color: 'orange' }} /> Your membership <b>request</b> is pending
+                </Tooltip>
+                )
+
             case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
-                return (<span><Icon type="user" style={{ color: 'blue' }} /> You have been <b>invited</b> to join</span>)
+                return (
+                    <Tooltip
+                        placement="bottomRight"
+                        mouseEnterDelay={0.5}
+                        title="You have been invited to join this organization"
+                    >
+                        <Icon type="user" style={{ color: 'blue' }} />
+                    </Tooltip>
+                )
             case (orgModel.UserRelationToOrganization.MEMBER):
-                return (<span><Icon type="user" /> You are a <b>member</b></span>)
+                return (
+                    <Tooltip
+                        placement="bottomRight"
+                        mouseEnterDelay={0.5}
+                        title="You are a member of this organization"
+                    >
+                        <Icon type="user" />
+                    </Tooltip>
+                )
             case (orgModel.UserRelationToOrganization.ADMIN):
-                return (<span><Icon type="unlock" /> You are an <b>admin</b></span>)
+                return (
+                    <Tooltip
+                        placement="bottomRight"
+                        mouseEnterDelay={0.5}
+                        title="You are an administrator of this organization"
+                    >
+                        <Icon type="robot" />
+                    </Tooltip>
+                )
             case (orgModel.UserRelationToOrganization.OWNER):
                 return (
                     <Tooltip
                         placement="bottomRight"
                         mouseEnterDelay={0.5}
-                        title="You own this org"
+                        title="You are the owner of this organization"
                     >
-                        <span><Icon type="crown" /> You are the <b>owner</b></span>
+                        <Icon type="crown" />
                     </Tooltip>
                 )
         }
@@ -154,8 +192,6 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     title="This organization is private - may only be viewed by members">
                     <span>
                         <Icon type="unlock" />
-                        {' '}
-                        <span>Private</span>
                     </span>
                 </Tooltip>
             )
@@ -167,119 +203,13 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     title="This organization is public - may be viewed by any KBase user">
                     <span>
                         <Icon type="global" />
-                        {' '}
-                        <span>Public</span>
                     </span>
                 </Tooltip>
             )
         }
     }
 
-    renderNormal() {
-        const org = this.props.organization
-        return (
-            <div className="BriefOrganization">
-                <div className="BriefOrganization-body">
-                    {/* <div className="BriefOrganization-freshnessCol">
-                        {this.renderFreshness(org)}
-                    </div> */}
-                    <div className="BriefOrganization-logoCol">
-                        <NavLink to={`/viewOrganization/${org.id}`}>
-                            {this.renderLogo(org)}
-                        </NavLink>
-                        {this.renderFreshness(org)}
-                    </div>
-                    <div className="BriefOrganization-infoCol">
-                        <div className="BriefOrganization-infoCol-row">
-                            <div className="BriefOrganization-infoCol-col1">
-                                <div className="BriefOrganization-orgName BriefOrganization-infoTableRow">
-                                    <NavLink to={`/viewOrganization/${org.id}`}>
-                                        {org.name}
-                                    </NavLink>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="BriefOrganization-infoCol-row">
-                            <div className="BriefOrganization-infoCol-col1">
-
-                                <div className="BriefOrganization-researchInterests BriefOrganization-infoTableRow">
-                                    {org.researchInterests}
-                                </div>
-                                <div className="BriefOrganization-homeUrl BriefOrganization-infoTableRow">
-                                    {this.renderHomeUrl(org)}
-                                </div>
-                                <div className="BriefOrganization-privacy">
-                                    {this.renderPrivacy()}
-                                </div>
-                                <div>
-                                    {this.renderRelation(org)}
-                                </div>
-                            </div>
-                            <div className="BriefOrganization-infoCol-col2">
-                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                    <div className="BriefOrganization-infoTableCol1">
-                                        <span className="field-label">members</span>
-                                    </div>
-                                    <div className="BriefOrganization-infoTableCol2">
-                                        {this.renderMemberCount(org)}
-                                    </div>
-                                </div>
-                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                    <div className="BriefOrganization-infoTableCol1">
-                                        <span className="field-label">narratives</span>
-                                    </div>
-                                    <div className="BriefOrganization-infoTableCol2">
-                                        {this.renderNarrativeCount(org)}
-                                    </div>
-                                </div>
-
-
-                            </div>
-                            <div className="BriefOrganization-infoCol-col3">
-                                <div className="BriefOrganization-orgOwner BriefOrganization-infoTableRow">
-                                    <div className="BriefOrganization-infoTableCol1">
-                                        <span className="field-label">owner</span>
-                                    </div>
-                                    <div className="BriefOrganization-infoTableCol2">
-                                        {/* TODO: render as Member or Owner component */}
-                                        <Owner username={org.owner} avatarSize={16} />
-                                    </div>
-                                </div>
-                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                    <div className="BriefOrganization-infoTableCol1">
-                                        <span className="field-label">established</span>
-                                    </div>
-                                    <div className="BriefOrganization-infoTableCol2">
-                                        <span >{Intl.DateTimeFormat('en-US', {
-                                            month: 'short',
-                                            day: 'numeric',
-                                            year: 'numeric'
-                                        }).format(org.createdAt)}</span>
-                                    </div>
-                                </div>
-                                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                    <div className="BriefOrganization-infoTableCol1">
-                                        <span className="field-label">last changed</span>
-                                    </div>
-                                    <div className="BriefOrganization-infoTableCol2">
-                                        <span >{Intl.DateTimeFormat('en-US', {
-                                            month: 'short',
-                                            day: 'numeric',
-                                            year: 'numeric'
-                                        }).format(org.modifiedAt)}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div >
-        )
-    }
-
-    renderFreshness(org: orgModel.BriefOrganization) {
+    renderOrgFreshness(org: orgModel.BriefOrganization) {
         const isNew = org.lastVisitedAt && (org.modifiedAt.getTime() > org.lastVisitedAt.getTime())
         let newAlert
         if (isNew) {
@@ -324,70 +254,222 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         )
     }
 
-    renderCompact() {
+    // renderOpenRequests() {
+    //     const title = (
+    //         <span>
+    //             There are outstanding requests for this organization
+    //         </span>
+    //     )
+    //     return (
+    //         <Tooltip placement="topRight" title={title}>
+    //             <span style={{ color: 'blue', fontSize: '80%' }}>
+    //                 <Icon type="mail" />
+    //             </span>
+    //         </Tooltip>
+    //     )
+    // }
+
+    // renderNewOpenRequests() {
+    //     const title = (
+    //         <span>
+    //             There are new requests for this organization
+    //         </span>
+    //     )
+    //     return (
+    //         <Tooltip placement="topRight" title={title}>
+    //             <span style={{ color: 'red', fontSize: '80%' }}>
+    //                 <Icon type="mail" />
+    //             </span>
+    //         </Tooltip>
+    //     )
+    // }
+
+    renderRequests() {
+        if (!(this.props.organization.relation === orgModel.UserRelationToOrganization.ADMIN ||
+            this.props.organization.relation === orgModel.UserRelationToOrganization.OWNER)) {
+            return
+        }
+        let message
+        let iconColor
+        switch (this.props.openRequestsStatus) {
+            case null:
+                message = 'There are no open requests for this organization'
+                iconColor = 'rgba(200, 200, 200, 0.3)'
+                break
+            case orgModel.RequestStatus.NEW:
+                message = 'There are new requests since you last visited this organization'
+                iconColor = 'red'
+                break
+            case orgModel.RequestStatus.OLD:
+                message = 'There are open requests for this organization'
+                iconColor = 'blue'
+                break
+            default:
+                console.warn('Invalid open request status: ' + this.props.openRequestsStatus)
+                return
+        }
+        const title = (
+            <span>
+                {message}
+            </span>
+        )
+        return (
+            <Tooltip
+                placement="topRight"
+                title={title}>
+                <span style={{ color: iconColor, fontSize: '80%' }}>
+                    <Icon type="mail" />
+                </span>
+            </Tooltip>
+        )
+    }
+
+    renderLogoColumn(org: orgModel.BriefOrganization) {
+        return (
+            <React.Fragment>
+                <div className="BriefOrganization-logoRow">
+                    <NavLink to={`/viewOrganization/${org.id}`}>
+                        {this.renderLogo(org)}
+                    </NavLink>
+                </div>
+                <div className="BriefOrganization-statusRow">
+                    <div className="BriefOrganization-relationCol">
+                        {this.renderRelation(org)}
+                    </div>
+                    <div className="BriefOrganization-privacyCol">
+                        {this.renderPrivacy()}
+                    </div>
+
+                    <div className="BriefOrganization-homeLinkCol">
+                        {this.renderHomeUrl(org)}
+                    </div>
+                </div>
+                <div className="BriefOrganization-freshnessRow">
+                    <div className="BriefOrganization-orgFreshnessCol">
+                        {this.renderOrgFreshness(org)}
+                    </div>
+                    <div className="BriefOrganization-openRequestsCol">
+                        {this.renderRequests()}
+                    </div>
+                    <div className="BriefOrganization-openNewRequestsCol">
+
+                    </div>
+                </div>
+            </React.Fragment>
+        )
+    }
+
+    renderInfoCol(org: orgModel.BriefOrganization) {
+        const modifiedAtTooltip = (
+            <span >
+                {Intl.DateTimeFormat('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                }).format(org.modifiedAt)}
+            </span>
+        )
+        return (
+            <React.Fragment>
+                <div className="BriefOrganization-researchInterests BriefOrganization-infoTableRow">
+                    {org.researchInterests}
+                </div>
+
+                <div className="BriefOrganization-orgOwner BriefOrganization-infoTableRow">
+                    <div className="BriefOrganization-infoTableCol1">
+                        <span className="field-label">owner</span>
+                    </div>
+                    <div className="BriefOrganization-infoTableCol2">
+                        {/* TODO: render as Member or Owner component */}
+                        <Owner username={org.owner} avatarSize={16} showAvatar={false} />
+                    </div>
+                </div>
+                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                    <div className="BriefOrganization-infoTableCol1">
+                        <span className="field-label">created</span>
+                    </div>
+                    <div className="BriefOrganization-infoTableCol2">
+                        {/* {niceElapsed(org.createdAt, 30)} */}
+                        <span >{Intl.DateTimeFormat('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                        }).format(org.createdAt)}</span>
+                    </div>
+                </div>
+                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                    <div className="BriefOrganization-infoTableCol1">
+                        <span className="field-label">last updated</span>
+                    </div>
+                    <div className="BriefOrganization-infoTableCol2">
+                        <Tooltip
+                            placement="bottomRight"
+                            mouseEnterDelay={0.5}
+                            title={modifiedAtTooltip}>
+                            {niceElapsed(org.modifiedAt, 30, false)}
+                        </Tooltip>
+
+                    </div>
+                </div>
+            </React.Fragment>
+        )
+    }
+
+    renderStatsCol(org: orgModel.BriefOrganization) {
+        return (
+            <React.Fragment>
+                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                    <div className="BriefOrganization-infoTableCol1">
+                        <span className="field-label"># members</span>
+                    </div>
+                    <div className="BriefOrganization-infoTableCol2">
+                        {this.renderMemberCount(org)}
+                    </div>
+                </div>
+                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                    <div className="BriefOrganization-infoTableCol1">
+                        <span className="field-label"># narratives</span>
+                    </div>
+                    <div className="BriefOrganization-infoTableCol2">
+                        {this.renderNarrativeCount(org)}
+                    </div>
+                </div>
+            </React.Fragment>
+        )
+    }
+
+    renderNormal() {
         const org = this.props.organization
         return (
             <div className="BriefOrganization">
                 <div className="BriefOrganization-body">
-                    <div className="BriefOrganization-freshnessCol">
+                    {/* <div className="BriefOrganization-freshnessCol">
                         {this.renderFreshness(org)}
-                    </div>
+                    </div> */}
                     <div className="BriefOrganization-logoCol">
-                        <NavLink to={`/viewOrganization/${org.id}`}>
-                            {this.renderLogo(org)}
-                        </NavLink>
+                        {this.renderLogoColumn(org)}
                     </div>
                     <div className="BriefOrganization-infoCol">
-                        <div className="BriefOrganization-infoTable">
-                            <div className="BriefOrganization-orgName BriefOrganization-infoTableRow">
-                                <NavLink to={`/viewOrganization/${org.id}`}>
-                                    {org.name}
-                                </NavLink>
-                            </div>
-                            <div className="BriefOrganization-homeUrl BriefOrganization-infoTableRow">
-                                {this.renderHomeUrl(org)}
-                            </div>
-                            <div className="BriefOrganization-researchInterests BriefOrganization-infoTableRow">
-                                {org.researchInterests}
-                            </div>
-                            <div>
-                                {this.renderRelation(org)}
-                            </div>
-                            <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                <div className="BriefOrganization-infoTableCol1">
-                                    <span className="field-label">established</span>
-                                </div>
-                                <div className="BriefOrganization-infoTableCol2">
-                                    <span >{Intl.DateTimeFormat('en-US', {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric'
-                                    }).format(org.createdAt)}</span>
+                        <div className="BriefOrganization-infoCol-row">
+                            <div className="BriefOrganization-infoCol-col1">
+                                <div className="BriefOrganization-orgName BriefOrganization-infoTableRow">
+                                    <NavLink to={`/viewOrganization/${org.id}`}>
+                                        {org.name}
+                                    </NavLink>
                                 </div>
                             </div>
-                            <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                                <div className="BriefOrganization-infoTableCol1">
-                                    <span className="field-label">last changed</span>
-                                </div>
-                                <div className="BriefOrganization-infoTableCol2">
-                                    <span >{Intl.DateTimeFormat('en-US', {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric'
-                                    }).format(org.modifiedAt)}</span>
-                                </div>
+                        </div>
+                        <div className="BriefOrganization-infoCol-row">
+                            <div className="BriefOrganization-infoCol-col1">
+                                {this.renderInfoCol(org)}
                             </div>
-                            <div className="BriefOrganization-infoTableRow">
-                                <a onClick={this.onToggleView.bind(this)}
-                                    className={`linkButton ${this.state.view === ComponentView.NORMAL ? "pressed" : ""}`}
-                                >
-                                    <Icon type={`${this.state.view === ComponentView.NORMAL ? "up" : "down"}`} />
-                                </a>
+                            <div className="BriefOrganization-infoCol-col2">
+                                {this.renderStatsCol(org)}
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         )
     }
 

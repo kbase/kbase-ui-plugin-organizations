@@ -54,11 +54,11 @@ class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                         mode="horizontal"
                     >
                         <Menu.Item key="allorgs">
-                            <Link to="/organizations">Organizations</Link>
+                            <Link to="/organizations">Browse &amp; Search</Link>
                         </Menu.Item>
-                        <Menu.Item key="neworg">
+                        {/* <Menu.Item key="neworg">
                             <Link to="/newOrganization">Create New Organization</Link>
-                        </Menu.Item>
+                        </Menu.Item> */}
                     </Menu>
                 )
             }} />

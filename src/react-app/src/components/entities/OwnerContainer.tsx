@@ -6,6 +6,7 @@ interface LoaderProps {
     username: orgModel.Username
     user: userModel.User | undefined
     avatarSize: number
+    showAvatar: boolean
     onLoad: (userId: userModel.Username) => void
 }
 
@@ -21,7 +22,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
     render() {
         if (this.props.user) {
             return (
-                <Owner user={this.props.user} avatarSize={this.props.avatarSize} />
+                <Owner user={this.props.user} avatarSize={this.props.avatarSize} showAvatar={this.props.showAvatar} />
             )
         } else {
             return (
@@ -49,6 +50,7 @@ import * as orgModel from '../../data/models/organization/model'
 export interface OwnProps {
     username: orgModel.Username
     avatarSize: number
+    showAvatar: boolean
 }
 
 interface StateProps {

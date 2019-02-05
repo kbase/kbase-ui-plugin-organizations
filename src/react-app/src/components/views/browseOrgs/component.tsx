@@ -10,6 +10,8 @@ import { RadioChangeEvent } from 'antd/lib/radio';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { Filter } from '../../../data/models/organization/model';
 import MainMenu from '../../menu/component';
+import { NavLink } from 'react-router-dom';
+import ButtonGroup from 'antd/lib/button/button-group';
 
 export interface OrganizationsBrowserProps {
     totalCount: number;
@@ -134,6 +136,12 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                 break
             case 'recentlyChanged':
                 this.props.onSortOrgs('changed', SortDirection.DESCENDING)
+                break
+            case 'memberCount':
+                this.props.onSortOrgs('memberCount', SortDirection.DESCENDING)
+                break
+            case 'narrativeCount':
+                this.props.onSortOrgs('narrativeCount', SortDirection.DESCENDING)
                 break
         }
     }
@@ -280,7 +288,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     icon="close"
                 >
                 </Button>
-
             </form>
         )
     }
@@ -289,14 +296,13 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         return (
             <div className="OrganizationsBrowser-searchBarRow">
                 <div className="OrganizationsBrowser-searchBarCol1">
-
-                </div>
-                <div className="OrganizationsBrowser-searchBarCol2">
                     {this.renderSearchForm()}
                 </div>
-                <div className="OrganizationsBrowser-searchBarCol3">
+                <div className="OrganizationsBrowser-searchBarCol2">
                     {this.renderSearchFeedback()}
                 </div>
+                {/* <div className="OrganizationsBrowser-searchBarCol3">
+                </div> */}
             </div>
         )
     }
@@ -327,6 +333,8 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                 <Select.Option value="recentlyChanged" key="changed">Date Changed</Select.Option>
                 <Select.Option value="recentlyAdded" key="recent">Date Established</Select.Option>
                 <Select.Option value="name" key="name">Org Name</Select.Option>
+                <Select.Option value="memberCount" key="memberCount"># members</Select.Option>
+                <Select.Option value="narrativeCount" key="narrativeCount"># narratives</Select.Option>
                 {/* <Select.Option value="owner" key="owner">Org owner</Select.Option> */}
                 {/* <Select.Option value=""newFirst key="newFirst">New Activity</Select.Option> */}
             </Select>
@@ -482,7 +490,11 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
     renderMenuButtons() {
         return (
-            <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+            <React.Fragment>
+                <NavLink to="/newOrganization"><Button icon="plus-circle" style={{ marginRight: '10px' }}>Create Organization</Button></NavLink>
+                {' '}
+                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+            </React.Fragment>
         )
     }
 

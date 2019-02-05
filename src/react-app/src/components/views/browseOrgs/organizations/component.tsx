@@ -9,6 +9,7 @@ import BriefOrganization from '../../../views/organizationHeader/BriefOrganizati
 
 export interface OrganizationsProps {
     organizations: Array<orgModel.BriefOrganization>
+    openRequests: Map<orgModel.OrganizationID, orgModel.RequestStatus>
 }
 
 export interface OrganizationsState {
@@ -43,9 +44,10 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
         if (this.props.organizations.length > 0) {
             return (
                 this.props.organizations.map((organization, index) => {
+                    const status = this.props.openRequests.get(organization.id) || null
                     return (
                         <div key={String(index)} className="simpleCard">
-                            <BriefOrganization organization={organization} />
+                            <BriefOrganization organization={organization} openRequestsStatus={status} />
                         </div>
                     )
                 })
@@ -60,6 +62,7 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
     }
 
     render() {
+        console.log('open reqs', this.props.openRequests)
         return (
             <div className="Organizations">
                 <div style={{ overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>

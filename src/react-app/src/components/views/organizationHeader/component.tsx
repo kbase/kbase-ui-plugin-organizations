@@ -383,7 +383,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                             {this.renderHomeUrl(org)}
                         </div>
                         <div className="owner">
-                            <Owner username={org.owner.username} avatarSize={20} />
+                            <Owner username={org.owner.username} avatarSize={20} showAvatar={true} />
                         </div>
                     </div>
                     <div style={{ display: 'inline-block', width: '50%', verticalAlign: 'top' }}>

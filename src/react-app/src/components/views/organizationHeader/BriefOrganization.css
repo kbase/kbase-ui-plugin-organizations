@@ -23,6 +23,8 @@
 
 .BriefOrganization-logoCol {
     flex: 0 0 64px;
+    display: flex;
+    flex-direction: column;
 }
 
 .BriefOrganization-infoCol {
@@ -39,7 +41,7 @@
 }
 
 .BriefOrganization-infoCol-col1 {
-    flex: 1 1 0px;
+    flex: 2 1 0px;
     /* margin-left: 10px; */
     display: flex;
     flex-direction: column;
@@ -61,7 +63,7 @@
 
 .BriefOrganization-orgName {
     font-weight: bold;
-    font-size: 120%;
+    font-size: 130%;
     cursor: pointer;
 }
 
@@ -88,4 +90,53 @@
 
 .BriefOrganization-researchInterests {
     font-style: italic;
+}
+
+/* logo column */
+
+.BriefOrganization-logoRow {
+    flex: 0 0 auto;
+    min-height: 64px;
+}
+
+.BriefOrganization-statusRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.BriefOrganization-freshnessRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.BriefOrganization-homeLinkCol {
+    flex: 1 1 0px;
+    text-align: center;
+}
+
+.BriefOrganization-privacyCol {
+    flex: 1 1 0px;
+    text-align: center;
+}
+
+.BriefOrganization-relationCol {
+    flex: 1 1 0px;
+    text-align: center;
+}
+
+.BriefOrganization-orgFreshnessCol {
+    flex: 1 1 0px;
+    text-align: center;
+}
+
+.BriefOrganization-openRequestsCol {
+    flex: 1 1 0px;
+    text-align: center;
+}
+
+.BriefOrganization-openNewRequestsCol {
+    flex: 1 1 0px;
+    text-align: center;
 }

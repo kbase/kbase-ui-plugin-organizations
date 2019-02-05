@@ -2,11 +2,8 @@ import * as React from 'react'
 import './Owner.css'
 
 import Avatar from './Avatar'
-import { } from '../../types';
 import { Icon, Tooltip } from 'antd';
-import * as orgModel from '../../data/models/organization/model'
 import * as userModel from '../../data/models/user'
-import User from './UserContainer'
 
 enum View {
     COMPACT = 0,
@@ -14,9 +11,9 @@ enum View {
 }
 
 export interface OwnerProps {
-    // member: orgModel.Member
     user: userModel.User
     avatarSize?: number
+    showAvatar: boolean
 }
 
 interface OwnerState {
@@ -55,7 +52,29 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
         )
     }
 
+    renderAvatar() {
+        if (this.props.showAvatar) {
+            return (
+                <div className="Owner-avatarCol">
+                    <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
+                </div>
+            )
+        }
+    }
+
     renderCompact() {
+        const tooltip = (
+            <div>
+                <div>
+                    {this.props.user.realname}
+                </div>
+                <div>
+                    <span><Avatar user={this.props.user} size={20} /></span>
+                    {' '}
+                    <span>{this.props.user.username}</span>
+                </div>
+            </div>
+        )
         return (
             <div className="Owner-owner" >
                 {/* <div className="Owner-controlCol">
@@ -65,15 +84,13 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                         <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
                     </a>
                 </div> */}
+                {this.renderAvatar()}
 
-                <div className="Owner-avatarCol">
-                    <Avatar user={this.props.user} size={this.props.avatarSize || 30} />
-                </div>
                 <div className="Owner-infoCol">
                     <div className="Owner-name">
                         <Tooltip
                             placement="bottomRight"
-                            title={this.props.user.username}>
+                            title={tooltip}>
                             <a href={"/#people/" + this.props.user.username} target="_blank">{this.props.user.realname}</a>
                         </Tooltip>
 

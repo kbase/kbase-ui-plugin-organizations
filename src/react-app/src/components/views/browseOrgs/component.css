@@ -71,7 +71,7 @@
 }
 
 .OrganizationsBrowser-searchBarCol3 {
-    flex: 2 1 0px;
+    flex: 0 0 12em;
     margin: 0 0 0 5px;
     display: flex;
     flex-direction: column;
@@ -80,7 +80,8 @@
 }
 
 .OrganizationsBrowser-searchInput {
-    width: 15em;
+    width: 100%;
+    /* max-width: 30em; */
     height: 100%;
 }
 

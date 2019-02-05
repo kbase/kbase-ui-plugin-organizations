@@ -177,9 +177,15 @@ export interface Organization {
     appCount: number
 }
 
-export interface RequestStatus {
-    new: boolean,
-    old: boolean
+// export interface RequestStatus {
+//     new: boolean,
+//     old: boolean
+// }
+
+export enum RequestStatus {
+    NONE = 'NONE',
+    OLD = 'OLD',
+    NEW = 'NEW'
 }
 
 export function determineRelation(
@@ -428,32 +434,39 @@ export function applyOrgSearch(orgs: Array<BriefOrganization>, searchTerms: Arra
     return filteredOrgs
 }
 
-function applySort(organizations: Array<BriefOrganization>, sortField: string, sortDirection: SortDirection): Array<BriefOrganization> {
-    const direction = sortDirection === SortDirection.ASCENDING ? 1 : -1
+function dateDays(d: Date) {
+    const t = d.getTime()
+    return Math.round(t / (1000 * 60 * 60 * 24))
+}
+
+function applySortComparison(sortField: string, direction: number, a: BriefOrganization, b: BriefOrganization) {
     switch (sortField) {
         case 'created':
-            return organizations.slice().sort((a, b) => {
-                return direction * (a.createdAt.getTime() - b.createdAt.getTime())
-            })
+            return direction * (dateDays(a.createdAt) - dateDays(b.createdAt))
         case 'modified':
         case 'changed':
-            return organizations.slice().sort((a, b) => {
-                return direction * (a.modifiedAt.getTime() - b.modifiedAt.getTime())
-            })
+            return direction * (dateDays(a.modifiedAt) - dateDays(b.modifiedAt))
         case 'name':
-            return organizations.slice().sort((a, b) => {
-                return direction * a.name.localeCompare(b.name)
-            })
+            return direction * a.name.localeCompare(b.name)
         case 'owner':
             // TODO: after the dust settles for org -> brief org conversion,
             // we may need to convert the owner to a member via profile...
-            return organizations.slice().sort((a, b) => {
-                return direction * a.owner.localeCompare(b.owner)
-            })
+            return direction * a.owner.localeCompare(b.owner)
+        case 'narrativeCount':
+            return direction * (a.narrativeCount - b.narrativeCount)
+        case 'memberCount':
+            return direction * (a.memberCount - b.memberCount)
         default:
             console.warn('unimplemented sort field: ' + sortField)
-            return organizations;
+            return 0;
     }
+}
+
+function applySort(organizations: Array<BriefOrganization>, sortField: string, sortDirection: SortDirection): Array<BriefOrganization> {
+    const direction = sortDirection === SortDirection.ASCENDING ? 1 : -1
+    return organizations.slice().sort((a, b) => {
+        return applySortComparison(sortField, direction, a, b) || applySortComparison('name', 1, a, b)
+    })
 }
 
 function groupRoleToUserRelation(role: groupsApi.Role): UserRelationToOrganization {
@@ -976,13 +989,19 @@ export class OrganizationModel {
         const openRequests = await groupsClient.getOpenRequests({ groupIds: organizationIds })
         const result = new Map<OrganizationID, RequestStatus>()
         for (const [groupId, status] of openRequests.entries()) {
-            const requestStatus: RequestStatus = {
-                old: status.new === 'Old',
-                new: status.new === 'New'
-            }
+            const requestStatus: RequestStatus = stringToRequestStatus(status)
             result.set(<OrganizationID>groupId, requestStatus)
         }
         return result
+    }
+}
+
+function stringToRequestStatus(status: groupsApi.RequestStatus): RequestStatus {
+    switch (status.new) {
+        case 'None': return RequestStatus.NONE
+        case 'Old': return RequestStatus.OLD
+        case 'New': return RequestStatus.NEW
+        default: throw new Error('Invalid open request status: ' + status)
     }
 }
 

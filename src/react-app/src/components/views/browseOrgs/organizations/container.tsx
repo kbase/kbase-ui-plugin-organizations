@@ -10,7 +10,7 @@ export function mapStateToProps(state: StoreState): OrganizationsProps {
     const {
         views: {
             browseOrgsView: {
-                viewModel: { organizations }
+                viewModel: { organizations, openRequests }
             }
         }
     } = state;
@@ -32,7 +32,7 @@ export function mapStateToProps(state: StoreState): OrganizationsProps {
     // })
 
     return {
-        organizations: organizations
+        organizations, openRequests
     }
 }
 
