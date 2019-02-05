@@ -560,6 +560,7 @@ export interface ViewOrgViewModel {
     kind: ViewOrgViewModelKind.NORMAL,
     organization: orgModel.Organization
     relation: orgModel.Relation
+    openRequest: orgModel.RequestStatus
     groupRequests: Array<requestModel.Request> | null
     groupInvitations: Array<requestModel.Request> | null
     requestOutbox: Array<requestModel.Request>

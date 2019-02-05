@@ -33,6 +33,7 @@ export function loadNormalSuccess(state: types.StoreState, action: actions.LoadN
                     kind: types.ViewOrgViewModelKind.NORMAL,
                     organization: action.organization,
                     relation: action.relation,
+                    openRequest: action.openRequest,
                     groupRequests: action.groupRequests,
                     groupInvitations: action.groupInvitations,
                     requestInbox: action.requestInbox,

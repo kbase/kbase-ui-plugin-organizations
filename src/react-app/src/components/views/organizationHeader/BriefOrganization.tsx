@@ -292,7 +292,8 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         let message
         let iconColor
         switch (this.props.openRequestsStatus) {
-            case null:
+            case orgModel.RequestStatus.NONE:
+                // case null:
                 message = 'There are no open requests for this organization'
                 iconColor = 'rgba(200, 200, 200, 0.3)'
                 break
@@ -304,6 +305,8 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                 message = 'There are open requests for this organization'
                 iconColor = 'blue'
                 break
+            case orgModel.RequestStatus.INAPPLICABLE:
+                return
             default:
                 console.warn('Invalid open request status: ' + this.props.openRequestsStatus)
                 return
@@ -381,7 +384,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     </div>
                     <div className="BriefOrganization-infoTableCol2">
                         {/* TODO: render as Member or Owner component */}
-                        <Owner username={org.owner} avatarSize={16} showAvatar={false} />
+                        <Owner username={org.owner.username} avatarSize={16} showAvatar={false} />
                     </div>
                 </div>
                 <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">

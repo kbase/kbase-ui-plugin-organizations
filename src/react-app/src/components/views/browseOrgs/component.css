@@ -64,10 +64,12 @@
 }
 
 .OrganizationsBrowser-searchBarCol2 {
-    flex: 0 0 auto;
+    /* flex: 0 0 auto; */
+    flex: 0 0 12em;
     margin: 0 5px 0 5px;
     display: flex;
     flex-direction: column;
+    text-align: center;
 }
 
 .OrganizationsBrowser-searchBarCol3 {

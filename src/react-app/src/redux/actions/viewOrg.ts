@@ -41,6 +41,7 @@ export interface LoadNormalSuccess extends Action {
     type: ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS
     organization: orgModel.Organization
     relation: orgModel.Relation
+    openRequest: orgModel.RequestStatus
     groupRequests: Array<requestModel.Request> | null
     groupInvitations: Array<requestModel.Request> | null
     requestInbox: Array<requestModel.Request>
@@ -378,6 +379,7 @@ export function loadStart(): LoadStart {
 export function loadNormalSuccess(
     organization: orgModel.Organization,
     relation: orgModel.Relation,
+    openRequest: orgModel.RequestStatus,
     groupRequests: Array<requestModel.Request> | null,
     groupInvitations: Array<requestModel.Request> | null,
     requestInbox: Array<requestModel.Request>,
@@ -385,7 +387,8 @@ export function loadNormalSuccess(
     notifications: Array<feedsModel.OrganizationNotification>): LoadNormalSuccess {
     return {
         type: ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS,
-        organization, relation, groupRequests, groupInvitations,
+        organization, relation, openRequest,
+        groupRequests, groupInvitations,
         requestInbox, requestOutbox, notifications
     }
 }
@@ -555,6 +558,11 @@ export function load(organizationId: string) {
             groupsServiceURL: config.services.Groups.url,
         })
 
+        const orgClient = new orgModel.OrganizationModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+
         try {
             const { organization, relation } = await uberClient.getOrganizationForUser(organizationId)
             if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
@@ -567,25 +575,25 @@ export function load(organizationId: string) {
                 dispatch(loadInaccessiblePrivateSuccess(organization, relation, requestInbox))
                 return
             }
+
+            let openRequest
             let orgRequests: Array<requestModel.Request> | null
             let orgInvitations: Array<requestModel.Request> | null
             if (relation.type === orgModel.UserRelationToOrganization.OWNER ||
                 relation.type === orgModel.UserRelationToOrganization.ADMIN) {
                 orgRequests = await requestClient.getPendingOrganizationRequestsForOrg(organizationId)
                 orgInvitations = await requestClient.getOrganizationInvitationsForOrg(organizationId)
+                openRequest = await orgClient.getOpenRequestStatus({ organizationId })
             } else {
                 orgRequests = null
                 orgInvitations = null
+                openRequest = orgModel.RequestStatus.INAPPLICABLE
             }
 
             const requestInbox: Array<requestModel.Request> = await requestClient.getCombinedRequestInboxForOrg(organizationId)
             const requestOutbox: Array<requestModel.Request> = await requestClient.getRequestOutboxForOrg(organizationId)
 
-            // const notifications: Array<feedsModel.OrganizationNotification> = all.filter((notification) => {
-            //     return (notification.organizationId === organizationId)
-            // })
-
-            dispatch(loadNormalSuccess(organization, relation, orgRequests, orgInvitations, requestInbox, requestOutbox, []))
+            dispatch(loadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations, requestInbox, requestOutbox, []))
         } catch (ex) {
             dispatch(loadError({
                 code: ex.name,
@@ -621,7 +629,7 @@ export function viewOrgJoinRequest() {
         })
 
         try {
-            await orgClient.requestMembershipToGroup(organization.id)
+            await orgClient.requestMembership(organization.id)
             dispatch(viewOrgJoinRequestSuccess())
             dispatch(load((organization.id)))
         } catch (ex) {

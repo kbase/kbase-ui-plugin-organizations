@@ -62,7 +62,6 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
     }
 
     render() {
-        console.log('open reqs', this.props.openRequests)
         return (
             <div className="Organizations">
                 <div style={{ overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>

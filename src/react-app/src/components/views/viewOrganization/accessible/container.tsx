@@ -24,6 +24,7 @@ export interface OwnProps {
 interface StateProps {
     organization: orgModel.Organization
     relation: orgModel.Relation
+    openRequest: orgModel.RequestStatus
     groupRequests: Array<requestModel.Request> | null
     groupInvitations: Array<requestModel.Request> | null
     requestOutbox: Array<requestModel.Request>
@@ -59,7 +60,7 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
         throw new Error("argh, wrong org kind")
     }
     const {
-        organization, relation, groupRequests, groupInvitations, requestInbox, requestOutbox
+        organization, relation, openRequest, groupRequests, groupInvitations, requestInbox, requestOutbox
     } = viewModel
     const {
         db: {
@@ -72,7 +73,7 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
     })
     // TODO: of course this really needs to be an async fetch of the org info!
     return {
-        organization, relation, groupRequests, groupInvitations, requestInbox, requestOutbox, notifications
+        organization, relation, openRequest, groupRequests, groupInvitations, requestInbox, requestOutbox, notifications
     }
 }
 
@@ -85,13 +86,13 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
             dispatch(actions.viewOrgJoinRequest() as any)
         },
         onCancelJoinRequest: (requestId: requestModel.RequestID) => {
-            dispatch(cancelOutboxRequestActions.cancelRequest(requestId) as any)
+            dispatch(actions.viewOrgCancelJoinRequest(requestId) as any)
         },
         onAcceptInvitation: (requestId: requestModel.RequestID) => {
-            dispatch(acceptInboxRequestActions.acceptRequest(requestId) as any)
+            dispatch(actions.acceptJoinInvitation(requestId) as any)
         },
         onRejectInvitation: (requestId: requestModel.RequestID) => {
-            dispatch(denyInboxRequestActions.denyRequest(requestId) as any)
+            dispatch(actions.rejectJoinInvitation(requestId) as any)
         },
         onRemoveNarrative: (narrative: orgModel.NarrativeResource) => {
             dispatch(actions.removeNarrative(narrative) as any)

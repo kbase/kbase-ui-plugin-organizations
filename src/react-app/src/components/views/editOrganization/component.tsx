@@ -500,24 +500,30 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
             </React.Fragment>
         )
         const buttons = (
-            <React.Fragment>
-                <Button icon="save"
-                    form="editOrganizationForm"
-                    key="submit"
-                    disabled={!this.canSave.call(this)}
-                    htmlType="submit">
-                    {/* <Icon type="save" /> */}
-                    {/* <FaSave style={{ verticalAlign: 'center' }} /> */}
-                    Save
+            <span className="ButtonSet">
+                <span className="ButtonSet-button">
+                    <Button icon="save"
+                        form="editOrganizationForm"
+                        key="submit"
+                        disabled={!this.canSave.call(this)}
+                        htmlType="submit">
+                        {/* <Icon type="save" /> */}
+                        {/* <FaSave style={{ verticalAlign: 'center' }} /> */}
+                        Save
+                    </Button>
+                </span>
+                <span className="ButtonSet-button">
+                    <Button icon="undo"
+                        type="danger"
+                        onClick={this.onClickCancelToViewer.bind(this)}>
+                        {/* <FaUndo style={{ verticalAlign: 'center' }} />  */}
+                        Cancel
                         </Button>
-                <Button icon="undo"
-                    type="danger"
-                    onClick={this.onClickCancelToViewer.bind(this)}>
-                    {/* <FaUndo style={{ verticalAlign: 'center' }} />  */}
-                    Cancel
-                        </Button>
-                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
-            </React.Fragment>
+                </span>
+                <span className="ButtonSet-button">
+                    <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+                </span>
+            </span>
         )
         return (
             <Header breadcrumbs={breadcrumbs} buttons={buttons} />
@@ -548,24 +554,31 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
 
     renderMenuButtons() {
         return (
-            <React.Fragment>
-                <Button icon="save"
-                    form="editOrganizationForm"
-                    key="submit"
-                    disabled={!this.canSave.call(this)}
-                    htmlType="submit">
-                    {/* <Icon type="save" /> */}
-                    {/* <FaSave style={{ verticalAlign: 'center' }} /> */}
-                    Save
+            <span className="ButtonSet">
+                <span className="ButtonSet-button">
+                    <Button icon="save"
+                        form="editOrganizationForm"
+                        key="submit"
+                        disabled={!this.canSave.call(this)}
+                        htmlType="submit">
+                        {/* <Icon type="save" /> */}
+                        {/* <FaSave style={{ verticalAlign: 'center' }} /> */}
+                        Save
+                    </Button>
+                </span>
+                <span className="ButtonSet-button">
+                    <Button icon="undo"
+                        type="danger"
+                        onClick={this.onClickCancelToViewer.bind(this)}>
+                        {/* <FaUndo style={{ verticalAlign: 'center' }} />  */}
+                        Cancel
                         </Button>
-                <Button icon="undo"
-                    type="danger"
-                    onClick={this.onClickCancelToViewer.bind(this)}>
-                    {/* <FaUndo style={{ verticalAlign: 'center' }} />  */}
-                    Cancel
-                        </Button>
-                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
-            </React.Fragment>
+                </span>
+                <span className="ButtonSet-button">
+                    <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+                </span>
+            </span>
+
         )
     }
 

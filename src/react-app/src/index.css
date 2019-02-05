@@ -191,3 +191,7 @@ a:hover {
 .IconButton-hover.ant-dropdown-open:hover {
     background-color: rgba(200, 200, 200, 0.5)
 }
+
+.ButtonSet .ButtonSet-button+.ButtonSet-button {
+    margin-left: 6px;
+}

@@ -214,18 +214,18 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         if (this.props.totalCount === 0) {
             return (
                 <span>
-                    No organizations in the system
+                    None available
                 </span>
             )
         }
         if (this.props.filteredCount === 0) {
             return (
                 <span>
-                    No organizations found out of
-                    {' '}
+                    Ø
+                    /
                     {this.props.totalCount}
                     {' '}
-                    available.
+                    orgs
                 </span>
             )
 
@@ -233,22 +233,20 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         if (this.props.totalCount === this.props.filteredCount) {
             return (
                 <span>
-                    Showing all
+                    <b>{this.props.totalCount}</b>
                     {' '}
-                    {this.props.totalCount}
+                    orgs
                 </span>
             )
         }
 
         return (
             <span>
-                Found
-                {' '}
-                {this.props.filteredCount}
-                {' '}
-                out of
-                {' '}
+                <b>{this.props.filteredCount}</b>
+                /
                 {this.props.totalCount}
+                {' '}
+                orgs
             </span>
         )
     }

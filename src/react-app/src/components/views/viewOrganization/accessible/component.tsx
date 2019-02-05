@@ -17,10 +17,17 @@ import MainMenu from '../../../menu/component';
 import Members from './members/reduxAdapter'
 
 import Requests from './requests/container'
+import BriefOrganization from '../../organizationHeader/BriefOrganization';
 
 enum NavigateTo {
     NONE = 0,
-    REQUEST_ADD_NARRATIVE
+    REQUEST_ADD_NARRATIVE,
+    MANAGE_MEMBERSHIP,
+    VIEW_MEMBERS,
+    MANAGE_REQUESTS,
+    VIEW_ORGANIZATION,
+    EDIT_ORGANIZATION,
+    INVITE_USER
 }
 
 export interface ViewOrganizationState {
@@ -34,6 +41,7 @@ export interface ViewOrganizationState {
 export interface ViewOrganizationProps {
     organization: orgModel.Organization
     relation: orgModel.Relation
+    openRequest: orgModel.RequestStatus
     groupRequests: Array<requestModel.Request> | null
     groupInvitations: Array<requestModel.Request> | null
     requestOutbox: Array<requestModel.Request>
@@ -71,9 +79,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     onCancelJoinRequest() {
-        if (!this.props.organization) {
-            return
-        }
         const relation = this.props.relation as orgModel.MembershipRequestPendingRelation
         this.props.onCancelJoinRequest(relation.requestId)
     }
@@ -879,19 +884,190 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
     renderMenuButtons() {
         return (
-            <React.Fragment>
-                {this.renderEditButton()}
-                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
-            </React.Fragment>
+            <span className="ButtonSet">
+                <span className="ButtonSet-button">
+                    {this.renderOrgMenu()}
+                </span>
+
+                <span className="ButtonSet-button">
+                    <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+                </span>
+            </span>
         )
     }
 
-    render() {
+    onNavigateToMembership() {
+        this.setState({ navigateTo: NavigateTo.MANAGE_MEMBERSHIP })
+    }
+
+    onNavigateToViewMembers() {
+        this.setState({ navigateTo: NavigateTo.VIEW_MEMBERS })
+    }
+
+    onNavigateToManageRequests() {
+        this.setState({ navigateTo: NavigateTo.MANAGE_REQUESTS })
+    }
+
+    onNavigateToEditOrganization() {
+        this.setState({ navigateTo: NavigateTo.EDIT_ORGANIZATION })
+    }
+
+    onNavigateToInviteUser() {
+        this.setState({ navigateTo: NavigateTo.INVITE_USER })
+    }
+
+    onNavigateToViewOrganization() {
+        this.setState({ navigateTo: NavigateTo.VIEW_ORGANIZATION })
+    }
+
+    onMenuClick({ key }: { key: string }) {
+        switch (key) {
+            case 'manageMyMembership':
+                this.setState({ navigateTo: NavigateTo.MANAGE_MEMBERSHIP })
+                break
+            case 'viewMembers':
+                this.setState({ navigateTo: NavigateTo.VIEW_MEMBERS })
+                break
+            case 'editOrg':
+                this.setState({ navigateTo: NavigateTo.EDIT_ORGANIZATION })
+                break
+            case 'inviteUser':
+                this.setState({ navigateTo: NavigateTo.INVITE_USER })
+                break
+            case 'manageRequests':
+                this.setState({ navigateTo: NavigateTo.MANAGE_REQUESTS })
+                break
+        }
+    }
+
+    renderOrgMenu() {
+        const org = this.props.organization
+        switch (this.props.relation.type) {
+            case (orgModel.UserRelationToOrganization.NONE):
+                // return (
+                //     <span><Icon type="stop" />None</span>
+                // )
+                return (
+                    <span>
+                        <Button
+                            type="primary"
+                            onClick={this.onJoinClick.bind(this)}>
+                            Join this Organization
+                        </Button>
+                    </span>
+                )
+            case (orgModel.UserRelationToOrganization.VIEW):
+                return (
+                    <span>
+                        <Button
+                            type="primary"
+                            onClick={this.onJoinClick.bind(this)}>
+                            Join this Organization
+                        </Button>
+                    </span>
+                )
+            case (orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
+                return (
+                    <span>
+                        <Tooltip
+                            placement="bottom"
+                            mouseEnterDelay={0.5}
+                            title="You have requested to join this Org; you may cancel your join request with this button"
+                        >
+                            <Button icon="delete" type="danger" onClick={this.onCancelJoinRequest.bind(this)}>Cancel Join Request</Button>
+                        </Tooltip>
+                    </span>
+
+                )
+            case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
+                return (
+                    <span>
+                        <span>You have been invited to this organization: </span>
+                        <Button icon="check" type="default" onClick={this.onAcceptInvitation.bind(this)}>Accept</Button>
+                        <Button icon="stop" type="danger" onClick={this.onRejectInvitation.bind(this)}>Reject</Button>
+                    </span>
+                )
+            case (orgModel.UserRelationToOrganization.MEMBER):
+                const menu = (
+                    <Menu onClick={this.onMenuClick.bind(this)}>
+                        <Menu.Item key="manageMyMembership">
+                            Manage My Membership
+                        </Menu.Item>
+                    </Menu>
+                )
+                return (
+                    <span>
+                        <Dropdown overlay={menu} trigger={['click']}>
+                            <Button shape="circle">
+                                <Icon type="setting" theme="filled" style={{ fontSize: '120%' }} />
+                            </Button>
+                        </Dropdown>
+                    </span>
+                )
+            case (orgModel.UserRelationToOrganization.ADMIN):
+                const adminMenu = (
+                    <Menu onClick={this.onMenuClick.bind(this)}>
+                        <Menu.Item key="manageMyMembership">
+                            Manage My Membership
+                        </Menu.Item>
+                        <Menu.Item key="editOrg" >
+                            Edit this Org
+                        </Menu.Item>
+                        <Menu.Item key="inviteUser">
+                            Invite User
+                        </Menu.Item>
+                    </Menu>
+                )
+                return (
+                    <span>
+                        <Dropdown overlay={adminMenu} trigger={['click']}>
+                            <Button shape="circle">
+                                <Icon type="setting" theme="filled" style={{ fontSize: '120%' }} />
+                            </Button>
+                        </Dropdown>
+                    </span>
+                )
+            case (orgModel.UserRelationToOrganization.OWNER):
+                const ownerMenu = (
+                    <Menu onClick={this.onMenuClick.bind(this)}>
+                        <Menu.Item key="editOrg">
+                            Edit this Org
+                        </Menu.Item>
+                        <Menu.Item key="inviteUser">
+                            Invite User
+                        </Menu.Item>
+                    </Menu>
+                )
+                return (
+                    <span>
+                        <Dropdown overlay={ownerMenu} trigger={['click']}>
+                            <Button shape="circle">
+                                <Icon type="setting" theme="filled" style={{ fontSize: '120%' }} />
+                            </Button>
+                        </Dropdown>
+                    </span>
+                )
+        }
+    }
+
+    renderx() {
         switch (this.state.navigateTo) {
             case NavigateTo.REQUEST_ADD_NARRATIVE:
                 return (
                     <Redirect to={"/requestAddNarrative"} />
                 )
+            case NavigateTo.MANAGE_MEMBERSHIP:
+                return <Redirect push to={"/membership/" + this.props.organization.id} />
+            case NavigateTo.VIEW_MEMBERS:
+                return <Redirect push to={"/viewMembers/" + this.props.organization.id} />
+            case NavigateTo.EDIT_ORGANIZATION:
+                return <Redirect push to={"/editOrganization/" + this.props.organization.id} />
+            case NavigateTo.MANAGE_REQUESTS:
+                return <Redirect push to={"/manageOrganizationRequests/" + this.props.organization.id} />
+            case NavigateTo.INVITE_USER:
+                return <Redirect push to={"/inviteUser/" + this.props.organization.id} />
+            case NavigateTo.VIEW_ORGANIZATION:
+                return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
             case NavigateTo.NONE:
             default:
             // do nothing.
@@ -954,6 +1130,92 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 Loading...
             </div>
         )
+    }
+
+    render() {
+        switch (this.state.navigateTo) {
+            case NavigateTo.REQUEST_ADD_NARRATIVE:
+                return (
+                    <Redirect to={"/requestAddNarrative"} />
+                )
+            case NavigateTo.MANAGE_MEMBERSHIP:
+                return <Redirect push to={"/membership/" + this.props.organization.id} />
+            case NavigateTo.VIEW_MEMBERS:
+                return <Redirect push to={"/viewMembers/" + this.props.organization.id} />
+            case NavigateTo.EDIT_ORGANIZATION:
+                return <Redirect push to={"/editOrganization/" + this.props.organization.id} />
+            case NavigateTo.MANAGE_REQUESTS:
+                return <Redirect push to={"/manageOrganizationRequests/" + this.props.organization.id} />
+            case NavigateTo.INVITE_USER:
+                return <Redirect push to={"/inviteUser/" + this.props.organization.id} />
+            case NavigateTo.VIEW_ORGANIZATION:
+                return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
+            case NavigateTo.NONE:
+            default:
+            // do nothing.
+        }
+
+        const uorg = this.props.organization as unknown
+        const borg = uorg as orgModel.BriefOrganization
+        return (
+            <div className="ViewOrganization  scrollable-flex-column">
+                <MainMenu buttons={this.renderMenuButtons()} />
+                <div style={{ borderBottom: '1px silver solid' }}>
+                    <BriefOrganization organization={borg} openRequestsStatus={this.props.openRequest} />
+                </div>
+                <div className="mainRow scrollable-flex-column">
+                    <div className="mainColumn  scrollable-flex-column">
+                        <div className="orgRow" style={{ minHeight: '0px' }}>
+                            {this.renderOrg()}
+                        </div>
+                        <div className="narrativesRow scrollable-flex-column">
+                            {this.renderNarratives()}
+                        </div>
+                    </div>
+                    <div className="infoColumn">
+                        {this.renderCombo()}
+                    </div>
+                </div>
+            </div>
+
+        )
+
+        // let accessModal
+        // if (this.state.requestAccess.narrative && this.props.organization) {
+
+        //     const relation = this.props.relation
+        //     const isMember = relation.type === orgModel.UserRelationToOrganization.MEMBER ||
+        //         relation.type === orgModel.UserRelationToOrganization.ADMIN ||
+        //         relation.type === orgModel.UserRelationToOrganization.OWNER
+        // }
+        // if (typeof this.props.organization !== 'undefined') {
+        //     return (
+        //         <div className="ViewOrganization  scrollable-flex-column">
+        //             <MainMenu buttons={this.renderMenuButtons()} />
+        //             {this.renderOrgHeader()}
+        //             <div className="mainRow scrollable-flex-column">
+        //                 <div className="mainColumn  scrollable-flex-column">
+        //                     <div className="orgRow" style={{ minHeight: '0px' }}>
+        //                         {this.renderOrg()}
+        //                     </div>
+        //                     <div className="narrativesRow scrollable-flex-column">
+        //                         {this.renderNarratives()}
+        //                     </div>
+        //                 </div>
+        //                 <div className="infoColumn">
+        //                     {this.renderCombo()}
+        //                 </div>
+        //             </div>
+        //             {accessModal}
+        //         </div>
+        //     )
+        // }
+        // return (
+        //     <div className="ViewOrganization">
+        //         {this.renderLoadingHeader()}
+        //         Loading...
+        //     </div>
+        // )
     }
 }
 

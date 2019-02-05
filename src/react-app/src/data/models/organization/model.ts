@@ -130,7 +130,7 @@ export interface BriefOrganization {
     homeUrl: string | null
     researchInterests: string | null
     // TODO: we need researchInterests here
-    owner: Username
+    owner: Member
     relation: UserRelationToOrganization
     createdAt: Date
     modifiedAt: Date
@@ -182,7 +182,9 @@ export interface Organization {
 //     old: boolean
 // }
 
+// LEFT OF HERE - inapplicable should be set if the user is not an admin.
 export enum RequestStatus {
+    INAPPLICABLE = 'INAPPLICABLE',
     NONE = 'NONE',
     OLD = 'OLD',
     NEW = 'NEW'
@@ -427,7 +429,7 @@ export function applyOrgSearch(orgs: Array<BriefOrganization>, searchTerms: Arra
         }
         return searchTermsRe.every((termRe) => {
             return termRe.test(org.name) ||
-                termRe.test(org.owner)
+                termRe.test(org.owner.username)
         })
     })
 
@@ -451,7 +453,7 @@ function applySortComparison(sortField: string, direction: number, a: BriefOrgan
         case 'owner':
             // TODO: after the dust settles for org -> brief org conversion,
             // we may need to convert the owner to a member via profile...
-            return direction * a.owner.localeCompare(b.owner)
+            return direction * a.owner.username.localeCompare(b.owner.username)
         case 'narrativeCount':
             return direction * (a.narrativeCount - b.narrativeCount)
         case 'memberCount':
@@ -698,7 +700,13 @@ export class OrganizationModel {
             private: group.private,
             homeUrl: group.custom.homeurl || null,
             researchInterests: group.custom.researchinterests || null,
-            owner: group.owner,
+            owner: {
+                username: group.owner,
+                lastVisitedAt: null,
+                type: MemberType.OWNER,
+                joinedAt: new Date(group.createdate),
+                title: 'Owner'
+            },
             // fix these...
             relation: groupRoleToUserRelation(group.role),
             createdAt: new Date(group.createdate),
@@ -900,7 +908,7 @@ export class OrganizationModel {
         return
     }
 
-    async requestMembershipToGroup(id: string): Promise<requestModel.Request> {
+    async requestMembership(id: string): Promise<requestModel.Request> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
@@ -993,6 +1001,18 @@ export class OrganizationModel {
             result.set(<OrganizationID>groupId, requestStatus)
         }
         return result
+    }
+
+    async getOpenRequestStatus({ organizationId }: { organizationId: OrganizationID }): Promise<RequestStatus> {
+        const groupsClient = new groupsApi.GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+        const openRequests = await groupsClient.getOpenRequests({ groupIds: [organizationId] })
+        for (const [groupId, status] of openRequests.entries()) {
+            return stringToRequestStatus(status)
+        }
+        throw new Error('expected request status, got none')
     }
 }
 

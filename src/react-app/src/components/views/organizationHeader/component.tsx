@@ -11,7 +11,6 @@ import './component.css'
 import OrgLogo from '../../OrgLogo';
 import Owner from '../../entities/OwnerContainer';
 
-
 export interface OrganizationHeaderProps {
     organization: orgModel.Organization
     pendingJoinRequest: requestModel.UserRequest | null
@@ -405,20 +404,6 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
                         </div>
                     </div>
                 </div>
-
-
-                {/* <div className="id">
-                    <span className="label">permalink</span>{' '}
-                    <span className="permalinkBase">https:/narrative.kbase.us#orgs/</span>{org.id}
-                </div> */}
-
-
-                {/* <div className="owner">
-                    <span className="field-label">owner</span>
-                    <a href={"/#people/" + org.owner.username} target="_blank">{org.owner.username}</a>
-                    {' '}
-                    ❨{org.owner.username}❩
-                                </div> */}
             </React.Fragment>
         )
     }
