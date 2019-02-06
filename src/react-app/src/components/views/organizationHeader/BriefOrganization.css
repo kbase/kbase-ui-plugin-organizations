@@ -48,7 +48,7 @@
 }
 
 .BriefOrganization-infoCol-col2 {
-    flex: 0 0 10em;
+    flex: 0 0 15em;
     /* margin-left: 10px; */
     display: flex;
     flex-direction: column;
@@ -80,7 +80,7 @@
 }
 
 .BriefOrganization-infoTableCol1 {
-    flex: 0 0 7em;
+    flex: 0 0 5em;
     text-align: right;
 }
 
@@ -139,4 +139,11 @@
 .BriefOrganization-openNewRequestsCol {
     flex: 1 1 0px;
     text-align: center;
+}
+
+.BriefOrganization-fieldLabel {
+    width: 4em;
+    text-align: left;
+    display: inline-block;
+    padding: 0;
 }

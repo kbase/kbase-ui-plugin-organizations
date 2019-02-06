@@ -421,7 +421,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
 
                 <div className="BriefOrganization-orgOwner BriefOrganization-infoTableRow">
                     <div className="BriefOrganization-infoTableCol1">
-                        <span className="field-label">owner</span>
+                        <span className="field-label BriefOrganization-fieldLabel">owner</span>
                     </div>
                     <div className="BriefOrganization-infoTableCol2">
                         {/* TODO: render as Member or Owner component */}
@@ -430,7 +430,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                 </div>
                 <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
                     <div className="BriefOrganization-infoTableCol1">
-                        <span className="field-label">created</span>
+                        <span className="field-label BriefOrganization-fieldLabel">created</span>
                     </div>
                     <div className="BriefOrganization-infoTableCol2">
                         {/* {niceElapsed(org.createdAt, 30)} */}
@@ -446,20 +446,6 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                                 }).format(org.createdAt)}
                             </span>
                         </Tooltip>
-                    </div>
-                </div>
-                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                    <div className="BriefOrganization-infoTableCol1">
-                        <span className="field-label">updated</span>
-                    </div>
-                    <div className="BriefOrganization-infoTableCol2">
-                        <Tooltip
-                            placement="bottomRight"
-                            mouseEnterDelay={0.5}
-                            title={this.fullTimestamp(org.modifiedAt)}>
-                            {niceElapsed(org.modifiedAt, 30, false)}
-                        </Tooltip>
-
                     </div>
                 </div>
             </React.Fragment>
@@ -483,6 +469,20 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     </div>
                     <div className="BriefOrganization-infoTableCol2">
                         {this.renderNarrativeCount(org)}
+                    </div>
+                </div>
+                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                    <div className="BriefOrganization-infoTableCol1">
+                        <span className="field-label"><Icon type="save" /></span>
+                    </div>
+                    <div className="BriefOrganization-infoTableCol2">
+                        <Tooltip
+                            placement="bottomRight"
+                            mouseEnterDelay={0.5}
+                            title={this.fullTimestamp(org.modifiedAt)}>
+                            {niceElapsed(org.modifiedAt, 30, false)}
+                        </Tooltip>
+
                     </div>
                 </div>
             </React.Fragment>
