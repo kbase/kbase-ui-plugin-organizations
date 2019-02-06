@@ -41,14 +41,14 @@
 }
 
 .BriefOrganization-infoCol-col1 {
-    flex: 2 1 0px;
+    flex: 1 1 0px;
     /* margin-left: 10px; */
     display: flex;
     flex-direction: column;
 }
 
 .BriefOrganization-infoCol-col2 {
-    flex: 1 1 0px;
+    flex: 0 0 10em;
     /* margin-left: 10px; */
     display: flex;
     flex-direction: column;
@@ -81,7 +81,7 @@
 
 .BriefOrganization-infoTableCol1 {
     flex: 0 0 7em;
-    text-align: left;
+    text-align: right;
 }
 
 .BriefOrganization-infoTableCol2 {

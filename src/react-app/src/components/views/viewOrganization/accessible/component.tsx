@@ -697,7 +697,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             return (
                 <Card
                     className="slimCard  narratives"
-                    title={<span><Icon type="folder-open" /> Narratives</span>}
+                    title={<span><Icon type="folder-open" /></span>}
                 >
                     <p style={{ textAlign: 'center', fontStyle: 'italic' }}>
                         Narratives are restricted to members only
@@ -728,7 +728,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 <Card
                     className="slimCard  narratives"
                     headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                    title={<span><Icon type="folder-open" /> narratives (Ø)</span>}
+                    title={<span><Icon type="folder-open" /> Narratives (Ø)</span>}
                     extra={extras}
                 >
                     <Alert type="info" message={message} />
@@ -758,7 +758,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         const title = (
             <span>
                 <Icon type="folder-open" />
-                narratives
+                Narratives
                 {' '}
                 <span className="titleCount">({narrativeCount})</span>
             </span>

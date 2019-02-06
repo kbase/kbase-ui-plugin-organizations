@@ -423,18 +423,22 @@ export class RequestAddNarrative extends React.Component<Props, State> {
 
     renderMenuButtons() {
         return (
-            <React.Fragment>
-                <Button icon="undo"
-                    type="danger"
-                    onClick={this.doCancelToViewer.bind(this)}>
-                    Return to this Org
+            <div className="ButtonSet">
+                <div className="ButtonSet-button">
+                    <Button icon="rollback"
+                        type="danger"
+                        onClick={this.doCancelToViewer.bind(this)}>
+                        Back to Org
                 </Button>
-                <Button
-                    shape="circle"
-                    icon="info"
-                    onClick={this.doShowInfo.bind(this)}>
-                </Button>
-            </React.Fragment>
+                </div>
+                <div className="ButtonSet-button">
+                    <Button
+                        shape="circle"
+                        icon="info"
+                        onClick={this.doShowInfo.bind(this)}>
+                    </Button>
+                </div>
+            </div >
         )
     }
 

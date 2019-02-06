@@ -195,6 +195,19 @@ a:hover {
     background-color: rgba(200, 200, 200, 0.5)
 }
 
+.ButtonSet {
+    display: inline-block;
+}
+
+.ButtonSet .ButtonSet-button {
+    display: inline-block;
+}
+
 .ButtonSet .ButtonSet-button+.ButtonSet-button {
     margin-left: 6px;
+}
+
+.Message {
+    font-style: italic;
+    text-align: center;
 }

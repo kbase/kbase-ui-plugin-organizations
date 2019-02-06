@@ -3,7 +3,7 @@ import * as orgModel from '../../../data/models/organization/model'
 import './BriefOrganization.css'
 import { NavLink } from 'react-router-dom';
 import OrgLogo from '../../OrgLogo';
-import { Icon, Tooltip } from 'antd';
+import { Icon, Tooltip, Menu, Dropdown, Modal } from 'antd';
 import Owner from '../../entities/OwnerContainer';
 import { ComponentView } from '../../../types';
 import { RequestStatus } from '../../../data/models/requests';
@@ -327,6 +327,44 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         )
     }
 
+    renderPermalink() {
+        const permalink = (
+            <div>
+                <p>
+                    Below is the "permalink" for this organization. You may copy
+                    this url and use it to access this organization in a web browser.
+                </p>
+                <p style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>
+                    {window.location.origin}/#org/{this.props.organization.id}
+                </p>
+            </div>
+        )
+        const menuClick = ({ key }: { key: string }) => {
+            Modal.info({
+                title: 'Org Permalink',
+                content: permalink
+            })
+        }
+        const menu = (
+            <Menu
+                onClick={menuClick}
+            >
+                <Menu.Item key="view">
+                    View Permalink
+                </Menu.Item>
+            </Menu>
+        )
+        return (
+            <Dropdown
+                overlay={menu}
+                trigger={['click', 'contextMenu']}>
+                <a href={"/#org/" + this.props.organization.id}>
+                    <Icon type="link" />
+                </a>
+            </Dropdown>
+        )
+    }
+
     renderLogoColumn(org: orgModel.BriefOrganization) {
         return (
             <React.Fragment>
@@ -355,7 +393,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         {this.renderRequests()}
                     </div>
                     <div className="BriefOrganization-openNewRequestsCol">
-
+                        {this.renderPermalink()}
                     </div>
                 </div>
             </React.Fragment>
@@ -412,7 +450,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                 </div>
                 <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
                     <div className="BriefOrganization-infoTableCol1">
-                        <span className="field-label">last updated</span>
+                        <span className="field-label">updated</span>
                     </div>
                     <div className="BriefOrganization-infoTableCol2">
                         <Tooltip
@@ -433,7 +471,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             <React.Fragment>
                 <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
                     <div className="BriefOrganization-infoTableCol1">
-                        <span className="field-label"># members</span>
+                        <span className="field-label"><Icon type="team" /></span>
                     </div>
                     <div className="BriefOrganization-infoTableCol2">
                         {this.renderMemberCount(org)}
@@ -441,7 +479,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                 </div>
                 <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
                     <div className="BriefOrganization-infoTableCol1">
-                        <span className="field-label"># narratives</span>
+                        <span className="field-label"><Icon type="file" /></span>
                     </div>
                     <div className="BriefOrganization-infoTableCol2">
                         {this.renderNarrativeCount(org)}

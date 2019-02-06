@@ -417,8 +417,8 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
         let inbox
         if (this.props.inbox.length === 0) {
             inbox = (
-                <div className="message">
-                    No pending organization requests for you
+                <div className="Message">
+                    No pending requests for you
                 </div>
             )
         } else {
@@ -447,8 +447,8 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
         let outbox
         if (this.props.outbox.length === 0) {
             outbox = (
-                <div className="message">
-                    No pending organization requests from you
+                <div className="Message">
+                    No pending requests from you
                 </div>
             )
         } else {

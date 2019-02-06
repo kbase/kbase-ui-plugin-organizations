@@ -447,18 +447,22 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
 
     renderMenuButtons() {
         return (
-            <React.Fragment>
-                <Button icon="undo"
-                    type="danger"
-                    onClick={this.onClickCancelToViewer.bind(this)}>
-                    Return to this Org
-            </Button>
-                <Button
-                    shape="circle"
-                    icon="info"
-                    onClick={this.onShowInfo.bind(this)}>
-                </Button>
-            </React.Fragment >
+            <div className="ButtonSet">
+                <div className="ButtonSet-button">
+                    <Button icon="rollback"
+                        type="danger"
+                        onClick={this.onClickCancelToViewer.bind(this)}>
+                        Back to Org
+                    </Button>
+                </div>
+                <div className="ButtonSet-button">
+                    <Button
+                        shape="circle"
+                        icon="info"
+                        onClick={this.onShowInfo.bind(this)}>
+                    </Button>
+                </div>
+            </div>
         )
     }
 
