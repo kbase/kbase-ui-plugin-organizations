@@ -182,6 +182,14 @@ function loadSuccess(state: BrowseOrgsView, action: actions.LoadSuccess): Browse
     }
 }
 
+function unload(state: BrowseOrgsView, action: actions.Unload): BrowseOrgsView {
+    return {
+        loadingState: ComponentLoadingState.NONE,
+        error: null,
+        viewModel: null
+    }
+}
+
 function localReducer(state: BrowseOrgsView, action: Action): BrowseOrgsView | null {
     // NB using discriminant union nature of the ActionX types to narrow
     // the type.
@@ -203,6 +211,8 @@ function localReducer(state: BrowseOrgsView, action: Action): BrowseOrgsView | n
             return sortOrgsStart(state, action as actions.SortOrgsStart)
         case ActionFlag.BROWSE_ORGS_FILTER_START:
             return filterOrgsStart(state, action as actions.FilterOrgsStart)
+        case ActionFlag.BROWSE_ORGS_UNLOAD:
+            return unload(state, action as actions.Unload)
         default:
             return null
     }

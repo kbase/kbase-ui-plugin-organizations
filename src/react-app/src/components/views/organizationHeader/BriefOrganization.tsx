@@ -111,7 +111,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     <Tooltip
                         placement="bottomRight"
                         mouseEnterDelay={0.5}
-                        title="You are not a member of this org, but you may access it; you may request membership"
+                        title="You are not a member of this org; you may request membership"
                     >
                         <span>
                             <Icon type="stop" />
@@ -123,7 +123,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     <Tooltip
                         placement="bottomRight"
                         mouseEnterDelay={0.5}
-                        title="You are not a member of this org, but you may access it; you may request membership"
+                        title="You are not a member of this org; you may request membership"
                     >
                         <Icon type="stop" />
                     </Tooltip>
@@ -362,16 +362,19 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         )
     }
 
+    fullTimestamp(d: Date) {
+        return Intl.DateTimeFormat('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            timeZoneName: 'short'
+        }).format(d)
+    }
+
     renderInfoCol(org: orgModel.BriefOrganization) {
-        const modifiedAtTooltip = (
-            <span >
-                {Intl.DateTimeFormat('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                }).format(org.modifiedAt)}
-            </span>
-        )
         return (
             <React.Fragment>
                 <div className="BriefOrganization-researchInterests BriefOrganization-infoTableRow">
@@ -393,11 +396,18 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     </div>
                     <div className="BriefOrganization-infoTableCol2">
                         {/* {niceElapsed(org.createdAt, 30)} */}
-                        <span >{Intl.DateTimeFormat('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(org.createdAt)}</span>
+                        <Tooltip
+                            placement="bottomRight"
+                            mouseEnterDelay={0.5}
+                            title={this.fullTimestamp(org.createdAt)}>
+                            <span>
+                                {Intl.DateTimeFormat('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                }).format(org.createdAt)}
+                            </span>
+                        </Tooltip>
                     </div>
                 </div>
                 <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
@@ -408,7 +418,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         <Tooltip
                             placement="bottomRight"
                             mouseEnterDelay={0.5}
-                            title={modifiedAtTooltip}>
+                            title={this.fullTimestamp(org.modifiedAt)}>
                             {niceElapsed(org.modifiedAt, 30, false)}
                         </Tooltip>
 

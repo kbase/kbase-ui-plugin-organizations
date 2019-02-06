@@ -237,7 +237,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     <Tooltip
                         placement="bottomRight"
                         mouseEnterDelay={0.5}
-                        title="You are not a member of this org, but you may access it; you may request membership"
+                        title="You are not a member of this org; you may request membership"
                     >
                         <div><Icon type="eye" style={{ marginRight: '4px' }} />You are not a member of this Organization</div>
                         <div style={{ marginTop: '10px' }}>
@@ -697,8 +697,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             return (
                 <Card
                     className="slimCard  narratives"
-                    headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                    title={<span><Icon type="folder-open" /> narratives</span>}
+                    title={<span><Icon type="folder-open" /> Narratives</span>}
                 >
                     <p style={{ textAlign: 'center', fontStyle: 'italic' }}>
                         Narratives are restricted to members only
@@ -875,7 +874,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
         return (
             <Tabs
-                defaultActiveKey="news"
+                defaultActiveKey="members"
                 className="ViewOrganization-tabs"
                 animated={false}
                 size="small"
