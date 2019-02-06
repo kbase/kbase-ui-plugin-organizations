@@ -4,40 +4,40 @@
     flex-direction: column;
 }
 
-.ViewOrganization .mainRow {
+.ViewOrganization-mainRow {
     flex: 1 1 0px;
     display: flex;
     flex-direction: row;
     margin-top: 10px;
 }
 
-.ViewOrganization .mainRow>.mainColumn {
+.ViewOrganization-mainRow>.mainColumn {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     margin-right: 10px;
 }
 
-.ViewOrganization .mainRow>.mainColumn>.orgRow {
-    flex: 0 0 auto;
+.ViewOrganization-orgRow {
+    /* flex: 0 0 auto; */
     display: flex;
     flex-direction: column;
 }
 
-.ViewOrganization .mainRow>.mainColumn>.narrativesRow {
-    flex: 2 1 0px;
+.ViewOrganization-narrativesRow {
+    /* flex: 2 1 0px; */
     display: flex;
     flex-direction: column;
     margin-top: 20px;
 }
 
-.ViewOrganization .mainRow>.mainColumn>.narrativesRow .narratives {
+.ViewOrganization-narrativesRow .narratives {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
 }
 
-.ViewOrganization .mainRow>.mainColumn>.narrativesRow .narrativesTable {
+.ViewOrganization-narrativesRow .narrativesTable {
     /* border: 1px silver solid; */
     padding: 4px;
     margin: 0 0 10px 0;
@@ -45,7 +45,7 @@
     overflow-y: auto;
 }
 
-.ViewOrganization .mainRow>.mainColumn>.narrativesRow .narrativesTable .narrative {
+.ViewOrganization-narrativesRow .narrativesTable .narrative {
     /* border: 1px rgba(150, 150, 150, 0.5) solid;
 padding:4px; */
     margin: 0 0 10px 0;
@@ -54,19 +54,19 @@ padding:4px; */
     flex-direction: row;
 }
 
-.ViewOrganization .mainRow>.mainColumn>.narrativesRow .narrativesTable .narrative .dataCol {
+.ViewOrganization-narrativesRow .narrativesTable .narrative .dataCol {
     flex: 1 1 0px;
 }
 
-.ViewOrganization .mainRow>.mainColumn>.narrativesRow .narrativesTable .narrative .buttonCol {
+.ViewOrganization-narrativesRow .narrativesTable .narrative .buttonCol {
     flex: 0 0 auto;
 }
 
-.ViewOrganization .mainRow>.mainColumn>.narrativesRow .narrativesTable .narrative .title {
+.ViewOrganization-narrativesRow .narrativesTable .narrative .title {
     font-weight: bold;
 }
 
-.ViewOrganization .mainRow>.infoColumn {
+.ViewOrganization-infoColumn {
     /* flex: 1 1 0px; */
     /* flex: 0 0 400px; */
     /* width: 15em; */
@@ -80,14 +80,14 @@ max-width: 30em; */
     /* overflow-y: auto; */
 }
 
-.ViewOrganization .infoTable {
+.ViewOrganization-infoTable {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
 }
 
-.ViewOrganization .infoTable>.row {
+.ViewOrganization-infoTable>.row {
     flex: 0 0 auto;
     min-height: 20px;
     display: flex;
@@ -96,148 +96,50 @@ max-width: 30em; */
     margin-bottom: 8px;
 }
 
-.ViewOrganization .infoTable>.row>.col0 {
+.ViewOrganization-infoTable>.row>.col0 {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
 }
 
-.ViewOrganization .ownerTable {
+.ViewOrganization-ownerTable {
     flex: 1 1 0px;
     display: flex;
     flex-direction: row;
     margin-bottom: 4px;
 }
 
-.ViewOrganization .ownerTable>.avatarCol {
+.ViewOrganization-ownerTable>.avatarCol {
     flex: 0 0 60px;
 }
 
-.ViewOrganization .ownerTable>.proprietorCol {
+.ViewOrganization-ownerTable>.proprietorCol {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     padding-left: 4px;
 }
 
-.ViewOrganization .ownerTable .owner {
+.ViewOrganization-ownerTable .owner {
     font-weight: bold;
 }
 
-.ViewOrganization .infoTable>.row>.col1 {
+.ViewOrganization-infoTable>.row>.col1 {
     flex: 0 0 8em;
     font-weight: bold;
     text-align: left;
     color: rgba(100, 100, 100, 1);
 }
 
-.ViewOrganization .infoTable>.row>.col2 {}
+.ViewOrganization-infoTable>.row>.col2 {}
 
-.ViewOrganization .table>.row>.col1 {
-    flex: 0 0 12em;
-    font-weight: bold;
-    text-align: left;
-    color: rgba(100, 100, 100, 1);
-    /* border: 1px silver solid; */
-}
-
-.ViewOrganization .table>.row>.col2 {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: column;
-    /* border: 1px silver solid; */
-}
-
-/* .ViewOrganization .preview .id {
-    font-family: monospace;
-} */
-
-.ViewOrganization .name {
-    font-weight: bold;
-    font-size: 150%;
-}
-
-.ViewOrganization .description {
-    padding: 8px;
-    border: 1px rgba(200, 200, 200, 0.5) solid;
-    /* border-radius: 8px; */
-    flex: 1 1 0px;
-    overflow-y: auto;
-    max-height: 25em;
-    /* box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5); */
-}
-
-.ViewOrganization .adminTasksBox {
+.ViewOrganization-adminTasksBox {
     margin-bottom: 20px;
 }
 
-.ViewOrganization .infoBox {
+.ViewOrganization-infoBox {
     margin-bottom: 20px;
 }
-
-.ViewOrganization .membersBox {
-    /* margin-bottom: 20px; */
-}
-
-/* .ViewOrganization .relationRequestPending {
-    border: 2px orange solid;
-}
-
-.ViewOrganization .relationInvitationPending {
-    border: 2px orange solid;
-} */
-
-.ViewOrganization .label {
-    /* background-color: rgba(200, 200, 200, 0.5); */
-    padding: 3px 3px 3px 0;
-    font-weight: bold;
-    color: rgba(150, 150, 150, 1);
-}
-
-.ViewOrganization .org {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: column;
-}
-
-.ViewOrganization .org .nameAndLogo {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 10px;
-}
-
-.ViewOrganization .org .nameAndLogo .avatar {
-    flex: 0 0 64px;
-    height: 64px;
-}
-
-.ViewOrganization .org .nameAndLogo .nameAndLink {
-    flex: 1 1 0px;
-    margin-left: 10px;
-}
-
-.ViewOrganization .member {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 10px;
-}
-
-.ViewOrganization .member .avatarCol {
-    flex: '0 0 auto';
-    margin-right: 4px;
-}
-
-.ViewOrganization .member .infoCol {
-    flex: '1 1 0px'
-}
-
-.ViewOrganization .member .infoCol .name {
-    font-size: 100%
-}
-
-.ViewOrganization .member .infoCol .location {}
-
-.ViewOrganization .member .infoCol .org {}
 
 .ViewOrganization .ant-card .ant-card-head {
     padding: 0 6px;
@@ -265,14 +167,9 @@ max-width: 30em; */
     flex-direction: column;
 }
 
-.ViewOrganization .titleCount {
+.ViewOrganization-titleCount {
     color: rgba(200, 200, 200, 1);
     margin-left: 4px;
-}
-
-.ViewOrganization .message {
-    text-align: center;
-    font-style: italic;
 }
 
 .ViewOrganization-tabs.ant-tabs {
@@ -330,5 +227,55 @@ max-width: 30em; */
 
 .ViewOrganization-org-description {
     overflow-y: auto;
-    max-height: 15em;
+    /* max-height: 15em; */
+}
+
+/* ACCORDION */
+
+.ViewOrganization-accordionOpen {
+    flex: 4 1 0px;
+}
+
+.ViewOrganization-accordionClosed {
+    flex: 1 1 0px;
+}
+
+.ViewOrganization-accordion {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+}
+
+.ViewOrganization-accordionCol1,
+.ViewOrganization-accordionCol3 {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization-accordionRow1,
+.ViewOrganization-accordionRow3 {
+    flex: 0 0 10px;
+}
+
+.ViewOrganization-accordionRow2 {
+    flex: 0 0 1em;
+    background-color: rgba(200, 200, 200, 0.3);
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization-accordion:hover .ViewOrganization-accordionRow2 {
+    background-color: rgba(200, 200, 200, 0.8);
+}
+
+.ViewOrganization-accordionCol2 {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization-accordionIcon {
+    flex: 1 1 0px;
 }

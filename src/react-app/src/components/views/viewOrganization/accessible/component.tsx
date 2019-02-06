@@ -30,12 +30,18 @@ enum NavigateTo {
     INVITE_USER
 }
 
+enum AccordionState {
+    UP = 0,
+    DOWN
+}
+
 export interface ViewOrganizationState {
     showInfo: boolean
     navigateTo: NavigateTo
     requestAccess: {
         narrative: orgModel.NarrativeResource | null
     }
+    accordionState: AccordionState
 }
 
 export interface ViewOrganizationProps {
@@ -67,7 +73,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             navigateTo: NavigateTo.NONE,
             requestAccess: {
                 narrative: null
-            }
+            },
+            accordionState: AccordionState.UP
         }
     }
 
@@ -191,9 +198,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     renderOwnerInfo(org: orgModel.Organization) {
         return (
             <div className="ownerTable">
-                {/* <div className="avatarCol">
-                    <Avatar user={org.owner.user} size={60} />
-                </div> */}
                 <div className="proprietorCol">
 
                     <div className="owner">
@@ -318,7 +322,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     <div>
                         <div className="label">owner</div>
                     </div>
-                    <div className="ownerTable">
+                    <div className="ViewOrganization-ownerTable">
                         <Member member={this.props.organization.owner} avatarSize={50} />
                         {/* TODO: fix avatar component */}
                         {/* <div className="avatarCol">
@@ -338,7 +342,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                             </div>
                         </div> */}
                     </div>
-                    <div className='infoTable'>
+                    <div className='ViewOrganization-infoTable'>
                         <div className="row">
                             <div className="col1">
                                 <span className="label">established</span>
@@ -554,13 +558,13 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 {' '}
                 group requests
                 {' '}
-                <span className="titleCount">({count})</span>
+                <span className="ViewOrganization-titleCount">({count})</span>
             </span>
         )
         return (
-            <div className="adminTasksBox">
+            <div className="ViewOrganization-adminTasksBox">
                 <Card
-                    className="slimCard adminTasksCard"
+                    className="slimCard ViewOrganization-adminTasksCard"
                     headStyle={{ backgroundColor: 'gray', color: 'white' }}
                     title={title} >
                     {this.renderGroupRequests(groupRequests, groupInvitations)}
@@ -763,7 +767,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         return (
             <Card
                 className="slimCard narratives narrativesCard scrollable-flex-column"
-                headStyle={{ backgroundColor: 'gray', color: 'white' }}
+                // headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 title={title}
                 extra={extras}
             >
@@ -1050,84 +1054,52 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         }
     }
 
-    renderx() {
-        switch (this.state.navigateTo) {
-            case NavigateTo.REQUEST_ADD_NARRATIVE:
-                return (
-                    <Redirect to={"/requestAddNarrative"} />
-                )
-            case NavigateTo.MANAGE_MEMBERSHIP:
-                return <Redirect push to={"/membership/" + this.props.organization.id} />
-            case NavigateTo.VIEW_MEMBERS:
-                return <Redirect push to={"/viewMembers/" + this.props.organization.id} />
-            case NavigateTo.EDIT_ORGANIZATION:
-                return <Redirect push to={"/editOrganization/" + this.props.organization.id} />
-            case NavigateTo.MANAGE_REQUESTS:
-                return <Redirect push to={"/manageOrganizationRequests/" + this.props.organization.id} />
-            case NavigateTo.INVITE_USER:
-                return <Redirect push to={"/inviteUser/" + this.props.organization.id} />
-            case NavigateTo.VIEW_ORGANIZATION:
-                return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
-            case NavigateTo.NONE:
-            default:
-            // do nothing.
-        }
-        let accessModal
-        if (this.state.requestAccess.narrative && this.props.organization) {
-            // TODO: replace with our own implementation...n
-            // accessModal = (
-            //     <Drawer title="Request Access to Narrative"
-            //         placement="right"
-            //         closable={true}
-            //         visible={true}
-            //         onClose={() => { this.onCloseRequestAccess.call(this) }}
-            //     >
-            //         Requesting access...
-            //     </Drawer>
-            // )
-            const relation = this.props.relation
-            const isMember = relation.type === orgModel.UserRelationToOrganization.MEMBER ||
-                relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-                relation.type === orgModel.UserRelationToOrganization.OWNER
 
-            // TODO: restore this ... requestaccess component needs a container to load the username 
-            // from the store
-            // if (isMember) {
-            //     accessModal = (
-            //         <RequestAccess
-            //             narrative={this.state.requestAccess.narrative}
-            //             organization={this.props.organization}
-            //             // member={member}
-            //             onClose={() => { this.onCloseRequestAccess.call(this) }} />
-            //     )
-            // }
-        }
-        if (typeof this.props.organization !== 'undefined') {
-            return (
-                <div className="ViewOrganization  scrollable-flex-column">
-                    <MainMenu buttons={this.renderMenuButtons()} />
-                    {this.renderOrgHeader()}
-                    <div className="mainRow scrollable-flex-column">
-                        <div className="mainColumn  scrollable-flex-column">
-                            <div className="orgRow" style={{ minHeight: '0px' }}>
-                                {this.renderOrg()}
-                            </div>
-                            <div className="narrativesRow scrollable-flex-column">
-                                {this.renderNarratives()}
-                            </div>
-                        </div>
-                        <div className="infoColumn">
-                            {this.renderCombo()}
-                        </div>
-                    </div>
-                    {accessModal}
-                </div>
-            )
+    toggleAccordion() {
+        this.setState({
+            accordionState: this.state.accordionState === AccordionState.UP ? AccordionState.DOWN : AccordionState.UP
+        })
+    }
+
+    renderAccordionControl() {
+        let iconType
+        if (this.state.accordionState === AccordionState.UP) {
+            iconType = 'caret-down'
+        } else {
+            iconType = 'caret-up'
         }
         return (
-            <div className="ViewOrganization">
-                {this.renderLoadingHeader()}
-                Loading...
+            <div className="ViewOrganization-accordion" onClick={this.toggleAccordion.bind(this)}>
+                <div className="ViewOrganization-accordionCol1">
+                    <div className="ViewOrganization-accordionRow1">
+                    </div>
+                    <div className="ViewOrganization-accordionRow2">
+                    </div>
+                    <div className="ViewOrganization-accordionRow3">
+                    </div>
+                </div>
+                <div className="ViewOrganization-accordionCol2">
+                    <div className="ViewOrganization-accordionRow1">
+                    </div>
+                    <div className="ViewOrganization-accordionRow2">
+                        <Icon type={iconType} />
+                    </div>
+                    <div className="ViewOrganization-accordionRow3">
+                    </div>
+                    {/* <div className="ViewOrganization-accordionIcon">
+                        <Icon type={iconType} />
+                    </div> */}
+                </div>
+                <div className="ViewOrganization-accordionCol3">
+                    <div className="ViewOrganization-accordionRow1">
+                    </div>
+                    <div className="ViewOrganization-accordionRow2">
+                    </div>
+                    <div className="ViewOrganization-accordionRow3">
+                    </div>
+                </div>
+
+
             </div>
         )
     }
@@ -1155,6 +1127,18 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             // do nothing.
         }
 
+        let orgRowClass
+        let narrativesRowClass
+        if (this.state.accordionState === AccordionState.UP) {
+            orgRowClass = "ViewOrganization-orgRow ViewOrganization-accordionClosed"
+            narrativesRowClass = "ViewOrganization-narrativesRow ViewOrganization-accordionOpen"
+        } else {
+            orgRowClass = "ViewOrganization-orgRow ViewOrganization-accordionOpen"
+            narrativesRowClass = "ViewOrganization-narrativesRow ViewOrganization-accordionClosed"
+        }
+        orgRowClass += " scrollable-flex-column"
+        narrativesRowClass += " scrollable-flex-column"
+
         const uorg = this.props.organization as unknown
         const borg = uorg as orgModel.BriefOrganization
         return (
@@ -1163,59 +1147,25 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 <div style={{ borderBottom: '1px silver solid' }}>
                     <BriefOrganization organization={borg} openRequestsStatus={this.props.openRequest} />
                 </div>
-                <div className="mainRow scrollable-flex-column">
-                    <div className="mainColumn  scrollable-flex-column">
-                        <div className="orgRow" style={{ minHeight: '0px' }}>
+                <div className="ViewOrganization-mainRow scrollable-flex-column">
+                    <div className="ViewOrganization-mainColumn  scrollable-flex-column">
+                        <div className={orgRowClass} style={{ minHeight: '0px' }}>
                             {this.renderOrg()}
                         </div>
-                        <div className="narrativesRow scrollable-flex-column">
+                        <div className="ViewOrganization-accordionRow">
+                            {this.renderAccordionControl()}
+                        </div>
+                        <div className={narrativesRowClass}>
                             {this.renderNarratives()}
                         </div>
                     </div>
-                    <div className="infoColumn">
+                    <div className="ViewOrganization-infoColumn">
                         {this.renderCombo()}
                     </div>
                 </div>
             </div>
 
         )
-
-        // let accessModal
-        // if (this.state.requestAccess.narrative && this.props.organization) {
-
-        //     const relation = this.props.relation
-        //     const isMember = relation.type === orgModel.UserRelationToOrganization.MEMBER ||
-        //         relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-        //         relation.type === orgModel.UserRelationToOrganization.OWNER
-        // }
-        // if (typeof this.props.organization !== 'undefined') {
-        //     return (
-        //         <div className="ViewOrganization  scrollable-flex-column">
-        //             <MainMenu buttons={this.renderMenuButtons()} />
-        //             {this.renderOrgHeader()}
-        //             <div className="mainRow scrollable-flex-column">
-        //                 <div className="mainColumn  scrollable-flex-column">
-        //                     <div className="orgRow" style={{ minHeight: '0px' }}>
-        //                         {this.renderOrg()}
-        //                     </div>
-        //                     <div className="narrativesRow scrollable-flex-column">
-        //                         {this.renderNarratives()}
-        //                     </div>
-        //                 </div>
-        //                 <div className="infoColumn">
-        //                     {this.renderCombo()}
-        //                 </div>
-        //             </div>
-        //             {accessModal}
-        //         </div>
-        //     )
-        // }
-        // return (
-        //     <div className="ViewOrganization">
-        //         {this.renderLoadingHeader()}
-        //         Loading...
-        //     </div>
-        // )
     }
 }
 

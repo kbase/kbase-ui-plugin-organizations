@@ -523,7 +523,12 @@ export function unload() {
 
         //  await userProfileClient.setLastVisitedAt(viewModel.organization.id, new Date())
 
-        await orgClient.visitOrg({ organizationId: viewModel.organization.id })
+
+        if (viewModel.organization.relation === orgModel.UserRelationToOrganization.MEMBER ||
+            viewModel.organization.relation === orgModel.UserRelationToOrganization.ADMIN ||
+            viewModel.organization.relation === orgModel.UserRelationToOrganization.OWNER) {
+            await orgClient.visitOrg({ organizationId: viewModel.organization.id })
+        }
 
         dispatch(dataServices.load())
 
