@@ -178,48 +178,48 @@ export class NarrativeModel {
             })
     }
 
-    async workspaceToNarrative(workspaceId: WorkspaceID): Promise<orgModel.NarrativeResource | null> {
-        const workspaceClient = new AuthorizedGenericClient({
-            module: 'Workspace',
-            url: this.params.workspaceServiceURL,
-            token: this.params.token
-        })
-        try {
-            const [[[rawObjectInfo], rawObjectInfoError], [[rawWorkspaceInfo], rawWorkspaceInfoError]] = await Promise.all([
-                workspaceClient.callFunc('get_object_info3', [{
-                    objects: [{
-                        wsid: workspaceId,
-                        // TODO: fix this!!
-                        objid: 1
-                    }],
-                    includeMetadata: 1,
-                    ignoreErrors: 0
-                }]),
-                workspaceClient.callFunc('get_workspace_info', [{
-                    id: workspaceId
-                }])
-            ])
+    // async workspaceToNarrative(workspaceId: WorkspaceID): Promise<orgModel.NarrativeResource | null> {
+    //     const workspaceClient = new AuthorizedGenericClient({
+    //         module: 'Workspace',
+    //         url: this.params.workspaceServiceURL,
+    //         token: this.params.token
+    //     })
+    //     try {
+    //         const [[[rawObjectInfo], rawObjectInfoError], [[rawWorkspaceInfo], rawWorkspaceInfoError]] = await Promise.all([
+    //             workspaceClient.callFunc('get_object_info3', [{
+    //                 objects: [{
+    //                     wsid: workspaceId,
+    //                     // TODO: fix this!!
+    //                     objid: 1
+    //                 }],
+    //                 includeMetadata: 1,
+    //                 ignoreErrors: 0
+    //             }]),
+    //             workspaceClient.callFunc('get_workspace_info', [{
+    //                 id: workspaceId
+    //             }])
+    //         ])
 
-            if (rawObjectInfoError || rawWorkspaceInfoError) {
-                // console.warn('narrative not accessible', rawObjectInfoError, rawWorkspaceInfoError)
-                return null
-            }
+    //         if (rawObjectInfoError || rawWorkspaceInfoError) {
+    //             // console.warn('narrative not accessible', rawObjectInfoError, rawWorkspaceInfoError)
+    //             return null
+    //         }
 
-            const workspaceInfo: NarrativeWorkspaceInfo = workspaceApi.workspaceInfoToObject(rawWorkspaceInfo) as NarrativeWorkspaceInfo
+    //         const workspaceInfo: NarrativeWorkspaceInfo = workspaceApi.workspaceInfoToObject(rawWorkspaceInfo) as NarrativeWorkspaceInfo
 
-            return {
-                workspaceId: workspaceInfo.id,
-                title: workspaceInfo.metadata.narrative_nice_name || 'Unknown',
-                permission: orgModel.userPermissionToWorkspacePermission(workspaceInfo.userPermission, workspaceInfo.owner === this.params.username),
-                isPublic: workspaceInfo.globalReadPermission
-            }
+    //         return {
+    //             workspaceId: workspaceInfo.id,
+    //             title: workspaceInfo.metadata.narrative_nice_name || 'Unknown',
+    //             permission: orgModel.userPermissionToWorkspacePermission(workspaceInfo.userPermission, workspaceInfo.owner === this.params.username),
+    //             isPublic: workspaceInfo.globalReadPermission
+    //         }
 
-        } catch (ex) {
-            // assume it is an inaccessible workspace
-            // console.warn('narrative not accessible', ex)
-            return null
-        }
-    }
+    //     } catch (ex) {
+    //         // assume it is an inaccessible workspace
+    //         // console.warn('narrative not accessible', ex)
+    //         return null
+    //     }
+    // }
 
     getSorter(sort: Sort) {
         switch (sort) {

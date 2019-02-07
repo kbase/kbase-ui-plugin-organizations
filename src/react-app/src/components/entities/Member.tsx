@@ -2,11 +2,12 @@ import * as React from 'react'
 
 import Avatar from './Avatar'
 import { } from '../../types';
-import { Icon } from 'antd';
+import { Icon, Tooltip } from 'antd';
 import * as orgModel from '../../data/models/organization/model'
 import * as userModel from '../../data/models/user'
 
 import './Member.css'
+import NiceElapsedTime from '../NiceElapsedTime';
 
 enum View {
     COMPACT = 0,
@@ -71,6 +72,11 @@ class Member extends React.Component<MemberProps, MemberState> {
     }
 
     renderCompact() {
+        const userTooltip = (
+            <div>
+                {this.props.member.username}
+            </div>
+        )
         return (
             <div className="Member View-COMPACT" >
                 <div className="Member-controlCol">
@@ -85,12 +91,14 @@ class Member extends React.Component<MemberProps, MemberState> {
                 </div>
                 <div className="Member-infoCol">
                     <div className="Member-name">
-                        <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
-                        {' '}
-                        ❨{this.props.user.username}❩
+                        <Tooltip placement="bottomRight" title={userTooltip}>
+                            <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
+                        </Tooltip>
                     </div>
                     <div className="Member-role">
                         {this.renderRole()}
+                        {', joined '}
+                        <NiceElapsedTime time={this.props.member.joinedAt} />
                     </div>
                     <div className="Member-title">
                         {this.props.member.title || this.props.user.title}
@@ -101,6 +109,11 @@ class Member extends React.Component<MemberProps, MemberState> {
     }
 
     renderNormal() {
+        const userTooltip = (
+            <div>
+                {this.props.member.username}
+            </div>
+        )
         return (
             <div className="Member View-NORMAL" >
                 <div className="Member-controlCol">
@@ -115,24 +128,18 @@ class Member extends React.Component<MemberProps, MemberState> {
                 </div>
                 <div className="Member-infoCol">
                     <div className="Member-name">
-                        <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
-                        {' '}
-                        ❨{this.props.user.username}❩
+                        <Tooltip placement="bottomRight" title={userTooltip}>
+                            <a href={"/#people/" + this.props.member.username} target="_blank">{this.props.user.realname}</a>
+                        </Tooltip>
                     </div>
                     <div className="Member-role">
                         {this.renderRole()}
+                        {', joined '}
+                        <NiceElapsedTime time={this.props.member.joinedAt} />
                     </div>
                     <div className="Member-title">
                         {this.props.member.title || this.props.user.title}
                     </div>
-                    <div className="Member-joinedAt">
-                        <span className="field-label">joined</span>{' '}{Intl.DateTimeFormat('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(this.props.member.joinedAt)}
-                    </div>
-
                     <div className="Member-organization">
                         {this.props.user.organization || <i>no organization in user profile</i>}
                     </div>
@@ -140,7 +147,6 @@ class Member extends React.Component<MemberProps, MemberState> {
                         {[this.props.user.city, this.props.user.state, this.props.user.country].filter(x => x).join(', ') || <i>no location information in user profile</i>}
                     </div>
                 </div>
-
             </div>
         )
     }

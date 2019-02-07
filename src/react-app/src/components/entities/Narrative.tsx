@@ -2,12 +2,11 @@ import * as React from 'react'
 import * as narrativeModel from '../../data/models/narrative'
 import { Tooltip, Icon, Alert } from 'antd';
 import './Narrative.css'
-import User from './UserContainer';
+import UserSimple from './UserContainer';
 
 export interface NarrativeProps {
     narrative: narrativeModel.Narrative
 }
-
 
 enum View {
     COMPACT = 0,
@@ -105,13 +104,16 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                     <Icon type="file" style={{ fontSize: '30px', width: '30px' }} />
                 </div>
                 <div className="mainCol">
-                    <div className="title">
+                    <div className="Narrative-title">
                         <a href={"/narrative/" + narrative.workspaceId} target="_blank">
                             {narrative.title}
                         </a>
                     </div>
+                    {' '}
+                    <div className="Narrative-owner">
+                        <UserSimple avatarSize={20} userId={narrative.owner} />
+                    </div>
                 </div>
-
             </React.Fragment>
         )
     }
@@ -131,10 +133,24 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                     <Icon type="file" style={{ fontSize: '30px', width: '30px' }} />
                 </div>
                 <div className="mainCol">
-                    <div className="title">
-                        <a href={"/narrative/" + narrative.workspaceId} target="_blank">
-                            {narrative.title}
-                        </a>
+                    <div className="mainCol">
+                        <div className="Narrative-title">
+                            <a href={"/narrative/" + narrative.workspaceId} target="_blank">
+                                {narrative.title}
+                            </a>
+                        </div>
+                        {' '}
+                        <div className="Narrative-owner">
+                            <UserSimple avatarSize={20} userId={narrative.owner} />
+                        </div>
+                    </div>
+                    <div className="Narrative-attributes">
+                        <div className="Narrative-userPermission">
+                            <Icon type="crown" />
+                        </div>
+                        <div className="Narrative-global">
+                            <Icon type="global" />
+                        </div>
                     </div>
                     <div>
                         {this.renderPublicPermission(narrative)}
@@ -143,11 +159,10 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                         <span className="field-label">your permission</span>
                         {this.renderUserPermission(narrative)}
                     </div>
-                    <div>
+                    {/* <div>
                         <span className="field-label">owner</span>
-                        <User avatarSize={20} userId={narrative.owner} />
-                        {/* {narrative.owner} */}
-                    </div>
+                        <UserSimple avatarSize={20} userId={narrative.owner} />
+                    </div> */}
                     <div>
                         <span className="field-label">last saved</span>{Intl.DateTimeFormat('en-US', {
                             month: 'short',

@@ -175,7 +175,7 @@ export class OrganizationHeader extends React.Component<OrganizationHeaderProps,
 
     renderLogo(org: orgModel.Organization) {
         return (
-            <OrgLogo logoUrl={org.logoUrl} size={64} organizationName={org.name} organizationId={org.id} />
+            <OrgLogo logoUrl={org.logoUrl} size={80} organizationName={org.name} organizationId={org.id} />
         )
     }
 

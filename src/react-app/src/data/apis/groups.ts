@@ -24,8 +24,11 @@ export interface WorkspaceInfo {
     rid: string
     name: string
     narrname: string
+    narrcreate: number
     public: boolean
     perm: string
+    description: string
+    moddate: number
 }
 
 export interface AppInfo {

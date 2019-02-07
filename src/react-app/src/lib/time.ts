@@ -42,7 +42,7 @@ export function niceElapsed(someDate: Date, absoluteAfter?: number, compactDate:
         return (prefix ? prefix + ' ' : '') + measureAbs + ' ' + unit + (suffix ? ' ' + suffix : '');
     } else {
         // otherwise show the actual date, with or without the year.
-        if (compactDate && nowDate.getFullYear() === nowDate.getFullYear()) {
+        if (compactDate && nowDate.getFullYear() === someDate.getFullYear()) {
             return Intl.DateTimeFormat('en-US', {
                 month: 'short',
                 day: 'numeric'

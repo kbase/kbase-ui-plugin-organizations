@@ -16,6 +16,25 @@
     flex: 0 0 auto;
 }
 
-.Narrative .title {
+.Narrative-title {
+    display: inline;
     font-weight: bold;
+}
+
+.Narrative-owner {
+    display: inline;
+    font-size: 90%;
+}
+
+.Narrative-attributes {
+    display: flex;
+    flex-direction: row;
+}
+
+.Narrative-userPermission {
+    flex: 0 0 1.5em;
+}
+
+.Narrative-global {
+    flex: 0 0 1.5em;
 }

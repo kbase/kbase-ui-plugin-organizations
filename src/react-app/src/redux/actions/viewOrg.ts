@@ -571,11 +571,7 @@ export function load(organizationId: string) {
         try {
             const { organization, relation } = await uberClient.getOrganizationForUser(organizationId)
             if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
-                // dispatch(loadError({
-                //     code: 'typeError',
-                //     message: 'Organization should be of kind "NORMAL"'
-                // }))
-                // return
+
                 const requestInbox = await requestClient.getRequestInboxForOrg(organizationId)
                 dispatch(loadInaccessiblePrivateSuccess(organization, relation, requestInbox))
                 return

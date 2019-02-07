@@ -1,0 +1,12 @@
+.OrganizationNarrative {
+    display: flex;
+    flex-direction: row;
+}
+
+.OrganizationNarrative-narrativeCol {
+    flex: 1 1 0px;
+}
+
+.OrganizationNarrative-resourceCol {
+    flex: 0 0 12em;
+}

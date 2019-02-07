@@ -4,7 +4,10 @@ import { Marked } from 'marked-ts';
 import { Button, Icon, Modal, Checkbox, Input, Tooltip } from 'antd';
 import md5 from 'md5'
 
-import { EditableOrganization, SaveState, ValidationState, EditState, ValidationErrorType, Editable, SyncState } from '../../../types';
+import {
+    EditableOrganization, SaveState, ValidationState,
+    EditState, ValidationErrorType, Editable, SyncState
+} from '../../../types';
 
 import './component.css'
 
@@ -314,7 +317,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                     </div>
                 </div>
 
-
                 {/* Is Private? */}
                 <div className="EditOrganization-row">
                     <div className="EditOrganization-col1">
@@ -377,20 +379,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                         />
                     </div>
                 </div>
-
-                {/* Empty row */}
-                {/* <div className="EditOrganization-row">
-                    <div className="EditOrganization-col1">
-                        <div className="EditOrganization-formLabel field-label">
-                        </div>
-                        <div className="EditOrganization-formControl">
-                        </div>
-                    </div>
-                    <div className="EditOrganization-col2">
-                        <div className="EditOrganization-preview-FIELD">
-                        </div>
-                    </div>
-                </div> */}
             </form >
         )
     }
@@ -420,7 +408,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     }
 
     charAt(inString: string, position: number) {
-        // const c1 = inString.charAt(position)
         const c1 = inString.charCodeAt(position)
         if (c1 >= 0xD800 && c1 <= 0xDBFF && inString.length > position + 1) {
             const c2 = inString.charCodeAt(position + 1)
@@ -440,11 +427,8 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
             )
         }
         const initial = this.charAt(this.props.editedOrganization.name.value, 0).toUpperCase()
-        // const initial = this.props.organizationName.substr(0, 1).toUpperCase()
         const hash = md5(this.props.editedOrganization.id.value)
-
         const size = 60;
-
         const color = hash.substr(0, 6)
         return (
             <svg width={size} height={size} style={{ border: '1px rgba(200, 200, 200, 0.5) solid' }}>
@@ -484,52 +468,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-    renderHeader() {
-        const breadcrumbs = (
-            <React.Fragment>
-                <span>
-                    {/* {this.renderOrgName(this.props.editedOrganization.name.value)} */}
-
-
-                    {/* <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} /> */}
-
-                    <Icon type="tool" />
-                    {' '}
-                    <span style={{ fontSize: '120%' }}>Edit Organization</span>
-                </span>
-            </React.Fragment>
-        )
-        const buttons = (
-            <span className="ButtonSet">
-                <span className="ButtonSet-button">
-                    <Button icon="save"
-                        form="editOrganizationForm"
-                        key="submit"
-                        disabled={!this.canSave.call(this)}
-                        htmlType="submit">
-                        {/* <Icon type="save" /> */}
-                        {/* <FaSave style={{ verticalAlign: 'center' }} /> */}
-                        Save
-                    </Button>
-                </span>
-                <span className="ButtonSet-button">
-                    <Button icon="undo"
-                        type="danger"
-                        onClick={this.onClickCancelToViewer.bind(this)}>
-                        {/* <FaUndo style={{ verticalAlign: 'center' }} />  */}
-                        Cancel
-                        </Button>
-                </span>
-                <span className="ButtonSet-button">
-                    <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
-                </span>
-            </span>
-        )
-        return (
-            <Header breadcrumbs={breadcrumbs} buttons={buttons} />
-        )
-    }
-
     renderLoadingHeader() {
         const breadcrumbs = (
             <span>
@@ -561,24 +499,20 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                         key="submit"
                         disabled={!this.canSave.call(this)}
                         htmlType="submit">
-                        {/* <Icon type="save" /> */}
-                        {/* <FaSave style={{ verticalAlign: 'center' }} /> */}
                         Save
                     </Button>
                 </span>
                 <span className="ButtonSet-button">
-                    <Button icon="undo"
+                    <Button icon="rollback"
                         type="danger"
                         onClick={this.onClickCancelToViewer.bind(this)}>
-                        {/* <FaUndo style={{ verticalAlign: 'center' }} />  */}
-                        Cancel
+                        Back to Org
                         </Button>
                 </span>
                 <span className="ButtonSet-button">
                     <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
                 </span>
             </span>
-
         )
     }
 

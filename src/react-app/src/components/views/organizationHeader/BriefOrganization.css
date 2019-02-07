@@ -22,7 +22,7 @@
 }
 
 .BriefOrganization-logoCol {
-    flex: 0 0 64px;
+    flex: 0 0 80px;
     display: flex;
     flex-direction: column;
 }
@@ -96,7 +96,7 @@
 
 .BriefOrganization-logoRow {
     flex: 0 0 auto;
-    min-height: 64px;
+    min-height: 80px;
 }
 
 .BriefOrganization-statusRow {

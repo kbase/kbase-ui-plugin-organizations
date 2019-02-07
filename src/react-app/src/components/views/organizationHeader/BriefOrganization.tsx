@@ -1,13 +1,12 @@
 import * as React from 'react'
 import * as orgModel from '../../../data/models/organization/model'
+import { NavLink } from 'react-router-dom'
+import OrgLogo from '../../OrgLogo'
+import { Icon, Tooltip, Menu, Dropdown, Modal } from 'antd'
+import Owner from '../../entities/OwnerContainer'
+import { ComponentView } from '../../../types'
 import './BriefOrganization.css'
-import { NavLink } from 'react-router-dom';
-import OrgLogo from '../../OrgLogo';
-import { Icon, Tooltip, Menu, Dropdown, Modal } from 'antd';
-import Owner from '../../entities/OwnerContainer';
-import { ComponentView } from '../../../types';
-import { RequestStatus } from '../../../data/models/requests';
-import { niceElapsed } from '../../../lib/time';
+import NiceElapsedTime from '../../NiceElapsedTime';
 
 export interface BriefOrganizationProps {
     organization: orgModel.BriefOrganization
@@ -30,7 +29,6 @@ function reverseView(v: ComponentView) {
 export default class BriefOrganization extends React.Component<BriefOrganizationProps, BriefOrganizationState> {
     constructor(props: BriefOrganizationProps) {
         super(props)
-
         this.state = {
             view: ComponentView.COMPACT
         }
@@ -44,13 +42,20 @@ export default class BriefOrganization extends React.Component<BriefOrganization
 
     renderLogo(org: orgModel.BriefOrganization) {
         return (
-            <OrgLogo logoUrl={org.logoUrl} size={64} organizationName={org.name} organizationId={org.id} />
+            <OrgLogo logoUrl={org.logoUrl} size={80} organizationName={org.name} organizationId={org.id} />
         )
     }
 
     renderHomeUrl(org: orgModel.BriefOrganization) {
         if (!org.homeUrl) {
-            return
+            return (
+                <Tooltip
+                    placement="bottomRight"
+                    title="This organization has not set a home page url"
+                >
+                    <Icon type="home" style={{ color: 'rgba(200, 200, 200, 0.3)' }} />
+                </Tooltip>
+            )
         }
         const tooltip = (
             <React.Fragment>
@@ -217,7 +222,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             newAlert = (
                 <div>
                     <Tooltip placement="topRight" title={title}>
-                        <span style={{ color: 'red' }}>
+                        <span style={{ color: 'red', fontSize: '120%' }}>
                             ●
                     </span>
                     </Tooltip>
@@ -226,7 +231,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         } else {
             newAlert = (
                 <div>
-                    <span style={{ color: 'transparent' }}>
+                    <span style={{ color: 'transparent', fontSize: '120%' }}>
                         ●
                     </span>
                 </div>
@@ -253,36 +258,6 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             </div>
         )
     }
-
-    // renderOpenRequests() {
-    //     const title = (
-    //         <span>
-    //             There are outstanding requests for this organization
-    //         </span>
-    //     )
-    //     return (
-    //         <Tooltip placement="topRight" title={title}>
-    //             <span style={{ color: 'blue', fontSize: '80%' }}>
-    //                 <Icon type="mail" />
-    //             </span>
-    //         </Tooltip>
-    //     )
-    // }
-
-    // renderNewOpenRequests() {
-    //     const title = (
-    //         <span>
-    //             There are new requests for this organization
-    //         </span>
-    //     )
-    //     return (
-    //         <Tooltip placement="topRight" title={title}>
-    //             <span style={{ color: 'red', fontSize: '80%' }}>
-    //                 <Icon type="mail" />
-    //             </span>
-    //         </Tooltip>
-    //     )
-    // }
 
     renderRequests() {
         if (!(this.props.organization.relation === orgModel.UserRelationToOrganization.ADMIN ||
@@ -452,9 +427,32 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         )
     }
 
-    renderStatsCol(org: orgModel.BriefOrganization) {
+    renderMemberRow(org: orgModel.BriefOrganization) {
+        const memberCount = org.memberCount - 1
+        let memberCountTooltip
+        if (memberCount) {
+            if (memberCount === 1) {
+                memberCountTooltip = (
+                    <span>
+                        There is <b>1</b> member in this organization
+                    </span>
+                )
+            } else {
+                memberCountTooltip = (
+                    <span>
+                        There are <b>{memberCount}</b> members in this organization
+                    </span>
+                )
+            }
+        } else {
+            memberCountTooltip = (
+                <span>
+                    There are <b>no members</b> in this organization
+                </span>
+            )
+        }
         return (
-            <React.Fragment>
+            <Tooltip placement="bottomRight" title={memberCountTooltip}>
                 <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
                     <div className="BriefOrganization-infoTableCol1">
                         <span className="field-label"><Icon type="team" /></span>
@@ -463,6 +461,36 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         {this.renderMemberCount(org)}
                     </div>
                 </div>
+            </Tooltip>
+        )
+    }
+
+    renderNarrativeRow(org: orgModel.BriefOrganization) {
+        const count = org.narrativeCount
+        let tooltip
+        if (count) {
+            if (count === 1) {
+                tooltip = (
+                    <span>
+                        There is <b>1</b> narrative in this organization
+                    </span>
+                )
+            } else {
+                tooltip = (
+                    <span>
+                        There are <b>{count}</b> narratives in this organization
+                    </span>
+                )
+            }
+        } else {
+            tooltip = (
+                <span>
+                    There are <b>no narratives</b> in this organization
+                </span>
+            )
+        }
+        return (
+            <Tooltip placement="bottomRight" title={tooltip}>
                 <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
                     <div className="BriefOrganization-infoTableCol1">
                         <span className="field-label"><Icon type="file" /></span>
@@ -471,20 +499,38 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         {this.renderNarrativeCount(org)}
                     </div>
                 </div>
+            </Tooltip>
+        )
+    }
+
+    renderModifiedRow(org: orgModel.BriefOrganization) {
+        const tooltip = (
+            <span>
+                This organization was last updated
+                {' '}
+                <NiceElapsedTime time={org.modifiedAt} showTooltip={false} />
+            </span>
+        )
+        return (
+            <Tooltip placement="bottomRight" title={tooltip}>
                 <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
                     <div className="BriefOrganization-infoTableCol1">
                         <span className="field-label"><Icon type="save" /></span>
                     </div>
                     <div className="BriefOrganization-infoTableCol2">
-                        <Tooltip
-                            placement="bottomRight"
-                            mouseEnterDelay={0.5}
-                            title={this.fullTimestamp(org.modifiedAt)}>
-                            {niceElapsed(org.modifiedAt, 30, false)}
-                        </Tooltip>
-
+                        <NiceElapsedTime time={org.modifiedAt} showTooltip={false} />
                     </div>
                 </div>
+            </Tooltip>
+        )
+    }
+
+    renderStatsCol(org: orgModel.BriefOrganization) {
+        return (
+            <React.Fragment>
+                {this.renderMemberRow(org)}
+                {this.renderNarrativeRow(org)}
+                {this.renderModifiedRow(org)}
             </React.Fragment>
         )
     }

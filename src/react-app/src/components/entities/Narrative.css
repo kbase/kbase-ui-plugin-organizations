@@ -16,6 +16,11 @@
     flex: 0 0 auto;
 }
 
-.Narrative .title {
+.Narrative-title {
     font-weight: bold;
+    display: inline;
+}
+
+.Narrative-owner {
+    display: inline;
 }

@@ -646,9 +646,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     renderMembersTab() {
         return (
             <div className="scrollable-flex-column">
-                <div className="ViewOrganization-tabPaneToolbar">
-                    {this.renderMembersToolbar()}
-                </div>
+                {this.renderMembersToolbar()}
+
                 {this.renderMembers()}
             </div>
         )
@@ -705,6 +704,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </Card>
             )
         }
+
         const extras = [
             (
                 <NavLink
@@ -734,12 +734,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     <Alert type="info" message={message} />
                 </Card>
             )
-
         }
 
         const narrativesTable = this.props.organization.narratives.map((narrative) => {
             // create buttons or not, depending on being an admin
-
             return (
                 <div className="narrative simpleCard" key={String(narrative.workspaceId)}>
                     <div className="dataCol">
@@ -766,7 +764,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         return (
             <Card
                 className="slimCard narratives narrativesCard scrollable-flex-column"
-                // headStyle={{ backgroundColor: 'gray', color: 'white' }}
                 title={title}
                 extra={extras}
             >
@@ -780,20 +777,12 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     renderMembersToolbar() {
         switch (this.props.relation.type) {
             case orgModel.UserRelationToOrganization.NONE:
-                return (
-                    <div className="toolbar">
-                    </div>
-                )
-
+                return
             case orgModel.UserRelationToOrganization.MEMBER:
-                return (
-                    <div className="toolbar">
-                    </div>
-                )
-
+                return
             case orgModel.UserRelationToOrganization.ADMIN:
                 return (
-                    <div className="toolbar">
+                    <div className="ViewOrganization-tabPaneToolbar">
                         <NavLink to={"/inviteUser/" + this.props.organization.id}>
                             <Button size="small"><Icon type="mail" /> Invite a User</Button>
                         </NavLink>
@@ -802,7 +791,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
             case orgModel.UserRelationToOrganization.OWNER:
                 return (
-                    <div className="toolbar">
+                    <div className="ViewOrganization-tabPaneToolbar">
                         <NavLink to={"/inviteUser/" + this.props.organization.id}>
                             <Button size="small"><Icon type="mail" /> Invite a User</Button>
                         </NavLink>

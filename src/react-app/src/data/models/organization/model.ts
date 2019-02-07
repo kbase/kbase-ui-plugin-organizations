@@ -109,11 +109,14 @@ export enum UserWorkspacePermission {
 
 export type WorkspaceID = number
 
-export interface NarrativeInfo {
-    workspaceId: WorkspaceID,
-    title: string,
-    isPublic: boolean,
+export interface NarrativeResource {
+    workspaceId: number
+    title: string
     permission: UserWorkspacePermission
+    isPublic: boolean
+    createdAt: Date
+    updatedAt: Date
+    description: string
 }
 
 export type AppID = string
@@ -170,7 +173,7 @@ export interface Organization {
     createdAt: Date
     modifiedAt: Date
     lastVisitedAt: Date | null
-    narratives: Array<NarrativeInfo>
+    narratives: Array<NarrativeResource>
     apps: Array<AppInfo>
     memberCount: number
     narrativeCount: number
@@ -307,12 +310,15 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         }
     }))
 
-    const narratives: Array<NarrativeInfo> = group.resources.workspace.map((info) => {
+    const narratives: Array<NarrativeResource> = group.resources.workspace.map((info) => {
         return {
             workspaceId: parseInt(info.rid, 10),
             title: info.narrname,
             isPublic: info.public,
-            permission: groupPermissionToWorkspacePermission(info.perm)
+            permission: groupPermissionToWorkspacePermission(info.perm),
+            createdAt: new Date(info.narrcreate),
+            updatedAt: new Date(info.moddate),
+            description: info.description
         }
     })
     const apps: Array<AppInfo> = []
@@ -411,15 +417,7 @@ export interface Query {
     filter: Filter
 }
 
-
-export interface NarrativeResource {
-    workspaceId: number
-    title: string
-    permission: UserWorkspacePermission
-    isPublic: boolean
-}
-
-export function applyOrgSearch(orgs: Array<BriefOrganization>, searchTerms: Array<string>): Array<BriefOrganization> {
+export function applySearch(orgs: Array<BriefOrganization>, searchTerms: Array<string>): Array<BriefOrganization> {
     const searchTermsRe = searchTerms.map((term) => {
         return new RegExp(term, 'i')
     })
@@ -429,10 +427,10 @@ export function applyOrgSearch(orgs: Array<BriefOrganization>, searchTerms: Arra
         }
         return searchTermsRe.every((termRe) => {
             return termRe.test(org.name) ||
+                termRe.test(org.researchInterests || '') ||
                 termRe.test(org.owner.username)
         })
     })
-
     return filteredOrgs
 }
 
@@ -730,7 +728,7 @@ export class OrganizationModel {
         const orgs = await this.getAllOrgs2()
 
         const filtered = applyFilter(orgs, query.filter, query.username)
-        const searched = applyOrgSearch(filtered, query.searchTerms)
+        const searched = applySearch(filtered, query.searchTerms)
         const sorted = applySort(searched, query.sortField, query.sortDirection)
 
         return {

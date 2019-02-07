@@ -1,7 +1,9 @@
 import * as React from 'react'
 import * as orgModel from '../data/models/organization/model'
-import { Button, Tooltip, Icon, Drawer } from 'antd';
-import Narrative from './entities/narrative/reduxAdapter';
+import { Button, Tooltip, Icon, Drawer } from 'antd'
+import Narrative from './entities/narrative/reduxAdapter'
+import NiceElapsedTime from './NiceElapsedTime'
+import './OrganizationNarrative.css'
 
 export interface Props {
     narrative: orgModel.NarrativeResource
@@ -15,7 +17,6 @@ interface State {
 export default class OrganizationNarrative extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
-
         this.state = {
             requestAccess: false
         }
@@ -182,6 +183,19 @@ export default class OrganizationNarrative extends React.Component<Props, State>
         }
     }
 
+    renderResource() {
+        return (
+            <div>
+                <div>
+                    <span className="field-label">added</span>
+                    <span>
+                        <NiceElapsedTime time={this.props.narrative.createdAt} />
+                    </span>
+                </div>
+            </div>
+        )
+    }
+
     render() {
         let accessModal
         if (this.state.requestAccess) {
@@ -199,8 +213,13 @@ export default class OrganizationNarrative extends React.Component<Props, State>
         }
 
         return (
-            <div>
-                {this.renderNarrative()}
+            <div className="OrganizationNarrative">
+                <div className="OrganizationNarrative-narrativeCol">
+                    {this.renderNarrative()}
+                </div>
+                <div className="OrganizationNarrative-resourceCol">
+                    {this.renderResource()}
+                </div>
                 {accessModal}
             </div>
         )
