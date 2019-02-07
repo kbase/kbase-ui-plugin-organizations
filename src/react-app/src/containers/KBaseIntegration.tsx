@@ -13,6 +13,7 @@ export interface OwnProps {
 interface StateProps {
     status: types.AppState
     defaultPath: string
+    channelId: string | null
 }
 
 interface DispatchProps {
@@ -20,9 +21,9 @@ interface DispatchProps {
 }
 
 export function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
-    const { app: { status, config: { defaultPath } } } = state
+    const { app: { status, config: { defaultPath, channelId } } } = state
     return {
-        status, defaultPath
+        status, defaultPath, channelId
     }
 }
 

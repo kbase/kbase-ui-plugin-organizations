@@ -46,15 +46,15 @@ class Message {
     payload: any;
     id: string;
     created: Date;
-    channel: any
+    channelId: string
     envelope: Envelope | null
 
-    constructor({ name, payload, channel }: { name: string, payload: any, channel: any }) {
+    constructor({ name, payload, channelId }: { name: string, payload: any, channelId: any }) {
         this.name = name
         this.payload = payload
         this.id = uuidv4()
         this.created = new Date()
-        this.channel = channel
+        this.channelId = channelId
         this.envelope = null;
     }
 
@@ -63,7 +63,7 @@ class Message {
             envelope: {
                 id: this.id,
                 created: this.created,
-                channel: this.channel
+                channelId: this.channelId
             },
             name: this.name,
             payload: this.payload
@@ -77,9 +77,13 @@ interface Handler {
 }
 
 interface ChannelParams {
-    window: Window,
-    host: string,
+    window?: Window,
+    host?: string,
     channelId?: string
+}
+
+interface MyWin extends Window {
+    xyz?: string
 }
 
 export class Channel {
@@ -100,7 +104,10 @@ export class Channel {
 
     constructor(params: ChannelParams) {
         // The given window upon which we will listen for messages.
-        this.window = params.window;
+        this.window = params.window || window
+        const x: MyWin = this.window
+
+
 
         // The host for the window; required for postmessage
         if (this.window.document === null) {
@@ -115,6 +122,7 @@ export class Channel {
         // this channel.
         this.id = params.channelId || uuidv4()
 
+        console.log('client - channel constructor', this.host, this.id, x.xyz, this.window)
 
         this.awaitingResponse = new Map<string, Handler>()
         this.waitingListeners = new Map<string, Array<Listener>>()
@@ -141,7 +149,7 @@ export class Channel {
         if (!message) {
             this.unwelcomeReceivedCount++;
             if (this.unwelcomeReceiptWarning) {
-                console.warn('No message data; message ignored', messageEvent);
+                console.warn('TS No message data; message ignored', messageEvent);
             }
             return;
         }
@@ -155,7 +163,7 @@ export class Channel {
         if (!(message.envelope.channelId === this.id)) {
             this.unwelcomeReceivedCount++;
             if (this.unwelcomeReceiptWarning) {
-                console.warn('Message envelope does not match this channel\'s id', messageEvent);
+                console.warn('Message envelope does not match this channel\'s id', message.envelope, message.envelope.channelId, this.id);
             }
             return;
         }
@@ -189,6 +197,7 @@ export class Channel {
 
         // and also awaiting by message name. Like a listener, but they are only used
         // once.
+
         if (this.waitingListeners.has(message.name)) {
             const awaiting = this.waitingListeners.get(message.name)!
             this.waitingListeners.delete(message.name)
@@ -203,7 +212,6 @@ export class Channel {
                 }
             });
         }
-
         // Otherwise, permanently registered handlers are found in the listeners for the
         // message name.
         if (this.listeners.has(message.name)) {
@@ -239,11 +247,12 @@ export class Channel {
     }
 
     sendMessage(message: Message) {
-        this.window.postMessage(message.getMessage(), this.host);
+        console.log('client sending', this.host, message.getMessage())
+        this.window.postMessage(message.getMessage(), this.host)
     }
 
     send(name: string, payload: Payload) {
-        const message = new Message({ name, payload, channel: this.id });
+        const message = new Message({ name, payload, channelId: this.id });
         this.sendMessage(message);
     }
 
@@ -259,7 +268,7 @@ export class Channel {
     request(name: string, payload: Payload) {
         return new Promise((resolve, reject) => {
             try {
-                this.sendRequest(new Message({ name, payload, channel: this.id }), (response: any) => {
+                this.sendRequest(new Message({ name, payload, channelId: this.id }), (response: any) => {
                     resolve(response);
                 });
             } catch (ex) {

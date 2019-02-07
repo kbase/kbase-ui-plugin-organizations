@@ -316,8 +316,10 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                         </div>
                     </div>
                     <div>
-                        <span className="field-label">updated</span>
-                        <NiceElapsedTime time={narrative.lastSavedAt} />
+                        <span className="field-label">
+                            <Icon type="save" />
+                        </span>
+                        <NiceElapsedTime time={narrative.lastSavedAt} tooltipPrefix="last saved " />
                     </div>
                 </div>
             </React.Fragment>

@@ -491,7 +491,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
             <React.Fragment>
                 <NavLink to="/newOrganization"><Button icon="plus-circle" style={{ marginRight: '10px' }}>Create Organization</Button></NavLink>
                 {' '}
-                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+                {/* <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button> */}
             </React.Fragment>
         )
     }

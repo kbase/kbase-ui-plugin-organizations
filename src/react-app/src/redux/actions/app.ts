@@ -46,10 +46,18 @@ export function appError(error: AppError): AppError {
 export function appStart() {
     return (dispatch: ThunkDispatch<types.StoreState, void, Action>, getState: () => types.StoreState) => {
         // check and see if we are in an iframe
-        let iframeParams = new IFrameIntegration().getParamsFromIFrame()
+        let integration = new IFrameIntegration();
+        let iframeParams = integration.getParamsFromIFrame();
+
 
         if (iframeParams) {
             let defaultPath
+
+            // set up the message bus.
+            let channelId = iframeParams.channelId;
+            console.log('channel', channelId);
+
+            // route from paths passed in from kbase-ui
             switch (iframeParams.params.view) {
                 case 'org':
                     defaultPath = '/viewOrganization/' + iframeParams.params.viewParams.id
@@ -60,6 +68,8 @@ export function appStart() {
                     window.history.pushState(null, 'organizations', '/organizations')
                     break
             }
+
+            // suck up all the params into our state.
             dispatch(appSuccess({
                 baseUrl: '',
                 services: {
@@ -82,7 +92,8 @@ export function appStart() {
                         url: iframeParams.params.authServiceURL
                     }
                 },
-                defaultPath: defaultPath
+                defaultPath,
+                channelId
             }))
 
         } else {
@@ -109,7 +120,8 @@ export function appStart() {
                         url: iframeParams.params.authServiceURL
                     }
                 },
-                defaultPath: '/organizations'
+                defaultPath: '/organizations',
+                channelId: null
             }))
         }
     }

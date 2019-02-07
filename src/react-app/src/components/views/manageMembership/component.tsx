@@ -133,11 +133,11 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                     Leave Organization...
                 </Button>
                 {' '}
-                <Button
+                {/* <Button
                     shape="circle"
                     icon="info"
                     onClick={this.doShowInfo.bind(this)}>
-                </Button>
+                </Button> */}
             </React.Fragment>
         )
         return (

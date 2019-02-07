@@ -2,19 +2,26 @@ import * as React from 'react'
 import './KBaseIntegration.css'
 
 import { AppState } from '../types'
-import { } from '../lib/IFrameSimulator'
+import { Channel } from '../lib/windowChannel';
+import { IFrameIntegration } from '../lib/IFrameIntegration';
 
 export interface KBaseIntegrationProps {
-    status: AppState,
+    status: AppState
+    channelId: string | null
     onAppStart: () => void
 }
 class KBaseIntegration extends React.Component<KBaseIntegrationProps, object> {
+
+    channel: Channel | null
+
     constructor(props: KBaseIntegrationProps) {
         super(props)
 
         // const params = this.getParamsFromIFrame()
 
         // this.props.onAppStart()
+
+        this.channel = null
     }
 
     componentDidMount() {
@@ -31,13 +38,35 @@ class KBaseIntegration extends React.Component<KBaseIntegrationProps, object> {
                     Loading...
                 </div>
             )
-        } else {
-            return (
-                <div className="KBaseIntegration scrollable-flex-column">
-                    {this.props.children}
-                </div>
-            )
         }
+
+        if (this.props.channelId) {
+            // let integration = new IFrameIntegration()
+            this.channel = new Channel({
+                channelId: this.props.channelId,
+            })
+            this.channel.start()
+
+
+            // this.channel.on('ready', (message) => {
+            //     console.log('client: got ready...', message)
+            // }, (err) => {
+            //     console.log('client: error!', err)
+            // })
+            // console.log('sending ready message...')
+            this.channel.send('ready', {
+                channelId: this.props.channelId,
+                greeting: 'hi'
+            })
+
+
+        }
+
+        return (
+            <div className="KBaseIntegration scrollable-flex-column">
+                {this.props.children}
+            </div>
+        )
     }
 
     // getParamsFromIFrame() {

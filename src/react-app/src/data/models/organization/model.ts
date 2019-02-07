@@ -604,6 +604,64 @@ function applyFilter(organizations: Array<BriefOrganization>, { roleType, roles,
     // }
 }
 
+function narrativeSortByToComparator(sortBy: string) {
+    switch (sortBy) {
+        case 'name':
+            return (a: NarrativeResource, b: NarrativeResource) => {
+                return a.title.localeCompare(b.title)
+            }
+        case 'updated':
+            return (a: NarrativeResource, b: NarrativeResource) => {
+                return b.updatedAt.getTime() - a.updatedAt.getTime()
+            }
+        default:
+        case 'added':
+            return (a: NarrativeResource, b: NarrativeResource) => {
+                return b.updatedAt.getTime() - a.updatedAt.getTime()
+            }
+    }
+}
+
+export function applyNarrativeSort(narratives: Array<NarrativeResource>, sortBy: string) {
+    if (!sortBy) {
+        return narratives
+    }
+    return narratives.slice().sort((a: NarrativeResource, b: NarrativeResource) => {
+        const c1 = narrativeSortByToComparator(sortBy)(a, b)
+        if (c1 === 0) {
+            if (sortBy !== 'name') {
+                return narrativeSortByToComparator('name')(a, b)
+            }
+        }
+        return c1
+    })
+}
+
+export function applyNarrativeSearch(narratives: Array<NarrativeResource>, searchBy: string) {
+    const tokens = searchBy.split(/\s+/).map((token) => {
+        return new RegExp(token, 'i')
+    })
+    if (tokens.length === 0) {
+        return narratives
+    }
+    return narratives.slice().filter((narrative: NarrativeResource) => {
+        return tokens.every((token: RegExp) => {
+            return (token.test(narrative.title))
+        })
+    })
+}
+
+export interface NarrativeQuery {
+    searchBy: string
+    sortBy: string
+}
+
+export function queryNarratives(narratives: Array<NarrativeResource>, query: NarrativeQuery) {
+    const searched = applyNarrativeSearch(narratives, query.searchBy)
+    const sorted = applyNarrativeSort(searched, query.sortBy)
+    return sorted
+}
+
 export class OrganizationModel {
 
     params: ConstructorParams

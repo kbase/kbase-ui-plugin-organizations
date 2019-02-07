@@ -6,6 +6,7 @@ import acceptInboxRequest from './viewOrganization/acceptInboxRequest'
 import viewMembers from './viewOrganization/viewMembers'
 import denyInboxRequest from './viewOrganization/denyInboxRequest'
 import cancelOutboxRequest from './viewOrganization/cancelOutboxRequests'
+import { OrganizationModel } from '../../data/models/organization/model';
 
 export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
     return {
@@ -37,7 +38,10 @@ export function loadNormalSuccess(state: types.StoreState, action: actions.LoadN
                     groupRequests: action.groupRequests,
                     groupInvitations: action.groupInvitations,
                     requestInbox: action.requestInbox,
-                    requestOutbox: action.requestOutbox
+                    requestOutbox: action.requestOutbox,
+                    sortNarrativesBy: action.narrativesSortBy,
+                    searchNarrativesBy: '',
+                    narratives: action.narratives
                 } as types.ViewOrgViewModel
             }
         }
@@ -142,6 +146,54 @@ export function accessNarrativeSuccess(state: types.StoreState, action: actions.
     }
 }
 
+export function sortNarrativesSuccess(state: types.StoreState, action: actions.SortNarrativesSuccess): types.StoreState {
+    if (!state.views.viewOrgView.viewModel) {
+        return state
+    }
+    if (state.views.viewOrgView.viewModel.kind !== types.ViewOrgViewModelKind.NORMAL) {
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            ...state.views,
+            viewOrgView: {
+                ...state.views.viewOrgView,
+                viewModel: {
+                    ...state.views.viewOrgView.viewModel,
+                    sortNarrativesBy: action.sortBy,
+                    narratives: action.narratives
+                }
+            }
+        }
+    }
+}
+
+export function searchNarrativesSuccess(state: types.StoreState, action: actions.SearchNarrativesSuccess): types.StoreState {
+    if (!state.views.viewOrgView.viewModel) {
+        return state
+    }
+    if (state.views.viewOrgView.viewModel.kind !== types.ViewOrgViewModelKind.NORMAL) {
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            ...state.views,
+            viewOrgView: {
+                ...state.views.viewOrgView,
+                viewModel: {
+                    ...state.views.viewOrgView.viewModel,
+                    searchNarrativesBy: action.searchBy,
+                    narratives: action.narratives
+                }
+            }
+        }
+    }
+}
+
 function reducer(state: types.StoreState, action: Action): types.StoreState | null {
     // NB using discriminant union nature of the ActionX types to narrow
     // the type.
@@ -161,6 +213,10 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
             return removeNarrativeSuccess(state, action as actions.RemoveNarrativeSuccess)
         case ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_SUCCESS:
             return accessNarrativeSuccess(state, action as actions.AccessNarrativeSuccess)
+        case ActionFlag.VIEW_ORG_SORT_NARRATIVES_SUCCESS:
+            return sortNarrativesSuccess(state, action as actions.SortNarrativesSuccess)
+        case ActionFlag.VIEW_ORG_SEARCH_NARRATIVES_SUCCESS:
+            return searchNarrativesSuccess(state, action as actions.SearchNarrativesSuccess)
     }
 
     return acceptInboxRequest(state, action) ||

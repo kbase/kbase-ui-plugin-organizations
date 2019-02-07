@@ -10,6 +10,7 @@ import * as orgModel from '../../../data/models/organization/model'
 import * as narrativeModel from '../../../data/models/narrative'
 import MainMenu from '../../menu/component';
 import { OrganizationNarrative, AccessibleNarrative } from '../../../data/models/narrative';
+import NiceElapsedTime from '../../NiceElapsedTime';
 
 
 export interface Props {
@@ -161,12 +162,11 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     </div>
                 </div> */}
                 <div className="RequestNarrative-modifiedAt">
-                    <span className="field-label">Last saved</span>
-                    {Intl.DateTimeFormat('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric'
-                    }).format(narrative.lastSavedAt)}
+                    <span className="field-label">
+                        <Icon type="save" />
+                    </span>
+                    {' '}
+                    <NiceElapsedTime time={narrative.lastSavedAt} tooltipPrefix="last saved " />
                 </div>
             </React.Fragment>
         )
@@ -404,13 +404,11 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                         {this.props.selectedNarrative.narrative.title}
                     </div>
                     <div>
-                        <span className="field-label">last saved</span>
+                        <span className="field-label">
+                            <Icon type="save" />
+                        </span>
                         {' '}
-                        {Intl.DateTimeFormat('en-US', {
-                            month: 'long',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(this.props.selectedNarrative.narrative.lastSavedAt)}
+                        <NiceElapsedTime time={this.props.selectedNarrative.narrative.lastSavedAt} tooltipPrefix="last saved " />
                     </div>
                 </div>
             )

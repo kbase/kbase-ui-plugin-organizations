@@ -599,7 +599,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     htmlType="submit">
                     Save
                 </Button>
-                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+                {/* <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button> */}
                 {errorButton}
             </React.Fragment>
         )

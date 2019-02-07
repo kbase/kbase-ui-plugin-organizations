@@ -5,7 +5,7 @@ import { NavLink, Redirect } from 'react-router-dom'
 import './component.css'
 
 import { } from '../../../../types'
-import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu, Alert, Tabs } from 'antd'
+import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu, Alert, Tabs, Input, Select } from 'antd'
 import Header from '../../../Header'
 import Member from '../../../entities/MemberContainer'
 import OrganizationHeader from '../../organizationHeader/loader'
@@ -53,6 +53,9 @@ export interface ViewOrganizationProps {
     requestOutbox: Array<requestModel.Request>
     requestInbox: Array<requestModel.Request>
     notifications: Array<feedsModel.OrganizationNotification>
+    sortNarrativesBy: string
+    searchNarrativesBy: string
+    narratives: Array<orgModel.NarrativeResource>
     onViewOrg: (id: string) => void
     onJoinOrg: () => void
     onCancelJoinRequest: (requestId: requestModel.RequestID) => void
@@ -62,6 +65,8 @@ export interface ViewOrganizationProps {
     onGetViewAccess: (narrative: orgModel.NarrativeResource) => void
     onAcceptRequest: (requestId: requestModel.RequestID) => void
     onReadNotification: (requestId: requestModel.RequestID) => void
+    onSortNarratives: (sortBy: string) => void
+    onSearchNarratives: (searchBy: string) => void
 }
 
 class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrganizationState> {
@@ -718,59 +723,102 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             )
         ]
 
-        if (this.props.organization.narratives.length === 0) {
-            const message = (
+        let narrativesTable
+        if (this.props.narratives.length === 0) {
+            narrativesTable = (
                 <div className="message">
                     No Narratives are yet associated with this Organization
                 </div>
             )
-            return (
-                <Card
-                    className="slimCard  narratives"
-                    headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                    title={<span><Icon type="folder-open" /> Narratives (Ø)</span>}
-                    extra={extras}
-                >
-                    <Alert type="info" message={message} />
-                </Card>
-            )
+
+        } else {
+            narrativesTable = this.props.narratives.map((narrative) => {
+                // create buttons or not, depending on being an admin
+                return (
+                    <div className="narrative simpleCard" key={String(narrative.workspaceId)}>
+                        <div className="dataCol">
+                            <OrganizationNarrative
+                                narrative={narrative}
+                                onGetViewAccess={this.props.onGetViewAccess} />
+                        </div>
+                        <div className="buttonCol">
+                            {this.renderNarrativeMenu(narrative)}
+                        </div>
+                    </div>
+                )
+            })
         }
 
-        const narrativesTable = this.props.organization.narratives.map((narrative) => {
-            // create buttons or not, depending on being an admin
-            return (
-                <div className="narrative simpleCard" key={String(narrative.workspaceId)}>
-                    <div className="dataCol">
-                        <OrganizationNarrative
-                            narrative={narrative}
-                            onGetViewAccess={this.props.onGetViewAccess} />
-                    </div>
-                    <div className="buttonCol">
-                        {this.renderNarrativeMenu(narrative)}
-                    </div>
-                </div>
-            )
-        })
-
-        const narrativeCount = this.props.organization.narratives.length
+        const narrativeCount = this.props.narratives.length
         const title = (
-            <span>
-                <Icon type="folder-open" />
+            <span className="ViewOrganization-narrativesTitle">
+                <Icon type="folder-open" style={{ marginRight: '8px' }} />
                 Narratives
                 {' '}
                 <span className="titleCount">({narrativeCount})</span>
             </span>
         )
         return (
-            <Card
-                className="slimCard narratives narrativesCard scrollable-flex-column"
-                title={title}
-                extra={extras}
-            >
-                <div className="narrativesTable">
-                    {narrativesTable}
+            <div className="ViewOrganization-narratives scrollable-flex-column">
+                <div className="ViewOrganization-narrativesHeader">
+                    <div className="ViewOrganization-narrativesHeaderCol1">
+                        {title}
+                    </div>
+                    <div className="ViewOrganization-narrativesHeaderCol2">
+                        {extras}
+                    </div>
                 </div>
-            </Card>
+                <div className="ViewOrganization-narratives-toolbar">
+                    <div className="ViewOrganization-narratives-toolbar-searchCol">
+                        {this.renderSearchBar()}
+                    </div>
+                    <div className="ViewOrganization-narratives-toolbar-sortCol">
+                        {this.renderSortBar()}
+                    </div>
+                </div>
+                <div className="ViewOrganization-narrativesList">
+                    <div className="narrativesTable">
+                        {narrativesTable}
+                    </div>
+                </div>
+            </div >
+        )
+    }
+
+    renderSearchBar() {
+        const doChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            this.props.onSearchNarratives(e.target.value)
+        }
+        return (
+            <div>
+                <Input style={{ width: '25em' }}
+                    placeholder="Filter narratives by title"
+                    onChange={doChange} />
+                {/* <Button>
+                    <Icon type="search" />
+                </Button> */}
+            </div>
+        )
+    }
+
+    renderSortBar() {
+        const handleSelect = (value: string) => {
+            this.props.onSortNarratives(value)
+        }
+
+        return (
+            <React.Fragment>
+                <span className="field-label">sort</span>
+                <Select onChange={handleSelect}
+                    style={{ width: '11em' }}
+                    dropdownMatchSelectWidth={true}
+                    defaultValue={this.props.sortNarrativesBy}
+                >
+                    <Select.Option value="name" key="name">Name</Select.Option>
+                    <Select.Option value="added" key="added">Date Added</Select.Option>
+                    <Select.Option value="changed" key="changed">Last Changed</Select.Option>
+                </Select>
+            </React.Fragment>
         )
     }
 
@@ -788,7 +836,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         </NavLink>
                     </div>
                 )
-
             case orgModel.UserRelationToOrganization.OWNER:
                 return (
                     <div className="ViewOrganization-tabPaneToolbar">
@@ -797,7 +844,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         </NavLink>
                     </div>
                 )
-
         }
     }
 
@@ -881,9 +927,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     {this.renderOrgMenu()}
                 </span>
 
-                <span className="ButtonSet-button">
+                {/* <span className="ButtonSet-button">
                     <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
-                </span>
+                </span> */}
             </span>
         )
     }

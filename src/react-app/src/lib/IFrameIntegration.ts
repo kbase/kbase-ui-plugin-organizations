@@ -33,4 +33,16 @@ export class IFrameIntegration {
         const iframeParams = JSON.parse(decodeURIComponent(params)) as IFrameParams
         return iframeParams
     }
+    getChannelID() {
+        if (!window.frameElement) {
+            return null
+        }
+        if (!window.frameElement.hasAttribute('data-channel')) {
+            return null
+        }
+        return window.frameElement.getAttribute('data-channel')
+    }
+    getIframeElement() {
+        return window.frameElement || null
+    }
 }

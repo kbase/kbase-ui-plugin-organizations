@@ -333,7 +333,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             <Dropdown
                 overlay={menu}
                 trigger={['click', 'contextMenu']}>
-                <a href={"/#org/" + this.props.organization.id}>
+                <a href={"/#orgs/" + this.props.organization.id}>
                     <Icon type="link" />
                 </a>
             </Dropdown>

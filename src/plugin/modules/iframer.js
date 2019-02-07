@@ -20,14 +20,14 @@ define([
             this.origin = config.origin;
             this.pathRoot = config.pathRoot;
 
-
             // So we can deterministically find the iframe
             this.id = 'frame_' + html.genId();
 
             const params = {
                 frameId: this.id,
                 parentHost: document.location.origin,
-                params: config.params
+                params: config.params,
+                channelId: config.channelId
             };
 
             // console.warn('PARAMS', JSON.parse(JSON.stringify(config)));
@@ -50,6 +50,7 @@ define([
             }, [
                 iframe({
                     id: this.id,
+                    name: this.id,
                     dataParams: encodeURIComponent(JSON.stringify(params)),
                     style: {
                         width: '100%',
@@ -74,7 +75,8 @@ define([
         }
 
         start() {
-            this.window.location = this.url;
+            this.iframe.src = this.url;
+            // this.window.location = this.url;
             // inside the web app launched by this will send the 'ready' message
             // to the window when it is finished loading and is ready for communication
             // with kbase-ui, e.g. to receive configuration, navigation events, etc.
@@ -94,13 +96,13 @@ define([
             // this.hostOrigin = document.location.origin;
             // this.iframeOrigin = document.location.origin;
 
-            this.channel = new WindowChannel.Channel({
-                window: window,
-                host: document.location.origin,
-                // recieveFor: [this.id],
-                // clientId: this.iframe.id,
-                // hostId: this.id
-            });
+            // this.channel = new WindowChannel.Channel({
+            //     window: window,
+            //     host: document.location.origin,
+            //     // recieveFor: [this.id],
+            //     // clientId: this.iframe.id,
+            //     // hostId: this.id
+            // });
 
             // Will be created when the "ready" message is received.
             this.iframeChannel = null;
@@ -108,13 +110,15 @@ define([
             this.iframe = new Iframe({
                 origin: document.location.origin,
                 pathRoot: this.pluginPath,
-                channelId: this.channel.id,
+                // channelId: this.channel.id,
+                channelId: this.id,
                 hostId: this.id,
                 params: this.params
 
             });
 
             this.iframe.attach(this.container);
+
 
             // this.iframeMessages = new WindowMessages({
             //     // window: window,
@@ -127,27 +131,38 @@ define([
         // Lifecycle
 
         /*
-                    iframe messages lifecycle.
+                        iframe messages lifecycle.
 
-                    create iframe, don't set source yet
-                    set up postmessage listener on the iframe content window
-                    listem for 'ready' message
-                    load content for iframe
-                    content will set up listening on window's postmessage too
-                    content sends 'ready' message
-                    host receives ready message and finishes setting up postmessage listener for the
-                        iframe client
-                    host sets up all listeners to support client
-                    life goes on
-                    when client is being removed e.g. for navigation it is sent the 'stop' message given
-                        some interval in which to finish this work before it is just axed.
-                                                                */
+                        create iframe, don't set source yet
+                        set up postmessage listener on the iframe content window
+                        listem for 'ready' message
+                        load content for iframe
+                        content will set up listening on window's postmessage too
+                        content sends 'ready' message
+                        host receives ready message and finishes setting up postmessage listener for the
+                            iframe client
+                        host sets up all listeners to support client
+                        life goes on
+                        when client is being removed e.g. for navigation it is sent the 'stop' message given
+                            some interval in which to finish this work before it is just axed.
+                        */
 
         start() {
-            // Use raw promise just to reduce a minor dependency upon bluebird.
             return new Promise((resolve, reject) => {
                 try {
+
+                    this.channel = new WindowChannel.Channel({
+                        window: this.iframe.window,
+                        host: document.location.origin,
+                        channelId: this.id
+                        // recieveFor: [this.id],
+                        // clientId: this.iframe.id,
+                        // hostId: this.id
+                    });
+
                     this.channel.start();
+
+                    console.log('host channel started', this.channel);
 
                     this.channel.on('get-auth-status', () => {
                         this.channel.send('auth-status', {
@@ -211,13 +226,14 @@ define([
                     });
 
                     this.channel.on('ready', (message) => {
-                        this.iframeChannel = new WindowChannel.Channel({
-                            window: this.iframe.iframe.contentWindow,
-                            channelId: message.channelId,
-                            host: message.channelHost
-                        });
-                        this.iframeChannel.start();
-                        this.iframeChannel.send('start', {
+                        console.log('READY', message);
+                        // this.iframeChannel = new WindowChannel.Channel({
+                        //     window: this.iframe.iframe.contentWindow,
+                        //     channelId: message.channelId,
+                        //     host: message.channelHost
+                        // });
+                        // this.iframeChannel.start();
+                        this.channel.send('start', {
                             token: this.runtime.service('session').getAuthToken(),
                             username: this.runtime.service('session').getUsername(),
                             realname: this.runtime.service('session').getRealname(),
@@ -225,7 +241,7 @@ define([
                             config: this.runtime.rawConfig()
                         });
                         this.runtime.receive('session', 'loggedin', () => {
-                            this.iframeChannel.send('loggedin', {
+                            this.channel.send('loggedin', {
                                 token: this.runtime.service('session').getAuthToken(),
                                 username: this.runtime.service('session').getUsername(),
                                 realname: this.runtime.service('session').getRealname(),
@@ -233,9 +249,13 @@ define([
                             });
                         });
                         this.runtime.receive('session', 'loggedout', () => {
-                            this.iframeChannel.send('loggedout');
+                            this.channel.send('loggedout', {});
                         });
                     });
+
+                    // this.channel.send('ready', {
+                    //     say: 'This is my message'
+                    // });
 
                     this.iframe.start();
                     resolve();

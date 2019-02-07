@@ -30,7 +30,6 @@ import { StateInstances } from './redux/state';
 import DataServices from './components/dataServices/storeAdapter'
 import { AppContextProvider } from './AppContext'
 import { Marked, Renderer, MarkedOptions } from 'marked-ts'
-import MainMenu from './components/menu/component';
 
 class DescriptionRenderer extends Renderer {
   constructor(options?: MarkedOptions) {

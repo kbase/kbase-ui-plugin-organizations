@@ -14,6 +14,8 @@ import * as feedsModel from '../../data/models/feeds'
 import * as userProfileModel from '../../data/models/profile'
 import { loadNarrative } from './entities'
 import * as dataServices from './dataServices'
+import { Narrative } from '../../data/models/narrative';
+import { AnError } from '../../lib/error';
 
 // Action Types
 
@@ -46,7 +48,9 @@ export interface LoadNormalSuccess extends Action {
     groupInvitations: Array<requestModel.Request> | null
     requestInbox: Array<requestModel.Request>
     requestOutbox: Array<requestModel.Request>
-    notifications: Array<feedsModel.OrganizationNotification>
+    notifications: Array<feedsModel.OrganizationNotification>,
+    narrativesSortBy: string
+    narratives: Array<orgModel.NarrativeResource>
 }
 
 export interface LoadInaccessiblePrivateSuccess extends Action {
@@ -384,12 +388,16 @@ export function loadNormalSuccess(
     groupInvitations: Array<requestModel.Request> | null,
     requestInbox: Array<requestModel.Request>,
     requestOutbox: Array<requestModel.Request>,
-    notifications: Array<feedsModel.OrganizationNotification>): LoadNormalSuccess {
+    notifications: Array<feedsModel.OrganizationNotification>,
+    narrativesSortBy: string,
+    narratives: Array<orgModel.NarrativeResource>): LoadNormalSuccess {
     return {
         type: ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS,
         organization, relation, openRequest,
         groupRequests, groupInvitations,
-        requestInbox, requestOutbox, notifications
+        requestInbox, requestOutbox, notifications,
+        narrativesSortBy,
+        narratives
     }
 }
 
@@ -571,7 +579,6 @@ export function load(organizationId: string) {
         try {
             const { organization, relation } = await uberClient.getOrganizationForUser(organizationId)
             if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
-
                 const requestInbox = await requestClient.getRequestInboxForOrg(organizationId)
                 dispatch(loadInaccessiblePrivateSuccess(organization, relation, requestInbox))
                 return
@@ -594,7 +601,14 @@ export function load(organizationId: string) {
             const requestInbox: Array<requestModel.Request> = await requestClient.getCombinedRequestInboxForOrg(organizationId)
             const requestOutbox: Array<requestModel.Request> = await requestClient.getRequestOutboxForOrg(organizationId)
 
-            dispatch(loadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations, requestInbox, requestOutbox, []))
+            // default narrative sort?
+            const narrativesSortBy = 'added'
+            const narratives = orgModel.queryNarratives(organization.narratives, {
+                sortBy: narrativesSortBy,
+                searchBy: ''
+            })
+
+            dispatch(loadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations, requestInbox, requestOutbox, [], narrativesSortBy, narratives))
         } catch (ex) {
             dispatch(loadError({
                 code: ex.name,
@@ -756,6 +770,143 @@ export function rejectJoinInvitation(requestId: string) {
                 message: ex.message
             }))
         }
+
+    }
+}
+
+// SORT NARRATIVES
+export interface SortNarratives {
+    type: ActionFlag.VIEW_ORG_SORT_NARRATIVES,
+    sortBy: string
+}
+
+export interface SortNarrativesStart {
+    type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_START
+}
+
+export interface SortNarrativesSuccess {
+    type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_SUCCESS
+    narratives: Array<orgModel.NarrativeResource>
+    sortBy: string
+}
+
+export interface SortNarrativesError {
+    type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_ERROR
+    error: AnError
+}
+
+
+
+export function sortNarratives(sortBy: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_START
+        })
+
+        const state = getState()
+
+        const viewModel = state.views.viewOrgView.viewModel
+
+        if (!viewModel) {
+            dispatch(viewOrgJoinRequestError({
+                type: UIErrorType.ERROR,
+                message: 'Now view model!'
+            }))
+            return
+        }
+
+        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+            dispatch(viewOrgJoinRequestError({
+                type: UIErrorType.ERROR,
+                message: 'Wrong org view model kind!'
+            }))
+            return
+        }
+
+        const { narratives } = viewModel.organization as orgModel.Organization
+        const searchBy = viewModel.searchNarrativesBy
+
+        const sorted = orgModel.queryNarratives(narratives, {
+            sortBy: sortBy,
+            searchBy: searchBy
+        })
+
+        // const sorted = orgModel.sortNarratives(narratives.slice(), sortBy)
+        // const sorted = narratives.slice().sort(sortByToComparator(sortBy))
+
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_SUCCESS,
+            narratives: sorted,
+            sortBy
+        })
+
+    }
+}
+
+
+// SEARCH NARRATIVES
+
+export interface SearchNarratives {
+    type: ActionFlag.VIEW_ORG_SEARCH_NARRATIVES,
+    searchBy: string
+}
+
+export interface SearchtNarrativesStart {
+    type: ActionFlag.VIEW_ORG_SEARCH_NARRATIVES_START
+}
+
+export interface SearchNarrativesSuccess {
+    type: ActionFlag.VIEW_ORG_SEARCH_NARRATIVES_SUCCESS
+    narratives: Array<orgModel.NarrativeResource>
+    searchBy: string
+}
+
+export interface SearchNarrativesError {
+    type: ActionFlag.VIEW_ORG_SEARCH_NARRATIVES_ERROR
+    error: AnError
+}
+
+
+
+export function searchNarratives(searchBy: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_START
+        })
+
+        const state = getState()
+
+        const viewModel = state.views.viewOrgView.viewModel
+
+        if (!viewModel) {
+            dispatch(viewOrgJoinRequestError({
+                type: UIErrorType.ERROR,
+                message: 'Now view model!'
+            }))
+            return
+        }
+
+        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+            dispatch(viewOrgJoinRequestError({
+                type: UIErrorType.ERROR,
+                message: 'Wrong org view model kind!'
+            }))
+            return
+        }
+
+        const { narratives } = viewModel.organization as orgModel.Organization
+        const sortBy = viewModel.sortNarrativesBy
+
+        const sorted = orgModel.queryNarratives(narratives, {
+            sortBy: sortBy,
+            searchBy: searchBy
+        })
+
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SEARCH_NARRATIVES_SUCCESS,
+            searchBy: searchBy,
+            narratives: sorted
+        })
 
     }
 }

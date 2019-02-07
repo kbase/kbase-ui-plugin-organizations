@@ -565,6 +565,9 @@ export interface ViewOrgViewModel {
     groupInvitations: Array<requestModel.Request> | null
     requestOutbox: Array<requestModel.Request>
     requestInbox: Array<requestModel.Request>
+    sortNarrativesBy: string
+    searchNarrativesBy: string
+    narratives: Array<orgModel.NarrativeResource>
 }
 
 export interface ViewInaccessiblePrivateOrgViewModel {
@@ -634,7 +637,7 @@ export interface StoreState {
     app: {
         status: AppState
         config: AppConfig
-        error?: AppError
+        error?: AppError,
     }
 
     views: {
@@ -733,7 +736,8 @@ export interface AppConfig {
             url: string
         }
     }
-    defaultPath: string
+    defaultPath: string,
+    channelId: string | null
 }
 
 export interface AuthProps {

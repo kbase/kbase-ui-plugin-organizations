@@ -4,8 +4,6 @@ import { connect } from 'react-redux'
 import { StoreState, ViewOrgViewModelKind } from '../../../../types'
 import * as actions from '../../../../redux/actions/viewOrg'
 import * as acceptInboxRequestActions from '../../../../redux/actions/viewOrganization/acceptInboxRequest'
-import * as denyInboxRequestActions from '../../../../redux/actions/viewOrganization/denyInboxRequest'
-import * as cancelOutboxRequestActions from '../../../../redux/actions/viewOrganization/cancelOutboxRequest'
 import * as notificationActions from '../../../../redux/actions/notifications'
 
 import ViewOrganization from './component'
@@ -30,6 +28,9 @@ interface StateProps {
     requestOutbox: Array<requestModel.Request>
     requestInbox: Array<requestModel.Request>
     notifications: Array<feedsModel.OrganizationNotification>
+    sortNarrativesBy: string
+    searchNarrativesBy: string
+    narratives: Array<orgModel.NarrativeResource>
 }
 
 // the interface for mapDispatchToProps
@@ -43,6 +44,8 @@ interface DispatchProps {
     onGetViewAccess: (narrative: orgModel.NarrativeResource) => void
     onAcceptRequest: (requestId: requestModel.RequestID) => void
     onReadNotification: (notificationId: string) => void
+    onSortNarratives: (sortBy: string) => void
+    onSearchNarratives: (searchBy: string) => void
 }
 
 // hmm this bit would be for the interface for the wrapped component.
@@ -60,7 +63,8 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
         throw new Error("argh, wrong org kind")
     }
     const {
-        organization, relation, openRequest, groupRequests, groupInvitations, requestInbox, requestOutbox
+        organization, relation, openRequest, groupRequests, groupInvitations,
+        requestInbox, requestOutbox, sortNarrativesBy, narratives, searchNarrativesBy
     } = viewModel
     const {
         db: {
@@ -73,7 +77,10 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
     })
     // TODO: of course this really needs to be an async fetch of the org info!
     return {
-        organization, relation, openRequest, groupRequests, groupInvitations, requestInbox, requestOutbox, notifications
+        organization, relation, openRequest, groupRequests, groupInvitations,
+        requestInbox, requestOutbox, notifications, sortNarrativesBy,
+        searchNarrativesBy,
+        narratives
     }
 }
 
@@ -105,6 +112,12 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         },
         onReadNotification: (notificationId: string) => {
             dispatch(notificationActions.read(notificationId) as any)
+        },
+        onSortNarratives: (sortBy: string) => {
+            dispatch(actions.sortNarratives(sortBy) as any)
+        },
+        onSearchNarratives: (searchBy: string) => {
+            dispatch(actions.searchNarratives(searchBy) as any)
         }
     }
 }

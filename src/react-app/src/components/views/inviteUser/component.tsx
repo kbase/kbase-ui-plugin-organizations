@@ -195,11 +195,11 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
             </Button> */}
 
 
-                <Button
+                {/* <Button
                     shape="circle"
                     icon="info"
                     onClick={this.onShowInfo.bind(this)}>
-                </Button>
+                </Button> */}
             </React.Fragment>
 
         )
@@ -455,13 +455,13 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                         Back to Org
                     </Button>
                 </div>
-                <div className="ButtonSet-button">
+                {/* <div className="ButtonSet-button">
                     <Button
                         shape="circle"
                         icon="info"
                         onClick={this.onShowInfo.bind(this)}>
                     </Button>
-                </div>
+                </div> */}
             </div>
         )
     }

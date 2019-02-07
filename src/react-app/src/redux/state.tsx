@@ -138,7 +138,8 @@ export class StateInstances {
                             url: ''
                         }
                     },
-                    defaultPath: ''
+                    defaultPath: '',
+                    channelId: null
                 }
             },
 

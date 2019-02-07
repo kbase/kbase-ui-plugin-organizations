@@ -217,9 +217,9 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                 <div className="OrganizationNarrative-narrativeCol">
                     {this.renderNarrative()}
                 </div>
-                <div className="OrganizationNarrative-resourceCol">
+                {/* <div className="OrganizationNarrative-resourceCol">
                     {this.renderResource()}
-                </div>
+                </div> */}
                 {accessModal}
             </div>
         )
