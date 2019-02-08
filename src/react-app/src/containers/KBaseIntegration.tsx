@@ -22,6 +22,7 @@ interface DispatchProps {
 
 export function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
     const { app: { status, config: { defaultPath, channelId } } } = state
+    // console.log('map state', status, defaultPath, channelId)
     return {
         status, defaultPath, channelId
     }

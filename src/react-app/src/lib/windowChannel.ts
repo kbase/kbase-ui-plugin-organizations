@@ -82,10 +82,6 @@ interface ChannelParams {
     channelId?: string
 }
 
-interface MyWin extends Window {
-    xyz?: string
-}
-
 export class Channel {
     window: Window
     host: string
@@ -105,9 +101,6 @@ export class Channel {
     constructor(params: ChannelParams) {
         // The given window upon which we will listen for messages.
         this.window = params.window || window
-        const x: MyWin = this.window
-
-
 
         // The host for the window; required for postmessage
         if (this.window.document === null) {
@@ -121,8 +114,6 @@ export class Channel {
         // The channel id. Used to filter all messages received to
         // this channel.
         this.id = params.channelId || uuidv4()
-
-        console.log('client - channel constructor', this.host, this.id, x.xyz, this.window)
 
         this.awaitingResponse = new Map<string, Handler>()
         this.waitingListeners = new Map<string, Array<Listener>>()
@@ -247,7 +238,6 @@ export class Channel {
     }
 
     sendMessage(message: Message) {
-        console.log('client sending', this.host, message.getMessage())
         this.window.postMessage(message.getMessage(), this.host)
     }
 

@@ -605,52 +605,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
-    renderMembersCard() {
-        const extras = [
-            (
-                <NavLink
-                    key="viewMembers"
-                    to={`/viewMembers/${this.props.organization!.id}`}>
-                    <Button
-                        onClick={this.onViewMembers.bind(this)}
-                        icon="team"></Button>
-                </NavLink>
-            )
-        ]
-        if (!this.props.organization) {
-            return
-        }
-
-        let memberCount
-        if (this.isMember()) {
-            memberCount = (
-                <span className="titleCount">({this.props.organization.members.length})</span>
-            )
-        } else {
-            memberCount = ''
-        }
-        const title = (
-            <span>
-                <Icon type="team" />
-                members
-                {memberCount}
-            </span>
-        )
-        return (
-            <Card
-                className="slimCard membersCard"
-                headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                title={title}
-                extra={extras}
-            >
-                {this.renderMembers()}
-            </Card>
-        )
-    }
-
     renderMembersTab() {
         return (
-            <div className="scrollable-flex-column">
+            <div className="ViewOrganization-membersCol scrollable-flex-column">
                 {this.renderMembersToolbar()}
 
                 {this.renderMembers()}

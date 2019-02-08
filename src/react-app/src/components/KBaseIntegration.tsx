@@ -24,14 +24,49 @@ class KBaseIntegration extends React.Component<KBaseIntegrationProps, object> {
         this.channel = null
     }
 
+    setupChannel() {
+        if (this.props.channelId) {
+            // let integration = new IFrameIntegration()
+            this.channel = new Channel({
+                channelId: this.props.channelId,
+            })
+
+            this.channel.on('navigate', ({ to, params }) => {
+                // switch (to) {
+                //     case 'orgs':
+
+                // }
+                console.log('NAVIGATE', to, params)
+            }, (err) => {
+                console.error('Error processing "navigate" message')
+            })
+
+            this.channel.start()
+
+            this.channel.send('ready', {
+                channelId: this.props.channelId,
+                greeting: 'heloooo'
+            })
+        }
+    }
+
+    teardownChannel() {
+
+    }
+
     componentDidMount() {
         this.props.onAppStart()
     }
 
-    render() {
-        // TODO: some test like 
-        // {this.props.env === 'dev' ? this.buildAuthDev() : this.buildAuthProd()}
+    componentDidUpdate() {
+        this.setupChannel()
+    }
 
+    componentWillUnmount() {
+        this.teardownChannel()
+    }
+
+    render() {
         if (this.props.status === AppState.NONE) {
             return (
                 <div className="KBaseIntegration">
@@ -40,50 +75,12 @@ class KBaseIntegration extends React.Component<KBaseIntegrationProps, object> {
             )
         }
 
-        if (this.props.channelId) {
-            // let integration = new IFrameIntegration()
-            this.channel = new Channel({
-                channelId: this.props.channelId,
-            })
-            this.channel.start()
-
-
-            // this.channel.on('ready', (message) => {
-            //     console.log('client: got ready...', message)
-            // }, (err) => {
-            //     console.log('client: error!', err)
-            // })
-            // console.log('sending ready message...')
-            this.channel.send('ready', {
-                channelId: this.props.channelId,
-                greeting: 'hi'
-            })
-
-
-        }
-
         return (
             <div className="KBaseIntegration scrollable-flex-column">
                 {this.props.children}
             </div>
         )
     }
-
-    // getParamsFromIFrame() {
-    //     if (!window.frameElement) {
-    //         return null
-    //     }
-    //     if (!window.frameElement.hasAttribute('data-params')) {
-    //         // throw new Error('No params found in window!!');
-    //         return null
-    //     }
-    //     const params = window.frameElement.getAttribute('data-params');
-    //     if (params === null) {
-    //         // throw new Error('No params found in window!')
-    //         return null
-    //     }
-    //     return JSON.parse(decodeURIComponent(params));
-    // }
 }
 
 export default KBaseIntegration

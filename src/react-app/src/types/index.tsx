@@ -568,6 +568,9 @@ export interface ViewOrgViewModel {
     sortNarrativesBy: string
     searchNarrativesBy: string
     narratives: Array<orgModel.NarrativeResource>
+    sortMembersBy: string
+    searchMembersBy: string
+    members: Array<orgModel.Member>
 }
 
 export interface ViewInaccessiblePrivateOrgViewModel {

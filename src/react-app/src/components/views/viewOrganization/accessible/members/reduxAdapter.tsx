@@ -1,7 +1,7 @@
 import { Dispatch, Action } from 'redux'
 import { connect } from 'react-redux'
 
-import { StoreState } from '../../../../../types'
+import { StoreState, ViewOrgViewModelKind } from '../../../../../types'
 import * as actions from '../../../../../redux/actions/viewOrganization/viewMembers'
 import ViewMembers from './component'
 import * as orgModel from '../../../../../data/models/organization/model'
@@ -12,7 +12,9 @@ export interface OwnProps {
 }
 
 interface StateProps {
-
+    searchMembersBy: string
+    sortMembersBy: string
+    members: Array<orgModel.Member>
 }
 
 interface DispatchProps {
@@ -20,23 +22,22 @@ interface DispatchProps {
     onPromoteMemberToAdmin: (memberUsername: string) => void,
     onDemoteAdminToMember: (adminUsername: string) => void,
     onRemoveMember: (memberUsername: string) => void
+    onSearchMembers: (searchBy: string) => void
+    onSortMembers: (sortBy: string) => void
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
-    // if (!state.views.viewMembersView || (state.views.viewMembersView.viewModel === null)) {
-    //     throw new Error('Runtime Error - view members view is not defined!')
-    // }
-    // const {
-    //     views: {
-    //         viewMembersView: {
-    //             viewModel: { organization, relation }
-    //         }
-    //     }
-    // } = state
-    // return {
-    //     organization, relation
-    // }
-    return {}
+    const viewModel = state.views.viewOrgView.viewModel
+    if (!viewModel) {
+        throw new Error('argh, view model missing')
+    }
+    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+        throw new Error("argh, wrong org kind")
+    }
+    const { searchMembersBy, sortMembersBy, members } = viewModel
+    return {
+        searchMembersBy, sortMembersBy, members
+    }
 }
 
 export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
@@ -52,6 +53,12 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         },
         onRemoveMember: (memberUsername: string) => {
             dispatch(actions.removeMember(memberUsername) as any)
+        },
+        onSearchMembers: (searchBy: string) => {
+            dispatch(actions.searchMembers(searchBy) as any)
+        },
+        onSortMembers: (sortBy: string) => {
+            dispatch(actions.sortMembers(sortBy) as any)
         }
     }
 }

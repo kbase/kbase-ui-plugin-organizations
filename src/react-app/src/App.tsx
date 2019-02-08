@@ -100,6 +100,7 @@ class App extends Component {
     return (
       <AppContextProvider value={{ test: 'ok' }}>
         <Provider store={store}>
+
           <KBaseIntegration>
             <Auth hosted={hosted}>
               <DataServices>
@@ -124,6 +125,7 @@ class App extends Component {
               </DataServices>
             </Auth>
           </KBaseIntegration>
+
         </Provider>
       </AppContextProvider>
     )

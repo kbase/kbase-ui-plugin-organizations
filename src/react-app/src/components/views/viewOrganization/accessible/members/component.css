@@ -1,3 +1,20 @@
+.ViewOrganizationMembers {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganizationMembers-header {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganizationMembers-body {
+    flex: 1 1 0px;
+    overflow-y: auto;
+}
+
 .ViewOrganization .infoTable>.row {
     flex: 0 0 auto;
     min-height: 20px;
@@ -25,4 +42,19 @@
 
 .Members-menu {
     flex: 0 0 2em;
+}
+
+.ViewOrganizationMembers-headerRow {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 6px;
+}
+
+.ViewOrganizationMembers-searchCol {
+    flex: 1 1 0px;
+}
+
+.ViewOrganizationMembers-sortCol {
+    flex: 0 0 auto;
 }

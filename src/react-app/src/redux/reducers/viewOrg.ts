@@ -41,7 +41,10 @@ export function loadNormalSuccess(state: types.StoreState, action: actions.LoadN
                     requestOutbox: action.requestOutbox,
                     sortNarrativesBy: action.narrativesSortBy,
                     searchNarrativesBy: '',
-                    narratives: action.narratives
+                    narratives: action.narratives,
+                    sortMembersBy: action.sortMembersBy,
+                    members: action.members,
+                    searchMembersBy: ''
                 } as types.ViewOrgViewModel
             }
         }
@@ -194,6 +197,8 @@ export function searchNarrativesSuccess(state: types.StoreState, action: actions
     }
 }
 
+
+
 function reducer(state: types.StoreState, action: Action): types.StoreState | null {
     // NB using discriminant union nature of the ActionX types to narrow
     // the type.
@@ -217,6 +222,7 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
             return sortNarrativesSuccess(state, action as actions.SortNarrativesSuccess)
         case ActionFlag.VIEW_ORG_SEARCH_NARRATIVES_SUCCESS:
             return searchNarrativesSuccess(state, action as actions.SearchNarrativesSuccess)
+
     }
 
     return acceptInboxRequest(state, action) ||

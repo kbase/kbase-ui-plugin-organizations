@@ -51,6 +51,8 @@ export interface LoadNormalSuccess extends Action {
     notifications: Array<feedsModel.OrganizationNotification>,
     narrativesSortBy: string
     narratives: Array<orgModel.NarrativeResource>
+    sortMembersBy: string,
+    members: Array<orgModel.Member>
 }
 
 export interface LoadInaccessiblePrivateSuccess extends Action {
@@ -363,23 +365,6 @@ export function loadStart(): LoadStart {
     }
 }
 
-
-
-// export function loadSuccess(
-//     organization: orgModel.Organization,
-//     relation: orgModel.Relation,
-//     groupRequests: Array<requestModel.Request> | null,
-//     groupInvitations: Array<requestModel.Request> | null,
-//     requestInbox: Array<requestModel.Request>,
-//     requestOutbox: Array<requestModel.Request>,
-//     notifications: Array<feedsModel.OrganizationNotification>): LoadSuccess {
-//     return {
-//         type: ActionFlag.VIEW_ORG_LOAD_SUCCESS,
-//         organization, relation, groupRequests, groupInvitations,
-//         requestInbox, requestOutbox, notifications
-//     }
-// }
-
 export function loadNormalSuccess(
     organization: orgModel.Organization,
     relation: orgModel.Relation,
@@ -390,14 +375,16 @@ export function loadNormalSuccess(
     requestOutbox: Array<requestModel.Request>,
     notifications: Array<feedsModel.OrganizationNotification>,
     narrativesSortBy: string,
-    narratives: Array<orgModel.NarrativeResource>): LoadNormalSuccess {
+    narratives: Array<orgModel.NarrativeResource>,
+    sortMembersBy: string,
+    members: Array<orgModel.Member>): LoadNormalSuccess {
     return {
         type: ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS,
         organization, relation, openRequest,
         groupRequests, groupInvitations,
         requestInbox, requestOutbox, notifications,
         narrativesSortBy,
-        narratives
+        narratives, sortMembersBy, members
     }
 }
 
@@ -411,7 +398,6 @@ export function loadInaccessiblePrivateSuccess(
         requestOutbox
     }
 }
-
 
 export function loadError(error: AppError): LoadError {
     return {
@@ -503,7 +489,6 @@ export function rejectJoinInvitationError(error: AppError): RejectJoinInvitation
         error: error
     }
 }
-
 
 // Join invitation acceptance
 
@@ -608,7 +593,14 @@ export function load(organizationId: string) {
                 searchBy: ''
             })
 
-            dispatch(loadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations, requestInbox, requestOutbox, [], narrativesSortBy, narratives))
+            const sortMembersBy = 'added'
+            const members = orgModel.queryMembers(organization.members, {
+                sortBy: sortMembersBy,
+                searchBy: ''
+            })
+
+            dispatch(loadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations,
+                requestInbox, requestOutbox, [], narrativesSortBy, narratives, sortMembersBy, members))
         } catch (ex) {
             dispatch(loadError({
                 code: ex.name,
@@ -910,3 +902,6 @@ export function searchNarratives(searchBy: string) {
 
     }
 }
+
+
+

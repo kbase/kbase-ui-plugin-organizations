@@ -1,19 +1,23 @@
 import * as React from 'react'
 import * as orgModel from '../../../../../data/models/organization/model'
-import { Alert, Card, Menu, Icon, Dropdown, Modal } from 'antd'
+import { Alert, Card, Menu, Icon, Dropdown, Modal, Input, Select } from 'antd'
 import Member from '../../../../entities/MemberContainer'
 import './component.css'
 
 export interface MembersProps {
     organization: orgModel.Organization
     relation: orgModel.Relation
+    searchMembersBy: string
+    sortMembersBy: string
+    members: Array<orgModel.Member>
     onPromoteMemberToAdmin: (username: string) => void
     onRemoveMember: (username: string) => void
     onDemoteAdminToMember: (username: string) => void
+    onSearchMembers: (searchBy: string) => void
+    onSortMembers: (sortBy: string) => void
 }
 
 interface MembersState {
-
 }
 
 export default class Members extends React.Component<MembersProps, MembersState> {
@@ -125,12 +129,12 @@ export default class Members extends React.Component<MembersProps, MembersState>
             </div>
         )
 
-        if (this.props.organization.members.length === 0) {
+        if (this.props.members.length === 0) {
             members = (
                 <Alert type="info" message={message} />
             )
         } else {
-            members = this.props.organization.members.map((member) => {
+            members = this.props.members.map((member) => {
                 return (
                     <div className="Members-row simpleCard" key={member.username}>
                         <div className="Members-member">
@@ -151,11 +155,65 @@ export default class Members extends React.Component<MembersProps, MembersState>
         )
     }
 
-    render() {
+    renderSearchBar() {
+        const doChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            this.props.onSearchMembers(e.target.value)
+            // console.log('sorting by', e.target.value)
+        }
+        return (
+            <div style={{ paddingRight: '6px' }}>
+                <Input style={{ width: '100%', marginRight: '6px' }}
+                    placeholder="Filter members by name"
+                    onChange={doChange} />
+            </div>
+        )
+    }
+
+    renderSortBar() {
+        const handleSelect = (value: string) => {
+            this.props.onSortMembers(value)
+            // console.log('filtering by ', value)
+        }
+
         return (
             <React.Fragment>
-                {this.renderMembers()}
+                <span className="field-label">sort</span>
+                <Select onChange={handleSelect}
+                    style={{ width: '10em' }}
+                    dropdownMatchSelectWidth={true}
+                    defaultValue={this.props.sortMembersBy}
+                >
+                    <Select.Option value="name" key="name">Name</Select.Option>
+                    <Select.Option value="added" key="added">Date Joined</Select.Option>
+                </Select>
             </React.Fragment>
+        )
+    }
+
+    renderHeader() {
+        return (
+            <div className="ViewOrganizationMembers-headerRow">
+                <div className="ViewOrganizationMembers-searchCol">
+                    {this.renderSearchBar()}
+                </div>
+                <div className="ViewOrganizationMembers-sortCol">
+                    {this.renderSortBar()}
+                </div>
+            </div>
+        )
+    }
+
+    render() {
+        return (
+            <div className="ViewOrganizationMembers scrollable-flex-column">
+                <div className="ViewOrganizationMembers-header">
+                    {this.renderHeader()}
+                </div>
+                <div className="ViewOrganizationMembers-body scrollable-flex-column">
+                    {this.renderMembers()}
+                </div>
+
+            </div>
         )
     }
 }

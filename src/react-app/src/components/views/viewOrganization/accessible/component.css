@@ -327,3 +327,9 @@ max-width: 30em; */
     flex: 1 1 0px;
     text-align: right;
 }
+
+.ViewOrganization-membersCol {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}

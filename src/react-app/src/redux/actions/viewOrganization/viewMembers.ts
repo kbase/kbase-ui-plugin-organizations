@@ -3,9 +3,10 @@ import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from '../index'
 
-import { AppError, StoreState } from '../../../types'
+import { AppError, StoreState, ViewOrgViewModelKind } from '../../../types'
 import * as orgModel from '../../../data/models/organization/model'
 import * as uberModel from '../../../data/models/uber'
+import { AnError, makeError } from '../../../lib/error';
 
 // LOADING
 
@@ -320,5 +321,148 @@ export function removeMember(memberUsername: string) {
                     message: err.message
                 }))
             })
+    }
+}
+
+// SORT MEMBERS
+
+export interface SortMembers {
+    type: ActionFlag.VIEW_ORG_SORT_MEMBERS,
+    sortBy: string
+}
+
+export interface SortMembersStart {
+    type: ActionFlag.VIEW_ORG_SORT_MEMBERS_START
+}
+
+export interface SortMembersSuccess {
+    type: ActionFlag.VIEW_ORG_SORT_MEMBERS_SUCCESS
+    members: Array<orgModel.Member>
+    sortBy: string
+}
+
+export interface SortMembersError {
+    type: ActionFlag.VIEW_ORG_SORT_MEMBERS_ERROR
+    error: AnError
+}
+
+
+
+export function sortMembers(sortBy: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SORT_MEMBERS_START
+        })
+
+        const state = getState()
+
+        const viewModel = state.views.viewOrgView.viewModel
+
+        if (viewModel === null) {
+            dispatch({
+                type: ActionFlag.VIEW_ORG_SORT_MEMBERS_ERROR,
+                error: makeError({
+                    code: 'error',
+                    message: 'No view model'
+                })
+            })
+            return
+        }
+
+        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+            dispatch({
+                type: ActionFlag.VIEW_ORG_SORT_MEMBERS_ERROR,
+                error: makeError({
+                    code: 'error',
+                    message: 'Wrong org view model kind!'
+                })
+            })
+            return
+        }
+
+        const { members } = viewModel.organization as orgModel.Organization
+        const searchBy = viewModel.searchMembersBy
+
+        const sorted = orgModel.queryMembers(members, {
+            sortBy: sortBy,
+            searchBy: searchBy
+        })
+
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SORT_MEMBERS_SUCCESS,
+            members: sorted,
+            sortBy
+        })
+
+    }
+}
+
+// SEARCH MEMBERS
+
+export interface SearchMembers {
+    type: ActionFlag.VIEW_ORG_SEARCH_MEMBERS,
+    searchBy: string
+}
+
+export interface SearchtMembersStart {
+    type: ActionFlag.VIEW_ORG_SEARCH_MEMBERS_START
+}
+
+export interface SearchMembersSuccess {
+    type: ActionFlag.VIEW_ORG_SEARCH_MEMBERS_SUCCESS
+    members: Array<orgModel.Member>
+    searchBy: string
+}
+
+export interface SearchMembersError {
+    type: ActionFlag.VIEW_ORG_SEARCH_MEMBERS_ERROR
+    error: AnError
+}
+
+export function searchMembers(searchBy: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SORT_MEMBERS_START
+        })
+
+        const state = getState()
+        const viewModel = state.views.viewOrgView.viewModel
+
+        if (!viewModel) {
+            dispatch({
+                type: ActionFlag.VIEW_ORG_SORT_MEMBERS_ERROR,
+                error: makeError({
+                    code: 'error',
+                    message: 'No view model'
+                })
+            })
+            return
+        }
+
+        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+            dispatch({
+                type: ActionFlag.VIEW_ORG_SORT_MEMBERS_ERROR,
+                error: makeError({
+                    code: 'error',
+                    message: 'Wrong org view model kind!'
+                })
+            })
+            return
+        }
+
+        const { members } = viewModel.organization as orgModel.Organization
+        const sortBy = viewModel.sortMembersBy
+
+        const sorted = orgModel.queryMembers(members, {
+            sortBy: sortBy,
+            searchBy: searchBy
+        })
+
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SEARCH_MEMBERS_SUCCESS,
+            searchBy: searchBy,
+            members: sorted
+        })
+
     }
 }

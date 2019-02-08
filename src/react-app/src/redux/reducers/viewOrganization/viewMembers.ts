@@ -197,6 +197,55 @@ export function removeMemberSuccess(state: StoreState, action: actions.RemoveMem
     }
 }
 
+
+export function sortMembersSuccess(state: StoreState, action: actions.SortMembersSuccess): StoreState {
+    if (!state.views.viewOrgView.viewModel) {
+        return state
+    }
+    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            ...state.views,
+            viewOrgView: {
+                ...state.views.viewOrgView,
+                viewModel: {
+                    ...state.views.viewOrgView.viewModel,
+                    sortMembersBy: action.sortBy,
+                    members: action.members
+                }
+            }
+        }
+    }
+}
+
+export function searchMembersSuccess(state: StoreState, action: actions.SearchMembersSuccess): StoreState {
+    if (!state.views.viewOrgView.viewModel) {
+        return state
+    }
+    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            ...state.views,
+            viewOrgView: {
+                ...state.views.viewOrgView,
+                viewModel: {
+                    ...state.views.viewOrgView.viewModel,
+                    searchMembersBy: action.searchBy,
+                    members: action.members
+                }
+            }
+        }
+    }
+}
+
 function reducer(state: StoreState, action: Action): StoreState | null {
     // NB using discriminant union nature of the ActionX types to narrow
     // the type.
@@ -216,6 +265,10 @@ function reducer(state: StoreState, action: Action): StoreState | null {
             return demoteToMemberSuccess(state, action as actions.DemoteToMemberSuccess)
         case ActionFlag.VIEW_ORG_VIEW_MEMBERS_REMOVE_MEMBER_SUCCESS:
             return removeMemberSuccess(state, action as actions.RemoveMemberSuccess)
+        case ActionFlag.VIEW_ORG_SORT_MEMBERS_SUCCESS:
+            return sortMembersSuccess(state, action as actions.SortMembersSuccess)
+        case ActionFlag.VIEW_ORG_SEARCH_MEMBERS_SUCCESS:
+            return searchMembersSuccess(state, action as actions.SearchMembersSuccess)
         default:
             return null
     }

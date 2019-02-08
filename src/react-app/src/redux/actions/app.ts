@@ -41,8 +41,6 @@ export function appError(error: AppError): AppError {
     }
 }
 
-// Action Thunks
-
 export function appStart() {
     return (dispatch: ThunkDispatch<types.StoreState, void, Action>, getState: () => types.StoreState) => {
         // check and see if we are in an iframe
@@ -55,7 +53,6 @@ export function appStart() {
 
             // set up the message bus.
             let channelId = iframeParams.channelId;
-            console.log('channel', channelId);
 
             // route from paths passed in from kbase-ui
             switch (iframeParams.params.view) {

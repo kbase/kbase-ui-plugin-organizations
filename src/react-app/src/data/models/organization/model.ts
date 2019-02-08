@@ -604,6 +604,9 @@ function applyFilter(organizations: Array<BriefOrganization>, { roleType, roles,
     // }
 }
 
+
+
+// Narrative Sort and Search
 function narrativeSortByToComparator(sortBy: string) {
     switch (sortBy) {
         case 'name':
@@ -659,6 +662,65 @@ export interface NarrativeQuery {
 export function queryNarratives(narratives: Array<NarrativeResource>, query: NarrativeQuery) {
     const searched = applyNarrativeSearch(narratives, query.searchBy)
     const sorted = applyNarrativeSort(searched, query.sortBy)
+    return sorted
+}
+
+// Members Sort and Search
+
+function memberSortByToComparator(sortBy: string) {
+    switch (sortBy) {
+        case 'name':
+            // TODO: need to use user real name
+
+            return (a: Member, b: Member) => {
+                return a.username.localeCompare(b.username)
+            }
+        default:
+        case 'added':
+            return (a: Member, b: Member) => {
+                return b.joinedAt.getTime() - a.joinedAt.getTime()
+            }
+    }
+}
+
+export function applyMembersSort(members: Array<Member>, sortBy: string) {
+    if (!sortBy) {
+        return members
+    }
+    return members.slice().sort((a: Member, b: Member) => {
+        const c1 = memberSortByToComparator(sortBy)(a, b)
+        if (c1 === 0) {
+            if (sortBy !== 'name') {
+                return memberSortByToComparator('name')(a, b)
+            }
+        }
+        return c1
+    })
+}
+
+export function applyMembersSearch(members: Array<Member>, searchBy: string) {
+    const tokens = searchBy.split(/\s+/).map((token) => {
+        return new RegExp(token, 'i')
+    })
+    if (tokens.length === 0) {
+        return members
+    }
+    return members.slice().filter((member: Member) => {
+        return tokens.every((token: RegExp) => {
+            return (token.test(member.username) ||
+                token.test(member.title || ''))
+        })
+    })
+}
+
+export interface MembersQuery {
+    searchBy: string
+    sortBy: string
+}
+
+export function queryMembers(members: Array<Member>, query: MembersQuery) {
+    const searched = applyMembersSearch(members, query.searchBy)
+    const sorted = applyMembersSort(searched, query.sortBy)
     return sorted
 }
 
