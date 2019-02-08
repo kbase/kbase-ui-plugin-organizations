@@ -135,8 +135,18 @@ export default class Members extends React.Component<MembersProps, MembersState>
             )
         } else {
             members = this.props.members.map((member) => {
+                let isNew: boolean
+                if (this.props.organization.lastVisitedAt === null) {
+                    isNew = false
+                } else {
+                    isNew = this.props.organization.lastVisitedAt.getTime() < member.joinedAt.getTime()
+                }
+                const classNames = ['Members-row', 'simpleCard']
+                if (isNew) {
+                    classNames.push('Members-newMember')
+                }
                 return (
-                    <div className="Members-row simpleCard" key={member.username}>
+                    <div className={classNames.join(' ')} key={member.username}>
                         <div className="Members-member">
                             <Member member={member} avatarSize={50} />
                         </div>
@@ -154,6 +164,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
             </div>
         )
     }
+
 
     renderSearchBar() {
         const doChange = (e: React.ChangeEvent<HTMLInputElement>) => {

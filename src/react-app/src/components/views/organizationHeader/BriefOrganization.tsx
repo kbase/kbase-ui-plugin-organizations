@@ -223,8 +223,9 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                 <div>
                     <Tooltip placement="topRight" title={title}>
                         <span style={{ color: 'red', fontSize: '120%' }}>
-                            ●
-                    </span>
+                            {/* ● */}
+                            <Icon type="bell" theme="filled" />
+                        </span>
                     </Tooltip>
                 </div>
             )
@@ -232,7 +233,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             newAlert = (
                 <div>
                     <span style={{ color: 'transparent', fontSize: '120%' }}>
-                        ●
+                        <Icon type="bell" theme="filled" />
                     </span>
                 </div>
             )

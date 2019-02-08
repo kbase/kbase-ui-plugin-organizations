@@ -58,3 +58,7 @@
 .ViewOrganizationMembers-sortCol {
     flex: 0 0 auto;
 }
+
+.simpleCard.Members-newMember {
+    border: 1px red solid;
+}

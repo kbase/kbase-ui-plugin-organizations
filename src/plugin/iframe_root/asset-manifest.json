@@ -1,17 +1,17 @@
 {
-  "main.css": "./static/css/main.de421c21.chunk.css",
-  "main.js": "./static/js/main.91d67cbe.chunk.js",
-  "main.js.map": "./static/js/main.91d67cbe.chunk.js.map",
+  "main.css": "./static/css/main.a906717d.chunk.css",
+  "main.js": "./static/js/main.df79059f.chunk.js",
+  "main.js.map": "./static/js/main.df79059f.chunk.js.map",
   "static/css/1.1828447f.chunk.css": "./static/css/1.1828447f.chunk.css",
   "static/js/1.16559154.chunk.js": "./static/js/1.16559154.chunk.js",
   "static/js/1.16559154.chunk.js.map": "./static/js/1.16559154.chunk.js.map",
   "runtime~main.js": "./static/js/runtime~main.4a686d48.js",
   "runtime~main.js.map": "./static/js/runtime~main.4a686d48.js.map",
   "static/media/nouserpic.png": "./static/media/nouserpic.9af42ba9.png",
-  "static/media/index.css": "./static/media/oxygen-latin-400.cb94a645.woff2",
-  "static/css/main.de421c21.chunk.css.map": "./static/css/main.de421c21.chunk.css.map",
+  "static/media/index.css": "./static/media/oxygen-latin-300.58a4de4f.woff2",
+  "static/css/main.a906717d.chunk.css.map": "./static/css/main.a906717d.chunk.css.map",
   "static/css/1.1828447f.chunk.css.map": "./static/css/1.1828447f.chunk.css.map",
   "index.html": "./index.html",
-  "precache-manifest.309574a200d95c61085f2d64fffe6788.js": "./precache-manifest.309574a200d95c61085f2d64fffe6788.js",
+  "precache-manifest.4781ebf1356cccd09e8f8de231b7df93.js": "./precache-manifest.4781ebf1356cccd09e8f8de231b7df93.js",
   "service-worker.js": "./service-worker.js"
 }
