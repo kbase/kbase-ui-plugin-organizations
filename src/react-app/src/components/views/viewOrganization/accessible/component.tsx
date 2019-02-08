@@ -790,8 +790,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             this.props.onSearchNarratives(e.target.value)
         }
         return (
-            <div>
-                <Input style={{ width: '25em' }}
+            <div style={{ paddingRight: '6px' }}>
+                <Input style={{ width: '100%', marginRight: '6px' }}
                     placeholder="Filter narratives by title"
                     onChange={doChange} />
                 {/* <Button>
