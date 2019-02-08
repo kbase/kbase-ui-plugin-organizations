@@ -126,21 +126,21 @@ define([
         // Lifecycle
 
         /*
-                iframe messages lifecycle.
+                    iframe messages lifecycle.
 
-                create iframe, don't set source yet
-                set up postmessage listener on the iframe content window
-                listem for 'ready' message
-                load content for iframe
-                content will set up listening on window's postmessage too
-                content sends 'ready' message
-                host receives ready message and finishes setting up postmessage listener for the
-                    iframe client
-                host sets up all listeners to support client
-                life goes on
-                when client is being removed e.g. for navigation it is sent the 'stop' message given
-                    some interval in which to finish this work before it is just axed.
-                */
+                    create iframe, don't set source yet
+                    set up postmessage listener on the iframe content window
+                    listem for 'ready' message
+                    load content for iframe
+                    content will set up listening on window's postmessage too
+                    content sends 'ready' message
+                    host receives ready message and finishes setting up postmessage listener for the
+                        iframe client
+                    host sets up all listeners to support client
+                    life goes on
+                    when client is being removed e.g. for navigation it is sent the 'stop' message given
+                        some interval in which to finish this work before it is just axed.
+                    */
 
         setupChannel() {
             this.channel = new WindowChannel.Channel({
@@ -209,7 +209,7 @@ define([
             });
 
             this.channel.on('ready', () => {
-                console.log('READY!!!!!');
+                // console.log('READY!!!!!');
                 this.channel.send('start', {
                     token: this.runtime.service('session').getAuthToken(),
                     username: this.runtime.service('session').getUsername(),
