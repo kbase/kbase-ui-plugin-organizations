@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as orgModel from '../../../../../data/models/organization/model'
-import { Button, Menu, Dropdown, Icon } from 'antd'
+import { Button, Menu, Dropdown, Icon, Alert } from 'antd'
 import OrganizationEntity from '../../../../entities/organization/loader'
 import './component.css'
 
@@ -68,6 +68,16 @@ export default class RelatedOrganizations extends React.Component<RelatedOrganiz
         if (RelatedOrganizations.length === 0) {
             return (
                 <p>Sorry, no related organizations</p>
+            )
+        }
+        if (this.props.relatedOrganizations.length === 0) {
+            const message = (
+                <div style={{ fontStyle: 'italic', textAlign: 'center' }}>
+                    No related organizations
+                </div>
+            )
+            return (
+                <Alert type="info" message={message} />
             )
         }
         const relatedOrgs = this.props.relatedOrganizations.map((organizationId: string) => {

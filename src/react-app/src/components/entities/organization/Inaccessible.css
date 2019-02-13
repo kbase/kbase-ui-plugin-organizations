@@ -1,1 +1,25 @@
-.OrganizationEntityt-Inaccessible {}
+.OrganizationEntity-Inaccessible {
+    display: flex;
+    flex-direction: row;
+}
+
+.OrganizationEntity-Inaccessible-logoCol {
+    flex: 0 0 30px;
+    margin-right: 4px;
+}
+
+.OrganizationEntity-Inaccessible-mainCol {
+    flex: 1 1 0px;
+}
+
+.OrganizationEntity-Inaccessible-name {
+    font-weight: bold;
+}
+
+.OrganizationEntity-Inaccessible-researchInterests {
+    font-style: italic;
+}
+
+.OrganizationEntity-Inaccessible-logo {}
+
+.OrganizationEntity-Inaccessible-createdAt {}

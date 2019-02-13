@@ -171,7 +171,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
         let members: JSX.Element | Array<JSX.Element>
         const message = (
             <div style={{ fontStyle: 'italic', textAlign: 'center' }}>
-                No members.
+                No members
             </div>
         )
 
