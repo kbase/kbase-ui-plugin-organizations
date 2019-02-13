@@ -6,6 +6,7 @@ import NiceElapsedTime from './NiceElapsedTime'
 import './OrganizationNarrative.css'
 
 export interface Props {
+    organization: orgModel.Organization
     narrative: orgModel.NarrativeResource
     onGetViewAccess: (narrative: orgModel.NarrativeResource) => void
 }
@@ -48,7 +49,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                             View Only (public)
                         </span>
                     )
-                    buttonTooltip = 'Although you have View-Only access to this Narrative due to it being shared globally, you can obtain personal View-Only access by clicking this button'
+                    buttonTooltip = 'Although you have View-Only access to this Narrative due to it being shared globally, you may obtain personal View-Only access by clicking this button'
                     shareButton = (
                         <Button size="small" onClick={() => { this.onGetViewAccess.call(this) }}>
                             Click for View Access
@@ -159,28 +160,27 @@ export default class OrganizationNarrative extends React.Component<Props, State>
 
     renderNarrative() {
         const narrative = this.props.narrative
-        if (narrative.permission === orgModel.UserWorkspacePermission.NONE) {
-            return (
-                <React.Fragment>
-                    <div className="title">{narrative.title}</div>
-                    {/* <div>{this.renderPublicPermission(narrative)}</div> */}
-                    <div>{this.renderNarrativePermission(narrative)}</div>
-                </React.Fragment>
-            )
-        } else {
+        if (this.props.organization.isMember) {
+            if (narrative.permission === orgModel.UserWorkspacePermission.NONE) {
+                return (
+                    <React.Fragment>
+                        <a href={'/narrative/' + narrative.workspaceId} target="_blank">
+                            <div className="title">{narrative.title}</div>
+                        </a>
+                        {/* <div>{this.renderPublicPermission(narrative)}</div> */}
+                        <div>{this.renderNarrativePermission(narrative)}</div>
+                    </React.Fragment>
+                )
+            }
             return (
                 <Narrative workspaceId={narrative.workspaceId} />
-                // <React.Fragment>
-                //     <div className="title"><a href={'https://ci.kbase.us/narrative/ws.' + narrative.workspaceId + '.obj.' + '1'} target="_blank">{narrative.title}</a></div>
-                //     <div>{this.renderPublicPermission(narrative)}</div>
-                //     <div>{this.renderNarrativePermission(narrative)}</div>
-
-                //     <div>
-                //         <Narrative workspaceId={narrative.workspaceId} />
-                //     </div>
-                // </React.Fragment>
             )
         }
+        return (
+            <a href={'/narrative/' + narrative.workspaceId} target="_blank">
+                <div className="title">{narrative.title}</div>
+            </a>
+        )
     }
 
     renderResource() {

@@ -105,7 +105,7 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
             case narrativeModel.NarrativeAccess.EDIT:
                 iconType = 'edit'
                 tooltip = (
-                    <span>This narrative is shared with you with <b>edit</b>> access (<i>visit narrative to request additional access</i>)</span>
+                    <span>This narrative is shared with you with <b>edit</b> access (<i>visit narrative to request additional access</i>)</span>
                 )
                 break
             case narrativeModel.NarrativeAccess.ADMIN:

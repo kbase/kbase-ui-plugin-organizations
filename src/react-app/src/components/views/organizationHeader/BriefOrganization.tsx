@@ -189,7 +189,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
 
     renderPrivacy() {
         const org = this.props.organization
-        if (org.private) {
+        if (org.isPrivate) {
             return (
                 <Tooltip
                     placement="bottomRight"

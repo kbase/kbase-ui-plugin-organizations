@@ -9,6 +9,7 @@ import * as orgModel from '../../../../../data/models/organization/model'
 export interface OwnProps {
     organization: orgModel.Organization
     relation: orgModel.Relation
+    onReloadOrg: (id: string) => void
 }
 
 interface StateProps {

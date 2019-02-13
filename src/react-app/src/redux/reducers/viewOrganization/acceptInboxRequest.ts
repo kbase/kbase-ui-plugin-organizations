@@ -11,6 +11,7 @@ export function acceptInboxRequestSuccess(state: StoreState, action: actions.Acc
     if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
         return state
     }
+
     return {
         ...state,
         views: {

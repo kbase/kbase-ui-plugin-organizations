@@ -6,7 +6,9 @@ import acceptInboxRequest from './viewOrganization/acceptInboxRequest'
 import viewMembers from './viewOrganization/viewMembers'
 import denyInboxRequest from './viewOrganization/denyInboxRequest'
 import cancelOutboxRequest from './viewOrganization/cancelOutboxRequests'
-import { OrganizationModel } from '../../data/models/organization/model';
+import manageRelatedOrganizations from './viewOrganization/manageRelatedOrganizations'
+import relatedOrganizations from './viewOrganization/relatedOrganizations'
+
 
 export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
     return {
@@ -44,7 +46,14 @@ export function loadNormalSuccess(state: types.StoreState, action: actions.LoadN
                     narratives: action.narratives,
                     sortMembersBy: action.sortMembersBy,
                     members: action.members,
-                    searchMembersBy: ''
+                    searchMembersBy: '',
+                    subViews: {
+                        manageRelatedOrganizationsView: {
+                            state: types.ViewState.NONE,
+                            viewModel: null,
+                            error: null
+                        }
+                    }
                 } as types.ViewOrgViewModel
             }
         }
@@ -228,7 +237,9 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
     return acceptInboxRequest(state, action) ||
         denyInboxRequest(state, action) ||
         cancelOutboxRequest(state, action) ||
-        viewMembers(state, action)
+        viewMembers(state, action) ||
+        manageRelatedOrganizations(state, action) ||
+        relatedOrganizations(state, action)
 }
 
 export default reducer

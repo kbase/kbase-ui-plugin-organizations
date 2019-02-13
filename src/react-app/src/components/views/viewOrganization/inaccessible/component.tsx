@@ -127,7 +127,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         const description = (
             <React.Fragment>
                 {this.renderMessage()}
-
                 <div>
                     {this.renderJoinButton()}
                 </div>
@@ -138,6 +137,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 message={message}
                 description={description}
                 type="info"
+                showIcon={true}
+                icon={(<Icon type="lock" />)}
                 style={{ width: '50em', margin: '20px auto' }}
                 className="ViewInaccessiblePrivateOrganization-message" />
         )

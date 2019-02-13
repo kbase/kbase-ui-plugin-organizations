@@ -92,7 +92,7 @@ export interface Member {
     joinedAt: Date
     lastVisitedAt: Date | null
     type: MemberType
-    title: string
+    title: string | null
 }
 
 export interface MemberUpdate {
@@ -129,18 +129,24 @@ export interface BriefOrganization {
     id: string
     name: string
     logoUrl: string | null
-    private: boolean
+    isPrivate: boolean
     homeUrl: string | null
     researchInterests: string | null
     // TODO: we need researchInterests here
     owner: Member
     relation: UserRelationToOrganization
+
+    isMember: boolean
+    isAdmin: boolean
+    isOwner: boolean
+
     createdAt: Date
     modifiedAt: Date
     lastVisitedAt: Date | null
 
     memberCount: number
     narrativeCount: number
+    relatedOrganizations: Array<OrganizationID>
 }
 
 export enum OrganizationKind {
@@ -159,8 +165,12 @@ export interface Organization {
     kind: OrganizationKind.NORMAL
     id: string
     name: string
+
     isPrivate: boolean
     isMember: boolean
+    isAdmin: boolean
+    isOwner: boolean
+
     relation: UserRelationToOrganization
     logoUrl: string | null
     homeUrl: string | null
@@ -178,6 +188,7 @@ export interface Organization {
     memberCount: number
     narrativeCount: number
     appCount: number
+    relatedOrganizations: Array<OrganizationID>
 }
 
 // export interface RequestStatus {
@@ -330,6 +341,8 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         name: group.name,
         isPrivate: group.private,
         isMember: (group.role !== "None"),
+        isAdmin: (group.role === "Admin" || group.role === "Owner"),
+        isOwner: (group.role === "Owner"),
         relation: groupRoleToUserRelation(group.role),
         logoUrl: group.custom.logourl || null,
         homeUrl: group.custom.homeurl || null,
@@ -345,7 +358,8 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         apps: [],
         memberCount: group.memcount,
         narrativeCount: group.rescount.workspace || 0,
-        appCount: group.rescount.catalogmethod || 0
+        appCount: group.rescount.catalogmethod || 0,
+        relatedOrganizations: group.custom ? group.custom.relatedgroups ? group.custom.relatedgroups.split(',') : [] : []
     }
 }
 
@@ -525,9 +539,9 @@ function applyFilter(organizations: Array<BriefOrganization>, { roleType, roles,
     function applyPrivacy(org: BriefOrganization) {
         switch (privacy) {
             case 'public':
-                return !org.private
+                return !org.isPrivate
             case 'private':
-                return org.private
+                return org.isPrivate
             case 'any':
                 return true
             default:
@@ -724,6 +738,16 @@ export function queryMembers(members: Array<Member>, query: MembersQuery) {
     return sorted
 }
 
+// function getCustomField(group: groupsApi.Group | groupsApi.BriefGroup, name: string): string | null {
+//     if (!group.custom) {
+//         return null
+//     }
+//     if (name in group.custom) {
+//         return group.custom[name]
+//     }
+//     return null
+// }
+
 export class OrganizationModel {
 
     params: ConstructorParams
@@ -766,7 +790,7 @@ export class OrganizationModel {
         }
         return this.groupsClient.getGroupById(id)
             .then((group) => {
-
+                console.log('group', group)
                 if (group.role === "None" && group.private) {
                     throw new Error('Inaccessible Organization')
                 }
@@ -802,20 +826,14 @@ export class OrganizationModel {
             })
 
         return ownOrgs
-
-        // return Promise.all(ownOrgs.map((org: BriefOrganization) => {
-        //     return this.getOrg(org.id)
-        // }))
     }
-
-
 
     listGroupToBriefOrganization(group: groupsApi.BriefGroup): BriefOrganization {
         return {
             id: group.id,
             name: group.name,
             logoUrl: group.custom.logourl || null,
-            private: group.private,
+            isPrivate: group.private,
             homeUrl: group.custom.homeurl || null,
             researchInterests: group.custom.researchinterests || null,
             owner: {
@@ -825,20 +843,33 @@ export class OrganizationModel {
                 joinedAt: new Date(group.createdate),
                 title: 'Owner'
             },
+
+            // owner: {
+            //     username: group.owner.name,
+            //     lastVisitedAt: group.owner.lastvisit ? new Date(group.owner.lastvisit) : null,
+            //     type: MemberType.OWNER,
+            //     joinedAt: new Date(group.owner.joined),
+            //     title: group.owner.custom ? group.owner.custom.title : null
+            // },
             // fix these...
             relation: groupRoleToUserRelation(group.role),
+            isMember: (group.role !== "None"),
+            isAdmin: (group.role === "Admin" || group.role === "Owner"),
+            isOwner: (group.role === "Owner"),
             createdAt: new Date(group.createdate),
             modifiedAt: new Date(group.moddate),
             lastVisitedAt: group.lastvisit ? new Date(group.lastvisit) : null,
             memberCount: group.memcount || 0,
-            narrativeCount: group.rescount.workspace || 0
+            narrativeCount: group.rescount.workspace || 0,
+            relatedOrganizations: group.custom ? group.custom.relatedgroups ? group.custom.relatedgroups.split(',') : [] : []
         }
     }
 
     async getAllOrgs2(): Promise<Array<BriefOrganization>> {
         const groups = await this.groupsClient.listGroups()
         const orgs = groups.map((group) => {
-            return this.listGroupToBriefOrganization(group)
+            const org = this.listGroupToBriefOrganization(group)
+            return org
         })
         return orgs
     }
@@ -858,58 +889,9 @@ export class OrganizationModel {
     }
 
     async ownOrgs(username: groupsApi.Username): Promise<QueryResults> {
-        // const orgs = await this.getAllOrgs2()
-
-        // const groupsClient = new groupsApi.GroupsClient({
-        //     url: this.params.groupsServiceURL,
-        //     token: this.params.token
-        // })
-
-        // const groups = await groupsClient.getGroups()
-
-        // const ownGroups = groups.filter((group: groupsApi.Group) => {
-        //     if (group.owner.name === username) {
-        //         return true
-        //     }
-        //     if (group.members.find((member) => {
-        //         return (member.name === username)
-        //     })) {
-        //         return true
-        //     }
-        //     if (group.admins.find((member) => {
-        //         return (member.name === username)
-        //     })) {
-        //         return true
-        //     }
-        //     return false
-        // })
-
-
-        // const ownOrganizations = ownGroups.map((group) => {
-        //     // return groupToOrganization(group, username)
-        //     return this.listGroupToBriefOrganization(group)
-        // })
-
         const orgs = await this.getAllOrgs2()
-
-
         const ownOrgs = orgs.filter((org: BriefOrganization) => {
-
             return (org.relation !== UserRelationToOrganization.NONE)
-            // if (org.owner === username) {
-            //     return true
-            // }
-            // if (org.members.find((member) => {
-            //     return (member.name === username)
-            // })) {
-            //     return true
-            // }
-            // if (group.admins.find((member) => {
-            //     return (member.name === username)
-            // })) {
-            //     return true
-            // }
-            // return false
         })
 
         return {
@@ -1131,6 +1113,22 @@ export class OrganizationModel {
             return stringToRequestStatus(status)
         }
         throw new Error('expected request status, got none')
+    }
+
+    async addRelatedOrganization({ organizationId, relatedOrganizationId }: { organizationId: OrganizationID, relatedOrganizationId: OrganizationID }): Promise<OrganizationID> {
+        const groupsClient = new groupsApi.GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+        return await groupsClient.addRelatedGroup(organizationId, relatedOrganizationId)
+    }
+
+    async removeRelatedOrganization({ organizationId, relatedOrganizationId }: { organizationId: OrganizationID, relatedOrganizationId: OrganizationID }): Promise<OrganizationID> {
+        const groupsClient = new groupsApi.GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+        return await groupsClient.removeRelatedGroup(organizationId, relatedOrganizationId)
     }
 }
 

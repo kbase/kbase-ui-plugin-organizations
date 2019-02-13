@@ -8,7 +8,6 @@ import * as narrativeModel from '../../data/models/narrative'
 import { AppError, StoreState } from '../../types'
 
 export interface EntityAction extends Action {
-
 }
 
 export interface UserLoader extends EntityAction {

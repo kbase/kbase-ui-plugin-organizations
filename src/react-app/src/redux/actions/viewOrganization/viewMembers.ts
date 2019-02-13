@@ -6,7 +6,8 @@ import { ActionFlag } from '../index'
 import { AppError, StoreState, ViewOrgViewModelKind } from '../../../types'
 import * as orgModel from '../../../data/models/organization/model'
 import * as uberModel from '../../../data/models/uber'
-import { AnError, makeError } from '../../../lib/error';
+import { AnError, makeError } from '../../../lib/error'
+import { reload as reloadOrg } from '../viewOrg'
 
 // LOADING
 
@@ -312,8 +313,9 @@ export function removeMember(memberUsername: string) {
 
         orgClient.removeMember(viewModel.organization.id, memberUsername)
             .then(() => {
-                dispatch(removeMemberSuccess(memberUsername))
+                // dispatch(removeMemberSuccess(memberUsername))
                 // dispatch(load(viewModel.organization.id))
+                dispatch(reloadOrg(viewModel.organization.id))
             })
             .catch((err: Error) => {
                 dispatch(removeMemberError({

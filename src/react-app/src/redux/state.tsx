@@ -1,7 +1,9 @@
 import {
     StoreState, SortDirection, AuthState, AppState,
     EditState, SaveState, ValidationState, BrowseOrgsState, ComponentLoadingState
-} from "../types";
+} from "../types"
+
+import * as orgModel from '../data/models/organization/model'
 
 // rawOrganizations: [],
 //                         organizations: [],
@@ -30,6 +32,9 @@ export class StateInstances {
                     all: []
                 },
                 narratives: {
+                    byId: new Map()
+                },
+                organizations: {
                     byId: new Map()
                 }
             },

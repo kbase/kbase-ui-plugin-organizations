@@ -24,6 +24,11 @@ export interface Load extends Action {
     organizationId: string
 }
 
+export interface ReLoad extends Action {
+    type: ActionFlag.VIEW_ORG_RELOAD
+    organizationId: string
+}
+
 export interface LoadStart extends Action {
     type: ActionFlag.VIEW_ORG_LOAD_START
 }
@@ -514,9 +519,6 @@ export function unload() {
             groupsServiceURL: config.services.Groups.url
         })
 
-        //  await userProfileClient.setLastVisitedAt(viewModel.organization.id, new Date())
-
-
         if (viewModel.organization.relation === orgModel.UserRelationToOrganization.MEMBER ||
             viewModel.organization.relation === orgModel.UserRelationToOrganization.ADMIN ||
             viewModel.organization.relation === orgModel.UserRelationToOrganization.OWNER) {
@@ -524,8 +526,6 @@ export function unload() {
         }
 
         dispatch(dataServices.load())
-
-        // Update the user's profile to indicate that this org has been "viewed".
 
         dispatch({
             type: ActionFlag.VIEW_ORG_UNLOAD
@@ -597,6 +597,100 @@ export function load(organizationId: string) {
             const members = orgModel.queryMembers(organization.members, {
                 sortBy: sortMembersBy,
                 searchBy: ''
+            })
+
+            dispatch(loadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations,
+                requestInbox, requestOutbox, [], narrativesSortBy, narratives, sortMembersBy, members))
+        } catch (ex) {
+            dispatch(loadError({
+                code: ex.name,
+                message: ex.message
+            }))
+        }
+    }
+}
+
+export function reload(organizationId: string) {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        const {
+            auth: { authorization: { token, username } },
+            app: { config }
+        } = getState()
+
+        const uberClient = new uberModel.UberModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url,
+            serviceWizardURL: config.services.ServiceWizard.url,
+            userProfileServiceURL: config.services.UserProfile.url,
+            workspaceServiceURL: config.services.Workspace.url
+        })
+
+        const requestClient = new requestModel.RequestsModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url,
+        })
+
+        const orgClient = new orgModel.OrganizationModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+
+        try {
+            // existing org view.
+            const state = getState()
+            const viewModel = state.views.viewOrgView.viewModel
+
+            if (!viewModel) {
+                dispatch(loadError({
+                    code: 'error',
+                    message: 'No view model'
+                }))
+                return
+            }
+
+            if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+                dispatch(loadError({
+                    code: 'error',
+                    message: 'Wrong org view model kind!'
+                }))
+                return
+            }
+
+            const { organization, relation } = await uberClient.getOrganizationForUser(organizationId)
+            if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
+                const requestInbox = await requestClient.getRequestInboxForOrg(organizationId)
+                dispatch(loadInaccessiblePrivateSuccess(organization, relation, requestInbox))
+                return
+            }
+
+            let openRequest
+            let orgRequests: Array<requestModel.Request> | null
+            let orgInvitations: Array<requestModel.Request> | null
+            if (relation.type === orgModel.UserRelationToOrganization.OWNER ||
+                relation.type === orgModel.UserRelationToOrganization.ADMIN) {
+                orgRequests = await requestClient.getPendingOrganizationRequestsForOrg(organizationId)
+                orgInvitations = await requestClient.getOrganizationInvitationsForOrg(organizationId)
+                openRequest = await orgClient.getOpenRequestStatus({ organizationId })
+            } else {
+                orgRequests = null
+                orgInvitations = null
+                openRequest = orgModel.RequestStatus.INAPPLICABLE
+            }
+
+            const requestInbox: Array<requestModel.Request> = await requestClient.getCombinedRequestInboxForOrg(organizationId)
+            const requestOutbox: Array<requestModel.Request> = await requestClient.getRequestOutboxForOrg(organizationId)
+
+            // default narrative sort?
+            const narrativesSortBy = 'added'
+            const narratives = orgModel.queryNarratives(organization.narratives, {
+                sortBy: viewModel.sortNarrativesBy,
+                searchBy: viewModel.searchNarrativesBy
+            })
+
+            const sortMembersBy = 'added'
+            const members = orgModel.queryMembers(organization.members, {
+                sortBy: viewModel.sortMembersBy,
+                searchBy: viewModel.searchMembersBy
             })
 
             dispatch(loadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations,
@@ -722,7 +816,6 @@ export function acceptJoinInvitation(requestId: string) {
                 message: ex.message
             }))
         }
-
     }
 }
 

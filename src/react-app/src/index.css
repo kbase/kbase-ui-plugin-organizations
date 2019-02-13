@@ -102,13 +102,12 @@ a:hover {
     border-radius: 4px;
     /* box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5); */
     /* padding: 4px; */
-    margin: 0 0 0 0;
-    margin-right: 4px;
+    margin: 0 4px 4px 0;
     padding: 4px;
 }
 
 .simpleCard+.simpleCard {
-    margin-top: 20px;
+    margin-top: 6px;
 }
 
 .simpleCard:hover {

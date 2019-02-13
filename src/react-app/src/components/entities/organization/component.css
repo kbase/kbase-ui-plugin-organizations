@@ -1,0 +1,25 @@
+.OrganizationEntity-Accessible {
+    display: flex;
+    flex-direction: row;
+}
+
+.OrganizationEntity-Accessible-logoCol {
+    flex: 0 0 30px;
+    margin-right: 4px;
+}
+
+.OrganizationEntity-Accessible-mainCol {
+    flex: 1 1 0px;
+}
+
+.OrganizationEntity-Accessible-name {
+    font-weight: bold;
+}
+
+.OrganizationEntity-Accessible-researchInterests {
+    font-style: italic;
+}
+
+.OrganizationEntity-Accessible-logo {}
+
+.OrganizationEntity-Accessible-createdAt {}

@@ -149,6 +149,57 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         )
     }
 
+    renderPermission(narrative: AccessibleNarrative) {
+        switch (narrative.access) {
+            case narrativeModel.NarrativeAccess.VIEW:
+                return (
+                    <span>
+                        <Icon type="eye" /> View
+                    </span>
+                )
+            case narrativeModel.NarrativeAccess.EDIT:
+                return (
+                    <span>
+                        <Icon type="edit" /> Edit
+                    </span>
+                )
+            case narrativeModel.NarrativeAccess.ADMIN:
+                return (
+                    <span>
+                        <Icon type="unlock" /> Admin
+                    </span>
+                )
+            case narrativeModel.NarrativeAccess.OWNER:
+                return (
+                    <span>
+                        <Icon type="crown" /> Owner
+                    </span>
+                )
+            default:
+                return (
+                    <span>
+                        ERROR
+                    </span>
+                )
+        }
+    }
+
+    renderPublicPermission(narrative: AccessibleNarrative) {
+        if (narrative.isPublic) {
+            return (
+                <span>
+                    <Icon type="global" /> Public
+                </span>
+            )
+        } else {
+            return (
+                <span>
+                    <Icon type="lock" /> Private
+                </span>
+            )
+        }
+    }
+
     renderNarrative(narrative: AccessibleNarrative) {
         return (
             <React.Fragment>
@@ -161,6 +212,12 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                         <User userId={narrative.owner} avatarSize={20} />
                     </div>
                 </div> */}
+                {/* <div className="RequestNarrative-permission">
+                    {this.renderPermission(narrative)}
+                </div> */}
+                <div className="RequestNarrative-publicPermission">
+                    {this.renderPublicPermission(narrative)}
+                </div>
                 <div className="RequestNarrative-modifiedAt">
                     <span className="field-label">
                         <Icon type="save" />

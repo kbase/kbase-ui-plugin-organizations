@@ -1,0 +1,36 @@
+.RelatedOrganization {
+    display: flex;
+    flex-direction: row;
+}
+
+.RelatedOrganization+.RelatedOrganization {
+    /* margin-top: 4px; */
+}
+
+.RelatedOrganization-orgCol {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.RelatedOrganization-relatedCol {
+    flex: 0 0 1.5em;
+    text-align: center;
+}
+
+.RelatedOrganization-actionCol {
+    flex: 0 0 1.5em;
+}
+
+.RelatedOrganization-orgInfoCol {
+    flex: 1 1 0px;
+}
+
+.RelatedOrganization-logoCol {
+    flex: 0 0 20px;
+    margin-right: 4px;
+}
+
+.RelatedOrganization-name {
+    font-weight: bold;
+}

@@ -3,6 +3,7 @@ import * as orgModel from '../../../../../data/models/organization/model'
 import { Alert, Card, Menu, Icon, Dropdown, Modal, Input, Select } from 'antd'
 import Member from '../../../../entities/MemberContainer'
 import './component.css'
+import { organizationLoader } from '../../../../../redux/actions/entities';
 
 export interface MembersProps {
     organization: orgModel.Organization
@@ -15,32 +16,78 @@ export interface MembersProps {
     onDemoteAdminToMember: (username: string) => void
     onSearchMembers: (searchBy: string) => void
     onSortMembers: (sortBy: string) => void
+    onReloadOrg: (id: string) => void
 }
 
 interface MembersState {
+    confirmMemberRemoval: {
+        member: orgModel.Member
+    } | null
 }
 
 export default class Members extends React.Component<MembersProps, MembersState> {
     constructor(props: MembersProps) {
         super(props)
+        this.state = {
+            confirmMemberRemoval: null
+        }
     }
 
-    onConfirmRemoveMember(memberUsername: orgModel.Username) {
-        const confirmed = (() => {
-            this.props.onRemoveMember(memberUsername)
-        })
-        Modal.confirm({
-            title: 'Really remove this user?',
-            content: (
-                <p>
-                    This is not reversible.
-                </p>
-            ),
-            width: '50em',
-            onOk: () => {
-                confirmed()
+    onConfirmRemoveMember(member: orgModel.Member) {
+        console.log('confirming?', member)
+        this.setState({
+            confirmMemberRemoval: {
+                member: member
             }
         })
+    }
+
+    renderConfirmMemberRemoval() {
+        if (!this.state.confirmMemberRemoval) {
+            return
+        }
+        const member = this.state.confirmMemberRemoval.member
+        const confirmed = (() => {
+            this.props.onRemoveMember(member.username)
+            this.setState({
+                confirmMemberRemoval: null
+            })
+        })
+        const canceled = (() => {
+            this.setState({
+                confirmMemberRemoval: null
+            })
+        })
+        const title = 'Confirm Removal of Member'
+        const content = (
+            <React.Fragment>
+                <p>
+                    Please confirm removal of this member from this organization.
+                </p>
+                <div className="simpleCard" style={{ marginBottom: '1em' }}>
+                    <Member member={member} avatarSize={20} />
+                </div>
+                <p>
+                    This user as well as members of this organization will receive a notification
+                    of the removal.
+                </p>
+                <p>
+                    Any Narratives associated by this member with this Organization will be unaffected. This member
+                    will also retain any Narrative permissions granted through this Organization.
+                </p>
+            </React.Fragment>
+        )
+        return (
+            <Modal
+                title={title}
+                width="50em"
+                visible={true}
+                onOk={() => { confirmed() }}
+                onCancel={() => { canceled() }}
+                okText="Confirm">
+                {content}
+            </Modal>
+        )
     }
 
     onMemberMenu(key: string, member: orgModel.Member) {
@@ -49,7 +96,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
                 this.props.onPromoteMemberToAdmin(member.username)
                 break
             case 'removeMember':
-                this.onConfirmRemoveMember(member.username)
+                this.onConfirmRemoveMember(member)
                 break
         }
     }
@@ -215,16 +262,22 @@ export default class Members extends React.Component<MembersProps, MembersState>
     }
 
     render() {
+        let confirm
+        if (this.state.confirmMemberRemoval) {
+            confirm = this.renderConfirmMemberRemoval()
+        }
         return (
-            <div className="ViewOrganizationMembers scrollable-flex-column">
-                <div className="ViewOrganizationMembers-header">
-                    {this.renderHeader()}
+            <React.Fragment>
+                <div className="ViewOrganizationMembers scrollable-flex-column">
+                    <div className="ViewOrganizationMembers-header">
+                        {this.renderHeader()}
+                    </div>
+                    <div className="ViewOrganizationMembers-body scrollable-flex-column">
+                        {this.renderMembers()}
+                    </div>
                 </div>
-                <div className="ViewOrganizationMembers-body scrollable-flex-column">
-                    {this.renderMembers()}
-                </div>
-
-            </div>
+                {confirm}
+            </React.Fragment>
         )
     }
 }

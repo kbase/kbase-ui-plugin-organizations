@@ -105,7 +105,7 @@ export function load(organizationId: string) {
 
             const editableProfile: orgModel.EditableMemberProfile = {
                 title: {
-                    value: thisMember.title,
+                    value: thisMember.title || '',
                     remoteValue: thisMember.title,
                     syncState: SyncState.NEW,
                     validationState: {

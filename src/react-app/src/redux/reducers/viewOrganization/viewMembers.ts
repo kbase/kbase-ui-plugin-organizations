@@ -179,6 +179,12 @@ export function removeMemberSuccess(state: StoreState, action: actions.RemoveMem
         return (member.username !== action.memberUsername)
     })
 
+    const sortedMembers = viewModel.members.filter((member) => {
+        return (member.username !== action.memberUsername)
+    })
+
+    console.log('members?', members)
+
     return {
         ...state,
         views: {
@@ -190,7 +196,8 @@ export function removeMemberSuccess(state: StoreState, action: actions.RemoveMem
                     organization: {
                         ...viewModel.organization,
                         members: members
-                    }
+                    },
+                    members: sortedMembers
                 }
             }
         }

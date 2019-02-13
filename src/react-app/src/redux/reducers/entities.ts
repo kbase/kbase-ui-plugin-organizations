@@ -1,7 +1,8 @@
 
 import * as actions from '../actions/entities'
-import { StoreState } from '../../types';
-import { ActionFlag } from '../actions';
+import { StoreState } from '../../types'
+import { ActionFlag } from '../actions'
+import organizationsReducer from './entities/organization'
 
 function userLoaderSuccess(state: StoreState, action: actions.UserLoaderSuccess) {
     const users = state.entities.users
@@ -54,7 +55,7 @@ function loadNarrativeSuccess(state: StoreState, action: actions.LoadNarrativeSu
 
 // TODO: start and error
 
-function reducer(state: StoreState, action: actions.EntityAction): StoreState | null {
+export default function reducer(state: StoreState, action: actions.EntityAction): StoreState | null {
     switch (action.type) {
         case ActionFlag.ENTITY_USER_LOADER_SUCCESS:
             return userLoaderSuccess(state, action as actions.UserLoaderSuccess)
@@ -62,9 +63,8 @@ function reducer(state: StoreState, action: actions.EntityAction): StoreState | 
             return organizationLoaderSuccess(state, action as actions.OrganizationLoaderSuccess)
         case ActionFlag.ENTITY_NARRATIVE_LOAD_SUCCESS:
             return loadNarrativeSuccess(state, action as actions.LoadNarrativeSuccess)
-        default:
-            return null
     }
+
+    return organizationsReducer(state, action)
 }
 
-export default reducer

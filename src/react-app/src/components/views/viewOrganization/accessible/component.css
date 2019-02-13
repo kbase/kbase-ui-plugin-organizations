@@ -67,17 +67,11 @@ padding:4px; */
 }
 
 .ViewOrganization-infoColumn {
-    /* flex: 1 1 0px; */
-    /* flex: 0 0 400px; */
-    /* width: 15em; */
     display: flex;
     flex-direction: column;
     margin-left: 10px;
     min-height: 0;
     width: 30em;
-    /* min-width: 15em;
-max-width: 30em; */
-    /* overflow-y: auto; */
 }
 
 .ViewOrganization-infoTable {
@@ -201,6 +195,10 @@ max-width: 30em; */
     min-height: 0;
 }
 
+.ViewOrganization-tabs.ant-tabs .ant-tabs-nav .ant-tabs-tab-active {
+    font-weight: normal;
+}
+
 .ViewOrganization-tabCount {
     color: rgba(200, 200, 200, 1);
 }
@@ -213,6 +211,7 @@ max-width: 30em; */
 
 .ViewOrganization-tabs.ant-tabs .ant-tabs-small-bar .ant-tabs-tab {
     padding: 4px;
+    margin-right: 10px;
 }
 
 .ViewOrganization-tabPaneToolbar {
@@ -332,4 +331,10 @@ max-width: 30em; */
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
+}
+
+.ViewOrganization-invitationPendingCard {
+    background-color: rgba(166, 255, 170, 0.3);
+    /* border: 1px blue solid; */
+    padding: 4px;
 }

@@ -37,6 +37,14 @@ export interface AppInfo {
 
 export type Role = "None" | "Member" | "Admin" | "Owner"
 
+export interface GroupCustomFields {
+    logourl?: string
+    description: string
+    researchinterests: string
+    homeurl?: string
+    relatedgroups?: string
+}
+
 export interface BriefGroup {
     id: GroupID
     name: string
@@ -46,11 +54,8 @@ export interface BriefGroup {
     private: boolean
     role: Role
 
-    custom: {
-        logourl?: string
-        researchinterests?: string
-        homeurl?: string
-    }
+    custom: GroupCustomFields
+    // owner: Member
     owner: Username
 
     memcount: number
@@ -86,12 +91,7 @@ export interface Group {
         workspace: number
         catalogmethod: number
     }
-    custom: {
-        logourl?: string
-        description: string
-        researchinterests: string
-        homeurl?: string
-    }
+    custom: GroupCustomFields
 }
 
 export interface NewGroup {
@@ -538,6 +538,76 @@ export class GroupsClient {
                 }
                 throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
             })
+    }
+
+    async addRelatedGroup(groupId: GroupID, relatedGroupId: GroupID): Promise<string> {
+        // get the existing related groups
+        const group = await this.get<Group>(['group', groupId])
+
+        // split into list
+        let relatedGroups: Array<GroupID>
+        if (group.custom.relatedgroups) {
+            relatedGroups = group.custom.relatedgroups.split(',')
+        } else {
+            relatedGroups = []
+        }
+
+        // ensure that this one is not already there
+        if (relatedGroups.includes(relatedGroupId)) {
+            return relatedGroupId
+        }
+
+        // append it
+        relatedGroups.push(relatedGroupId)
+
+        // join back into string
+        const update = {
+            custom: {
+                relatedgroups: relatedGroups.join(',')
+            }
+        }
+
+        // save as the relatedgroups property
+        await this.put<void>(['group', groupId, 'update'], update)
+
+        return relatedGroupId
+    }
+
+    async removeRelatedGroup(groupId: GroupID, relatedGroupId: GroupID): Promise<string> {
+        // get the existing related groups
+        const group = await this.get<Group>(['group', groupId])
+
+        // split into list
+        let relatedGroups: Array<GroupID>
+        if (group.custom.relatedgroups) {
+            relatedGroups = group.custom.relatedgroups.split(',')
+        } else {
+            relatedGroups = []
+        }
+
+        // ensure that this one is already there
+        if (!relatedGroups.includes(relatedGroupId)) {
+            return relatedGroupId
+        }
+
+        // append it
+        relatedGroups.push(relatedGroupId)
+
+        const newRelatedGroups = relatedGroups.filter((groupId) => {
+            return groupId !== relatedGroupId
+        })
+
+        // join back into string
+        const update = {
+            custom: {
+                relatedgroups: newRelatedGroups.join(',')
+            }
+        }
+
+        // save as the relatedgroups property
+        await this.put<void>(['group', groupId, 'update'], update)
+
+        return relatedGroupId
     }
 
     async getRequest(requestId: string): Promise<Request> {

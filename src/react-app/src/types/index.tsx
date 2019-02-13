@@ -571,6 +571,10 @@ export interface ViewOrgViewModel {
     sortMembersBy: string
     searchMembersBy: string
     members: Array<orgModel.Member>
+
+    subViews: {
+        manageRelatedOrganizationsView: View<ManageRelatedOrgsViewModel>
+    }
 }
 
 export interface ViewInaccessiblePrivateOrgViewModel {
@@ -585,6 +589,44 @@ export interface ViewOrgView {
     error: AppError | null
     viewModel: ViewOrgViewModel | ViewInaccessiblePrivateOrgViewModel | null
 }
+
+export enum ViewOrgSubViewKind {
+    NONE = 0,
+    MANAGE_RELATED_ORGS
+}
+
+export interface NoneViewModel {
+    kind: ViewOrgSubViewKind.NONE
+}
+
+export enum ViewState {
+    NONE = 0,
+    LOADING,
+    OK,
+    ERROR
+}
+export interface View<T> {
+    state: ViewState
+    error: AnError | null
+    viewModel: T | null
+}
+
+export interface SelectableRelatableOrganization {
+    organization: orgModel.BriefOrganization
+    isRelated: boolean
+    isSelected: boolean
+}
+
+export interface ManageRelatedOrgsViewModel {
+    kind: ViewOrgSubViewKind.MANAGE_RELATED_ORGS
+    organization: orgModel.Organization
+    organizations: Array<SelectableRelatableOrganization>
+    relatedOrganizations: Array<string>
+    selectedOrganization: SelectableRelatableOrganization | null
+}
+
+export type ViewOrgSubView = View<NoneViewModel> | View<ManageRelatedOrgsViewModel>
+
 
 export interface EditOrgViewModel {
     editState: EditState
@@ -618,6 +660,9 @@ export interface StoreState {
         }
         narratives: {
             byId: Map<narrativeModel.WorkspaceID, narrativeModel.Narrative>
+        }
+        organizations: {
+            byId: Map<orgModel.OrganizationID, orgModel.Organization | orgModel.InaccessiblePrivateOrganization>
         }
         // notifications: {
         //     byId: <Map<

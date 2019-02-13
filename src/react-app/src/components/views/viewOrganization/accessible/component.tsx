@@ -4,20 +4,21 @@ import { NavLink, Redirect } from 'react-router-dom'
 
 import './component.css'
 
-import { } from '../../../../types'
+import { ViewOrgViewModel } from '../../../../types'
 import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu, Alert, Tabs, Input, Select } from 'antd'
 import Header from '../../../Header'
 import Member from '../../../entities/MemberContainer'
 import OrganizationHeader from '../../organizationHeader/loader'
 import * as orgModel from '../../../../data/models/organization/model'
 import * as requestModel from '../../../../data/models/requests'
-import * as feedsModel from '../../../../data/models/feeds'
 import OrganizationNarrative from '../../../OrganizationNarrative'
-import MainMenu from '../../../menu/component';
+import MainMenu from '../../../menu/component'
 import Members from './members/reduxAdapter'
 
 import Requests from './requests/container'
-import BriefOrganization from '../../organizationHeader/BriefOrganization';
+import BriefOrganization from '../../organizationHeader/BriefOrganization'
+import RelatedOrganizations from './relatedOrgs/reduxAdapter'
+import ManageRelatedOrganizations from './manageRelatedOrganizations/loader'
 
 enum NavigateTo {
     NONE = 0,
@@ -35,6 +36,11 @@ enum AccordionState {
     DOWN
 }
 
+enum SubViews {
+    NORMAL = 0,
+    MANAGE_RELATED_ORGS
+}
+
 export interface ViewOrganizationState {
     showInfo: boolean
     navigateTo: NavigateTo
@@ -42,21 +48,25 @@ export interface ViewOrganizationState {
         narrative: orgModel.NarrativeResource | null
     }
     accordionState: AccordionState
+    subView: SubViews
 }
 
 export interface ViewOrganizationProps {
-    organization: orgModel.Organization
-    relation: orgModel.Relation
-    openRequest: orgModel.RequestStatus
-    groupRequests: Array<requestModel.Request> | null
-    groupInvitations: Array<requestModel.Request> | null
-    requestOutbox: Array<requestModel.Request>
-    requestInbox: Array<requestModel.Request>
-    notifications: Array<feedsModel.OrganizationNotification>
-    sortNarrativesBy: string
-    searchNarrativesBy: string
-    narratives: Array<orgModel.NarrativeResource>
+    viewModel: ViewOrgViewModel
+
+    // organization: orgModel.Organization
+    // relation: orgModel.Relation
+    // openRequest: orgModel.RequestStatus
+    // groupRequests: Array<requestModel.Request> | null
+    // groupInvitations: Array<requestModel.Request> | null
+    // requestOutbox: Array<requestModel.Request>
+    // requestInbox: Array<requestModel.Request>
+    // notifications: Array<feedsModel.OrganizationNotification>
+    // sortNarrativesBy: string
+    // searchNarrativesBy: string
+    // narratives: Array<orgModel.NarrativeResource>
     onViewOrg: (id: string) => void
+    onReloadOrg: (id: string) => void
     onJoinOrg: () => void
     onCancelJoinRequest: (requestId: requestModel.RequestID) => void
     onAcceptInvitation: (requestId: requestModel.RequestID) => void
@@ -79,8 +89,13 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             requestAccess: {
                 narrative: null
             },
-            accordionState: AccordionState.UP
+            accordionState: AccordionState.UP,
+            subView: SubViews.NORMAL
         }
+    }
+
+    onManageRelatedOrgs() {
+        this.setState({ subView: SubViews.MANAGE_RELATED_ORGS })
     }
 
     onViewMembers() {
@@ -91,23 +106,23 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     onCancelJoinRequest() {
-        const relation = this.props.relation as orgModel.MembershipRequestPendingRelation
+        const relation = this.props.viewModel.relation as orgModel.MembershipRequestPendingRelation
         this.props.onCancelJoinRequest(relation.requestId)
     }
 
     onAcceptInvitation() {
-        if (!this.props.organization) {
+        if (!this.props.viewModel.organization) {
             return
         }
-        const relation = this.props.relation as orgModel.MembershipRequestPendingRelation
+        const relation = this.props.viewModel.relation as orgModel.MembershipRequestPendingRelation
         this.props.onAcceptInvitation(relation.requestId)
     }
 
     onRejectInvitation() {
-        if (!this.props.organization) {
+        if (!this.props.viewModel.organization) {
             return
         }
-        const relation = this.props.relation as orgModel.MembershipRequestPendingRelation
+        const relation = this.props.viewModel.relation as orgModel.MembershipRequestPendingRelation
         this.props.onRejectInvitation(relation.requestId)
     }
 
@@ -166,34 +181,34 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderEditRow() {
-        if (this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-            this.props.relation.type === orgModel.UserRelationToOrganization.OWNER) {
+        if (this.props.viewModel.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
+            this.props.viewModel.relation.type === orgModel.UserRelationToOrganization.OWNER) {
             return (
                 <p style={{ textAlign: 'center' }}>
-                    As the owner of this group, you may <NavLink to={`/editOrganization/${this.props.organization!.id}`}><Button icon="edit">Edit</Button></NavLink> it.
+                    As the owner of this group, you may <NavLink to={`/editOrganization/${this.props.viewModel.organization!.id}`}><Button icon="edit">Edit</Button></NavLink> it.
                 </p>
             )
         }
     }
 
     renderEditButton() {
-        if (this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-            this.props.relation.type === orgModel.UserRelationToOrganization.OWNER) {
+        if (this.props.viewModel.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
+            this.props.viewModel.relation.type === orgModel.UserRelationToOrganization.OWNER) {
             return (
-                <NavLink to={`/editOrganization/${this.props.organization!.id}`}><Button icon="edit">Edit This Organization</Button></NavLink>
+                <NavLink to={`/editOrganization/${this.props.viewModel.organization!.id}`}><Button icon="edit">Edit This Organization</Button></NavLink>
             )
         }
     }
 
     renderOrg() {
         // apparently TS is not smart enough to know this from the conditional branch in render()!
-        if (!this.props.organization) {
+        if (!this.props.viewModel.organization) {
             return
         }
         return (
             <div className="ViewOrganization-org-description-org scrollable-flex-column">
                 <div className="ViewOrganization-org-description"
-                    dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.organization.description || '') })}
+                    dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.viewModel.organization.description || '') })}
                 />
             </div>
         )
@@ -223,11 +238,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
     renderOrgHeader() {
         // apparently TS is not smart enough to know this from the conditional branch in render()!
-        if (!this.props.organization) {
+        if (!this.props.viewModel.organization) {
             return
         }
         return (
-            <OrganizationHeader organizationId={this.props.organization.id} />
+            <OrganizationHeader organizationId={this.props.viewModel.organization.id} />
         )
     }
 
@@ -288,12 +303,12 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     isMember(): boolean {
-        if (!this.props.organization) {
+        if (!this.props.viewModel.organization) {
             return false
         }
-        if (this.props.relation.type === orgModel.UserRelationToOrganization.OWNER ||
-            this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-            this.props.relation.type === orgModel.UserRelationToOrganization.MEMBER) {
+        if (this.props.viewModel.relation.type === orgModel.UserRelationToOrganization.OWNER ||
+            this.props.viewModel.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
+            this.props.viewModel.relation.type === orgModel.UserRelationToOrganization.MEMBER) {
             return true
         }
         return false
@@ -302,20 +317,21 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     renderMembers() {
         if (!this.isMember()) {
             return (
-                <p className="message">
-                    Organization membership restricted to members only
-                </p>
+                <Alert message="Membership is only available to members" type="info" />
             )
         }
         return (
-            <Members organization={this.props.organization} relation={this.props.relation} />
+            <Members
+                organization={this.props.viewModel.organization}
+                relation={this.props.viewModel.relation}
+                onReloadOrg={this.props.onReloadOrg} />
         )
 
     }
 
     renderInfo() {
         // apparently TS is not smart enough to know this from the conditional branch in render()!
-        if (!this.props.organization) {
+        if (!this.props.viewModel.organization) {
             return
         }
         return (
@@ -328,7 +344,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         <div className="label">owner</div>
                     </div>
                     <div className="ViewOrganization-ownerTable">
-                        <Member member={this.props.organization.owner} avatarSize={50} />
+                        <Member member={this.props.viewModel.organization.owner} avatarSize={50} />
                         {/* TODO: fix avatar component */}
                         {/* <div className="avatarCol">
                             <Avatar user={this.props.organization.owner.username} size={60} />
@@ -358,7 +374,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                                         month: 'long',
                                         day: 'numeric',
                                         year: 'numeric'
-                                    }).format(this.props.organization.createdAt)}
+                                    }).format(this.props.viewModel.organization.createdAt)}
                                 </div>
                             </div>
                         </div>
@@ -373,7 +389,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                                         month: 'long',
                                         day: 'numeric',
                                         year: 'numeric'
-                                    }).format(this.props.organization.modifiedAt)}
+                                    }).format(this.props.viewModel.organization.modifiedAt)}
                                 </div>
                             </div>
                         </div>
@@ -384,9 +400,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderGroupRequestsRow() {
-        const relation = this.props.relation
-        const requests = this.props.groupRequests
-        const invitations = this.props.groupInvitations
+        const relation = this.props.viewModel.relation
+        const requests = this.props.viewModel.groupRequests
+        const invitations = this.props.viewModel.groupInvitations
 
         if (!(relation.type === orgModel.UserRelationToOrganization.ADMIN ||
             relation.type === orgModel.UserRelationToOrganization.OWNER)) {
@@ -421,7 +437,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
                     </div>
                     <div>
-                        <NavLink to={"/manageOrganizationRequests/" + this.props.organization.id}>
+                        <NavLink to={"/manageOrganizationRequests/" + this.props.viewModel.organization.id}>
                             <Button>Manage Requests</Button>
                         </NavLink>
                     </div>
@@ -469,7 +485,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         pending invitation{invitations.length > 1 ? 's' : ''}
                     </div>
                     <div>
-                        <NavLink to={"/manageOrganizationRequests/" + this.props.organization!.id}>
+                        <NavLink to={"/manageOrganizationRequests/" + this.props.viewModel.organization!.id}>
                             <Button>Manage Requests</Button>
                         </NavLink>
                     </div>
@@ -547,13 +563,13 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderAdminTasks() {
-        const relation = this.props.relation
+        const relation = this.props.viewModel.relation
         if (!(relation.type === orgModel.UserRelationToOrganization.ADMIN ||
             relation.type === orgModel.UserRelationToOrganization.OWNER)) {
             return
         }
         // TODO: ditto -- silly to test both conditions (this is only to make TS happy btw)
-        const { groupRequests, groupInvitations } = this.props
+        const { groupRequests, groupInvitations } = this.props.viewModel
         if (groupInvitations === null || groupRequests === null) {
             return
         }
@@ -579,10 +595,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderJoinButton() {
-        if (!this.props.organization) {
+        if (!this.props.viewModel.organization) {
             return
         }
-        if (this.props.relation.type !== orgModel.UserRelationToOrganization.VIEW) {
+        if (this.props.viewModel.relation.type !== orgModel.UserRelationToOrganization.VIEW) {
             return
         }
         return (
@@ -620,7 +636,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderNarrativeMenu(narrative: orgModel.NarrativeResource) {
-        const relation = this.props.relation
+        const relation = this.props.viewModel.relation
         const isAdmin = (relation.type === orgModel.UserRelationToOrganization.OWNER ||
             relation.type === orgModel.UserRelationToOrganization.ADMIN)
         let menu
@@ -654,34 +670,35 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderNarratives() {
-        if (!this.isMember()) {
-            return (
-                <Card
-                    className="slimCard  narratives"
-                    title={<span><Icon type="folder-open" /></span>}
-                >
-                    <p style={{ textAlign: 'center', fontStyle: 'italic' }}>
-                        Narratives are restricted to members only
-                </p>
-                </Card>
-            )
-        }
+        // if (!this.isMember()) {
+        //     return (
+        //         <Card
+        //             className="slimCard  narratives"
+        //             title={<span><Icon type="folder-open" /> Narratives ({this.props.organization.narrativeCount})</span>}
+        //         >
+        //             <Alert message="Narratives are only available to members" type="info" />
+        //         </Card>
+        //     )
+        // }
 
         const extras = [
-            (
+        ]
+
+        if (this.props.viewModel.organization.isMember) {
+            extras.push((
                 <NavLink
                     key="requestAddNarrative"
-                    to={`/requestAddNarrative/${this.props.organization!.id}`}>
+                    to={`/requestAddNarrative/${this.props.viewModel.organization!.id}`}>
                     <Button
                         onClick={this.onRequestAddNarrative.bind(this)}>
                         <Icon type="plus" /> Add a Narrative
                     </Button>
                 </NavLink>
-            )
-        ]
+            ))
+        }
 
         let narrativesTable
-        if (this.props.narratives.length === 0) {
+        if (this.props.viewModel.narratives.length === 0) {
             narrativesTable = (
                 <div className="message">
                     No Narratives are yet associated with this Organization
@@ -689,13 +706,14 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             )
 
         } else {
-            narrativesTable = this.props.narratives.map((narrative) => {
+            narrativesTable = this.props.viewModel.narratives.map((narrative) => {
                 // create buttons or not, depending on being an admin
                 return (
                     <div className="narrative simpleCard" key={String(narrative.workspaceId)}>
                         <div className="dataCol">
                             <OrganizationNarrative
                                 narrative={narrative}
+                                organization={this.props.viewModel.organization}
                                 onGetViewAccess={this.props.onGetViewAccess} />
                         </div>
                         <div className="buttonCol">
@@ -706,7 +724,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             })
         }
 
-        const narrativeCount = this.props.narratives.length
+        // const narrativeCount = this.props.narratives.length
+        const narrativeCount = this.props.viewModel.organization.narrativeCount
         const title = (
             <span className="ViewOrganization-narrativesTitle">
                 <Icon type="folder-open" style={{ marginRight: '8px' }} />
@@ -769,7 +788,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 <Select onChange={handleSelect}
                     style={{ width: '11em' }}
                     dropdownMatchSelectWidth={true}
-                    defaultValue={this.props.sortNarrativesBy}
+                    defaultValue={this.props.viewModel.sortNarrativesBy}
                 >
                     <Select.Option value="name" key="name">Name</Select.Option>
                     <Select.Option value="added" key="added">Date Added</Select.Option>
@@ -780,7 +799,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderMembersToolbar() {
-        switch (this.props.relation.type) {
+        switch (this.props.viewModel.relation.type) {
             case orgModel.UserRelationToOrganization.NONE:
                 return
             case orgModel.UserRelationToOrganization.MEMBER:
@@ -788,7 +807,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             case orgModel.UserRelationToOrganization.ADMIN:
                 return (
                     <div className="ViewOrganization-tabPaneToolbar">
-                        <NavLink to={"/inviteUser/" + this.props.organization.id}>
+                        <NavLink to={"/inviteUser/" + this.props.viewModel.organization.id}>
                             <Button size="small"><Icon type="mail" /> Invite a User</Button>
                         </NavLink>
                     </div>
@@ -796,7 +815,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             case orgModel.UserRelationToOrganization.OWNER:
                 return (
                     <div className="ViewOrganization-tabPaneToolbar">
-                        <NavLink to={"/inviteUser/" + this.props.organization.id}>
+                        <NavLink to={"/inviteUser/" + this.props.viewModel.organization.id}>
                             <Button size="small"><Icon type="mail" /> Invite a User</Button>
                         </NavLink>
                     </div>
@@ -805,24 +824,24 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     renderCombo() {
-        const isAdmin = (this.props.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
-            this.props.relation.type === orgModel.UserRelationToOrganization.OWNER)
+        const isAdmin = (this.props.viewModel.relation.type === orgModel.UserRelationToOrganization.ADMIN ||
+            this.props.viewModel.relation.type === orgModel.UserRelationToOrganization.OWNER)
 
-        const isMember = this.props.organization.isMember
+        const isMember = this.props.viewModel.organization.isMember
 
-        if (!isMember) {
-            return (
-                <p style={{ fontStyle: 'italic' }}>
-                    The membership list is only available to members.
-                </p>
-            )
-        }
+        // if (!isMember) {
+        //     return (
+        //         <p style={{ fontStyle: 'italic' }}>
+        //             The membership list is only available to members.
+        //         </p>
+        //     )
+        // }
 
         const tabs = []
 
         let memberCount
-        if (this.props.organization.memberCount - 1) {
-            memberCount = String(this.props.organization.memberCount - 1)
+        if (this.props.viewModel.organization.memberCount - 1) {
+            memberCount = String(this.props.viewModel.organization.memberCount - 1)
         } else {
             memberCount = 'Ø'
         }
@@ -837,7 +856,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
         if (isMember) {
             if (isAdmin) {
-                const totalRequestCount = this.props.requestInbox.length + this.props.requestOutbox.length
+                const totalRequestCount = this.props.viewModel.requestInbox.length + this.props.viewModel.requestOutbox.length
                 const totalRequests = (
                     <span className="ViewOrganization-tabCount">
                         ({totalRequestCount || 'Ø'})
@@ -845,11 +864,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 )
                 tabs.push((
                     <Tabs.TabPane tab={<span><Icon type="inbox" />Requests {totalRequests} </span>} key="inbox" style={{ flexDirection: 'column' }}>
-                        <Requests inbox={this.props.requestInbox} outbox={this.props.requestOutbox} relation={this.props.relation} />
+                        <Requests inbox={this.props.viewModel.requestInbox} outbox={this.props.viewModel.requestOutbox} relation={this.props.viewModel.relation} />
                     </Tabs.TabPane>
                 ))
             } else {
-                const outboxSize = this.props.requestOutbox.length
+                const outboxSize = this.props.viewModel.requestOutbox.length
                 let titleCount
                 if (outboxSize) {
                     titleCount = String(outboxSize)
@@ -858,11 +877,27 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 }
                 tabs.push((
                     <Tabs.TabPane tab={<span><Icon type="inbox" />Requests <span className="ViewOrganization-tabCount">({titleCount})</span></span>} key="outbox" style={{ flexDirection: 'column' }}>
-                        <Requests inbox={[]} outbox={this.props.requestOutbox} relation={this.props.relation} />
+                        <Requests inbox={[]} outbox={this.props.viewModel.requestOutbox} relation={this.props.viewModel.relation} />
                     </Tabs.TabPane>
                 ))
             }
         }
+
+        const relatedOrgCount = this.props.viewModel.organization.relatedOrganizations.length
+        const relatedOrgTab = (
+            <span>
+                <Icon type="team" />
+                Related Orgs <span className="ViewOrganization-tabCount">({relatedOrgCount})</span>
+            </span>
+        )
+        tabs.push((
+            <Tabs.TabPane tab={relatedOrgTab} key="relatedorgs" style={{ flexDirection: 'column' }}>
+                <RelatedOrganizations
+                    relatedOrganizations={this.props.viewModel.organization.relatedOrganizations}
+                    organization={this.props.viewModel.organization}
+                    onManageRelatedOrgs={() => { this.onManageRelatedOrgs() }} />
+            </Tabs.TabPane>
+        ))
 
         return (
             <Tabs
@@ -932,12 +967,18 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             case 'manageRequests':
                 this.setState({ navigateTo: NavigateTo.MANAGE_REQUESTS })
                 break
+            case 'addNarrative':
+                this.setState({ navigateTo: NavigateTo.REQUEST_ADD_NARRATIVE })
+                break
+            case 'manageRelatedOrgs':
+                this.setState({ subView: SubViews.MANAGE_RELATED_ORGS })
+                break
         }
     }
 
     renderOrgMenu() {
-        const org = this.props.organization
-        switch (this.props.relation.type) {
+        const org = this.props.viewModel.organization
+        switch (this.props.viewModel.relation.type) {
             case (orgModel.UserRelationToOrganization.NONE):
                 // return (
                 //     <span><Icon type="stop" />None</span>
@@ -976,17 +1017,17 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 )
             case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
                 return (
-                    <span>
+                    <div className="ViewOrganization-invitationPendingCard">
                         <span>You have been invited to this organization: </span>
-                        <Button icon="check" type="default" onClick={this.onAcceptInvitation.bind(this)}>Accept</Button>
-                        <Button icon="stop" type="danger" onClick={this.onRejectInvitation.bind(this)}>Reject</Button>
-                    </span>
+                        <Button icon="check" type="default" size="small" onClick={this.onAcceptInvitation.bind(this)}>Accept</Button>
+                        <Button icon="stop" type="danger" size="small" onClick={this.onRejectInvitation.bind(this)}>Reject</Button>
+                    </div>
                 )
             case (orgModel.UserRelationToOrganization.MEMBER):
                 const menu = (
                     <Menu onClick={this.onMenuClick.bind(this)}>
                         <Menu.Item key="manageMyMembership">
-                            Manage My Membership
+                            <Icon type="user" />{' '}Manage My Membership
                         </Menu.Item>
                     </Menu>
                 )
@@ -1003,13 +1044,16 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 const adminMenu = (
                     <Menu onClick={this.onMenuClick.bind(this)}>
                         <Menu.Item key="manageMyMembership">
-                            Manage My Membership
+                            <Icon type="user" />{' '}Manage My Membership
                         </Menu.Item>
                         <Menu.Item key="editOrg" >
-                            Edit this Org
+                            <Icon type="edit" />{' '}Edit this Org
                         </Menu.Item>
                         <Menu.Item key="inviteUser">
-                            Invite User
+                            <Icon type="mail" />{' '}Invite User
+                        </Menu.Item>
+                        <Menu.Item key="manageRelatedOrgs">
+                            <Icon type="team" />{' '}Manage Related Orgs
                         </Menu.Item>
                     </Menu>
                 )
@@ -1025,11 +1069,20 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             case (orgModel.UserRelationToOrganization.OWNER):
                 const ownerMenu = (
                     <Menu onClick={this.onMenuClick.bind(this)}>
+                        <Menu.Item key="manageMyMembership">
+                            <Icon type="user" />{' '}Manage My Membership
+                        </Menu.Item>
                         <Menu.Item key="editOrg">
-                            Edit this Org
+                            <Icon type="edit" />{' '}Edit this Org
                         </Menu.Item>
                         <Menu.Item key="inviteUser">
-                            Invite User
+                            <Icon type="mail" />{' '}Invite User
+                        </Menu.Item>
+                        <Menu.Item key="addNarrative">
+                            <Icon type="file" />{' '}Add Narrative
+                        </Menu.Item>
+                        <Menu.Item key="manageRelatedOrgs">
+                            <Icon type="team" />{' '}Manage Related Orgs
                         </Menu.Item>
                     </Menu>
                 )
@@ -1095,29 +1148,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
-    render() {
-        switch (this.state.navigateTo) {
-            case NavigateTo.REQUEST_ADD_NARRATIVE:
-                return (
-                    <Redirect to={"/requestAddNarrative"} />
-                )
-            case NavigateTo.MANAGE_MEMBERSHIP:
-                return <Redirect push to={"/membership/" + this.props.organization.id} />
-            case NavigateTo.VIEW_MEMBERS:
-                return <Redirect push to={"/viewMembers/" + this.props.organization.id} />
-            case NavigateTo.EDIT_ORGANIZATION:
-                return <Redirect push to={"/editOrganization/" + this.props.organization.id} />
-            case NavigateTo.MANAGE_REQUESTS:
-                return <Redirect push to={"/manageOrganizationRequests/" + this.props.organization.id} />
-            case NavigateTo.INVITE_USER:
-                return <Redirect push to={"/inviteUser/" + this.props.organization.id} />
-            case NavigateTo.VIEW_ORGANIZATION:
-                return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
-            case NavigateTo.NONE:
-            default:
-            // do nothing.
-        }
-
+    renderNormalView() {
         let orgRowClass
         let narrativesRowClass
         if (this.state.accordionState === AccordionState.UP) {
@@ -1129,31 +1160,83 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         }
         orgRowClass += " scrollable-flex-column"
         narrativesRowClass += " scrollable-flex-column"
+        return (
+            <div className="ViewOrganization-mainRow scrollable-flex-column">
+                <div className="ViewOrganization-mainColumn  scrollable-flex-column">
+                    <div className={orgRowClass} style={{ minHeight: '0px' }}>
+                        {this.renderOrg()}
+                    </div>
+                    <div className="ViewOrganization-accordionRow">
+                        {this.renderAccordionControl()}
+                    </div>
+                    <div className={narrativesRowClass}>
+                        {this.renderNarratives()}
+                    </div>
+                </div>
+                <div className="ViewOrganization-infoColumn">
+                    {this.renderCombo()}
+                </div>
+            </div>
+        )
+    }
 
-        const uorg = this.props.organization as unknown
+    renderManageRelatedOrgsView() {
+        const onFinish = () => {
+            this.setState({
+                subView: SubViews.NORMAL
+            })
+        }
+        return (
+            <ManageRelatedOrganizations
+                // organization={this.props.viewModel.organization}
+                // relatedOrganizations={[]}
+                // relation={this.props.viewModel.relation}
+                onFinish={onFinish} />
+        )
+    }
+
+    getSubView() {
+        switch (this.state.subView) {
+
+            case SubViews.MANAGE_RELATED_ORGS:
+                return this.renderManageRelatedOrgsView()
+            case SubViews.NORMAL:
+            default:
+                return this.renderNormalView()
+        }
+    }
+
+    render() {
+        switch (this.state.navigateTo) {
+            case NavigateTo.REQUEST_ADD_NARRATIVE:
+                return <Redirect to={"/requestAddNarrative/" + this.props.viewModel.organization.id} />
+            case NavigateTo.MANAGE_MEMBERSHIP:
+                return <Redirect push to={"/membership/" + this.props.viewModel.organization.id} />
+            case NavigateTo.VIEW_MEMBERS:
+                return <Redirect push to={"/viewMembers/" + this.props.viewModel.organization.id} />
+            case NavigateTo.EDIT_ORGANIZATION:
+                return <Redirect push to={"/editOrganization/" + this.props.viewModel.organization.id} />
+            case NavigateTo.MANAGE_REQUESTS:
+                return <Redirect push to={"/manageOrganizationRequests/" + this.props.viewModel.organization.id} />
+            case NavigateTo.INVITE_USER:
+                return <Redirect push to={"/inviteUser/" + this.props.viewModel.organization.id} />
+            case NavigateTo.VIEW_ORGANIZATION:
+                return <Redirect push to={"/viewOrganization/" + this.props.viewModel.organization.id} />
+            case NavigateTo.NONE:
+            default:
+            // do nothing.
+        }
+
+        const uorg = this.props.viewModel.organization as unknown
         const borg = uorg as orgModel.BriefOrganization
+
         return (
             <div className="ViewOrganization  scrollable-flex-column">
                 <MainMenu buttons={this.renderMenuButtons()} />
                 <div style={{ borderBottom: '1px silver solid' }}>
-                    <BriefOrganization organization={borg} openRequestsStatus={this.props.openRequest} />
+                    <BriefOrganization organization={borg} openRequestsStatus={this.props.viewModel.openRequest} />
                 </div>
-                <div className="ViewOrganization-mainRow scrollable-flex-column">
-                    <div className="ViewOrganization-mainColumn  scrollable-flex-column">
-                        <div className={orgRowClass} style={{ minHeight: '0px' }}>
-                            {this.renderOrg()}
-                        </div>
-                        <div className="ViewOrganization-accordionRow">
-                            {this.renderAccordionControl()}
-                        </div>
-                        <div className={narrativesRowClass}>
-                            {this.renderNarratives()}
-                        </div>
-                    </div>
-                    <div className="ViewOrganization-infoColumn">
-                        {this.renderCombo()}
-                    </div>
-                </div>
+                {this.getSubView()}
             </div>
 
         )
