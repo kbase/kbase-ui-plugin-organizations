@@ -34,7 +34,6 @@ export default class Members extends React.Component<MembersProps, MembersState>
     }
 
     onConfirmRemoveMember(member: orgModel.Member) {
-        console.log('confirming?', member)
         this.setState({
             confirmMemberRemoval: {
                 member: member
@@ -216,7 +215,6 @@ export default class Members extends React.Component<MembersProps, MembersState>
     renderSearchBar() {
         const doChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             this.props.onSearchMembers(e.target.value)
-            // console.log('sorting by', e.target.value)
         }
         return (
             <div style={{ paddingRight: '6px' }}>
@@ -230,7 +228,6 @@ export default class Members extends React.Component<MembersProps, MembersState>
     renderSortBar() {
         const handleSelect = (value: string) => {
             this.props.onSortMembers(value)
-            // console.log('filtering by ', value)
         }
 
         return (

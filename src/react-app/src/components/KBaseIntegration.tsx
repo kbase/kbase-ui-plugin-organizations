@@ -36,7 +36,7 @@ class KBaseIntegration extends React.Component<KBaseIntegrationProps, object> {
                 //     case 'orgs':
 
                 // }
-                console.log('NAVIGATE', to, params)
+                // console.log('NAVIGATE', to, params)
             }, (err) => {
                 console.error('Error processing "navigate" message')
             })

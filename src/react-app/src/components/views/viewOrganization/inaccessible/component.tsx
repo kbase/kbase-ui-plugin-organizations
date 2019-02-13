@@ -51,9 +51,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             content: (
                 <div>
                     <p>This organization is <b>private</b>.</p>
-                    <p>Nothing about this organization may be revealed to non-members.</p>
-                    <p>You may request membership</p>
-                    <p>Upon requesting membership, the organization administrators may grant you membership</p>
+                    <p>Although no information about this organization may be revealed to non-members, you may request membership</p>
+                    <p>Upon requesting membership, an organization administrator may grant you membership</p>
                     <p>When your request is either accepted or denied, you will received a notification in your KBase Feed.</p>
                 </div>
             )
@@ -91,8 +90,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 return (
                     <React.Fragment>
                         <p>This organization is <b>private</b> and you are not a member.</p>
-                        <p>Nothing about a private organization may be revealed to a non-member.</p>
-                        <p>However, you may request membership</p>
+                        <p>Although no information about this organization may be revealed to non-members, you may request membership</p>
                         <p>Upon requesting membership, the organization administrators will be notified.</p>
                         <p>When your request is either accepted or denied, you will received a notification in your KBase Feed.</p>
                     </React.Fragment>

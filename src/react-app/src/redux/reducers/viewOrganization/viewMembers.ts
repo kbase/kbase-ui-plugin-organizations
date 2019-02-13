@@ -183,8 +183,6 @@ export function removeMemberSuccess(state: StoreState, action: actions.RemoveMem
         return (member.username !== action.memberUsername)
     })
 
-    console.log('members?', members)
-
     return {
         ...state,
         views: {

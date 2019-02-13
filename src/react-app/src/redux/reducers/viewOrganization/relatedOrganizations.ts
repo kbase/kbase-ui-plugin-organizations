@@ -17,8 +17,6 @@ export function removeOrganization(state: StoreState, action: actions.RemoveOrga
         return (organizationId !== action.organizationId)
     })
 
-    console.log('hmm', relatedOrgs, action.organizationId)
-
     return {
         ...state,
         views: {

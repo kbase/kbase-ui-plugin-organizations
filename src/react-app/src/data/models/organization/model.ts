@@ -790,7 +790,6 @@ export class OrganizationModel {
         }
         return this.groupsClient.getGroupById(id)
             .then((group) => {
-                console.log('group', group)
                 if (group.role === "None" && group.private) {
                     throw new Error('Inaccessible Organization')
                 }
