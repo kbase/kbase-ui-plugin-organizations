@@ -210,3 +210,11 @@ a:hover {
     font-style: italic;
     text-align: center;
 }
+
+.Organizations p {
+    margin-bottom: 0;
+}
+
+.Organizations p+p {
+    margin-top: 1em;
+}

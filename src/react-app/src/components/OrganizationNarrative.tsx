@@ -177,9 +177,10 @@ export default class OrganizationNarrative extends React.Component<Props, State>
             )
         }
         return (
-            <a href={'/narrative/' + narrative.workspaceId} target="_blank">
-                <div className="title">{narrative.title}</div>
-            </a>
+            <Narrative workspaceId={narrative.workspaceId} />
+            // <a href={'/narrative/' + narrative.workspaceId} target="_blank">
+            //     <div className="title">{narrative.title}</div>
+            // </a>
         )
     }
 

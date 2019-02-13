@@ -65,16 +65,11 @@ export default class RelatedOrganizations extends React.Component<RelatedOrganiz
     }
 
     renderBody() {
-        if (RelatedOrganizations.length === 0) {
-            return (
-                <p>Sorry, no related organizations</p>
-            )
-        }
         if (this.props.relatedOrganizations.length === 0) {
             const message = (
-                <div style={{ fontStyle: 'italic', textAlign: 'center' }}>
+                <p>
                     No related organizations
-                </div>
+                </p>
             )
             return (
                 <Alert type="info" message={message} />

@@ -637,8 +637,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
     renderNarrativeMenu(narrative: orgModel.NarrativeResource) {
         const relation = this.props.viewModel.relation
-        const isAdmin = (relation.type === orgModel.UserRelationToOrganization.OWNER ||
-            relation.type === orgModel.UserRelationToOrganization.ADMIN)
         let menu
         switch (relation.type) {
             case (orgModel.UserRelationToOrganization.NONE):
@@ -669,45 +667,119 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
-    renderNarratives() {
-        // if (!this.isMember()) {
-        //     return (
-        //         <Card
-        //             className="slimCard  narratives"
-        //             title={<span><Icon type="folder-open" /> Narratives ({this.props.organization.narrativeCount})</span>}
-        //         >
-        //             <Alert message="Narratives are only available to members" type="info" />
-        //         </Card>
-        //     )
-        // }
-
-        const extras = [
-        ]
-
-        if (this.props.viewModel.organization.isMember) {
-            extras.push((
-                <NavLink
-                    key="requestAddNarrative"
-                    to={`/requestAddNarrative/${this.props.viewModel.organization!.id}`}>
-                    <Button
-                        onClick={this.onRequestAddNarrative.bind(this)}>
-                        <Icon type="plus" /> Add a Narrative
-                    </Button>
-                </NavLink>
-            ))
+    renderNonMemberNarratives() {
+        let alert
+        const narrativesToShow = this.props.viewModel.organization.narratives.length
+        const hiddenNarrativeCount = this.props.viewModel.organization.narrativeCount - this.props.viewModel.organization.narratives.length
+        const alertStyle = {
+            marginBottom: '10px'
         }
+        if (narrativesToShow) {
+            if (hiddenNarrativeCount) {
+                const message = (
+                    <React.Fragment>
+                        <p>Since you are not a member of this Organization, only public Narratives are displayed.</p>
+                        <p>{hiddenNarrativeCount} private Narrative{hiddenNarrativeCount !== 1 ? 's have ' : ' has '} been hidden.</p>
+                    </React.Fragment>
+                )
+                alert = (
+                    <Alert type="info" message={message} style={alertStyle} />
+                )
+            }
+        } else {
+            if (hiddenNarrativeCount) {
+                const message = (
+                    <React.Fragment>
+                        <p>Since you are not a member of this Organization, only public Narratives would be displayed, but this Organization has none.</p>
+                        <p>{hiddenNarrativeCount} private Narrative{hiddenNarrativeCount !== 1 ? 's have ' : ' has '} been hidden.</p>
+                    </React.Fragment>
+                )
+                alert = (
+                    <Alert type="info" message={message} style={alertStyle} />
+                )
+            } else {
+                alert = (
+                    <Alert type="info" message="No Narratives are yet associated with this Organization" style={alertStyle} />
+                )
+            }
+        }
+
+        let narrativesTable
+        if (narrativesToShow) {
+            narrativesTable = this.props.viewModel.narratives.map((narrative) => {
+                // create buttons or not, depending on being an admin
+                return (
+                    <div className="narrative simpleCard" key={String(narrative.workspaceId)}>
+                        <div className="dataCol">
+                            <OrganizationNarrative
+                                narrative={narrative}
+                                organization={this.props.viewModel.organization}
+                                onGetViewAccess={this.props.onGetViewAccess} />
+                        </div>
+                        <div className="buttonCol">
+                            {this.renderNarrativeMenu(narrative)}
+                        </div>
+                    </div>
+                )
+            })
+        }
+
+        // const narrativeCount = this.props.narratives.length
+        const title = (
+            <span className="ViewOrganization-narrativesTitle">
+                <Icon type="folder-open" style={{ marginRight: '8px' }} />
+                Narratives
+                {' '}
+                <span className="titleCount">({this.props.viewModel.organization.narrativeCount})</span>
+            </span>
+        )
+        return (
+            <div className="ViewOrganization-narratives scrollable-flex-column">
+                <div className="ViewOrganization-narrativesHeader">
+                    <div className="ViewOrganization-narrativesHeaderCol1">
+                        {title}
+                    </div>
+                    <div className="ViewOrganization-narrativesHeaderCol2">
+                    </div>
+                </div>
+                <div className="ViewOrganization-narratives-toolbar">
+                    <div className="ViewOrganization-narratives-toolbar-searchCol">
+                        {this.renderSearchBar()}
+                    </div>
+                    <div className="ViewOrganization-narratives-toolbar-sortCol">
+                        {this.renderSortBar()}
+                    </div>
+                </div>
+                <div className="ViewOrganization-narrativesList">
+                    <div className="narrativesTable">
+                        {alert}
+                        {narrativesTable}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    renderMemberNarratives() {
+        const extras = [(
+            <NavLink
+                key="requestAddNarrative"
+                to={`/requestAddNarrative/${this.props.viewModel.organization!.id}`}>
+                <Button
+                    onClick={this.onRequestAddNarrative.bind(this)}>
+                    <Icon type="plus" /> Add a Narrative
+                </Button>
+            </NavLink>
+        )]
 
         let narrativesTable
         if (this.props.viewModel.narratives.length === 0) {
             narrativesTable = (
-                <div className="message">
-                    No Narratives are yet associated with this Organization
-                </div>
+                <Alert type="info" message="No Narratives are yet associated with this Organization" />
             )
 
         } else {
             narrativesTable = this.props.viewModel.narratives.map((narrative) => {
-                // create buttons or not, depending on being an admin
                 return (
                     <div className="narrative simpleCard" key={String(narrative.workspaceId)}>
                         <div className="dataCol">
@@ -759,6 +831,14 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </div>
             </div >
         )
+    }
+
+    renderNarratives() {
+        if (this.props.viewModel.organization.isMember) {
+            return this.renderMemberNarratives()
+        } else {
+            return this.renderNonMemberNarratives()
+        }
     }
 
     renderSearchBar() {
