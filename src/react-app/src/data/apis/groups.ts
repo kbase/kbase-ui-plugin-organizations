@@ -367,6 +367,7 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result) => {
+                console.log('GROUP', result)
                 return result as Group
             })
     }

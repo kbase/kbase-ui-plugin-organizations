@@ -4,7 +4,6 @@ import * as orgModel from '../data/models/organization/model'
 import * as userModel from "../data/models/user"
 import * as requestModel from '../data/models/requests'
 import * as narrativeModel from '../data/models/narrative'
-import * as uberModel from '../data/models/uber'
 import * as feedsModel from '../data/models/feeds'
 import { AnError } from "../combo/error/api";
 
@@ -620,7 +619,11 @@ export interface SelectableRelatableOrganization {
 export interface ManageRelatedOrgsViewModel {
     kind: ViewOrgSubViewKind.MANAGE_RELATED_ORGS
     organization: orgModel.Organization
-    organizations: Array<SelectableRelatableOrganization>
+    availableOrganizations: {
+        organizations: Array<SelectableRelatableOrganization>
+        queried: Array<SelectableRelatableOrganization>
+        searchBy: string
+    }
     relatedOrganizations: Array<string>
     selectedOrganization: SelectableRelatableOrganization | null
 }

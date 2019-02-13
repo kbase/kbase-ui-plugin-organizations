@@ -20,6 +20,7 @@ interface DispatchProps {
     onSelectOrganization: (org: SelectableRelatableOrganization) => void
     onAddOrganization: (organizationId: orgModel.OrganizationID, relatedOrganizationId: orgModel.OrganizationID) => void
     onRemoveOrganization: (organizationId: orgModel.OrganizationID, relatedOrganizationId: orgModel.OrganizationID) => void
+    onSearch: (searchBy: string) => void
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
@@ -36,10 +37,10 @@ function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
     if (viewModel.subViews.manageRelatedOrganizationsView.viewModel === null) {
         throw new Error("argh, null subview view model")
     }
-    const { organization, organizations, relatedOrganizations, selectedOrganization } = viewModel.subViews.manageRelatedOrganizationsView.viewModel
+    const { organization, availableOrganizations: { queried }, relatedOrganizations, selectedOrganization } = viewModel.subViews.manageRelatedOrganizationsView.viewModel
 
     return {
-        organization, organizations, relatedOrganizations, selectedOrganization
+        organization, organizations: queried, relatedOrganizations, selectedOrganization
     }
 }
 
@@ -53,6 +54,9 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         },
         onRemoveOrganization: (organizationId: orgModel.OrganizationID, relatedOrganizationId: orgModel.OrganizationID) => {
             dispatch(actions.removeOrganization(organizationId, relatedOrganizationId) as any)
+        },
+        onSearch: (searchBy: string) => {
+            dispatch(actions.search(searchBy) as any)
         }
     }
 }

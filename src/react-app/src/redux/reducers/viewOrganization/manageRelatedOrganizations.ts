@@ -30,7 +30,11 @@ export function loadSuccess(state: StoreState, action: actions.LoadSuccess): Sto
                                 kind: ViewOrgSubViewKind.MANAGE_RELATED_ORGS,
                                 relatedOrganizations: state.views.viewOrgView.viewModel.organization.relatedOrganizations,
                                 organization: state.views.viewOrgView.viewModel.organization,
-                                organizations: action.organizations,
+                                availableOrganizations: {
+                                    organizations: action.organizations,
+                                    queried: action.organizations,
+                                    searchBy: ''
+                                },
                                 selectedOrganization: null
                             }
                         }
@@ -81,7 +85,9 @@ export function selectOrganization(state: StoreState, action: actions.SelectOrga
     if (state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel === null) {
         return state
     }
-    const organizations = state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.organizations.map((relatedOrg: SelectableRelatableOrganization) => {
+    const availableOrgs = state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.availableOrganizations;
+
+    const organizations = availableOrgs.organizations.map((relatedOrg: SelectableRelatableOrganization) => {
         if (relatedOrg.organization.id === action.selectedOrganization.organization.id) {
             relatedOrg.isSelected = true
         } else {
@@ -89,6 +95,7 @@ export function selectOrganization(state: StoreState, action: actions.SelectOrga
         }
         return relatedOrg
     })
+
     return {
         ...state,
         views: {
@@ -104,7 +111,11 @@ export function selectOrganization(state: StoreState, action: actions.SelectOrga
                             viewModel: {
                                 ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel,
                                 selectedOrganization: action.selectedOrganization,
-                                organizations
+                                availableOrganizations: {
+                                    organizations: organizations,
+                                    queried: actions.applyQuery(organizations, availableOrgs.searchBy),
+                                    searchBy: availableOrgs.searchBy
+                                }
                             }
                         }
                     }
@@ -124,10 +135,10 @@ export function addOrganization(state: StoreState, action: actions.AddOrganizati
     if (state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel === null) {
         return state
     }
-    const orgs = state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.organizations
+    const availableOrgs = state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.availableOrganizations
     const newRelatedOrgs = state.views.viewOrgView.viewModel.organization.relatedOrganizations.concat([action.organizationId])
 
-    const organizations = orgs.map((relatedOrg: SelectableRelatableOrganization) => {
+    const newAvailableOrgs = availableOrgs.organizations.map((relatedOrg: SelectableRelatableOrganization) => {
         if (newRelatedOrgs.includes(relatedOrg.organization.id)) {
             relatedOrg.isRelated = true
         } else {
@@ -154,7 +165,11 @@ export function addOrganization(state: StoreState, action: actions.AddOrganizati
                             ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView,
                             viewModel: {
                                 ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel,
-                                organizations
+                                availableOrganizations: {
+                                    organizations: newAvailableOrgs,
+                                    queried: actions.applyQuery(newAvailableOrgs, availableOrgs.searchBy),
+                                    searchBy: availableOrgs.searchBy
+                                }
                             }
                         }
                     }
@@ -183,8 +198,10 @@ export function removeOrganization(state: StoreState, action: actions.RemoveOrga
         return (organizationId !== action.organizationId)
     })
 
+    const availableOrgs = state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.availableOrganizations
+
     // Update the related status of the org in the management interface.
-    const organizations = state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.organizations.filter((relatedOrg: SelectableRelatableOrganization) => {
+    const newAvailableOrgs = availableOrgs.organizations.filter((relatedOrg: SelectableRelatableOrganization) => {
         if (relatedOrg.organization.id === action.organizationId) {
             relatedOrg.isRelated = false
         }
@@ -209,7 +226,54 @@ export function removeOrganization(state: StoreState, action: actions.RemoveOrga
                             ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView,
                             viewModel: {
                                 ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel,
-                                organizations
+                                availableOrganizations: {
+                                    organizations: newAvailableOrgs,
+                                    queried: actions.applyQuery(newAvailableOrgs, availableOrgs.searchBy),
+                                    searchBy: availableOrgs.searchBy
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+export function searchSuccess(state: StoreState, action: actions.SearchSuccess): StoreState {
+
+    if (!state.views.viewOrgView.viewModel) {
+        return state
+    }
+
+    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state
+    }
+
+    if (state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel === null) {
+        return state
+    }
+
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            viewOrgView: {
+                ...state.views.viewOrgView,
+                viewModel: {
+                    ...state.views.viewOrgView.viewModel,
+                    subViews: {
+                        ...state.views.viewOrgView.viewModel.subViews,
+                        manageRelatedOrganizationsView: {
+                            ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView,
+                            viewModel: {
+                                ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel,
+                                availableOrganizations: {
+                                    ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.availableOrganizations,
+                                    queried: action.organizations,
+                                    searchBy: action.searchBy
+                                }
                             }
                         }
                     }
@@ -231,6 +295,8 @@ export default function reducer(state: StoreState, action: Action): StoreState |
             return addOrganization(state, action as actions.AddOrganizationSuccess)
         case ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_SUCCESS:
             return removeOrganization(state, action as actions.RemoveOrganizationSuccess)
+        case ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_SUCCESS:
+            return searchSuccess(state, action as actions.SearchSuccess)
         default:
             return null
     }

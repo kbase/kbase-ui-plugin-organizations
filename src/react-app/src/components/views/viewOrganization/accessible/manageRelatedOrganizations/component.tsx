@@ -17,6 +17,7 @@ export interface ManageRelatedOrganizationsProps {
     onSelectOrganization: (org: SelectableRelatableOrganization) => void
     onAddOrganization: (organizationId: orgModel.OrganizationID, relatedOrganizationId: orgModel.OrganizationID) => void
     onRemoveOrganization: (organizationId: orgModel.OrganizationID, relatedOrganizationId: orgModel.OrganizationID) => void
+    onSearch: (searchBy: string) => void
 }
 
 interface ManageRelatedOrganizationsState {
@@ -42,10 +43,15 @@ export default class ManageRelatedOrganizations extends React.Component<ManageRe
         this.props.onRemoveOrganization(this.props.organization.id, this.props.selectedOrganization.organization.id)
     }
 
+    onFilterChange(e: React.ChangeEvent<HTMLInputElement>) {
+        e.persist()
+        this.props.onSearch(e.target.value)
+    }
+
     renderAvailableToolbar() {
         return (
             <div className="ManageRelatedOrganizations-available-toolbar">
-                <Input placeholder="Filter Available Organizations" />
+                <Input placeholder="Filter Available Organizations" onChange={this.onFilterChange.bind(this)} />
             </div>
         )
     }

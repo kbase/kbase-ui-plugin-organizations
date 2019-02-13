@@ -215,3 +215,91 @@ export function removeOrganization(organizationId: orgModel.OrganizationID, rela
         }
     }
 }
+
+// Search Orgs
+
+export interface Search extends Action<ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH> {
+    type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH,
+    query: string
+}
+
+export interface SearchStart extends Action<ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_START> {
+    type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_START
+}
+
+export interface SearchSuccess extends Action<ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_SUCCESS> {
+    type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_SUCCESS,
+    organizations: Array<SelectableRelatableOrganization>
+    searchBy: string
+}
+
+export interface SearchError extends Action<ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_ERROR> {
+    type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_ERROR,
+    error: AnError
+}
+
+export function applyQuery(orgs: Array<SelectableRelatableOrganization>, query: string) {
+    const searchExp = query.split(/\s+/).map((term) => {
+        return new RegExp(term, 'i')
+    })
+
+    return orgs.filter(({ organization }) => {
+        return searchExp.every((re) => {
+            return (
+                re.test(organization.name) ||
+                // TODO: realname
+                re.test(organization.owner.username)
+            )
+        })
+    })
+}
+
+export function search(query: string) {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch({
+            type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_START
+        } as SearchStart)
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config },
+            views: {
+                viewOrgView: { viewModel }
+            }
+        } = getState()
+        if (viewModel === null) {
+            throw new Error('view is not populated')
+        }
+        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+            throw new Error('view is not normal')
+        }
+
+        const vm = viewModel.subViews.manageRelatedOrganizationsView.viewModel
+        if (vm === null) {
+            throw new Error('vm is null')
+        }
+
+        const orgClient = new orgModel.OrganizationModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+        try {
+            const availableOrgs = applyQuery(vm.availableOrganizations.organizations, query)
+
+            dispatch({
+                type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_SUCCESS,
+                organizations: availableOrgs,
+                searchBy: query
+            } as SearchSuccess)
+            // dispatch(viewOrgActions.reload(organizationId))
+        } catch (ex) {
+            dispatch({
+                type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_ERROR,
+                error: makeError({
+                    code: 'error',
+                    message: ex.message
+                })
+            })
+        }
+    }
+}
