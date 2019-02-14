@@ -11,9 +11,6 @@ export function loadSuccess(state: StoreState, action: actions.LoadSuccess): Sto
     if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
         return state
     }
-    // if (state.views.viewOrgView.viewModel.subView.kind !== ViewOrgSubViewKind.MANAGE_RELATED_ORGS) {
-    //     return state
-    // }
     return {
         ...state,
         views: {
@@ -23,6 +20,7 @@ export function loadSuccess(state: StoreState, action: actions.LoadSuccess): Sto
                 viewModel: {
                     ...state.views.viewOrgView.viewModel,
                     subViews: {
+                        ...state.views.viewOrgView.viewModel.subViews,
                         manageRelatedOrganizationsView: {
                             state: ViewState.OK,
                             error: null,

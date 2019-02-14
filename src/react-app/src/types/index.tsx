@@ -424,12 +424,12 @@ export interface InviteUserViewModel {
     editState: InviteUserViewState
 }
 
-export interface InviteUserView {
-    loadingState: ComponentLoadingState
-    viewModel: InviteUserViewModel | null
-    error: AppError | null
-    // viewState: AppError | InviteUserValue | null
-}
+// export interface InviteUserView {
+//     loadingState: ComponentLoadingState
+//     viewModel: InviteUserViewModel | null
+//     error: AppError | null
+//     // viewState: AppError | InviteUserValue | null
+// }
 
 export interface ManageMembershipViewModel {
     organization: orgModel.Organization
@@ -568,6 +568,7 @@ export interface ViewOrgViewModel {
 
     subViews: {
         manageRelatedOrganizationsView: View<ManageRelatedOrgsViewModel>
+        inviteUserView: View<InviteUserViewModel>
     }
 }
 
@@ -683,7 +684,7 @@ export interface StoreState {
         editOrgView: EditOrgView
         manageOrganizationRequestsView: ManageOrganizationRequestsView
         viewMembersView: ViewMembersView
-        inviteUserView: InviteUserView
+        // inviteUserView: InviteUserView
         manageMembershipView: ManageMembershipView
         requestNarrativeView: RequestNarrativeView
         organizationCentricView: OrganizationCentricView

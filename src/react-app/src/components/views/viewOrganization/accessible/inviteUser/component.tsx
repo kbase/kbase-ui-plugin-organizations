@@ -1,15 +1,15 @@
 import * as React from 'react'
 
 import './component.css'
-import { User, InviteUserViewState, OrganizationUser } from '../../../types';
+import { User, InviteUserViewState, OrganizationUser } from '../../../../../types';
 import { Button, Icon, Modal, Alert } from 'antd';
-import Header from '../../Header';
+import Header from '../../../../Header';
 import { Redirect, NavLink } from 'react-router-dom';
-import OrganizationHeader from '../organizationHeader/loader';
-import UserComponent from '../../User'
-import * as orgModel from '../../../data/models/organization/model'
-import * as userModel from '../../../data/models/user'
-import MainMenu from '../../menu/component';
+import OrganizationHeader from '../../../organizationHeader/loader';
+import UserComponent from '../../../../User'
+import * as orgModel from '../../../../../data/models/organization/model'
+import * as userModel from '../../../../../data/models/user'
+import MainMenu from '../../../../menu/component';
 
 export interface InviteUserProps {
     organization: orgModel.Organization,
@@ -22,15 +22,12 @@ export interface InviteUserProps {
     onSearchUsers: (query: userModel.UserQuery) => void,
     onSelectUser: (username: string) => void,
     onSendInvitation: () => void
+    onFinish: () => void
 }
 
 interface InviteUserState {
-    cancelToViewMembers: boolean
-    cancelToBrowser: boolean
-    cancelToViewer: boolean
     autocompleteMessage: string
 }
-
 class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
 
     lastSearchAt: Date | null
@@ -48,23 +45,12 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         this.searchButton = React.createRef()
 
         this.state = {
-            cancelToViewMembers: false,
-            cancelToBrowser: false,
-            cancelToViewer: false,
             autocompleteMessage: ''
         }
     }
 
-    onClickCancelToViewMembers() {
-        this.setState({ cancelToViewMembers: true })
-    }
-
-    onClickCancelToBrowser() {
-        this.setState({ cancelToBrowser: true })
-    }
-
     onClickCancelToViewer() {
-        this.setState({ cancelToViewer: true })
+        this.props.onFinish()
     }
 
     onSendInvitation() {
@@ -122,28 +108,6 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         this.props.onSelectUser(user.username);
     }
 
-    onShowInfo() {
-        Modal.info({
-            title: 'Invite User Help',
-            width: '50em',
-            content: (
-                <div>
-                    <p>This is the invite user tool...</p>
-                </div>
-            )
-        })
-    }
-
-    // foundUsers() {
-    //     const users = this.props.users.map(({ username, realname }) => {
-    //         return {
-    //             value: username,
-    //             text: realname + ' (' + username + ')'
-    //         }
-    //     })
-    //     return users
-    // }
-
     renderOrgName(name: string) {
         const maxLength = 25
         if (name.length < 25) {
@@ -159,11 +123,6 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
 
     renderHeader() {
         let orgName: string
-        // if (this.props.manageGroupRequestsView && this.props.manageGroupRequestsView.view) {
-        //     orgName = this.props.manageGroupRequestsView.view.organization.name
-        // } else {
-        //     orgName = 'loading...'
-        // }
         const breadcrumbs = (
             <React.Fragment>
                 <span>
@@ -183,25 +142,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         )
         const buttons = (
             <React.Fragment>
-                {/* <Button icon="undo"
-                    type="danger"
-                    onClick={this.onClickCancelToViewMembers.bind(this)}>
-                    Return to Org Members
-            </Button>
-                <Button icon="undo"
-                    type="danger"
-                    onClick={this.onClickCancelToViewer.bind(this)}>
-                    Return to this Org
-            </Button> */}
-
-
-                {/* <Button
-                    shape="circle"
-                    icon="info"
-                    onClick={this.onShowInfo.bind(this)}>
-                </Button> */}
             </React.Fragment>
-
         )
         return (
             <Header breadcrumbs={breadcrumbs} buttons={buttons} />
@@ -263,8 +204,6 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
             </div>
         )
     }
-
-
 
     renderInvitationForm() {
         let button
@@ -350,17 +289,6 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                     <div>Bad State</div>
                 )
         }
-
-    }
-
-    renderOrgHeader() {
-        // apparently TS is not smart enough to know this from the conditional branch in render()!
-        if (!this.props.organization) {
-            return
-        }
-        return (
-            <OrganizationHeader organizationId={this.props.organization.id} />
-        )
     }
 
     renderRelation(relation: orgModel.UserRelationToOrganization) {
@@ -389,33 +317,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         }
     }
 
-    // renderRelationText(relation: UserRelationToOrganization) {
-    //     switch (relation) {
-    //         case (UserRelationToOrganization.NONE):
-    //             return (
-    //                 <span><Icon type="stop" />None</span>
-    //             )
-    //         case (UserRelationToOrganization.VIEW):
-    //             return (
-    //                 <span><Icon type="stop" /> Not a member</span>
-    //             )
-    //         case (UserRelationToOrganization.MEMBER_REQUEST_PENDING):
-    //             return (<span><Icon type="user" style={{ color: 'orange' }} /> User's membership <b>request</b> is pending</span>)
-    //         case (UserRelationToOrganization.MEMBER_INVITATION_PENDING):
-    //             return (<span><Icon type="user" style={{ color: 'blue' }} /> User has been <b>invited</b> to join</span>)
-    //         case (UserRelationToOrganization.MEMBER):
-    //             return (<span><Icon type="user" /> User is a <b>member</b> of this organization</span>)
-    //         case (UserRelationToOrganization.ADMIN):
-    //             return (<span><Icon type="unlock" />User is an <b>admin</b> of this organization</span>)
-    //         case (UserRelationToOrganization.OWNER):
-    //             return (
-    //                 <span><Icon type="crown" /> User is the <b>owner</b> of this Organization</span>
-    //             )
-    //     }
-    // }
-
     renderSelectedUser() {
-
         if (this.props.selectedUser === null) {
             return (
                 <div className="selectedUser">
@@ -452,39 +354,17 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                     <Button icon="rollback"
                         type="danger"
                         onClick={this.onClickCancelToViewer.bind(this)}>
-                        Back to Org
+                        Done
                     </Button>
                 </div>
-                {/* <div className="ButtonSet-button">
-                    <Button
-                        shape="circle"
-                        icon="info"
-                        onClick={this.onShowInfo.bind(this)}>
-                    </Button>
-                </div> */}
             </div>
         )
     }
 
     render() {
-
-        if (this.state.cancelToViewMembers) {
-            return <Redirect push to={"/viewMembers/" + this.props.organization.id} />
-        }
-
-        if (this.state.cancelToBrowser) {
-            return <Redirect push to="/organizations" />
-        }
-
-        if (this.state.cancelToViewer) {
-            return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
-        }
-
         return (
             <div className="InviteUser scrollable-flex-column">
                 <MainMenu buttons={this.renderMenuButtons()} />
-                {/* {this.renderHeader()} */}
-                {this.renderOrgHeader()}
                 <div className="row scrollable-flex-column">
                     <div className="col1 firstCol users scrollable-flex-column">
                         <h3>Select User to Invite</h3>
@@ -508,14 +388,6 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                         <div className="usersTable">
                             {this.renderUsers()}
                         </div>
-                        {/* <SelectUserComponent
-                            users={this.props.users}
-                            selectedUser={this.props.selectedUser}
-                            onSearchUsers={this.onSearchUsers.bind(this)}
-                            onSelectUser={this.onSelectUser.bind(this)}
-                        />
-                        {this.renderInvitationForm()}
-                        {this.renderInvitationStatus()} */}
                     </div>
                     <div className="col1 lastCol">
                         <h3>Selected User</h3>
@@ -523,55 +395,10 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                         {this.renderInvitationForm()}
                     </div>
                 </div>
-                {/* <div className="row">
-                    <div className="col1">
-                        <h3>Send Invitation</h3>
-                        {this.renderInvitationForm()}
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col1">
-                        <h3>Status</h3>
-                        {this.renderInvitationStatus()}
-                    </div>
-                </div> */}
-                {/* {this.renderUsers()} */}
+
                 {this.renderFooter()}
             </div>
         )
-
-        // return (
-        //     <div className="InviteUser">
-        //         {this.renderHeader()}
-        //         {this.renderOrgHeader()}
-        //         <div className="row">
-        //             <div className="col1">
-        //                 <h3>Select User to Invite</h3>
-        //                 <SelectUserComponent
-        //                     users={this.props.users}
-        //                     selectedUser={this.props.selectedUser}
-        //                     onSearchUsers={this.onSearchUsers.bind(this)}
-        //                     onSelectUser={this.onSelectUser.bind(this)}
-        //                 />
-        //                 {this.renderInvitationForm()}
-        //                 {this.renderInvitationStatus()}
-        //             </div>
-        //         </div>
-        //         {/* <div className="row">
-        //             <div className="col1">
-        //                 <h3>Send Invitation</h3>
-        //                 {this.renderInvitationForm()}
-        //             </div>
-        //         </div>
-        //         <div className="row">
-        //             <div className="col1">
-        //                 <h3>Status</h3>
-        //                 {this.renderInvitationStatus()}
-        //             </div>
-        //         </div> */}
-        //         {/* {this.renderUsers()} */}
-        //     </div>
-        // )
     }
 }
 

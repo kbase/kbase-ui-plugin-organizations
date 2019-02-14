@@ -77,11 +77,11 @@ export class StateInstances {
                     error: null,
                     viewModel: null
                 },
-                inviteUserView: {
-                    loadingState: ComponentLoadingState.NONE,
-                    error: null,
-                    viewModel: null
-                },
+                // inviteUserView: {
+                //     loadingState: ComponentLoadingState.NONE,
+                //     error: null,
+                //     viewModel: null
+                // },
                 manageMembershipView: {
                     loadingState: ComponentLoadingState.NONE,
                     error: null,

@@ -52,6 +52,11 @@ export function loadNormalSuccess(state: types.StoreState, action: actions.LoadN
                             state: types.ViewState.NONE,
                             viewModel: null,
                             error: null
+                        },
+                        inviteUserView: {
+                            state: types.ViewState.NONE,
+                            viewModel: null,
+                            error: null
                         }
                     }
                 } as types.ViewOrgViewModel

@@ -19,6 +19,7 @@ import Requests from './requests/container'
 import BriefOrganization from '../../organizationHeader/BriefOrganization'
 import RelatedOrganizations from './relatedOrgs/reduxAdapter'
 import ManageRelatedOrganizations from './manageRelatedOrganizations/loader'
+import InviteUser from './inviteUser/loader';
 
 enum NavigateTo {
     NONE = 0,
@@ -39,7 +40,8 @@ enum AccordionState {
 
 enum SubViews {
     NORMAL = 0,
-    MANAGE_RELATED_ORGS
+    MANAGE_RELATED_ORGS,
+    INVITE_USER
 }
 
 export interface ViewOrganizationState {
@@ -84,6 +86,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
     onManageRelatedOrgs() {
         this.setState({ subView: SubViews.MANAGE_RELATED_ORGS })
+    }
+
+    onInviteUser() {
+        this.setState({ subView: SubViews.INVITE_USER })
     }
 
     onViewMembers() {
@@ -875,17 +881,13 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             case orgModel.UserRelationToOrganization.ADMIN:
                 return (
                     <div className="ViewOrganization-tabPaneToolbar">
-                        <NavLink to={"/inviteUser/" + this.props.viewModel.organization.id}>
-                            <Button size="small"><Icon type="mail" /> Invite a User</Button>
-                        </NavLink>
+                        <Button size="small" onClick={this.onInviteUser.bind(this)}><Icon type="mail" /> Invite a User</Button>
                     </div>
                 )
             case orgModel.UserRelationToOrganization.OWNER:
                 return (
                     <div className="ViewOrganization-tabPaneToolbar">
-                        <NavLink to={"/inviteUser/" + this.props.viewModel.organization.id}>
-                            <Button size="small"><Icon type="mail" /> Invite a User</Button>
-                        </NavLink>
+                        <Button size="small" onClick={this.onInviteUser.bind(this)}><Icon type="mail" /> Invite a User</Button>
                     </div>
                 )
         }
@@ -1039,7 +1041,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 this.setState({ navigateTo: NavigateTo.EDIT_ORGANIZATION })
                 break
             case 'inviteUser':
-                this.setState({ navigateTo: NavigateTo.INVITE_USER })
+                this.setState({ subView: SubViews.INVITE_USER })
                 break
             case 'manageRequests':
                 this.setState({ navigateTo: NavigateTo.MANAGE_REQUESTS })
@@ -1272,11 +1274,24 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
+    renderInviteUsersView() {
+        const onFinish = () => {
+            this.setState({
+                subView: SubViews.NORMAL
+            })
+        }
+        return (
+            <InviteUser onFinish={onFinish} organizationId={this.props.viewModel.organization.id} />
+        )
+    }
+
     getSubView() {
         switch (this.state.subView) {
 
             case SubViews.MANAGE_RELATED_ORGS:
                 return this.renderManageRelatedOrgsView()
+            case SubViews.INVITE_USER:
+                return this.renderInviteUsersView()
             case SubViews.NORMAL:
             default:
                 return this.renderNormalView()
@@ -1295,8 +1310,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 return <Redirect push to={"/editOrganization/" + this.props.viewModel.organization.id} />
             case NavigateTo.MANAGE_REQUESTS:
                 return <Redirect push to={"/manageOrganizationRequests/" + this.props.viewModel.organization.id} />
-            case NavigateTo.INVITE_USER:
-                return <Redirect push to={"/inviteUser/" + this.props.viewModel.organization.id} />
+            // case NavigateTo.INVITE_USER:
+            //     return <Redirect push to={"/inviteUser/" + this.props.viewModel.organization.id} />
             case NavigateTo.VIEW_ORGANIZATION:
                 return <Redirect push to={"/viewOrganization/" + this.props.viewModel.organization.id} />
             case NavigateTo.BROWSER:
