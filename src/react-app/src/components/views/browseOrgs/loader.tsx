@@ -21,10 +21,19 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
     }
 
     renderLoading() {
-        return (
+        const message = (
             <div>
-                Fetching your orgs and other things...
+                Loading Organizations...
+                {' '}
+                <Spin />
             </div>
+        )
+        return (
+            <Alert type="info" message={message} style={{
+                width: '20em',
+                padding: '20px',
+                margin: '20px auto'
+            }} />
         )
     }
 
@@ -73,6 +82,7 @@ import { Dispatch, Action } from 'redux'
 import { connect } from 'react-redux'
 
 import * as actions from '../../../redux/actions/browseOrgs'
+import { Spin, Alert } from 'antd';
 
 export interface OwnProps {
 

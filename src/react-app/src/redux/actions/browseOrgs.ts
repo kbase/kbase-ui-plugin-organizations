@@ -170,26 +170,76 @@ export function filterOrgsStart(filter: orgModel.Filter): FilterOrgsStart {
 }
 
 export function load() {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(loadStart())
 
-        // populate default browse orgs props
-        const defaultViewModel: BrowseOrgsViewModel = {
-            rawOrganizations: [],
-            organizations: [],
-            openRequests: new Map(),
-            totalCount: 0,
-            filteredCount: 0,
-            sortField: 'changed',
-            sortDirection: SortDirection.DESCENDING,
-            filter: { roleType: 'myorgs', roles: [], privacy: 'any' },
-            searchTerms: [],
-            selectedOrganizationId: null,
-            searching: false,
-            error: null
+        const {
+            auth: { authorization: { token, username } },
+            app: { config }
+        } = getState()
+
+        const orgClient = new orgModel.OrganizationModel({
+            token, username,
+            groupsServiceURL: config.services.Groups.url
+        })
+
+        const defaultSearchTerms: Array<string> = []
+        const defaultSortField = 'changed'
+        const defaultSortDirection = SortDirection.DESCENDING
+        const defaultFilter = { roleType: 'myorgs', roles: [], privacy: 'any' }
+
+        try {
+            const { organizations, total } = await orgClient.queryOrgs({
+                searchTerms: defaultSearchTerms,
+                sortField: defaultSortField,
+                sortDirection: defaultSortDirection,
+                filter: defaultFilter,
+                username
+            })
+
+            const adminOrgs = organizations
+                .filter((org) => {
+                    return (
+                        org.relation === orgModel.UserRelationToOrganization.ADMIN ||
+                        org.relation === orgModel.UserRelationToOrganization.OWNER
+                    )
+                })
+                .map((org) => {
+                    return org.id
+                })
+            let openRequests
+            if (adminOrgs.length > 0) {
+                openRequests = await orgClient.getOpenRequestsStatus({ organizationIds: adminOrgs })
+            } else {
+                openRequests = new Map()
+            }
+
+            // dispatch(searchOrgsSuccess(organizations, total, openRequests))
+            // populate default browse orgs props
+            const defaultViewModel: BrowseOrgsViewModel = {
+                rawOrganizations: organizations,
+                organizations: organizations,
+                openRequests: openRequests,
+                totalCount: total,
+                filteredCount: organizations.length,
+                sortField: defaultSortField,
+                sortDirection: defaultSortDirection,
+                filter: defaultFilter,
+                searchTerms: defaultSearchTerms,
+                selectedOrganizationId: null,
+                searching: false,
+                error: null
+            }
+            // done!
+            dispatch(loadSuccess(defaultViewModel))
+        } catch (ex) {
+            console.error('Error querying orgs', ex.name, ex.message)
+            dispatch(searchOrgsError({
+                code: ex.name,
+                message: ex.message
+            }))
         }
-        // done!
-        dispatch(loadSuccess(defaultViewModel))
+
     }
 }
 
