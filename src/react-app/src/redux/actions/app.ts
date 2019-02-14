@@ -82,9 +82,6 @@ export function appStart() {
                     ServiceWizard: {
                         url: iframeParams.params.serviceWizardURL
                     },
-                    Feeds: {
-                        url: iframeParams.params.feedsServiceURL
-                    },
                     Auth: {
                         url: iframeParams.params.authServiceURL
                     }
@@ -109,9 +106,6 @@ export function appStart() {
                     },
                     ServiceWizard: {
                         url: iframeParams.params.serviceWizardURL
-                    },
-                    Feeds: {
-                        url: iframeParams.params.feedsServiceURL
                     },
                     Auth: {
                         url: iframeParams.params.authServiceURL

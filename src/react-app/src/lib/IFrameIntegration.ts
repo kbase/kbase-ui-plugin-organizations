@@ -7,7 +7,6 @@ import { IFrameParams } from '../types'
 //         userProfileServiceURL: string
 //         workspaceServiceURL: string
 //         serviceWizardURL: string
-//         feedsServiceURL: string
 //         authServiceURL: string
 //         originalPath: string | null,
 //         view: string | null,

@@ -10,11 +10,8 @@ import {
 import * as orgModel from '../../data/models/organization/model'
 import * as requestModel from '../../data/models/requests'
 import * as uberModel from '../../data/models/uber'
-import * as feedsModel from '../../data/models/feeds'
-import * as userProfileModel from '../../data/models/profile'
 import { loadNarrative } from './entities'
 import * as dataServices from './dataServices'
-import { Narrative } from '../../data/models/narrative';
 import { AnError } from '../../lib/error';
 
 // Action Types
@@ -33,17 +30,6 @@ export interface LoadStart extends Action {
     type: ActionFlag.VIEW_ORG_LOAD_START
 }
 
-// export interface LoadSuccess extends Action {
-//     type: ActionFlag.VIEW_ORG_LOAD_SUCCESS
-//     organization: orgModel.Organization
-//     relation: orgModel.Relation
-//     groupRequests: Array<requestModel.Request> | null
-//     groupInvitations: Array<requestModel.Request> | null
-//     requestInbox: Array<requestModel.Request>
-//     requestOutbox: Array<requestModel.Request>
-//     notifications: Array<feedsModel.OrganizationNotification>
-// }
-
 export interface LoadNormalSuccess extends Action {
     type: ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS
     organization: orgModel.Organization
@@ -53,7 +39,6 @@ export interface LoadNormalSuccess extends Action {
     groupInvitations: Array<requestModel.Request> | null
     requestInbox: Array<requestModel.Request>
     requestOutbox: Array<requestModel.Request>
-    notifications: Array<feedsModel.OrganizationNotification>,
     narrativesSortBy: string
     narratives: Array<orgModel.NarrativeResource>
     sortMembersBy: string,
@@ -378,7 +363,6 @@ export function loadNormalSuccess(
     groupInvitations: Array<requestModel.Request> | null,
     requestInbox: Array<requestModel.Request>,
     requestOutbox: Array<requestModel.Request>,
-    notifications: Array<feedsModel.OrganizationNotification>,
     narrativesSortBy: string,
     narratives: Array<orgModel.NarrativeResource>,
     sortMembersBy: string,
@@ -387,7 +371,7 @@ export function loadNormalSuccess(
         type: ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS,
         organization, relation, openRequest,
         groupRequests, groupInvitations,
-        requestInbox, requestOutbox, notifications,
+        requestInbox, requestOutbox,
         narrativesSortBy,
         narratives, sortMembersBy, members
     }
@@ -539,8 +523,7 @@ export function load(organizationId: string) {
 
         const {
             auth: { authorization: { token, username } },
-            app: { config },
-            db: { notifications: { all, byId } }
+            app: { config }
         } = getState()
 
         const uberClient = new uberModel.UberModel({
@@ -600,7 +583,7 @@ export function load(organizationId: string) {
             })
 
             dispatch(loadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations,
-                requestInbox, requestOutbox, [], narrativesSortBy, narratives, sortMembersBy, members))
+                requestInbox, requestOutbox, narrativesSortBy, narratives, sortMembersBy, members))
         } catch (ex) {
             dispatch(loadError({
                 code: ex.name,
@@ -694,7 +677,7 @@ export function reload(organizationId: string) {
             })
 
             dispatch(loadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations,
-                requestInbox, requestOutbox, [], narrativesSortBy, narratives, sortMembersBy, members))
+                requestInbox, requestOutbox, narrativesSortBy, narratives, sortMembersBy, members))
         } catch (ex) {
             dispatch(loadError({
                 code: ex.name,

@@ -10,7 +10,6 @@ import { IFrameParams } from '../types'
 //         userProfileServiceURL: string
 //         workspaceServiceURL: string
 //         serviceWizardURL: string
-//         feedsServiceURL: string
 //         authServiceURL: string
 //         originalPath: string | null,
 //         view: string | null,
@@ -59,7 +58,6 @@ class IFrameSimulator {
                 userProfileServiceURL: '/services/user_profile/rpc',
                 workspaceServiceURL: '/services/ws',
                 serviceWizardURL: '/services/service_wizard',
-                feedsServiceURL: '/services/feeds',
                 authServiceURL: '/services/auth',
                 originalPath: '',
                 view: null,

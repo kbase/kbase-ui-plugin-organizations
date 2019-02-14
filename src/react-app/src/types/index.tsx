@@ -4,7 +4,6 @@ import * as orgModel from '../data/models/organization/model'
 import * as userModel from "../data/models/user"
 import * as requestModel from '../data/models/requests'
 import * as narrativeModel from '../data/models/narrative'
-import * as feedsModel from '../data/models/feeds'
 import { AnError } from "../combo/error/api";
 
 /* Types from the organization service (approximately) */
@@ -519,10 +518,6 @@ export interface AddOrgView {
     viewModel: AddOrgViewModel | null
 }
 
-export interface Notification {
-
-}
-
 export interface UserEntity {
     userId: string
     profile: userProfile.UserProfile
@@ -667,19 +662,9 @@ export interface StoreState {
         organizations: {
             byId: Map<orgModel.OrganizationID, orgModel.Organization | orgModel.InaccessiblePrivateOrganization>
         }
-        // notifications: {
-        //     byId: <Map<
-        // }
     }
 
     db: {
-        notifications: {
-            all: Array<feedsModel.OrganizationNotification>
-            byId: Map<feedsModel.NotificationID, feedsModel.OrganizationNotification>
-            // collections: {
-            //     byGroup: Map<orgModel.OrganizationID, Array<feedsModel.NotificationID>>
-            // }
-        }
     }
 
     auth: Authorization
@@ -780,9 +765,6 @@ export interface AppConfig {
         ServiceWizard: {
             url: string
         }
-        Feeds: {
-            url: string
-        }
         Auth: {
             url: string
         }
@@ -811,7 +793,6 @@ export interface IFrameParams {
         userProfileServiceURL: string
         workspaceServiceURL: string
         serviceWizardURL: string
-        feedsServiceURL: string
         authServiceURL: string
         originalPath: string | null,
         view: string | null,

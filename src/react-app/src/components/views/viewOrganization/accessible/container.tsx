@@ -4,13 +4,11 @@ import { connect } from 'react-redux'
 import { StoreState, ViewOrgViewModelKind, ViewOrgViewModel } from '../../../../types'
 import * as actions from '../../../../redux/actions/viewOrg'
 import * as acceptInboxRequestActions from '../../../../redux/actions/viewOrganization/acceptInboxRequest'
-import * as notificationActions from '../../../../redux/actions/notifications'
 
 import ViewOrganization from './component'
 
 import * as orgModel from '../../../../data/models/organization/model'
 import * as requestModel from '../../../../data/models/requests'
-import * as feedsModel from '../../../../data/models/feeds'
 
 // Props for this component
 
@@ -21,17 +19,6 @@ export interface OwnProps {
 // the interface for mapStateTo props
 interface StateProps {
     viewModel: ViewOrgViewModel
-    // organization: orgModel.Organization
-    // relation: orgModel.Relation
-    // openRequest: orgModel.RequestStatus
-    // groupRequests: Array<requestModel.Request> | null
-    // groupInvitations: Array<requestModel.Request> | null
-    // requestOutbox: Array<requestModel.Request>
-    // requestInbox: Array<requestModel.Request>
-    // notifications: Array<feedsModel.OrganizationNotification>
-    // sortNarrativesBy: string
-    // searchNarrativesBy: string
-    // narratives: Array<orgModel.NarrativeResource>
 }
 
 // the interface for mapDispatchToProps
@@ -45,7 +32,6 @@ interface DispatchProps {
     onRemoveNarrative: (narrative: orgModel.NarrativeResource) => void
     onGetViewAccess: (narrative: orgModel.NarrativeResource) => void
     onAcceptRequest: (requestId: requestModel.RequestID) => void
-    onReadNotification: (notificationId: string) => void
     onSortNarratives: (sortBy: string) => void
     onSearchNarratives: (searchBy: string) => void
 }
@@ -64,26 +50,10 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
     if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
         throw new Error("argh, wrong org kind")
     }
-    // const {
-    //     organization, relation, openRequest, groupRequests, groupInvitations,
-    //     requestInbox, requestOutbox, sortNarrativesBy, narratives, searchNarrativesBy
-    // } = viewModel
-    // const {
-    //     db: {
-    //         notifications: { all }
-    //     }
-    // } = state
 
-    // const notifications = all.filter((notification) => {
-    //     return (notification.organizationId === viewModel.organization.id)
-    // })
     // TODO: of course this really needs to be an async fetch of the org info!
     return {
         viewModel
-        // organization, relation, openRequest, groupRequests, groupInvitations,
-        // requestInbox, requestOutbox, notifications, sortNarrativesBy,
-        // searchNarrativesBy,
-        // narratives
     }
 }
 
@@ -115,9 +85,6 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         },
         onAcceptRequest: (requestId: requestModel.RequestID) => {
             dispatch(acceptInboxRequestActions.acceptRequest(requestId) as any)
-        },
-        onReadNotification: (notificationId: string) => {
-            dispatch(notificationActions.read(notificationId) as any)
         },
         onSortNarratives: (sortBy: string) => {
             dispatch(actions.sortNarratives(sortBy) as any)

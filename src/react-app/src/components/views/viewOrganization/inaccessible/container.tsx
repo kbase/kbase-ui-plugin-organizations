@@ -48,15 +48,7 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
     const {
         organization, relation, requestOutbox
     } = viewModel
-    const {
-        db: {
-            notifications: { all }
-        }
-    } = state
 
-    const notifications = all.filter((notification) => {
-        return (notification.organizationId === organization.id)
-    })
     // TODO: of course this really needs to be an async fetch of the org info!
     return {
         organization, relation, requestOutbox

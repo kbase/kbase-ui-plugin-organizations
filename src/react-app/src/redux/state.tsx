@@ -39,13 +39,6 @@ export class StateInstances {
                 }
             },
             db: {
-                notifications: {
-                    all: [],
-                    byId: new Map(),
-                    // collections: {
-                    //     byGroup: new Map()
-                    // }
-                }
             },
             views: {
                 browseOrgsView: {
@@ -134,9 +127,6 @@ export class StateInstances {
                             url: ''
                         },
                         ServiceWizard: {
-                            url: ''
-                        },
-                        Feeds: {
                             url: ''
                         },
                         Auth: {

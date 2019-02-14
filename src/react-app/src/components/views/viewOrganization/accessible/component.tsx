@@ -54,18 +54,6 @@ export interface ViewOrganizationState {
 
 export interface ViewOrganizationProps {
     viewModel: ViewOrgViewModel
-
-    // organization: orgModel.Organization
-    // relation: orgModel.Relation
-    // openRequest: orgModel.RequestStatus
-    // groupRequests: Array<requestModel.Request> | null
-    // groupInvitations: Array<requestModel.Request> | null
-    // requestOutbox: Array<requestModel.Request>
-    // requestInbox: Array<requestModel.Request>
-    // notifications: Array<feedsModel.OrganizationNotification>
-    // sortNarrativesBy: string
-    // searchNarrativesBy: string
-    // narratives: Array<orgModel.NarrativeResource>
     onViewOrg: (id: string) => void
     onReloadOrg: (id: string) => void
     onJoinOrg: () => void
@@ -75,7 +63,6 @@ export interface ViewOrganizationProps {
     onRemoveNarrative: (narrative: orgModel.NarrativeResource) => void
     onGetViewAccess: (narrative: orgModel.NarrativeResource) => void
     onAcceptRequest: (requestId: requestModel.RequestID) => void
-    onReadNotification: (requestId: requestModel.RequestID) => void
     onSortNarratives: (sortBy: string) => void
     onSearchNarratives: (searchBy: string) => void
 }
