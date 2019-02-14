@@ -92,9 +92,16 @@ export function load(organizationId: string) {
                 return
             }
 
-            const thisMember = org.members.find((member) => {
+            let thisMember = org.members.find((member) => {
                 return member.username === username
             })
+
+            if (!thisMember) {
+                if (org.owner.username === username) {
+                    thisMember = org.owner
+                }
+            }
+
             if (!thisMember) {
                 dispatch(loadError(makeError({
                     code: 'notfound',

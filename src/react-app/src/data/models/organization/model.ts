@@ -298,7 +298,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         joinedAt: new Date(group.owner.joined),
         lastVisitedAt: group.owner.lastvisit ? new Date(group.owner.lastvisit) : null,
         type: MemberType.OWNER,
-        title: 'Owner'
+        title: group.owner.custom.title
     }
 
     // We join admins and members, since they are all members, just different privileges in the org
