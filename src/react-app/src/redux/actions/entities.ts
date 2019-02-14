@@ -165,7 +165,7 @@ interface LoadNarrativeError {
 
 export function loadNarrative(workspaceId: narrativeModel.WorkspaceID) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch({
+        dispatch(<LoadNarrativeStart>{
             type: ActionFlag.ENTITY_NARRATIVE_LOAD_START
         })
 
@@ -183,12 +183,12 @@ export function loadNarrative(workspaceId: narrativeModel.WorkspaceID) {
 
         try {
             const narrative = await narrativeClient.getNarrative(workspaceId)
-            dispatch({
+            dispatch(<LoadNarrativeSuccess>{
                 type: ActionFlag.ENTITY_NARRATIVE_LOAD_SUCCESS,
                 narrative: narrative
             })
         } catch (ex) {
-            dispatch({
+            dispatch(<LoadNarrativeError>{
                 type: ActionFlag.ENTITY_NARRATIVE_LOAD_ERROR,
                 error: {
                     code: ex.name,

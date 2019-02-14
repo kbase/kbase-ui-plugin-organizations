@@ -338,3 +338,7 @@ padding:4px; */
     /* border: 1px blue solid; */
     padding: 4px;
 }
+
+.ViewOrganization-newNarrative {
+    border: 1px red solid;
+}

@@ -120,9 +120,15 @@ export function removeNarrativeSuccess(state: types.StoreState, action: actions.
     if (state.views.viewOrgView.viewModel.kind !== types.ViewOrgViewModelKind.NORMAL) {
         return state
     }
-    const newNarratives = state.views.viewOrgView.viewModel.organization.narratives.filter((narrative) => {
-        return (narrative.workspaceId !== action.narrative.workspaceId)
+    const narratives = state.views.viewOrgView.viewModel.organization.narratives
+    const newNarratives = narratives.filter((narrative) => {
+        return (narrative.workspaceId !== action.narrativeId)
     })
+    const newDisplayNarratives = state.views.viewOrgView.viewModel.narratives.filter((narrative) => {
+        return (narrative.workspaceId !== action.narrativeId)
+    })
+    // const filteredSortedNarratives = 
+    console.log('new narratives...', newNarratives)
     return {
         ...state,
         views: {
@@ -134,7 +140,8 @@ export function removeNarrativeSuccess(state: types.StoreState, action: actions.
                     organization: {
                         ...state.views.viewOrgView.viewModel.organization,
                         narratives: newNarratives
-                    }
+                    },
+                    narratives: newDisplayNarratives
                 }
             }
         }
@@ -156,7 +163,8 @@ export function accessNarrativeSuccess(state: types.StoreState, action: actions.
                 ...state.views.viewOrgView,
                 viewModel: {
                     ...state.views.viewOrgView.viewModel,
-                    organization: action.organization
+                    organization: action.organization,
+                    narratives: action.narratives
                 }
             }
         }
@@ -173,7 +181,6 @@ export function sortNarrativesSuccess(state: types.StoreState, action: actions.S
     return {
         ...state,
         views: {
-            ...state.views,
             ...state.views,
             viewOrgView: {
                 ...state.views.viewOrgView,
@@ -197,7 +204,6 @@ export function searchNarrativesSuccess(state: types.StoreState, action: actions
     return {
         ...state,
         views: {
-            ...state.views,
             ...state.views,
             viewOrgView: {
                 ...state.views.viewOrgView,
@@ -236,7 +242,6 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
             return sortNarrativesSuccess(state, action as actions.SortNarrativesSuccess)
         case ActionFlag.VIEW_ORG_SEARCH_NARRATIVES_SUCCESS:
             return searchNarrativesSuccess(state, action as actions.SearchNarrativesSuccess)
-
     }
 
     return acceptInboxRequest(state, action) ||

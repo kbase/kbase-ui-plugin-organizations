@@ -1,17 +1,14 @@
 import * as React from 'react'
-
 import OrganizationHeader from '../organizationHeader/loader';
-import { Redirect, NavLink } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { NarrativeState } from '../../../types';
-import Header from '../../Header';
-import { Icon, Button, Modal, Alert, Select, Tooltip } from 'antd';
+import { Icon, Button, Alert, Select, Tooltip } from 'antd';
 import './component.css'
 import * as orgModel from '../../../data/models/organization/model'
 import * as narrativeModel from '../../../data/models/narrative'
 import MainMenu from '../../menu/component';
 import { OrganizationNarrative, AccessibleNarrative } from '../../../data/models/narrative';
 import NiceElapsedTime from '../../NiceElapsedTime';
-
 
 export interface Props {
     organization: orgModel.Organization
@@ -20,7 +17,6 @@ export interface Props {
     selectedNarrative: OrganizationNarrative | null
     searching: boolean
     sortBy: string
-    // sortDirection: string
     filter: string
     doSortBy: (sortBy: narrativeModel.Sort) => void
     doSendRequest: (groupId: string, workspaceId: number) => void
@@ -35,7 +31,6 @@ enum NavigateTo {
 
 interface State {
     navigateTo: NavigateTo,
-    // selectedNarrative: Narrative | null
 }
 
 export class RequestAddNarrative extends React.Component<Props, State> {
@@ -58,19 +53,6 @@ export class RequestAddNarrative extends React.Component<Props, State> {
 
     doSelectNarrative(narrative: OrganizationNarrative) {
         this.props.doSelectNarrative(narrative)
-    }
-
-    doShowInfo() {
-        // this.setState({ showInfo: true })
-        Modal.info({
-            title: 'Request to Add Narrative Help',
-            width: '50em',
-            content: (
-                <div>
-                    <p>This is the view to help you request the addition of a narrative to this org...</p>
-                </div>
-            )
-        })
     }
 
     doSendRequest() {
@@ -108,44 +90,6 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 {name.slice(0, 25)}
                 …
             </span>
-        )
-    }
-
-    renderHeader() {
-        let orgName: string
-        const breadcrumbs = (
-            <React.Fragment>
-                <span>
-                    <NavLink to={`/viewOrganization/${this.props.organization.id}`}>
-                        <span style={{ fontWeight: 'bold' }}>
-                            {this.renderOrgName(this.props.organization.name)}
-                        </span>
-                    </NavLink>
-
-                    <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
-
-                    <Icon type="plus" />
-                    {' '}
-                    <span style={{ fontSize: '120%' }}>Add Narrative to Org</span>
-                </span>
-            </React.Fragment>
-        )
-        const buttons = (
-            <React.Fragment>
-                {/* <Button icon="undo"
-                    type="danger"
-                    onClick={this.doCancelToViewer.bind(this)}>
-                    Return to this Org
-                </Button> */}
-                <Button
-                    shape="circle"
-                    icon="info"
-                    onClick={this.doShowInfo.bind(this)}>
-                </Button>
-            </React.Fragment>
-        )
-        return (
-            <Header breadcrumbs={breadcrumbs} buttons={buttons} />
         )
     }
 
@@ -206,15 +150,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 <div className="RequestNarrative-title">
                     {narrative.title}
                 </div>
-                {/* <div className="RequestNarrative-owner">
-                    <span className="field-label">owner</span>
-                    <div style={{ display: 'inline-block' }}>
-                        <User userId={narrative.owner} avatarSize={20} />
-                    </div>
-                </div> */}
-                {/* <div className="RequestNarrative-permission">
-                    {this.renderPermission(narrative)}
-                </div> */}
+
                 <div className="RequestNarrative-publicPermission">
                     {this.renderPublicPermission(narrative)}
                 </div>
@@ -309,26 +245,14 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     placeholder="Search your Narratives"
                     // onChange={this.onSearchInputChange.bind(this)}
                     autoFocus
-                // ref={this.searchInput}
                 />
-                {/* <Tooltip
-                    title="Enter one or more words to search organizations by name or owner">
-                    <Icon type="info-circle" theme="twoTone" style={{ alignSelf: 'end' }} />
-                </Tooltip> */}
                 <Button
-                    // disabled={!this.haveSearchInput()}
-                    // ref={this.searchButton}
                     className="RequestNarrative-button"
                     form="searchForm"
                     key="submit"
                     htmlType="submit">
                     {this.renderSearchIcon()}
-                    {/* Search */}
                 </Button>
-
-                {/* <div className="message">
-                    {this.renderSearchFeedback()}
-                </div> */}
             </form>
         )
     }
@@ -362,11 +286,9 @@ export class RequestAddNarrative extends React.Component<Props, State> {
     }
 
     onSortDirectionChange() {
-
     }
 
     onFilterChange() {
-
     }
 
     renderFilterSortBar() {
@@ -380,22 +302,6 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     <Select.Option value="title" key="title">Title</Select.Option>
                     <Select.Option value="savedAt" key="savedAt">Last saved</Select.Option>
                 </Select>
-                {/* <Select onChange={this.onSortDirectionChange.bind(this)}
-                    style={{ width: '4em' }}
-                    dropdownMatchSelectWidth={true}
-                    defaultValue={this.props.sortDirection}>
-                    <Select.Option value={SortDirection.ASCENDING} key="name"><Icon type="sort-ascending" /></Select.Option>
-                    <Select.Option value={SortDirection.DESCENDING} key="owner"><Icon type="sort-descending" /></Select.Option>
-                </Select> */}
-                {/* <span className="field-label" style={{ marginLeft: '10px' }}>filter</span>
-                <Select onChange={this.onFilterChange.bind(this)}
-                    defaultValue={this.props.filter}
-                    style={{ width: '10em' }}
-                    dropdownMatchSelectWidth={true}>
-                    <Select.Option value="all" key="all">All</Select.Option>
-                    <Select.Option value="notAssociatedPending" key="notAssociatedPending">Not Associated/Pending</Select.Option>
-                    <Select.Option value="associatedPending" key="associatedPending">Only Associated/Pending</Select.Option>
-                </Select> */}
             </div>
         )
     }
@@ -450,7 +356,6 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 disabled={!this.canSendRequest.call(this)}
             >{buttonLabel}</Button>
         )
-
     }
 
     renderSelectedNarrative() {
@@ -486,13 +391,6 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                         Done
                 </Button>
                 </div>
-                {/* <div className="ButtonSet-button">
-                    <Button
-                        shape="circle"
-                        icon="info"
-                        onClick={this.doShowInfo.bind(this)}>
-                    </Button>
-                </div> */}
             </div >
         )
     }
@@ -508,18 +406,9 @@ export class RequestAddNarrative extends React.Component<Props, State> {
             // do nothing.
         }
 
-        // let buttonLabel
-        // if (this.props.organization.relation.type === UserRelationToOrganization.ADMIN ||
-        //     this.props.organization.relation.type === UserRelationToOrganization.OWNER) {
-        //     buttonLabel = 'Add Selected Narrative to Organization'
-        // } else {
-        //     buttonLabel = 'Request Addition of Selected Narrative to Organization'
-        // }
-
         return (
             <div className="RequestNarrative scrollable-flex-column">
                 <MainMenu buttons={this.renderMenuButtons()} />
-                {/* {this.renderHeader()} */}
                 {this.renderOrgHeader()}
                 <div className="RequestNarrative-body scrollable-flex-column">
                     <div className="RequestNarrative-selectNarrativeCol scrollable-flex-column">
@@ -535,11 +424,6 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     </div>
                 </div>
                 <div className="RequestNarrative-footer">
-                    {/* <Button
-                        type="primary"
-                        onClick={this.doSendRequest.bind(this)}
-                        disabled={!this.canSendRequest.call(this)}
-                    >{buttonLabel}</Button> */}
                 </div>
             </div>
         )

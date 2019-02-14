@@ -41,12 +41,12 @@ function organizationLoaderSuccess(state: StoreState, action: actions.Organizati
 function loadNarrativeSuccess(state: StoreState, action: actions.LoadNarrativeSuccess) {
     const narratives = state.entities.narratives
     narratives.byId.set(action.narrative.workspaceId, action.narrative)
-
     return {
         ...state,
         entities: {
             ...state.entities,
             narratives: {
+                ...state.entities.narratives,
                 byId: new Map(narratives.byId)
             }
         }

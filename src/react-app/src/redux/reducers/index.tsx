@@ -13,7 +13,7 @@ import manageMembership from './manageMembership'
 import requestAddNarrative from './requestAddNarrative'
 import entities from './entities'
 import organizationCentric from './organizationCentric'
-import global from './global'
+// import global from './global'
 import dataServices from './dataServices'
 
 
@@ -31,7 +31,7 @@ export function reducer(state: StoreState, action: Action): StoreState {
         requestAddNarrative(state, action) ||
         entities(state, action) ||
         organizationCentric(state, action) ||
-        global(state, action) ||
+        // global(state, action) ||
         dataServices(state, action) ||
         state;
 }

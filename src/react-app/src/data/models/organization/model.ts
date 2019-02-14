@@ -768,7 +768,7 @@ export class OrganizationModel {
 
     params: ConstructorParams
     groupsClient: groupsApi.GroupsClient
-    organizations: Map<OrganizationID, Organization | InaccessiblePrivateOrganization>
+    // organizations: Map<OrganizationID, Organization | InaccessiblePrivateOrganization>
 
     constructor(params: ConstructorParams) {
         this.params = params
@@ -776,44 +776,26 @@ export class OrganizationModel {
             url: this.params.groupsServiceURL,
             token: this.params.token
         })
-        this.organizations = new Map<OrganizationID, Organization>()
+        // this.organizations = new Map<OrganizationID, Organization>()
     }
 
     async getOrg(id: OrganizationID): Promise<Organization | InaccessiblePrivateOrganization> {
-        if (this.organizations.has(id)) {
-            return this.organizations.get(id)!
-        }
         return this.groupsClient.getGroupById(id)
             .then((group) => {
-                let org: Organization | InaccessiblePrivateOrganization
                 if (group.role === "None" && group.private) {
-                    org = groupToPrivateOrganization(group as groupsApi.InaccessiblePrivateGroup, this.params.username)
+                    return groupToPrivateOrganization(group as groupsApi.InaccessiblePrivateGroup, this.params.username)
                 } else {
-                    org = groupToOrganization(group as groupsApi.Group, this.params.username)
+                    return groupToOrganization(group as groupsApi.Group, this.params.username)
                 }
-                this.organizations.set(id, org)
-                return org
             })
     }
 
     async getOrganization(id: OrganizationID): Promise<Organization> {
-        if (this.organizations.has(id)) {
-            const org = this.organizations.get(id)!
-            if (org.kind !== OrganizationKind.NORMAL) {
-                throw new Error('Inaccessible Organization')
-            }
-            return org
+        const group = await this.groupsClient.getGroupById(id)
+        if (group.role === "None" && group.private) {
+            throw new Error('Inaccessible Organization')
         }
-        return this.groupsClient.getGroupById(id)
-            .then((group) => {
-                if (group.role === "None" && group.private) {
-                    throw new Error('Inaccessible Organization')
-                }
-
-                const org = groupToOrganization(group as groupsApi.Group, this.params.username)
-                this.organizations.set(id, org)
-                return org
-            })
+        return groupToOrganization(group as groupsApi.Group, this.params.username)
     }
 
     async getOrgs(ids: Array<OrganizationID>): Promise<Array<Organization | InaccessiblePrivateOrganization>> {

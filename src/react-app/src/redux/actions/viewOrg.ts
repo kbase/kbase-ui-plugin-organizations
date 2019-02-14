@@ -13,6 +13,7 @@ import * as uberModel from '../../data/models/uber'
 import { loadNarrative } from './entities'
 import * as dataServices from './dataServices'
 import { AnError } from '../../lib/error';
+import * as narrativeModel from '../../data/models/narrative'
 
 // Action Types
 
@@ -151,7 +152,7 @@ export interface RemoveNarrativeStart extends Action {
 
 export interface RemoveNarrativeSuccess extends Action {
     type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_SUCCESS,
-    narrative: orgModel.NarrativeResource
+    narrativeId: narrativeModel.NarrativeID
 }
 
 export interface RemoveNarrativeError extends Action {
@@ -167,10 +168,10 @@ export function removeNarrativeStart(): RemoveNarrativeStart {
     }
 }
 
-export function removeNarrativeSuccess(narrative: orgModel.NarrativeResource): RemoveNarrativeSuccess {
+export function removeNarrativeSuccess(narrativeId: narrativeModel.NarrativeID): RemoveNarrativeSuccess {
     return {
         type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_SUCCESS,
-        narrative: narrative
+        narrativeId
     }
 }
 
@@ -203,12 +204,20 @@ export function removeNarrative(narrative: orgModel.NarrativeResource) {
             app: { config },
             views: {
                 viewOrgView: {
-                    viewModel: {
-                        organization
-                    }
+                    viewModel
                 }
             }
-        } = state
+        }: StoreState = state
+
+        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+            dispatch(removeNarrativeError({
+                code: 'bad state',
+                message: 'View orgs does not have an org'
+            }))
+            return
+        }
+
+        const { organization } = viewModel
 
         if (!organization) {
             dispatch(removeNarrativeError({
@@ -228,7 +237,8 @@ export function removeNarrative(narrative: orgModel.NarrativeResource) {
 
         try {
             await orgClient.removeNarrativeFromOrg(groupId, narrative.workspaceId)
-            dispatch(removeNarrativeSuccess(narrative))
+
+            dispatch(removeNarrativeSuccess(narrative.workspaceId))
         } catch (ex) {
             dispatch(removeNarrativeError({
                 code: ex.name,
@@ -252,6 +262,7 @@ export interface AccessNarrativeStart extends Action {
 export interface AccessNarrativeSuccess extends Action {
     type: ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_SUCCESS,
     organization: orgModel.Organization
+    narratives: Array<orgModel.NarrativeResource>
 }
 
 export interface AccessNarrativeError extends Action {
@@ -266,10 +277,11 @@ export function accessNarrativeStart(): AccessNarrativeStart {
     }
 }
 
-export function accessNarrativeSuccess(organization: orgModel.Organization): AccessNarrativeSuccess {
+export function accessNarrativeSuccess(organization: orgModel.Organization, narratives: Array<orgModel.NarrativeResource>): AccessNarrativeSuccess {
     return {
         type: ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_SUCCESS,
-        organization: organization
+        organization,
+        narratives
     }
 }
 
@@ -304,14 +316,14 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
             return
         }
 
-        const { organization } = viewModel
+        const { organization, sortNarrativesBy, searchNarrativesBy } = viewModel
 
         const {
             auth: { authorization: { token, username } },
             app: { config },
         } = state
 
-        const groupId = organization.id
+        const organizationId = organization.id
         const resourceId = String(narrative.workspaceId)
 
         const orgClient = new orgModel.OrganizationModel({
@@ -320,12 +332,16 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
         })
 
         try {
-            await orgClient.grantNarrativeAccess(groupId, resourceId)
+            await orgClient.grantNarrativeAccess(organizationId, resourceId)
             // Getting a fresh copy of the org will trigger the view org component and
             // all subcomponents with changed data to refresh. All we are intending here is that
             // the narrative in the list of narratives provided by the groups api is updated, but
             // there may be other elements of the group/org which have changed as well. So be it.
-            const org = await orgClient.getOrg(groupId)
+
+            // TODO: just update the narrative, don't reprocess everything.
+
+
+            const org = await orgClient.getOrg(organizationId)
 
             if (org.kind !== orgModel.OrganizationKind.NORMAL) {
                 dispatch(accessNarrativeError({
@@ -335,8 +351,15 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
                 return
             }
 
+            const narratives = org.narratives
+
+            const filteredNarratives = orgModel.queryNarratives(narratives, {
+                sortBy: sortNarrativesBy,
+                searchBy: searchNarrativesBy
+            })
+
             dispatch(loadNarrative(narrative.workspaceId))
-            dispatch(accessNarrativeSuccess(org))
+            dispatch(accessNarrativeSuccess(org, filteredNarratives))
         } catch (ex) {
             dispatch(accessNarrativeError({
                 code: 'error',

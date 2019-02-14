@@ -218,7 +218,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         const isNew = org.lastVisitedAt && (org.modifiedAt.getTime() > org.lastVisitedAt.getTime())
         let newAlert
         if (isNew) {
-            const title = 'This org has changed since your last visit to it'
+            const title = 'This org has changed since your last visit to it; new or updated items are highlighted'
             newAlert = (
                 <div>
                     <Tooltip placement="topRight" title={title}>
