@@ -18,10 +18,14 @@ class Loader extends React.Component<Props, State> {
     }
 
     renderLoading() {
+        const message = (
+            <React.Fragment>
+                <Icon type="loading" />{' '}Loading Your Narratives...
+            </React.Fragment>
+        )
         return (
-            <div>
-                Loading Your Narratives...
-            </div>
+            <Alert type="info" message={message}
+                style={{ padding: '20px', width: '30em', margin: '30px auto 0 auto', textAlign: 'center' }} />
         )
     }
 
@@ -77,6 +81,7 @@ import { connect } from 'react-redux'
 
 import * as types from '../../../types'
 import * as actions from '../../../redux/actions/requestAddNarrative'
+import { Icon, Alert } from 'antd';
 
 export interface OwnProps {
     organizationId: string

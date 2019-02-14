@@ -116,6 +116,7 @@ export interface NarrativeResource {
     isPublic: boolean
     createdAt: Date
     updatedAt: Date
+    addedAt: Date | null
     description: string
 }
 
@@ -329,7 +330,8 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
             permission: groupPermissionToWorkspacePermission(info.perm),
             createdAt: new Date(info.narrcreate),
             updatedAt: new Date(info.moddate),
-            description: info.description
+            description: info.description,
+            addedAt: info.added === null ? null : new Date(info.added)
         }
     })
     const apps: Array<AppInfo> = []
@@ -634,7 +636,21 @@ function narrativeSortByToComparator(sortBy: string) {
         default:
         case 'added':
             return (a: NarrativeResource, b: NarrativeResource) => {
-                return b.updatedAt.getTime() - a.updatedAt.getTime()
+                if (a.addedAt === null) {
+                    if (b.addedAt === null) {
+                        return 0
+                    } else {
+                        // nulls sort to bottom
+                        return 1
+                    }
+                } else {
+                    if (b.addedAt === null) {
+                        return -1
+                    } else {
+                        return b.addedAt.getTime() - a.addedAt.getTime()
+                    }
+                }
+
             }
     }
 }

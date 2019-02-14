@@ -20,8 +20,12 @@ export interface Member {
     }
 }
 
-export interface WorkspaceInfo {
+export interface Resource {
     rid: string
+    added: number | null
+}
+
+export interface WorkspaceInfo extends Resource {
     name: string
     narrname: string
     narrcreate: number
@@ -31,8 +35,7 @@ export interface WorkspaceInfo {
     moddate: number
 }
 
-export interface AppInfo {
-    rid: string
+export interface AppInfo extends Resource {
 }
 
 export type Role = "None" | "Member" | "Admin" | "Owner"
@@ -367,7 +370,6 @@ export class GroupsClient {
                 return response.json()
             })
             .then((result) => {
-                console.log('GROUP', result)
                 return result as Group
             })
     }

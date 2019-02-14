@@ -483,16 +483,16 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     <Button icon="rollback"
                         type="danger"
                         onClick={this.doCancelToViewer.bind(this)}>
-                        Back to Org
+                        Done
                 </Button>
                 </div>
-                <div className="ButtonSet-button">
+                {/* <div className="ButtonSet-button">
                     <Button
                         shape="circle"
                         icon="info"
                         onClick={this.doShowInfo.bind(this)}>
                     </Button>
-                </div>
+                </div> */}
             </div >
         )
     }
