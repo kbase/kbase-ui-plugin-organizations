@@ -53,9 +53,9 @@ class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                         style={{ backgroundColor: 'transparent' }}
                         mode="horizontal"
                     >
-                        <Menu.Item key="allorgs">
+                        {/* <Menu.Item key="allorgs">
                             <Link to="/organizations">Browse &amp; Search</Link>
-                        </Menu.Item>
+                        </Menu.Item> */}
                         {/* <Menu.Item key="neworg">
                             <Link to="/newOrganization">Create New Organization</Link>
                         </Menu.Item> */}

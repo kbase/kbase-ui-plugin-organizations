@@ -28,7 +28,8 @@ enum NavigateTo {
     MANAGE_REQUESTS,
     VIEW_ORGANIZATION,
     EDIT_ORGANIZATION,
-    INVITE_USER
+    INVITE_USER,
+    BROWSER
 }
 
 enum AccordionState {
@@ -996,6 +997,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         return (
             <span className="ButtonSet">
                 <span className="ButtonSet-button">
+                    <Button type="danger" onClick={this.onNavigateToBrowser.bind(this)} >
+                        <Icon type="rollback" />{' '}Done
+                    </Button>
+                </span>
+                <span className="ButtonSet-button">
                     {this.renderOrgMenu()}
                 </span>
 
@@ -1004,6 +1010,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </span> */}
             </span>
         )
+    }
+
+    onNavigateToBrowser() {
+        this.setState({ navigateTo: NavigateTo.BROWSER })
     }
 
     onNavigateToMembership() {
@@ -1302,6 +1312,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 return <Redirect push to={"/inviteUser/" + this.props.viewModel.organization.id} />
             case NavigateTo.VIEW_ORGANIZATION:
                 return <Redirect push to={"/viewOrganization/" + this.props.viewModel.organization.id} />
+            case NavigateTo.BROWSER:
+                return <Redirect push to={"/organizations"} />
             case NavigateTo.NONE:
             default:
             // do nothing.
