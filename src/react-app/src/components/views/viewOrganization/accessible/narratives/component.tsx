@@ -1,7 +1,7 @@
 import * as React from 'react'
 import './component.css'
 import * as orgModel from '../../../../../data/models/organization/model'
-import { Alert, Button, Icon, Menu, Dropdown, Input, Select } from 'antd';
+import { Alert, Button, Icon, Menu, Dropdown, Input, Select, Modal } from 'antd';
 import OrganizationNarrative from '../../../../OrganizationNarrative'
 
 export interface NarrativesProps {
@@ -31,10 +31,38 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
         this.props.onRequestAddNarrative()
     }
 
+    onRemoveNarrative(narrative: orgModel.NarrativeResource) {
+        const confirmed = () => {
+            this.props.onRemoveNarrative(narrative)
+        }
+        const message = (
+            <React.Fragment>
+                <p>
+                    Please confirm the removal of this Narrative from this Organization.
+                </p>
+                <p>
+                    Any view permission granted to organization members will be unaffected by removing the Narrative.
+                </p>
+                <p>
+                    All Organization members and the Narrative owner will receive a notification.
+                </p>
+            </React.Fragment>
+        )
+        Modal.confirm({
+            title: 'Confirm',
+            content: message,
+            width: '50em',
+            okText: 'Confirm',
+            onOk: () => {
+                confirmed()
+            }
+        })
+    }
+
     onNarrativeMenu(key: string, narrative: orgModel.NarrativeResource) {
         switch (key) {
             case 'removeNarrative':
-                this.props.onRemoveNarrative(narrative)
+                this.onRemoveNarrative(narrative)
                 break
         }
     }
