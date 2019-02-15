@@ -733,8 +733,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         return (
             <span className="ButtonSet">
                 <span className="ButtonSet-button">
-                    <Button type="danger" onClick={this.onNavigateToBrowser.bind(this)} >
-                        <Icon type="rollback" />{' '}Done
+                    <Button type="default" onClick={this.onNavigateToBrowser.bind(this)} >
+                        <Icon type="rollback" />{' '}Back
                     </Button>
                 </span>
                 <span className="ButtonSet-button">
@@ -1090,7 +1090,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         return (
             <div className="ViewOrganization  scrollable-flex-column">
                 <MainMenu buttons={this.renderMenuButtons()} />
-                <div style={{ borderBottom: '1px silver solid' }}>
+                <div className="ViewOrganization-organizationBox">
                     <BriefOrganization organization={borg} openRequestsStatus={this.props.viewModel.openRequest} />
                 </div>
                 {this.getSubView()}

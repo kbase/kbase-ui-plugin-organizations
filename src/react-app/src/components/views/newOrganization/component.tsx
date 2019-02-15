@@ -586,22 +586,31 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         let errorButton
         if (this.props.error) {
             errorButton = (
-                <Button shape="circle" icon="exclamation" type="danger" onClick={this.toggleError.bind(this)}></Button>
+                <span className="ButtonSet-button">
+                    <Button shape="circle" icon="exclamation" type="danger" onClick={this.toggleError.bind(this)}></Button>
+                </span>
             )
         }
 
         return (
-            <React.Fragment>
-                <Button icon="save"
-                    form="newOrganizationForm"
-                    key="submit"
-                    disabled={!this.canSave.call(this)}
-                    htmlType="submit">
-                    Save
+            <div className="ButtonSet">
+                <span className="ButtonSet-button">
+                    <Button type="default" onClick={this.onClickCancelToBrowser.bind(this)} >
+                        <Icon type="rollback" />{' '}Back
+                    </Button>
+                </span>
+                <span className="ButtonSet-button">
+                    <Button icon="save"
+                        form="newOrganizationForm"
+                        key="submit"
+                        disabled={!this.canSave.call(this)}
+                        htmlType="submit">
+                        Save
                 </Button>
+                </span>
                 {/* <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button> */}
                 {errorButton}
-            </React.Fragment>
+            </div>
         )
     }
 

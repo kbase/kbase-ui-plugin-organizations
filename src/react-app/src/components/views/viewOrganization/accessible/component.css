@@ -22,6 +22,8 @@
     /* flex: 0 0 auto; */
     display: flex;
     flex-direction: column;
+    border: 1px rgba(200, 200, 200, 0.3) solid;
+    padding: 4px;
 }
 
 .ViewOrganization-narrativesRow {
@@ -225,7 +227,6 @@ padding:4px; */
 
 .ViewOrganization-org-description {
     overflow-y: auto;
-    /* max-height: 15em; */
 }
 
 /* ACCORDION */
@@ -341,4 +342,12 @@ padding:4px; */
 
 .ViewOrganization-newNarrative {
     border: 1px red solid;
+}
+
+.ViewOrganization-organizationBox {
+    border: 1px rgba(200, 200, 200, 0.5) solid;
+    background-color: rgba(200, 200, 200, 0.3);
+    border-radius: 4px;
+    margin: 0 4px 4px 0;
+    padding: 4px;
 }
