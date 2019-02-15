@@ -297,7 +297,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                 placement="topRight"
                 title={title}>
                 <span style={{ color: iconColor, fontSize: '80%' }}>
-                    <Icon type="mail" />
+                    <Icon type="mail" theme="filled" />
                 </span>
             </Tooltip>
         )
