@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Marked } from 'marked-ts'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Redirect } from 'react-router-dom'
 import { ViewOrgViewModel } from '../../../../types'
 import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu, Alert, Tabs } from 'antd'
 import Header from '../../../Header'
@@ -752,18 +752,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         this.setState({ navigateTo: NavigateTo.BROWSER })
     }
 
-    onNavigateToViewMembers() {
-        this.setState({ navigateTo: NavigateTo.VIEW_MEMBERS })
-    }
-
-    onNavigateToManageRequests() {
-        this.setState({ navigateTo: NavigateTo.MANAGE_REQUESTS })
-    }
-
-    onNavigateToViewOrganization() {
-        this.setState({ navigateTo: NavigateTo.VIEW_ORGANIZATION })
-    }
-
     onMenuClick({ key }: { key: string }) {
         switch (key) {
             case 'manageMyMembership':
@@ -1088,27 +1076,13 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     render() {
-        // switch (this.state.navigateTo) {
-        //     case NavigateTo.REQUEST_ADD_NARRATIVE:
-        //         return <Redirect to={"/requestAddNarrative/" + this.props.viewModel.organization.id} />
-        //     case NavigateTo.MANAGE_MEMBERSHIP:
-        //         return <Redirect push to={"/membership/" + this.props.viewModel.organization.id} />
-        //     case NavigateTo.VIEW_MEMBERS:
-        //         return <Redirect push to={"/viewMembers/" + this.props.viewModel.organization.id} />
-        //     // case NavigateTo.EDIT_ORGANIZATION:
-        //     //     return <Redirect push to={"/editOrganization/" + this.props.viewModel.organization.id} />
-        //     case NavigateTo.MANAGE_REQUESTS:
-        //         return <Redirect push to={"/manageOrganizationRequests/" + this.props.viewModel.organization.id} />
-        //     // case NavigateTo.INVITE_USER:
-        //     //     return <Redirect push to={"/inviteUser/" + this.props.viewModel.organization.id} />
-        //     case NavigateTo.VIEW_ORGANIZATION:
-        //         return <Redirect push to={"/viewOrganization/" + this.props.viewModel.organization.id} />
-        //     case NavigateTo.BROWSER:
-        //         return <Redirect push to={"/organizations"} />
-        //     case NavigateTo.NONE:
-        //     default:
-        //     // do nothing.
-        // }
+        switch (this.state.navigateTo) {
+            case NavigateTo.BROWSER:
+                return <Redirect push to={"/organizations"} />
+            case NavigateTo.NONE:
+            default:
+            // do nothing.
+        }
 
         const uorg = this.props.viewModel.organization as unknown
         const borg = uorg as orgModel.BriefOrganization
