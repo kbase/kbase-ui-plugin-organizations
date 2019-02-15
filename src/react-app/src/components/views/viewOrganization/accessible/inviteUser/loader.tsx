@@ -25,7 +25,7 @@ class InviteUserLoader extends React.Component<InviteUserLoaderProps, InviteUser
     renderLoading() {
         const message = (
             <div>
-                Loading Related Organizations Manager...
+                Loading ...
                 {' '}
                 <Spin />
             </div>

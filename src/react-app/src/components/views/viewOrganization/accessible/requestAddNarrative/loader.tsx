@@ -1,13 +1,13 @@
 import * as React from 'react'
-import { ManageMembershipView, ComponentLoadingState, StoreState } from '../../../types'
+
 import Container from './container'
-import Error from '../../../combo/error/component'
 
 export interface Props {
     organizationId: string
-    view: ManageMembershipView
+    view: types.RequestNarrativeView
     onLoad: (organizationId: string) => void
     onUnload: () => void
+    onFinish: () => void
 }
 
 interface State {
@@ -18,54 +18,54 @@ class Loader extends React.Component<Props, State> {
         super(props)
     }
 
-    renderLoadingNone() {
-        return (
-            <div>
-                Loading membership editor (none)...
-            </div>
-        )
-    }
-
     renderLoading() {
+        const message = (
+            <React.Fragment>
+                <Icon type="loading" />{' '}Loading Your Narratives...
+            </React.Fragment>
+        )
         return (
-            <div>
-                Loading membership editor...
-            </div>
+            <Alert type="info" message={message}
+                style={{ padding: '20px', width: '30em', margin: '30px auto 0 auto', textAlign: 'center' }} />
         )
     }
 
-    renderError(error: AnError) {
+    renderError(error: types.AppError) {
         return (
-            <Error error={error} />
+            <div>
+                Error!
+                <div>
+                    {error.message}
+                </div>
+            </div>
         )
     }
 
     render() {
         switch (this.props.view.loadingState) {
-            case ComponentLoadingState.NONE:
-                return this.renderLoadingNone()
-            case ComponentLoadingState.LOADING:
+            case types.ComponentLoadingState.NONE:
                 return this.renderLoading()
-            case ComponentLoadingState.ERROR:
+            case types.ComponentLoadingState.LOADING:
+                return this.renderLoading()
+            case types.ComponentLoadingState.ERROR:
                 if (this.props.view.error) {
                     return this.renderError(this.props.view.error)
                 } else {
-                    return this.renderError(makeError({
-                        code: 'missing-error',
+                    return this.renderError({
+                        code: 'Missing Error',
                         message: 'The error appears to be missing'
-                    }))
+                    })
                 }
             default:
                 return (
-                    <Container />
+                    <Container onFinish={this.props.onFinish} />
                 )
         }
     }
 
     componentDidMount() {
         switch (this.props.view.loadingState) {
-            case ComponentLoadingState.NONE:
-                // should only appear briefly as the LOAD event is processed.
+            case types.ComponentLoadingState.NONE:
                 this.props.onLoad(this.props.organizationId)
         }
     }
@@ -79,15 +79,17 @@ class Loader extends React.Component<Props, State> {
 
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
-import * as actions from '../../../redux/actions/manageMembership'
-import { AnError, makeError } from '../../../combo/error/api';
+
+import * as types from '../../../../../types'
+import * as actions from '../../../../../redux/actions/requestAddNarrative'
+import { Icon, Alert } from 'antd';
 
 export interface OwnProps {
     organizationId: string
 }
 
 interface StateProps {
-    view: ManageMembershipView
+    view: types.RequestNarrativeView
 }
 
 interface DispatchProps {
@@ -95,9 +97,9 @@ interface DispatchProps {
     onUnload: () => void
 }
 
-function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
+function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
     return {
-        view: state.views.manageMembershipView
+        view: state.views.requestNarrativeView
     }
 }
 
@@ -112,4 +114,4 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.Load>): DispatchPr
     }
 }
 
-export default connect<StateProps, DispatchProps, OwnProps, StoreState>(mapStateToProps, mapDispatchToProps)(Loader)
+export default connect<StateProps, DispatchProps, OwnProps, types.StoreState>(mapStateToProps, mapDispatchToProps)(Loader)

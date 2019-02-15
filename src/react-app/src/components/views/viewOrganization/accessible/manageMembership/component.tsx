@@ -1,12 +1,12 @@
 import * as React from 'react'
-import Header from '../../Header';
+import Header from '../../../../Header';
 import { Icon, Button, Modal, Input } from 'antd';
 import { NavLink } from 'react-router-dom';
 import './component.css'
-import OrganizationHeader from '../organizationHeader/loader';
-import * as orgModel from '../../../data/models/organization/model'
-import * as userModel from '../../../data/models/user'
-import { Editable, ValidationErrorType, SyncState, EditState, SaveState, ValidationState } from '../../../types';
+import * as orgModel from '../../../../../data/models/organization/model'
+import * as userModel from '../../../../../data/models/user'
+import { Editable, ValidationErrorType, SyncState, EditState, SaveState, ValidationState } from '../../../../../types'
+import MainMenu from '../../../../menu/component'
 
 export interface ManageMembershipProps {
     username: userModel.Username
@@ -18,6 +18,7 @@ export interface ManageMembershipProps {
     onLeaveOrganization: (organizationId: string) => void
     onUpdateTitle: (title: string) => void
     onSave: () => void
+    onFinish: () => void
 }
 
 interface MangeMembershipState {
@@ -46,6 +47,10 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                 confirmed()
             }
         })
+    }
+
+    onDone() {
+        this.props.onFinish()
     }
 
     doLeaveOrgConfirmed() {
@@ -119,12 +124,6 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         )
         const buttons = (
             <React.Fragment>
-                {/* <Button icon="undo"
-                    type="danger"
-                    onClick={this.doCancelToViewer.bind(this)}>
-                    Return to this Org
-                </Button> */}
-
                 <Button
                     // shape="circle"
                     type="danger"
@@ -132,26 +131,10 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                     onClick={this.doLeaveOrg.bind(this)}>
                     Leave Organization...
                 </Button>
-                {' '}
-                {/* <Button
-                    shape="circle"
-                    icon="info"
-                    onClick={this.doShowInfo.bind(this)}>
-                </Button> */}
             </React.Fragment>
         )
         return (
             <Header breadcrumbs={breadcrumbs} buttons={buttons} />
-        )
-    }
-
-    renderOrgHeader() {
-        // apparently TS is not smart enough to know this from the conditional branch in render()!
-        if (!this.props.organization) {
-            return
-        }
-        return (
-            <OrganizationHeader organizationId={this.props.organization.id} />
         )
     }
 
@@ -218,11 +201,24 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         )
     }
 
+    renderMenuButtons() {
+        return (
+            <div className="ButtonSet">
+                <div className="ButtonSet-button">
+                    <Button icon="rollback"
+                        type="danger"
+                        onClick={this.onDone.bind(this)}>
+                        Done
+                    </Button>
+                </div>
+            </div>
+        )
+    }
+
     render() {
         return (
-            <div className="ManageMembership">
-                {this.renderOrgHeader()}
-                {this.renderHeader()}
+            <div className="ManageMembership scrollable-flex-column">
+                <MainMenu buttons={this.renderMenuButtons()} />
                 <h3>
                     Edit Your Membership Profile
                 </h3>

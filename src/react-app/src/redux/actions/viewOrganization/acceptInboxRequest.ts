@@ -9,7 +9,7 @@ import {
 } from '../../../types'
 
 import * as requestModel from '../../../data/models/requests'
-import * as uberModel from '../../../data/models/uber'
+
 
 export interface AcceptRequestAction<T> extends Action<T> {
 }
@@ -26,7 +26,6 @@ interface AcceptRequestStart extends AcceptRequestAction<ActionFlag.VIEW_ORG_ACC
 export interface AcceptRequestSuccess extends AcceptRequestAction<ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_SUCCESS> {
     type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_SUCCESS,
     requests: Array<requestModel.Request>
-    organizations: Array<uberModel.UberOrganization>
 }
 
 interface AcceptRequestError extends AcceptRequestAction<ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR> {
@@ -72,7 +71,7 @@ export function acceptRequest(requestId: requestModel.RequestID) {
             app: { config }
         } = state
 
-        // do the cancelation
+        // do the cancellation
         const requestClient = new requestModel.RequestsModel({
             token, username,
             groupsServiceURL: config.services.Groups.url
@@ -88,6 +87,8 @@ export function acceptRequest(requestId: requestModel.RequestID) {
                 type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_SUCCESS,
                 requests: inbox
             })
+
+
 
             // send the inbox in the success
         } catch (ex) {

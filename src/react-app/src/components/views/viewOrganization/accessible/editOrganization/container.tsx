@@ -1,16 +1,16 @@
 import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
-
-import { StoreState, EditableOrganization, EditState, SaveState, ValidationState } from '../../../types';
+import { StoreState, EditableOrganization, EditState, SaveState, ValidationState } from '../../../../../types';
 import {
     editOrgSave,
     updateName,
     updateDescription, updateLogoUrl, updateIsPrivate, updateHomeUrl, updateResearchInterests
-} from '../../../redux/actions/editOrg';
+} from '../../../../../redux/actions/editOrg';
 import EditOrganization from './component';
-import * as orgModel from '../../../data/models/organization/model'
+import * as orgModel from '../../../../../data/models/organization/model'
 
 interface OwnProps {
+    onFinish: () => void
 }
 
 export interface StateProps {

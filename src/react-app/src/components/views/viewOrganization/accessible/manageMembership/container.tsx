@@ -1,14 +1,15 @@
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
-import * as actions from '../../../redux/actions/manageMembership'
+import * as actions from '../../../../../redux/actions/manageMembership'
 
-import { StoreState, EditState, SaveState, ValidationState } from '../../../types';
-import * as orgModel from '../../../data/models/organization/model'
-import * as userModel from '../../../data/models/user'
+import { StoreState, EditState, SaveState, ValidationState } from '../../../../../types';
+import * as orgModel from '../../../../../data/models/organization/model'
+import * as userModel from '../../../../../data/models/user'
 
 import Component from './component'
 
 export interface OwnProps {
+    onFinish: () => void
 }
 
 interface StateProps {

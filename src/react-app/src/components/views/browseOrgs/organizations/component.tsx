@@ -2,7 +2,7 @@ import * as React from 'react';
 import './component.css';
 import { Alert } from 'antd';
 import * as orgModel from '../../../../data/models/organization/model'
-import BriefOrganization from '../../../views/organizationHeader/BriefOrganization';
+import BriefOrganization from '../../../BriefOrganization';
 
 // TODO: need more ergonomic way to resolve the common issue of data types interfering with 
 // component types.

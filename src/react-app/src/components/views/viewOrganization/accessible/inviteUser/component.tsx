@@ -4,12 +4,11 @@ import './component.css'
 import { User, InviteUserViewState, OrganizationUser } from '../../../../../types';
 import { Button, Icon, Modal, Alert } from 'antd';
 import Header from '../../../../Header';
-import { Redirect, NavLink } from 'react-router-dom';
-import OrganizationHeader from '../../../organizationHeader/loader';
+import { NavLink } from 'react-router-dom';
 import UserComponent from '../../../../User'
 import * as orgModel from '../../../../../data/models/organization/model'
 import * as userModel from '../../../../../data/models/user'
-import MainMenu from '../../../../menu/component';
+import MainMenu from '../../../../menu/component'
 
 export interface InviteUserProps {
     organization: orgModel.Organization,

@@ -1,36 +1,31 @@
 import * as React from 'react'
 import { Marked } from 'marked-ts'
-import { NavLink, Redirect } from 'react-router-dom'
-
-import './component.css'
-
+import { NavLink } from 'react-router-dom'
 import { ViewOrgViewModel } from '../../../../types'
-import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu, Alert, Tabs, Input, Select } from 'antd'
+import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu, Alert, Tabs } from 'antd'
 import Header from '../../../Header'
 import Member from '../../../entities/MemberContainer'
-import OrganizationHeader from '../../organizationHeader/loader'
-import * as orgModel from '../../../../data/models/organization/model'
-import * as requestModel from '../../../../data/models/requests'
 
 import MainMenu from '../../../menu/component'
 import Members from './members/reduxAdapter'
-
 import Requests from './requests/container'
-import BriefOrganization from '../../organizationHeader/BriefOrganization'
+import BriefOrganization from '../../../BriefOrganization'
 import RelatedOrganizations from './relatedOrgs/reduxAdapter'
 import ManageRelatedOrganizations from './manageRelatedOrganizations/loader'
 import InviteUser from './inviteUser/loader'
 import Narratives from './narratives/component'
+import ManageMembership from './manageMembership/loader'
+import EditOrganization from './editOrganization/loader'
+import RequestAddNarrative from './requestAddNarrative/loader'
+import * as requestModel from '../../../../data/models/requests'
+import * as orgModel from '../../../../data/models/organization/model'
+import './component.css'
 
 enum NavigateTo {
     NONE = 0,
-    REQUEST_ADD_NARRATIVE,
-    MANAGE_MEMBERSHIP,
     VIEW_MEMBERS,
     MANAGE_REQUESTS,
     VIEW_ORGANIZATION,
-    EDIT_ORGANIZATION,
-    INVITE_USER,
     BROWSER
 }
 
@@ -42,7 +37,10 @@ enum AccordionState {
 enum SubViews {
     NORMAL = 0,
     MANAGE_RELATED_ORGS,
-    INVITE_USER
+    INVITE_USER,
+    MANAGE_MEMBERSHIP,
+    EDIT_ORGANIZATION,
+    ADD_NARRATIVE
 }
 
 export interface ViewOrganizationState {
@@ -122,7 +120,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     onRequestAddNarrative() {
-        this.setState({ navigateTo: NavigateTo.REQUEST_ADD_NARRATIVE })
+        this.setState({ subView: SubViews.ADD_NARRATIVE })
     }
 
     onRemoveNarrative(narrative: orgModel.NarrativeResource) {
@@ -228,16 +226,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     </div> */}
                 </div>
             </div>
-        )
-    }
-
-    renderOrgHeader() {
-        // apparently TS is not smart enough to know this from the conditional branch in render()!
-        if (!this.props.viewModel.organization) {
-            return
-        }
-        return (
-            <OrganizationHeader organizationId={this.props.viewModel.organization.id} />
         )
     }
 
@@ -764,24 +752,12 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         this.setState({ navigateTo: NavigateTo.BROWSER })
     }
 
-    onNavigateToMembership() {
-        this.setState({ navigateTo: NavigateTo.MANAGE_MEMBERSHIP })
-    }
-
     onNavigateToViewMembers() {
         this.setState({ navigateTo: NavigateTo.VIEW_MEMBERS })
     }
 
     onNavigateToManageRequests() {
         this.setState({ navigateTo: NavigateTo.MANAGE_REQUESTS })
-    }
-
-    onNavigateToEditOrganization() {
-        this.setState({ navigateTo: NavigateTo.EDIT_ORGANIZATION })
-    }
-
-    onNavigateToInviteUser() {
-        this.setState({ navigateTo: NavigateTo.INVITE_USER })
     }
 
     onNavigateToViewOrganization() {
@@ -791,13 +767,14 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     onMenuClick({ key }: { key: string }) {
         switch (key) {
             case 'manageMyMembership':
-                this.setState({ navigateTo: NavigateTo.MANAGE_MEMBERSHIP })
+                this.setState({ subView: SubViews.MANAGE_MEMBERSHIP })
                 break
             case 'viewMembers':
                 this.setState({ navigateTo: NavigateTo.VIEW_MEMBERS })
                 break
             case 'editOrg':
-                this.setState({ navigateTo: NavigateTo.EDIT_ORGANIZATION })
+                console.log('setting state')
+                this.setState({ subView: SubViews.EDIT_ORGANIZATION })
                 break
             case 'inviteUser':
                 this.setState({ subView: SubViews.INVITE_USER })
@@ -806,7 +783,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 this.setState({ navigateTo: NavigateTo.MANAGE_REQUESTS })
                 break
             case 'addNarrative':
-                this.setState({ navigateTo: NavigateTo.REQUEST_ADD_NARRATIVE })
+                this.setState({ subView: SubViews.ADD_NARRATIVE })
                 break
             case 'manageRelatedOrgs':
                 this.setState({ subView: SubViews.MANAGE_RELATED_ORGS })
@@ -1060,13 +1037,53 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
+    renderManageMembership() {
+        const onFinish = () => {
+            this.setState({
+                subView: SubViews.NORMAL
+            })
+        }
+        return (
+            <ManageMembership onFinish={onFinish} organizationId={this.props.viewModel.organization.id} />
+        )
+    }
+
+    renderEditOrganization() {
+        const onFinish = () => {
+            this.setState({
+                subView: SubViews.NORMAL
+            })
+        }
+        return (
+            <EditOrganization onFinish={onFinish} organizationId={this.props.viewModel.organization.id} />
+        )
+    }
+
+    renderAddNarrative() {
+        const onFinish = () => {
+            this.setState({
+                subView: SubViews.NORMAL
+            })
+        }
+        return (
+            <RequestAddNarrative onFinish={onFinish} organizationId={this.props.viewModel.organization.id} />
+        )
+    }
+
     getSubView() {
+        console.log('get sub view', this.state.subView, this.state.subView === SubViews.EDIT_ORGANIZATION)
         switch (this.state.subView) {
 
             case SubViews.MANAGE_RELATED_ORGS:
                 return this.renderManageRelatedOrgsView()
             case SubViews.INVITE_USER:
                 return this.renderInviteUsersView()
+            case SubViews.MANAGE_MEMBERSHIP:
+                return this.renderManageMembership()
+            case SubViews.EDIT_ORGANIZATION:
+                return this.renderEditOrganization()
+            case SubViews.ADD_NARRATIVE:
+                return this.renderAddNarrative()
             case SubViews.NORMAL:
             default:
                 return this.renderNormalView()
@@ -1074,27 +1091,27 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     render() {
-        switch (this.state.navigateTo) {
-            case NavigateTo.REQUEST_ADD_NARRATIVE:
-                return <Redirect to={"/requestAddNarrative/" + this.props.viewModel.organization.id} />
-            case NavigateTo.MANAGE_MEMBERSHIP:
-                return <Redirect push to={"/membership/" + this.props.viewModel.organization.id} />
-            case NavigateTo.VIEW_MEMBERS:
-                return <Redirect push to={"/viewMembers/" + this.props.viewModel.organization.id} />
-            case NavigateTo.EDIT_ORGANIZATION:
-                return <Redirect push to={"/editOrganization/" + this.props.viewModel.organization.id} />
-            case NavigateTo.MANAGE_REQUESTS:
-                return <Redirect push to={"/manageOrganizationRequests/" + this.props.viewModel.organization.id} />
-            // case NavigateTo.INVITE_USER:
-            //     return <Redirect push to={"/inviteUser/" + this.props.viewModel.organization.id} />
-            case NavigateTo.VIEW_ORGANIZATION:
-                return <Redirect push to={"/viewOrganization/" + this.props.viewModel.organization.id} />
-            case NavigateTo.BROWSER:
-                return <Redirect push to={"/organizations"} />
-            case NavigateTo.NONE:
-            default:
-            // do nothing.
-        }
+        // switch (this.state.navigateTo) {
+        //     case NavigateTo.REQUEST_ADD_NARRATIVE:
+        //         return <Redirect to={"/requestAddNarrative/" + this.props.viewModel.organization.id} />
+        //     case NavigateTo.MANAGE_MEMBERSHIP:
+        //         return <Redirect push to={"/membership/" + this.props.viewModel.organization.id} />
+        //     case NavigateTo.VIEW_MEMBERS:
+        //         return <Redirect push to={"/viewMembers/" + this.props.viewModel.organization.id} />
+        //     // case NavigateTo.EDIT_ORGANIZATION:
+        //     //     return <Redirect push to={"/editOrganization/" + this.props.viewModel.organization.id} />
+        //     case NavigateTo.MANAGE_REQUESTS:
+        //         return <Redirect push to={"/manageOrganizationRequests/" + this.props.viewModel.organization.id} />
+        //     // case NavigateTo.INVITE_USER:
+        //     //     return <Redirect push to={"/inviteUser/" + this.props.viewModel.organization.id} />
+        //     case NavigateTo.VIEW_ORGANIZATION:
+        //         return <Redirect push to={"/viewOrganization/" + this.props.viewModel.organization.id} />
+        //     case NavigateTo.BROWSER:
+        //         return <Redirect push to={"/organizations"} />
+        //     case NavigateTo.NONE:
+        //     default:
+        //     // do nothing.
+        // }
 
         const uorg = this.props.viewModel.organization as unknown
         const borg = uorg as orgModel.BriefOrganization

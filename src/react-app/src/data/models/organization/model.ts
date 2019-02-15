@@ -864,11 +864,9 @@ export class OrganizationModel {
 
     async getAllOrgs2(): Promise<Array<BriefOrganization>> {
         const groups = await this.groupsClient.listGroups()
-        const orgs = groups.map((group) => {
-            const org = this.listGroupToBriefOrganization(group)
-            return org
+        return groups.map((group) => {
+            return this.listGroupToBriefOrganization(group)
         })
-        return orgs
     }
 
     async queryOrgs(query: Query): Promise<QueryResults> {

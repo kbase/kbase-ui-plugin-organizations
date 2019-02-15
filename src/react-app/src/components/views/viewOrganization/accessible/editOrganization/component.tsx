@@ -3,20 +3,17 @@ import { Redirect, NavLink } from 'react-router-dom';
 import { Marked } from 'marked-ts';
 import { Button, Icon, Modal, Checkbox, Input, Tooltip } from 'antd';
 import md5 from 'md5'
-
 import {
     EditableOrganization, SaveState, ValidationState,
     EditState, ValidationErrorType, Editable, SyncState
-} from '../../../types';
-
+} from '../../../../../types';
 import './component.css'
 
-import Header from '../../Header';
-import OrganizationHeader from '../organizationHeader/loader';
-import * as orgModel from '../../../data/models/organization/model'
+import Header from '../../../../Header';
+import * as orgModel from '../../../../../data/models/organization/model'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import TextArea from 'antd/lib/input/TextArea';
-import MainMenu from '../../menu/component';
+import MainMenu from '../../../../menu/component';
 
 export interface EditOrganizationProps {
     editState: EditState
@@ -31,6 +28,7 @@ export interface EditOrganizationProps {
     onUpdateLogoUrl: (logoUrl: string) => void
     onUpdateHomeUrl: (homeUrl: string) => void
     onUpdateResearchInterests: (researchInterests: string) => void
+    onFinish: () => void
 }
 
 enum NavigateTo {
@@ -59,6 +57,10 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         }
 
         this.origin = document.location!.origin
+    }
+
+    onFinish() {
+        this.props.onFinish()
     }
 
     onShowInfo() {
@@ -479,20 +481,16 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-    renderOrgHeader() {
-        // apparently TS is not smart enough to know this from the conditional branch in render()!
-        if (!this.props.organization) {
-            return
-        }
-
-        return (
-            <OrganizationHeader organizationId={this.props.organization.id} />
-        )
-    }
-
     renderMenuButtons() {
         return (
             <span className="ButtonSet">
+                <span className="ButtonSet-button">
+                    <Button icon="rollback"
+                        type="danger"
+                        onClick={this.onFinish.bind(this)}>
+                        Close
+                        </Button>
+                </span>
                 <span className="ButtonSet-button">
                     <Button icon="save"
                         form="editOrganizationForm"
@@ -501,16 +499,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                         htmlType="submit">
                         Save
                     </Button>
-                </span>
-                <span className="ButtonSet-button">
-                    <Button icon="rollback"
-                        type="danger"
-                        onClick={this.onClickCancelToViewer.bind(this)}>
-                        Back to Org
-                        </Button>
-                </span>
-                <span className="ButtonSet-button">
-                    <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
                 </span>
             </span>
         )
@@ -532,8 +520,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         return (
             <div className="EditOrganization">
                 <MainMenu buttons={this.renderMenuButtons()} />
-                {this.renderOrgHeader()}
-
                 {this.renderEditor()}
             </div>
         )

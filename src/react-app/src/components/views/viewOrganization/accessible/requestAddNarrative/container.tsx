@@ -2,14 +2,15 @@ import { Dispatch, Action } from 'redux'
 
 import { connect } from 'react-redux'
 
-import * as types from '../../../types'
+import * as types from '../../../../../types'
 
 import Component from './component'
-import * as actions from '../../../redux/actions/requestAddNarrative'
-import * as orgModel from '../../../data/models/organization/model'
-import * as narrativeModel from '../../../data/models/narrative'
+import * as actions from '../../../../../redux/actions/requestAddNarrative'
+import * as orgModel from '../../../../../data/models/organization/model'
+import * as narrativeModel from '../../../../../data/models/narrative'
 
 export interface OwnProps {
+    onFinish: () => void
 }
 
 interface StateProps {

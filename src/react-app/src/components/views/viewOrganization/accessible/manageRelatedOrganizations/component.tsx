@@ -4,7 +4,7 @@ import * as orgModel from '../../../../../data/models/organization/model'
 import './component.css'
 import { Button, Icon, Input, Alert } from 'antd';
 import AvailableOrganization from './AvailableOrganization'
-import BriefOrganization from '../../../organizationHeader/BriefOrganization';
+import BriefOrganization from '../../../../BriefOrganization';
 import { SelectableRelatableOrganization } from '../../../../../types';
 
 export interface ManageRelatedOrganizationsProps {

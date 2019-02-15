@@ -1,12 +1,12 @@
 import * as React from 'react'
-import * as orgModel from '../../../data/models/organization/model'
+import * as orgModel from '../data/models/organization/model'
 import { NavLink } from 'react-router-dom'
-import OrgLogo from '../../OrgLogo'
+import OrgLogo from './OrgLogo'
 import { Icon, Tooltip, Menu, Dropdown, Modal } from 'antd'
-import Owner from '../../entities/OwnerContainer'
-import { ComponentView } from '../../../types'
+import Owner from './entities/OwnerContainer'
+import { ComponentView } from '../types'
 import './BriefOrganization.css'
-import NiceElapsedTime from '../../NiceElapsedTime';
+import NiceElapsedTime from './NiceElapsedTime';
 
 export interface BriefOrganizationProps {
     organization: orgModel.BriefOrganization

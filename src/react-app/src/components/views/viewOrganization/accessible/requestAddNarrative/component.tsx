@@ -1,14 +1,12 @@
 import * as React from 'react'
-import OrganizationHeader from '../organizationHeader/loader';
-import { Redirect } from 'react-router-dom';
-import { NarrativeState } from '../../../types';
+import { NarrativeState } from '../../../../../types';
 import { Icon, Button, Alert, Select, Tooltip } from 'antd';
 import './component.css'
-import * as orgModel from '../../../data/models/organization/model'
-import * as narrativeModel from '../../../data/models/narrative'
-import MainMenu from '../../menu/component';
-import { OrganizationNarrative, AccessibleNarrative } from '../../../data/models/narrative';
-import NiceElapsedTime from '../../NiceElapsedTime';
+import * as orgModel from '../../../../../data/models/organization/model'
+import * as narrativeModel from '../../../../../data/models/narrative'
+import MainMenu from '../../../../menu/component';
+import { OrganizationNarrative, AccessibleNarrative } from '../../../../../data/models/narrative';
+import NiceElapsedTime from '../../../../NiceElapsedTime';
 
 export interface Props {
     organization: orgModel.Organization
@@ -21,16 +19,10 @@ export interface Props {
     doSortBy: (sortBy: narrativeModel.Sort) => void
     doSendRequest: (groupId: string, workspaceId: number) => void
     doSelectNarrative: (narrative: OrganizationNarrative) => void
-}
-
-enum NavigateTo {
-    NONE = 0,
-    BROWSER,
-    VIEWER
+    onFinish: () => void
 }
 
 interface State {
-    navigateTo: NavigateTo,
 }
 
 export class RequestAddNarrative extends React.Component<Props, State> {
@@ -38,17 +30,11 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         super(props)
 
         this.state = {
-            navigateTo: NavigateTo.NONE,
-            // selectedNarrative: null
         }
     }
 
-    doCancelToBrowser() {
-        this.setState({ navigateTo: NavigateTo.BROWSER })
-    }
-
-    doCancelToViewer() {
-        this.setState({ navigateTo: NavigateTo.VIEWER })
+    onFinish() {
+        this.props.onFinish()
     }
 
     doSelectNarrative(narrative: OrganizationNarrative) {
@@ -68,16 +54,6 @@ export class RequestAddNarrative extends React.Component<Props, State> {
             return true
         }
         return false
-    }
-
-    renderOrgHeader() {
-        // apparently TS is not smart enough to know this from the conditional branch in render()!
-        if (!this.props.organization) {
-            return
-        }
-        return (
-            <OrganizationHeader organizationId={this.props.organization.id} />
-        )
     }
 
     renderOrgName(name: string) {
@@ -387,7 +363,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 <div className="ButtonSet-button">
                     <Button icon="rollback"
                         type="danger"
-                        onClick={this.doCancelToViewer.bind(this)}>
+                        onClick={this.onFinish.bind(this)}>
                         Done
                 </Button>
                 </div>
@@ -396,20 +372,9 @@ export class RequestAddNarrative extends React.Component<Props, State> {
     }
 
     render() {
-        switch (this.state.navigateTo) {
-            case NavigateTo.BROWSER:
-                return <Redirect push to="/organizations" />
-            case NavigateTo.VIEWER:
-                return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
-            case NavigateTo.NONE:
-            default:
-            // do nothing.
-        }
-
         return (
             <div className="RequestNarrative scrollable-flex-column">
                 <MainMenu buttons={this.renderMenuButtons()} />
-                {this.renderOrgHeader()}
                 <div className="RequestNarrative-body scrollable-flex-column">
                     <div className="RequestNarrative-selectNarrativeCol scrollable-flex-column">
                         <h3>Select a Narrative</h3>

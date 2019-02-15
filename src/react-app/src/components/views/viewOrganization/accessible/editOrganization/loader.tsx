@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { ComponentLoadingState, StoreState, EditOrgView } from '../../../types';
+import { ComponentLoadingState, StoreState, EditOrgView } from '../../../../../types'
 import Container from './container'
-import * as orgModel from '../../../data/models/organization/model'
+import * as orgModel from '../../../../../data/models/organization/model'
 
 // First the loader component, which takes care of a loading view, error view, and the 
 // container.
@@ -11,10 +11,10 @@ export interface LoaderProps {
     view: EditOrgView
     onLoad: (organizationId: orgModel.OrganizationID) => void
     onUnload: () => void
+    onFinish: () => void
 }
 
 interface LoaderState {
-
 }
 
 class Loader extends React.Component<LoaderProps, LoaderState> {
@@ -23,10 +23,19 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
     }
 
     renderLoading() {
-        return (
+        const message = (
             <div>
-                Fetching your organizations and other stuff...
+                Loading Editor...
+                {' '}
+                <Spin />
             </div>
+        )
+        return (
+            <Alert type="info" message={message} style={{
+                width: '20em',
+                padding: '20px',
+                margin: '20px auto'
+            }} />
         )
     }
 
@@ -51,7 +60,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
                 return this.renderError()
             case ComponentLoadingState.SUCCESS:
                 return (
-                    <Container />
+                    <Container onFinish={this.props.onFinish} />
                 )
         }
     }
@@ -74,7 +83,8 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
 import { Dispatch, Action } from 'redux'
 import { connect } from 'react-redux'
 
-import * as actions from '../../../redux/actions/editOrg'
+import * as actions from '../../../../../redux/actions/editOrg'
+import { Alert, Spin } from 'antd';
 
 export interface OwnProps {
     organizationId: orgModel.OrganizationID
