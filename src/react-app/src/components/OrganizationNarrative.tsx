@@ -161,13 +161,13 @@ export default class OrganizationNarrative extends React.Component<Props, State>
     renderNarrative() {
         const narrative = this.props.narrative
         if (this.props.organization.isMember) {
-            if (narrative.permission === orgModel.UserWorkspacePermission.NONE) {
+            if (narrative.permission === orgModel.UserWorkspacePermission.NONE &&
+                !narrative.isPublic) {
                 return (
                     <React.Fragment>
                         <a href={'/narrative/' + narrative.workspaceId} target="_blank">
                             <div className="title">{narrative.title}</div>
                         </a>
-                        {/* <div>{this.renderPublicPermission(narrative)}</div> */}
                         <div>{this.renderNarrativePermission(narrative)}</div>
                     </React.Fragment>
                 )

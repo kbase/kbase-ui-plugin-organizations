@@ -998,9 +998,7 @@ export class OrganizationModel {
             token: this.params.token
         })
 
-        // TODO: yuck. need to 
         await groupsClient.grantResourceAccess(groupId, 'workspace', resourceId)
-        return
     }
 
     async requestMembership(id: string): Promise<requestModel.Request> {
