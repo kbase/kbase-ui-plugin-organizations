@@ -26,17 +26,13 @@ class KBaseIntegration extends React.Component<KBaseIntegrationProps, object> {
 
     setupChannel() {
         if (this.props.channelId) {
-            // let integration = new IFrameIntegration()
+
             this.channel = new Channel({
                 channelId: this.props.channelId,
             })
 
             this.channel.on('navigate', ({ to, params }) => {
-                // switch (to) {
-                //     case 'orgs':
 
-                // }
-                // console.log('NAVIGATE', to, params)
             }, (err) => {
                 console.error('Error processing "navigate" message')
             })

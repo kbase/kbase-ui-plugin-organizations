@@ -128,7 +128,6 @@ export function removeNarrativeSuccess(state: types.StoreState, action: actions.
         return (narrative.workspaceId !== action.narrativeId)
     })
     // const filteredSortedNarratives = 
-    console.log('new narratives...', newNarratives)
     return {
         ...state,
         views: {

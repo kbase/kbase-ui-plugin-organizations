@@ -773,7 +773,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 this.setState({ navigateTo: NavigateTo.VIEW_MEMBERS })
                 break
             case 'editOrg':
-                console.log('setting state')
                 this.setState({ subView: SubViews.EDIT_ORGANIZATION })
                 break
             case 'inviteUser':
@@ -1071,9 +1070,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     getSubView() {
-        console.log('get sub view', this.state.subView, this.state.subView === SubViews.EDIT_ORGANIZATION)
         switch (this.state.subView) {
-
             case SubViews.MANAGE_RELATED_ORGS:
                 return this.renderManageRelatedOrgsView()
             case SubViews.INVITE_USER:
