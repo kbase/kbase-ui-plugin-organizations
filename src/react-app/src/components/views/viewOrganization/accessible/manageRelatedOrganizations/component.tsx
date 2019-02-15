@@ -74,24 +74,23 @@ export default class ManageRelatedOrganizations extends React.Component<ManageRe
     }
 
     renderSelectedOrg() {
-        if (!this.props.selectedOrganization) {
-            return
-        }
-        let relatedInfo
         let button
-        if (this.props.selectedOrganization.isRelated) {
-            relatedInfo = (
-                <Alert type="warning" message="This org is already associated" />
+        let content
+        let alert
+        let alertStyle = {
+            marginBottom: '4px'
+        }
+        if (!this.props.selectedOrganization) {
+            const message = (
+                <React.Fragment>
+                    <p>
+                        When you select an organization on the left, details about it will be displayed here.
+                    </p>
+                </React.Fragment>
             )
-            button = (
-                <Button
-                    type="danger"
-                    disabled={this.props.selectedOrganization === null}
-                    onClick={this.onRemoveSelectedOrganization.bind(this)}>
-                    Remove Organization
-                </Button>
+            alert = (
+                <Alert type="info" message={message} style={alertStyle} />
             )
-        } else {
             button = (
                 <Button
                     type="primary"
@@ -100,13 +99,40 @@ export default class ManageRelatedOrganizations extends React.Component<ManageRe
                     Add Organization
                 </Button>
             )
+        } else {
+            content = (
+                <div className="ManageRelatedOrganizations-selectedOrganization">
+                    <BriefOrganization organization={this.props.selectedOrganization.organization} openRequestsStatus={null} />
+                </div>
+            )
+            if (this.props.selectedOrganization.isRelated) {
+                alert = (
+                    <Alert type="warning" message="This org is associated" style={alertStyle} />
+                )
+                button = (
+                    <Button
+                        type="danger"
+                        disabled={this.props.selectedOrganization === null}
+                        onClick={this.onRemoveSelectedOrganization.bind(this)}>
+                        Remove Organization
+                    </Button>
+                )
+            } else {
+                button = (
+                    <Button
+                        type="primary"
+                        disabled={this.props.selectedOrganization === null}
+                        onClick={this.onAddSelectedOrganization.bind(this)}>
+                        Add Organization
+                    </Button>
+                )
+            }
         }
 
         return (
             <React.Fragment>
-                <div className="ManageRelatedOrganizations-selectedOrganization">
-                    <BriefOrganization organization={this.props.selectedOrganization.organization} openRequestsStatus={null} />
-                </div>
+                {alert}
+                {content}
                 <div className="ManageRelatedOrganizations-buttonBar">
                     {button}
                 </div>
