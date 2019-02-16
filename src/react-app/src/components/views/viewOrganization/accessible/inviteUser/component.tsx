@@ -120,34 +120,6 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         )
     }
 
-    renderHeader() {
-        let orgName: string
-        const breadcrumbs = (
-            <React.Fragment>
-                <span>
-                    <NavLink to={`/viewOrganization/${this.props.organization.id}`}>
-                        <span style={{ fontWeight: 'bold' }}>
-                            {this.renderOrgName(this.props.organization.name)}
-                        </span>
-                    </NavLink>
-
-                    <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
-
-                    <Icon type="tool" />
-                    {' '}
-                    <span style={{ fontSize: '120%' }}>Invite a User to Join Org</span>
-                </span>
-            </React.Fragment>
-        )
-        const buttons = (
-            <React.Fragment>
-            </React.Fragment>
-        )
-        return (
-            <Header breadcrumbs={breadcrumbs} buttons={buttons} />
-        )
-    }
-
     renderUsers() {
         if (!this.props.users) {
             const message = 'Search for users by name or username to display a list of available users in this space.'

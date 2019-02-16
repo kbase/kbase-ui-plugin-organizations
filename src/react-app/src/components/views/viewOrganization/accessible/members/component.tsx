@@ -211,7 +211,6 @@ export default class Members extends React.Component<MembersProps, MembersState>
         )
     }
 
-
     renderSearchBar() {
         const doChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             this.props.onSearchMembers(e.target.value)
@@ -229,7 +228,6 @@ export default class Members extends React.Component<MembersProps, MembersState>
         const handleSelect = (value: string) => {
             this.props.onSortMembers(value)
         }
-
         return (
             <React.Fragment>
                 <span className="field-label">sort</span>

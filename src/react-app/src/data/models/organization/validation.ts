@@ -1,4 +1,4 @@
-import { UIError, UIErrorType, ValidationState, ValidationErrorType } from "../../../types";
+import { ValidationState, ValidationErrorType } from "../../../types"
 
 export default class Validation {
     static nonPrintableRe = /[\000-\031]/
@@ -13,6 +13,7 @@ export default class Validation {
         const after = s.slice(firstNonPrintable + 1, firstNonPrintable + 6)
         return `Non-printable character at position ${firstNonPrintable}: "${before}___${after}`
     }
+
     static validateOrgId(id: string): [string, ValidationState] {
         // May not be empty
         if (id.length === 0) {
@@ -102,6 +103,33 @@ export default class Validation {
                     validatedAt: new Date()
                 }]
         }
+        try {
+            const url = new URL(logoUrl)
+            console.log('hmm', url, url.toJSON())
+            if (!url.protocol.match(/^http[s]?:$/)) {
+                return [
+                    logoUrl, {
+                        type: ValidationErrorType.ERROR,
+                        message: 'Error parsing url: ' + url.protocol + ' is not a valid protocol',
+                        validatedAt: new Date()
+                    }]
+            }
+            if (!url.protocol.match(/^https:$/)) {
+                return [
+                    logoUrl, {
+                        type: ValidationErrorType.ERROR,
+                        message: 'Only https (secure) urls are supported',
+                        validatedAt: new Date()
+                    }]
+            }
+        } catch (ex) {
+            return [
+                logoUrl, {
+                    type: ValidationErrorType.ERROR,
+                    message: 'Error parsing url: ' + ex.message,
+                    validatedAt: new Date()
+                }]
+        }
         return [
             logoUrl, {
                 type: ValidationErrorType.OK,
@@ -123,6 +151,33 @@ export default class Validation {
                 homeUrl, {
                     type: ValidationErrorType.ERROR,
                     message: 'Home url may not be longer than 1000 characters',
+                    validatedAt: new Date()
+                }]
+        }
+        try {
+            const url = new URL(homeUrl)
+            console.log('hmm', url, url.toJSON())
+            if (!url.protocol.match(/^http[s]?:$/)) {
+                return [
+                    homeUrl, {
+                        type: ValidationErrorType.ERROR,
+                        message: 'Error parsing url: ' + url.protocol + ' is not a valid protocol',
+                        validatedAt: new Date()
+                    }]
+            }
+            if (!url.protocol.match(/^https:$/)) {
+                return [
+                    homeUrl, {
+                        type: ValidationErrorType.ERROR,
+                        message: 'Only https (secure) urls are supported',
+                        validatedAt: new Date()
+                    }]
+            }
+        } catch (ex) {
+            return [
+                homeUrl, {
+                    type: ValidationErrorType.ERROR,
+                    message: 'Error parsing url: ' + ex.message,
                     validatedAt: new Date()
                 }]
         }
@@ -156,55 +211,6 @@ export default class Validation {
                 validatedAt: new Date()
             }]
     }
-
-    // static validateOrgGravatarHash(gravatarHash: string | null): [string | null, ValidationState] {
-    //     if (!gravatarHash) {
-    //         return [
-    //             null, {
-    //                 type: ValidationErrorType.OK,
-    //                 validatedAt: new Date()
-    //             }]
-    //     }
-    //     if (gravatarHash.length === 0) {
-    //         return [
-    //             gravatarHash, {
-    //                 type: ValidationErrorType.OK,
-    //                 validatedAt: new Date()
-    //             }]
-    //     }
-    //     if (gravatarHash.length > 32) {
-    //         return [
-    //             gravatarHash, {
-    //                 type: ValidationErrorType.ERROR,
-    //                 message: 'Organization gravatar hash may not be longer than 32 characters',
-    //                 validatedAt: new Date()
-    //             }]
-    //     }
-    //     if (gravatarHash.length < 32) {
-    //         return [
-    //             gravatarHash, {
-    //                 type: ValidationErrorType.ERROR,
-    //                 message: 'Organization gravatar hash may not be shorter than 32 characters',
-    //                 validatedAt: new Date()
-    //             }]
-    //     }
-    //     const acceptedChars = /^[a-f0-9]+$/
-    //     if (!acceptedChars.test(gravatarHash)) {
-    //         return [
-    //             gravatarHash, {
-    //                 type: ValidationErrorType.ERROR,
-    //                 message: 'Organization gravatar hash must consist only of the lower case hexadecimal characters a-f and 0-9',
-    //                 validatedAt: new Date()
-    //             }
-    //         ]
-    //     }
-
-    //     return [
-    //         gravatarHash, {
-    //             type: ValidationErrorType.OK,
-    //             validatedAt: new Date()
-    //         }]
-    // }
 
     static validateOrgDescription(description: string): [string, ValidationState] {
         if (description.length === 0) {

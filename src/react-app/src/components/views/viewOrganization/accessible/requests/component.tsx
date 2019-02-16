@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import './component.css'
 import Header from '../../../../Header'
-import { Icon, Button, Modal, Card } from 'antd'
+import { Icon, Button, Modal, Card, Alert } from 'antd'
 import User from '../../../../entities/UserContainer'
 import Narrative from '../../../../entities/NarrativeContainer'
 import * as requestModel from '../../../../../data/models/requests'
@@ -133,17 +133,17 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                 actions={actions}
                 headStyle={{ backgroundColor: 'rgba(200, 200, 200,0.3' }}
                 style={{ marginBottom: '10px' }}>
-                <table className="pendingRequestsTable">
+                <table className="Requests-pendingRequestsTable">
                     <tbody>
                         <tr>
                             <th>from</th>
-                            <td className="requester">
+                            <td className="Requests-requester">
                                 <User userId={request.requester} avatarSize={50} />
                             </td>
                         </tr>
                         <tr>
                             <th>sent</th>
-                            <td className="createdAt">{Intl.DateTimeFormat('en-US', {
+                            <td className="Requests-createdAt">{Intl.DateTimeFormat('en-US', {
                                 month: 'long',
                                 day: 'numeric',
                                 year: 'numeric'
@@ -151,7 +151,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                         </tr>
                         <tr>
                             <th>expires</th>
-                            <td className="expiresAt">{Intl.DateTimeFormat('en-US', {
+                            <td className="Requests-expiresAt">{Intl.DateTimeFormat('en-US', {
                                 month: 'long',
                                 day: 'numeric',
                                 year: 'numeric'
@@ -191,17 +191,17 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                 actions={actions}
                 headStyle={{ backgroundColor: 'rgba(200, 200, 200,0.3' }}
                 style={{ marginBottom: '10px' }}>
-                <table className="pendingRequestsTable">
+                <table className="Requests-pendingRequestsTable">
                     <tbody>
                         <tr>
                             <th>invitation to</th>
-                            <td className="requester">
+                            <td className="Requests-requester">
                                 <User userId={request.user} avatarSize={30} />
                             </td>
                         </tr>
                         <tr>
                             <th>sent</th>
-                            <td className="createdAt">{Intl.DateTimeFormat('en-US', {
+                            <td className="Requests-createdAt">{Intl.DateTimeFormat('en-US', {
                                 month: 'long',
                                 day: 'numeric',
                                 year: 'numeric'
@@ -209,7 +209,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                         </tr>
                         <tr>
                             <th>expires</th>
-                            <td className="expiresAt">{Intl.DateTimeFormat('en-US', {
+                            <td className="Requests-expiresAt">{Intl.DateTimeFormat('en-US', {
                                 month: 'long',
                                 day: 'numeric',
                                 year: 'numeric'
@@ -309,23 +309,23 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                 actions={actions}
                 headStyle={{ backgroundColor: 'rgba(200, 200, 200,0.3' }}
                 style={{ marginBottom: '10px' }}>
-                <table className="pendingRequestsTable">
+                <table className="Requests-pendingRequestsTable">
                     <tbody>
                         <tr>
                             <th>from</th>
-                            <td className="requester">
+                            <td className="Requests-requester">
                                 <User userId={request.requester} avatarSize={30} />
                             </td>
                         </tr>
                         <tr>
                             <th>narrative</th>
-                            <td className="narrative">
+                            <td className="Requests-narrative">
                                 {narrativeAccess}
                             </td>
                         </tr>
                         <tr>
                             <th>sent</th>
-                            <td className="createdAt">{Intl.DateTimeFormat('en-US', {
+                            <td className="Requests-createdAt">{Intl.DateTimeFormat('en-US', {
                                 month: 'long',
                                 day: 'numeric',
                                 year: 'numeric'
@@ -333,7 +333,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                         </tr>
                         <tr>
                             <th>expires</th>
-                            <td className="expiresAt">{Intl.DateTimeFormat('en-US', {
+                            <td className="Requests-expiresAt">{Intl.DateTimeFormat('en-US', {
                                 month: 'long',
                                 day: 'numeric',
                                 year: 'numeric'
@@ -377,23 +377,23 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                 actions={actions}
                 headStyle={{ backgroundColor: 'rgba(200, 200, 200,0.3' }}
                 style={{ marginBottom: '10px' }}>
-                <table className="pendingRequestsTable">
+                <table className="Requests-pendingRequestsTable">
                     <tbody>
                         <tr>
                             <th>from</th>
-                            <td className="requester">
+                            <td className="Requests-requester">
                                 <User userId={request.requester} avatarSize={50} />
                             </td>
                         </tr>
                         <tr>
                             <th>app</th>
-                            <td className="requester">
+                            <td className="Requests-requester">
                                 {request.appId}
                             </td>
                         </tr>
                         <tr>
                             <th>sent</th>
-                            <td className="createdAt">{Intl.DateTimeFormat('en-US', {
+                            <td className="Requests-createdAt">{Intl.DateTimeFormat('en-US', {
                                 month: 'long',
                                 day: 'numeric',
                                 year: 'numeric'
@@ -401,7 +401,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                         </tr>
                         <tr>
                             <th>expires</th>
-                            <td className="expiresAt">{Intl.DateTimeFormat('en-US', {
+                            <td className="Requests-expiresAt">{Intl.DateTimeFormat('en-US', {
                                 month: 'long',
                                 day: 'numeric',
                                 year: 'numeric'
@@ -417,9 +417,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
         let inbox
         if (this.props.inbox.length === 0) {
             inbox = (
-                <div className="Message">
-                    No pending requests for you
-                </div>
+                <Alert type="info" message="No pending requests" />
             )
         } else {
             const requests = this.props.inbox.map((request) => {
@@ -447,9 +445,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
         let outbox
         if (this.props.outbox.length === 0) {
             outbox = (
-                <div className="Message">
-                    No pending requests from you
-                </div>
+                <Alert type="info" message="No pending requests" />
             )
         } else {
             const requests = this.props.outbox.map((request) => {
@@ -487,9 +483,9 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
 
             return (
                 <div className="Requests">
-                    <div className="ViewOrganization-tabPaneHeader">inbox ({inboxCount})</div>
+                    <div className="Requests-tabPaneHeader">inbox ({inboxCount})</div>
                     {this.renderInbox()}
-                    <div className="ViewOrganization-tabPaneHeader">outbox ({outboxCount})</div>
+                    <div className="Requests-tabPaneHeader">outbox ({outboxCount})</div>
                     {this.renderOutbox()}
                 </div>
             )
@@ -498,7 +494,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
 
             return (
                 <div className="Requests">
-                    <div className="ViewOrganization-tabPaneHeader">outbox ({outboxCount})</div>
+                    <div className="Requests-tabPaneHeader">outbox ({outboxCount})</div>
                     {this.renderOutbox()}
                 </div>
             )

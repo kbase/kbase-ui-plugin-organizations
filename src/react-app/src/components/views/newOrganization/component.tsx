@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Redirect } from 'react-router-dom'
+import { Redirect, NavLink } from 'react-router-dom'
 import { Marked } from 'marked-ts'
 import { Button, Icon, Modal, Input, Checkbox, Tooltip } from 'antd'
 import md5 from 'md5'
@@ -526,17 +526,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
-    renderLoadingHeader() {
-        const breadcrumbs = (
-            <span>
-                Loading New Org Editor...
-            </span>
-        )
-        return (
-            <Header breadcrumbs={breadcrumbs} />
-        )
-    }
-
     renderError() {
         if (this.props.error && this.state.showError) {
             const onOk = () => {
@@ -624,18 +613,9 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             return <Redirect push to={"/editOrganization/" + this.props.newOrganization.id.value} />
         }
 
-        if (!this.props.newOrganization) {
-            return (
-                <div className="NewOrganization">
-                    {this.renderLoadingHeader()}
-                </div>
-            )
-        }
-
         return (
             <div className="NewOrganization">
                 <MainMenu buttons={this.renderMenuButtons()} />
-                {/* {this.renderHeader()} */}
                 {this.renderEditor()}
                 {this.renderError()}
             </div>

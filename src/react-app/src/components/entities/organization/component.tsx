@@ -4,6 +4,7 @@ import { Tooltip } from 'antd';
 import './component.css'
 import OrgLogo from '../../OrgLogo';
 import Owner from '../OwnerContainer';
+import { NavLink } from 'react-router-dom';
 
 export interface OrganizationProps {
     organization: orgModel.Organization
@@ -45,7 +46,9 @@ export default class Organization extends React.Component<OrganizationProps, Org
                 </div>
                 <div className="OrganizationEntity-Accessible-mainCol">
                     <div className="OrganizationEntity-Accessible-name">
-                        <a href={`/viewOrganization/${org.id}`}>{org.name}</a>
+                        <NavLink to={`/viewOrganization/${org.id}`}>
+                            {org.name}
+                        </NavLink>
                     </div>
                     <div className="OrganizationEntity-Accessible-researchInterests">
                         {org.researchInterests}

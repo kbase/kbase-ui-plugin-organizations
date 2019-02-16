@@ -2,7 +2,6 @@ import * as React from 'react'
 
 import { AppError, AddOrgView, ComponentLoadingState, StoreState } from '../../../types'
 import Container from './container'
-import './loader.css'
 
 interface LoaderProps {
     view: AddOrgView

@@ -140,8 +140,9 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
         const extras = [(
             <Button
                 key="addNarrative"
+                size="small"
                 onClick={this.onRequestAddNarrative.bind(this)}>
-                <Icon type="plus" /> Add a Narrative
+                <Icon type="plus" />  Add a Narrative
             </Button>
         )]
 
@@ -150,7 +151,6 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
             narrativesTable = (
                 <Alert type="info" message="No Narratives are yet associated with this Organization" />
             )
-
         } else {
             narrativesTable = this.props.narratives.map((narrative) => {
                 const lastOrgVisitAt = this.props.organization.lastVisitedAt
@@ -169,19 +169,19 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
                         isNew = lastOrgVisitAt.getTime() < addedAt.getTime()
                     }
                 }
-                const classNames = ['narrative', 'simpleCard']
+                const classNames = ['ViewOrganization-Narratives-narrative', 'simpleCard']
                 if (isNew) {
-                    classNames.push('ViewOrganization-newNarrative')
+                    classNames.push('ViewOrganization-Narratives-newNarrative')
                 }
                 return (
                     <div className={classNames.join(' ')} key={String(narrative.workspaceId)}>
-                        <div className="dataCol">
+                        <div className="ViewOrganization-Narratives-dataCol">
                             <OrganizationNarrative
                                 narrative={narrative}
                                 organization={this.props.organization}
                                 onGetViewAccess={this.props.onGetViewAccess} />
                         </div>
-                        <div className="buttonCol">
+                        <div className="ViewOrganization-Narratives-buttonCol">
                             {this.renderNarrativeMenu(narrative)}
                         </div>
                     </div>
@@ -192,33 +192,33 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
         // const narrativeCount = this.props.narratives.length
         const narrativeCount = this.props.organization.narrativeCount
         const title = (
-            <span className="ViewOrganization-narrativesTitle">
+            <span className="ViewOrganization-Narratives-title">
                 <Icon type="folder-open" style={{ marginRight: '8px' }} />
                 Narratives
                 {' '}
-                <span className="titleCount">({narrativeCount})</span>
+                <span className="ViewOrganization-Narratives-titleCount">({narrativeCount})</span>
             </span>
         )
         return (
-            <div className="ViewOrganization-narratives scrollable-flex-column">
-                <div className="ViewOrganization-narrativesHeader">
-                    <div className="ViewOrganization-narrativesHeaderCol1">
+            <div className="ViewOrganization-Narratives scrollable-flex-column">
+                <div className="ViewOrganization-Narratives-header">
+                    <div className="ViewOrganization-Narratives-headerCol1">
                         {title}
                     </div>
-                    <div className="ViewOrganization-narrativesHeaderCol2">
+                    <div className="ViewOrganization-Narratives-headerCol2">
                         {extras}
                     </div>
                 </div>
-                <div className="ViewOrganization-narratives-toolbar">
-                    <div className="ViewOrganization-narratives-toolbar-searchCol">
+                <div className="ViewOrganization-Narratives-toolbar">
+                    <div className="ViewOrganization-Narratives-toolbar-searchCol">
                         {this.renderSearchBar()}
                     </div>
-                    <div className="ViewOrganization-narratives-toolbar-sortCol">
+                    <div className="ViewOrganization-Narratives-toolbar-sortCol">
                         {this.renderSortBar()}
                     </div>
                 </div>
-                <div className="ViewOrganization-narrativesList">
-                    <div className="narrativesTable">
+                <div className="ViewOrganization-Narratives-narrativesList">
+                    <div className="ViewOrganization-Narratives-narrativesTable">
                         {narrativesTable}
                     </div>
                 </div>
@@ -268,14 +268,14 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
             narrativesTable = this.props.narratives.map((narrative) => {
                 // create buttons or not, depending on being an admin
                 return (
-                    <div className="narrative simpleCard" key={String(narrative.workspaceId)}>
-                        <div className="dataCol">
+                    <div className="ViewOrganization-Narratives-narrative simpleCard" key={String(narrative.workspaceId)}>
+                        <div className="ViewOrganization-Narratives-dataCol">
                             <OrganizationNarrative
                                 narrative={narrative}
                                 organization={this.props.organization}
                                 onGetViewAccess={this.props.onGetViewAccess} />
                         </div>
-                        <div className="buttonCol">
+                        <div className="ViewOrganization-Narratives-buttonCol">
                             {this.renderNarrativeMenu(narrative)}
                         </div>
                     </div>
@@ -285,32 +285,32 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
 
         // const narrativeCount = this.props.narratives.length
         const title = (
-            <span className="ViewOrganization-narrativesTitle">
+            <span className="ViewOrganization-Narratives-title">
                 <Icon type="folder-open" style={{ marginRight: '8px' }} />
                 Narratives
                 {' '}
-                <span className="titleCount">({this.props.organization.narrativeCount})</span>
+                <span className="ViewOrganization-Narratives-titleCount">({this.props.organization.narrativeCount})</span>
             </span>
         )
         return (
-            <div className="ViewOrganization-narratives scrollable-flex-column">
-                <div className="ViewOrganization-narrativesHeader">
-                    <div className="ViewOrganization-narrativesHeaderCol1">
+            <div className="ViewOrganization-Narratives scrollable-flex-column">
+                <div className="ViewOrganization-Narratives-header">
+                    <div className="ViewOrganization-Narratives-headerCol1">
                         {title}
                     </div>
-                    <div className="ViewOrganization-narrativesHeaderCol2">
+                    <div className="ViewOrganization-Narratives-headerCol2">
                     </div>
                 </div>
-                <div className="ViewOrganization-narratives-toolbar">
-                    <div className="ViewOrganization-narratives-toolbar-searchCol">
+                <div className="ViewOrganization-Narratives-toolbar">
+                    <div className="ViewOrganization-Narratives-toolbar-searchCol">
                         {this.renderSearchBar()}
                     </div>
-                    <div className="ViewOrganization-narratives-toolbar-sortCol">
+                    <div className="ViewOrganization-Narratives-toolbar-sortCol">
                         {this.renderSortBar()}
                     </div>
                 </div>
-                <div className="ViewOrganization-narrativesList">
-                    <div className="narrativesTable">
+                <div className="ViewOrganization-Narratives-narrativesList">
+                    <div className="ViewOrganization-Narratives-table">
                         {alert}
                         {narrativesTable}
                     </div>

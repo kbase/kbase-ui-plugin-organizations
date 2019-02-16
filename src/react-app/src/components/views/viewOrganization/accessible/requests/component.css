@@ -2,6 +2,37 @@
     overflow-y: auto;
 }
 
+.Requests-tabPaneHeader {
+    font-weight: bold;
+    color: rgba(150, 150, 150, 1);
+    border-bottom: 2px rgba(150, 150, 150, 0.5) solid;
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+
+.Requests-tabPaneHeader:nth-child(1) {
+    margin-top: 0;
+}
+
+.Requests-pendingRequestsTable {
+    width: 100%;
+}
+
+.Requests-pendingRequestsTable th {
+    width: 7em;
+    text-align: right;
+    font-weight: bold;
+    color: rgba(150, 150, 150, 1);
+    padding-right: 4px;
+}
+
+.Requests-pendingRequestsTable th,
+.Requests-pendingRequestsTable td {
+    vertical-align: top;
+}
+
+/* ==== */
+
 .ManageGroupRequests {
     flex: 1 1 0px;
     display: flex;
@@ -49,23 +80,6 @@
 .ManageGroupRequests .pendingCol .pendingRequests {
     flex: 1 1 0px;
     overflow-y: auto;
-}
-
-.ManageGroupRequests table.pendingRequestsTable {
-    width: 100%;
-}
-
-.ManageGroupRequests table.pendingRequestsTable th {
-    width: 7em;
-    text-align: right;
-    font-weight: bold;
-    color: rgba(150, 150, 150, 1);
-    padding-right: 4px;
-}
-
-.ManageGroupRequests table.pendingRequestsTable th,
-.ManageGroupRequests table.pendingRequestsTable td {
-    vertical-align: top;
 }
 
 .ManageGroupRequests h2 {

@@ -15,14 +15,19 @@ interface State {
 }
 
 class Loader extends React.Component<Props, State> {
+
+    previousOrganizationId: string | null
+
     constructor(props: Props) {
         super(props)
+
+        this.previousOrganizationId = null
     }
 
     renderLoading() {
         const message = (
             <div>
-                Loading your Organization...
+                Loading Organization...
                 {' '}
                 <Spin />
             </div>
@@ -62,6 +67,7 @@ class Loader extends React.Component<Props, State> {
                         message: 'The error appears to be missing'
                     })
                 }
+            case types.ComponentLoadingState.SUCCESS:
             default:
                 if (this.props.view.viewModel === null) {
                     return this.renderError({
@@ -73,10 +79,6 @@ class Loader extends React.Component<Props, State> {
                     return (
                         <InaccessibleContainer />
                     )
-                    // return this.renderError({
-                    //     code: 'Unsupported',
-                    //     message: 'Private orgs are not currently supported'
-                    // })
                 }
                 return (
                     <AccessibleContainer />
@@ -84,10 +86,15 @@ class Loader extends React.Component<Props, State> {
         }
     }
 
+    componentDidUpdate(previousProps: Props) {
+        if (previousProps.organizationId !== this.props.organizationId) {
+            this.props.onLoad(this.props.organizationId)
+        }
+    }
+
     componentDidMount() {
-        switch (this.props.view.loadingState) {
-            case types.ComponentLoadingState.NONE:
-                this.props.onLoad(this.props.organizationId)
+        if (this.props.view.loadingState === types.ComponentLoadingState.NONE) {
+            this.props.onLoad(this.props.organizationId)
         }
     }
 

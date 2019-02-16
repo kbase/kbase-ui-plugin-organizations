@@ -26,48 +26,6 @@
     padding: 4px;
 }
 
-.ViewOrganization-narrativesRow {
-    /* flex: 2 1 0px; */
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-}
-
-.ViewOrganization-narrativesRow .narratives {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: column;
-}
-
-.ViewOrganization-narrativesRow .narrativesTable {
-    /* border: 1px silver solid; */
-    padding: 4px;
-    margin: 0 0 10px 0;
-    flex: 1 1 0px;
-    overflow-y: auto;
-}
-
-.ViewOrganization-narrativesRow .narrativesTable .narrative {
-    /* border: 1px rgba(150, 150, 150, 0.5) solid;
-padding:4px; */
-    margin: 0 0 10px 0;
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: row;
-}
-
-.ViewOrganization-narrativesRow .narrativesTable .narrative .dataCol {
-    flex: 1 1 0px;
-}
-
-.ViewOrganization-narrativesRow .narrativesTable .narrative .buttonCol {
-    flex: 0 0 auto;
-}
-
-.ViewOrganization-narrativesRow .narrativesTable .narrative .title {
-    font-weight: bold;
-}
-
 .ViewOrganization-infoColumn {
     display: flex;
     flex-direction: column;
@@ -155,13 +113,6 @@ padding:4px; */
     For some browsers - FF specifically - but actually makes this usage compliant
     to css.
 */
-
-.narrativesCard.ant-card .ant-card-body {
-    min-height: 0;
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: column;
-}
 
 .ViewOrganization-titleCount {
     color: rgba(200, 200, 200, 1);
@@ -279,55 +230,6 @@ padding:4px; */
     flex: 1 1 0px;
 }
 
-.ViewOrganization-narratives {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: column;
-}
-
-.ViewOrganization-narrativesTitle {
-    font-weight: bold;
-    font-size: 120%;
-}
-
-.ViewOrganization-narrativesHeader {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: row;
-    border-bottom: 1px rgba(200, 200, 200, 0.5) solid;
-    margin-bottom: 4px;
-    padding: 4px;
-}
-
-.ViewOrganization-narrativesHeaderCol1 {
-    flex: 1 1 0px;
-}
-
-.ViewOrganization-narrativesHeaderCol2 {
-    flex: 1 1 0px;
-    text-align: right;
-}
-
-.ViewOrganization-narrativesList {
-    flex: 1 1 0px;
-    overflow-y: auto;
-}
-
-.ViewOrganization-narratives-toolbar {
-    display: flex;
-    flex-direction: row;
-    padding: 4px;
-}
-
-.ViewOrganization-narratives-toolbar-searchCol {
-    flex: 2 1 0px;
-}
-
-.ViewOrganization-narratives-toolbar-sortCol {
-    flex: 1 1 0px;
-    text-align: right;
-}
-
 .ViewOrganization-membersCol {
     flex: 1 1 0px;
     display: flex;
@@ -338,10 +240,6 @@ padding:4px; */
     background-color: rgba(166, 255, 170, 0.3);
     /* border: 1px blue solid; */
     padding: 4px;
-}
-
-.ViewOrganization-newNarrative {
-    border: 1px red solid;
 }
 
 .ViewOrganization-organizationBox {

@@ -608,7 +608,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         return (
             <div className="ViewOrganization-membersCol scrollable-flex-column">
                 {this.renderMembersToolbar()}
-
                 {this.renderMembers()}
             </div>
         )
@@ -628,14 +627,47 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             case orgModel.UserRelationToOrganization.ADMIN:
                 return (
                     <div className="ViewOrganization-tabPaneToolbar">
-                        <Button size="small" onClick={this.onInviteUser.bind(this)}><Icon type="mail" /> Invite a User</Button>
+                        <Tooltip placement="bottomRight"
+                            title="Invite one or more users to this organization">
+                            <Button size="small" onClick={this.onInviteUser.bind(this)}><Icon type="mail" />Invite Users</Button>
+                        </Tooltip>
                     </div>
                 )
             case orgModel.UserRelationToOrganization.OWNER:
                 return (
                     <div className="ViewOrganization-tabPaneToolbar">
-                        <Button size="small" onClick={this.onInviteUser.bind(this)}><Icon type="mail" /> Invite a User</Button>
+                        <Tooltip placement="bottomRight"
+                            title="Invite one or more users to this organization">
+                            <Button size="small" onClick={this.onInviteUser.bind(this)}><Icon type="mail" />Invite Users</Button>
+                        </Tooltip>
                     </div>
+                )
+        }
+    }
+
+    renderToolbarButtons() {
+        switch (this.props.viewModel.relation.type) {
+            case orgModel.UserRelationToOrganization.NONE:
+                return
+            case orgModel.UserRelationToOrganization.MEMBER:
+                return
+            case orgModel.UserRelationToOrganization.ADMIN:
+                return (
+                    <React.Fragment>
+                        <Tooltip placement="bottomRight"
+                            title="Invite a user to this organization">
+                            <Button size="small" onClick={this.onInviteUser.bind(this)}><Icon type="mail" /></Button>
+                        </Tooltip>
+                    </React.Fragment>
+                )
+            case orgModel.UserRelationToOrganization.OWNER:
+                return (
+                    <React.Fragment>
+                        <Tooltip placement="bottomRight"
+                            title="Invite a user to this organization">
+                            <Button size="small" onClick={this.onInviteUser.bind(this)}><Icon type="mail" /></Button>
+                        </Tooltip>
+                    </React.Fragment>
                 )
         }
     }

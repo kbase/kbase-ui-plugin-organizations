@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component, FunctionComponent } from 'react'
 import { Route, Switch, Redirect } from 'react-router'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, RouteProps, RouteComponentProps } from 'react-router-dom'
 
 // redux
 import { Provider } from 'react-redux';
@@ -87,10 +87,46 @@ const initialState = StateInstances.makeInitialState()
 // const store = createStore<StoreState, SortOrgs, null, null>(theReducer as any, initialState, applyMiddleware(thunk));
 const store = createStore(theReducer as any, initialState as any, compose(applyMiddleware(thunk)))
 
+// export interface WrappedComponent extends React.Component<NewOrganization {
+
+// }
+
+// const Wrapped: FunctionComponent<NewOrganization> = ({component: Component, ...rest}: {component: any}) => {
+//   return (<Route {...rest} render={(props) => {
+//       <Component {...props} />
+//     }} />
+//   )
+// }
+
+
+
+interface ViewOrgMatchProps {
+  id: string
+}
+type WrappedProps = RouteComponentProps<ViewOrgMatchProps>
+const F: React.SFC<WrappedProps> = (props: WrappedProps) => {
+  return (
+    <ViewOrganization organizationId={props.match.params.id} />
+  )
+}
+
+// class F2 extends React.Component<WrappedProps> {
+//   constructor(params: WrappedProps) {
+//     super(params)
+//   }
+//   render() {
+//     return (
+//       <ViewOrganization organizationId={this.props.match.params.id} />
+//     )
+//   }
+// }
+
 class App extends Component {
   constructor(props: any) {
     super(props)
   }
+
+
 
   render() {
     return (
@@ -106,8 +142,8 @@ class App extends Component {
                       <Switch>
                         <Route path="/organizations" component={OrganizationsBrowser} />
                         <Route path="/newOrganization" component={NewOrganization} />
-                        {/* The destructuring below is ugly, but effective */}
-                        <Route path="/viewOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewOrganization organizationId={id} />} />
+                        <Route path="/viewOrganization/:id" exact={true} component={F} />
+                        {/* <Route path="/viewOrganization/:id" component={({ match: { params: { id } } }: { match: { params: { id: string } } }) => <ViewOrganization organizationId={id} />} /> */}
                         <Redirect from="/" to="/organizations" exact={true} />
                       </Switch>
                     </div>

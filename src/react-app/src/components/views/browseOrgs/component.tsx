@@ -1,17 +1,13 @@
-import * as React from 'react';
-
-import Organizations from './organizations/container';
-import { SortDirection, AppError } from '../../../types';
-
-import './component.css';
+import * as React from 'react'
+import Organizations from './organizations/container'
+import { SortDirection, AppError } from '../../../types'
 import { Button, Icon, Radio, Select, Modal, Alert, Checkbox } from 'antd'
-import Header from '../../Header';
-import { RadioChangeEvent } from 'antd/lib/radio';
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { Filter } from '../../../data/models/organization/model';
-import MainMenu from '../../menu/component';
-import { NavLink } from 'react-router-dom';
-import ButtonGroup from 'antd/lib/button/button-group';
+import { RadioChangeEvent } from 'antd/lib/radio'
+import { CheckboxValueType } from 'antd/lib/checkbox/Group'
+import { Filter } from '../../../data/models/organization/model'
+import MainMenu from '../../menu/component'
+import { NavLink } from 'react-router-dom'
+import './component.css'
 
 export interface OrganizationsBrowserProps {
     totalCount: number;
@@ -27,7 +23,6 @@ export interface OrganizationsBrowserProps {
 
 export interface OrganizationsBrowserState {
     searchInput: string
-    showInfo: boolean
     filterByRoleType: string
     filterByRole: Array<CheckboxValueType>
     filterByPrivacy: string
@@ -67,7 +62,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
         this.state = {
             searchInput: '',
-            showInfo: false,
             filterByRoleType: 'myorgs',
             filterByRole: [],
             filterByPrivacy: 'any',
@@ -78,18 +72,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
     // https://reactjs.org/docs/react-component.html#componentdidmount
     componentDidMount() {
         this.props.onSearchOrgs([])
-    }
-
-    onShowInfo() {
-        Modal.info({
-            title: 'Organizations Browser Help',
-            width: '50em',
-            content: (
-                <div>
-                    <p>This is the organizations browser...</p>
-                </div>
-            )
-        })
     }
 
     doSearch() {
@@ -267,10 +249,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     onChange={this.onSearchInputChange.bind(this)}
                     autoFocus
                     ref={this.searchInput}></input>
-                {/* <Tooltip
-                    title="Enter one or more words to search organizations by name or owner">
-                    <Icon type="info-circle" theme="twoTone" style={{ alignSelf: 'end' }} />
-                </Tooltip> */}
                 <Button
                     disabled={!this.haveSearchInput()}
                     ref={this.searchButton}
@@ -278,7 +256,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     key="submit"
                     htmlType="submit">
                     {this.renderSearchIcon()}
-                    {/* Search */}
                 </Button>
                 <Button
                     onClick={this.onClearSearch.bind(this)}
@@ -305,22 +282,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         )
     }
 
-    renderHeader() {
-        const breadcrumbs = (
-            <React.Fragment>
-            </React.Fragment>
-        )
-        const buttons = (
-            <React.Fragment>
-                {/* <NavLink to="/newOrganization"><Button icon="plus-circle">Create Organization</Button></NavLink> */}
-                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
-            </React.Fragment>
-        )
-        return (
-            <Header breadcrumbs={breadcrumbs} buttons={buttons} />
-        )
-    }
-
     renderSortByControl() {
         return (
             <Select
@@ -333,8 +294,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                 <Select.Option value="name" key="name">Org Name</Select.Option>
                 <Select.Option value="memberCount" key="memberCount"># members</Select.Option>
                 <Select.Option value="narrativeCount" key="narrativeCount"># narratives</Select.Option>
-                {/* <Select.Option value="owner" key="owner">Org owner</Select.Option> */}
-                {/* <Select.Option value=""newFirst key="newFirst">New Activity</Select.Option> */}
             </Select>
         )
     }
@@ -491,7 +450,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
             <React.Fragment>
                 <NavLink to="/newOrganization"><Button icon="plus-circle" style={{ marginRight: '10px' }}>Create Organization</Button></NavLink>
                 {' '}
-                {/* <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button> */}
             </React.Fragment>
         )
     }
@@ -500,7 +458,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         return (
             <div className="OrganizationsBrowser scrollable-flex-column">
                 <MainMenu buttons={this.renderMenuButtons()} />
-                {/* {this.renderHeader()} */}
                 {this.renderSearchBar()}
                 <div className="OrganizationsBrowser-bodyRow">
                     <div className="OrganizationsBrowser-bodyCol scrollable-flex-column">

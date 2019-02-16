@@ -104,40 +104,6 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         )
     }
 
-    renderHeader() {
-        const breadcrumbs = (
-            <React.Fragment>
-                <span>
-                    <NavLink to={`/viewOrganization/${this.props.organization.id}`}>
-                        <span style={{ fontWeight: 'bold' }}>
-                            {this.renderOrgName(this.props.organization.name)}
-                        </span>
-                    </NavLink>
-
-                    <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
-
-                    <Icon type="user" />
-                    {' '}
-                    <span style={{ fontSize: '120%' }}>Manage your membership</span>
-                </span>
-            </React.Fragment>
-        )
-        const buttons = (
-            <React.Fragment>
-                <Button
-                    // shape="circle"
-                    type="danger"
-                    icon="frown"
-                    onClick={this.doLeaveOrg.bind(this)}>
-                    Leave Organization...
-                </Button>
-            </React.Fragment>
-        )
-        return (
-            <Header breadcrumbs={breadcrumbs} buttons={buttons} />
-        )
-    }
-
     calcFieldClass(field: Editable) {
         switch (field.validationState.type) {
             // case (ValidationErrorType.OK):

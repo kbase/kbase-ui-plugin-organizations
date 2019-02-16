@@ -447,40 +447,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-    renderOrgName(name: string) {
-        const maxLength = 25
-        if (name.length === 0) {
-            return (
-                <span style={{ fontStyle: 'italic' }}>
-                    org name missing
-                </span>
-            )
-        }
-
-        let orgName = name
-        if (name.length >= maxLength) {
-            orgName = name.slice(0, 25) + '…'
-        }
-        return (
-            <NavLink to={`/viewOrganization/${this.props.organization.id}`}>
-                <span style={{ fontWeight: 'bold' }}>
-                    {orgName}
-                </span>
-            </NavLink>
-        )
-    }
-
-    renderLoadingHeader() {
-        const breadcrumbs = (
-            <span>
-                Loading Org Editor...
-            </span>
-        )
-        return (
-            <Header breadcrumbs={breadcrumbs} />
-        )
-    }
-
     renderMenuButtons() {
         return (
             <span className="ButtonSet">
@@ -507,14 +473,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     render() {
         if (this.state.cancelToViewer) {
             return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
-        }
-
-        if (!this.props.editedOrganization) {
-            return (
-                <div className="EditOrganization">
-                    {this.renderLoadingHeader()}
-                </div>
-            )
         }
 
         return (

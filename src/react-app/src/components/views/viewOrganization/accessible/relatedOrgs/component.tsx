@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as orgModel from '../../../../../data/models/organization/model'
 import { Button, Menu, Dropdown, Icon, Alert } from 'antd'
 import OrganizationEntity from '../../../../entities/organization/loader'
+import { withRouter, NavLink } from 'react-router-dom'
 import './component.css'
 
 export interface RelatedOrganizationsProps {
@@ -12,7 +13,6 @@ export interface RelatedOrganizationsProps {
 }
 
 interface RelatedOrganizationsState {
-
 }
 
 export default class RelatedOrganizations extends React.Component<RelatedOrganizationsProps, RelatedOrganizationsState> {
@@ -75,12 +75,15 @@ export default class RelatedOrganizations extends React.Component<RelatedOrganiz
                 <Alert type="info" message={message} />
             )
         }
+        const Wrapped = withRouter<any>(OrganizationEntity)
+        // console.log('hmm???', OrganizationEntity, Wrapped)
         const relatedOrgs = this.props.relatedOrganizations.map((organizationId: string) => {
             return (
                 <div key={organizationId} className="RelatedOrganizations-orgRow simpleCard">
                     {/* <RelatedOrganization organizationId={org} /> */}
+
                     <div className="RelatedOrganizations-orgCol">
-                        <OrganizationEntity organizationId={organizationId} />
+                        <Wrapped organizationId={organizationId} />
                     </div>
                     <div className="RelatedOrganizations-controlCol">
                         {this.renderControls(organizationId)}
