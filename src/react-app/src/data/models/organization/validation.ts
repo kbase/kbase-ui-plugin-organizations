@@ -87,7 +87,7 @@ export default class Validation {
     }
 
     static validateOrgLogoUrl(logoUrl: string | null): [string | null, ValidationState] {
-        if (logoUrl === null) {
+        if (logoUrl === null || logoUrl === '') {
             return [
                 logoUrl, {
                     type: ValidationErrorType.OK,
@@ -105,7 +105,6 @@ export default class Validation {
         }
         try {
             const url = new URL(logoUrl)
-            console.log('hmm', url, url.toJSON())
             if (!url.protocol.match(/^http[s]?:$/)) {
                 return [
                     logoUrl, {
@@ -138,7 +137,7 @@ export default class Validation {
     }
 
     static validateOrgHomeUrl(homeUrl: string | null): [string | null, ValidationState] {
-        if (homeUrl === null) {
+        if (homeUrl === null || homeUrl === '') {
             return [
                 homeUrl, {
                     type: ValidationErrorType.OK,
@@ -156,7 +155,6 @@ export default class Validation {
         }
         try {
             const url = new URL(homeUrl)
-            console.log('hmm', url, url.toJSON())
             if (!url.protocol.match(/^http[s]?:$/)) {
                 return [
                     homeUrl, {
@@ -189,6 +187,7 @@ export default class Validation {
     }
 
     static validateOrgResearchInterests(researchInterests: string): [string, ValidationState] {
+        console.log('validating research interests', researchInterests, researchInterests === null, researchInterests === '')
         if (researchInterests.length === 0) {
             return [
                 name, {
@@ -197,6 +196,7 @@ export default class Validation {
                     validatedAt: new Date()
                 }]
         }
+
         if (researchInterests.length > 280) {
             return [
                 researchInterests, {
@@ -213,6 +213,7 @@ export default class Validation {
     }
 
     static validateOrgDescription(description: string): [string, ValidationState] {
+        console.log('validating description', description, description === null, description === '')
         if (description.length === 0) {
             // return [name, {
             //     type: ValidationErrorType.OK,

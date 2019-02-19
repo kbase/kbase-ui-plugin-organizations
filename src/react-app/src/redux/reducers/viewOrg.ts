@@ -8,6 +8,7 @@ import denyInboxRequest from './viewOrganization/denyInboxRequest'
 import cancelOutboxRequest from './viewOrganization/cancelOutboxRequests'
 import manageRelatedOrganizations from './viewOrganization/manageRelatedOrganizations'
 import relatedOrganizations from './viewOrganization/relatedOrganizations'
+import requestAddNarrative from './viewOrganization/requestAddNarrative'
 
 
 export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
@@ -54,6 +55,11 @@ export function loadNormalSuccess(state: types.StoreState, action: actions.LoadN
                             error: null
                         },
                         inviteUserView: {
+                            state: types.ViewState.NONE,
+                            viewModel: null,
+                            error: null
+                        },
+                        requestNarrativeView: {
                             state: types.ViewState.NONE,
                             viewModel: null,
                             error: null
@@ -248,6 +254,7 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
         cancelOutboxRequest(state, action) ||
         viewMembers(state, action) ||
         manageRelatedOrganizations(state, action) ||
+        relatedOrganizations(state, action) ||
         relatedOrganizations(state, action)
 }
 

@@ -553,9 +553,9 @@ export function updateHomeUrl(homeUrl: string | null) {
     }
 }
 
-export function updateResearchInterests(researchInterests: string | null) {
+export function updateResearchInterests(researchInterests: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
-        const [validatedResearchInterests, error] = Validation.validateOrgHomeUrl(researchInterests)
+        const [validatedResearchInterests, error] = Validation.validateOrgResearchInterests(researchInterests)
 
         if (error.type !== ValidationErrorType.OK) {
             dispatch({
@@ -581,10 +581,6 @@ export function updateDescription(description: string) {
             app: { config }
         } = getState()
 
-        const orgClient = new orgModel.OrganizationModel({
-            token, username,
-            groupsServiceURL: config.services.Groups.url
-        })
         const [validatedDescription, error] = Validation.validateOrgDescription(description)
 
         if (error.type !== ValidationErrorType.OK) {

@@ -39,15 +39,6 @@ function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
         throw new Error("argh, null subview view model")
     }
 
-
-    // const {
-    //     views: {
-    //         inviteUserView: {
-    //             viewModel: { organization, users, selectedUser, editState }
-    //         }
-    //     }
-    // } = state
-
     return viewModel.subViews.inviteUserView.viewModel
 }
 

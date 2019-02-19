@@ -6,7 +6,6 @@
 
 .NewOrganization h3 {
     padding: 8px;
-    /* background-color: rgba(200, 200, 200, 0.5); */
     border-bottom: 2px rgba(200, 200, 200, 0.8) solid;
     text-align: center;
 }
@@ -55,7 +54,6 @@
     min-height: 30px;
     display: flex;
     flex-direction: row;
-    /* height: 30px; */
     margin: 4px 0;
 }
 
@@ -63,15 +61,12 @@
     flex: 0 0 7em;
     font-weight: bold;
     text-align: left;
-    /* color: rgba(100, 100, 100, 1); */
-    /* border: 1px silver solid; */
 }
 
 .NewOrganization .col2 {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
-    /* border: 1px silver solid; */
 }
 
 .NewOrganization .editor input {
@@ -104,7 +99,6 @@
 .NewOrganization .preview .description {
     padding: 8px;
     border: 1px rgba(200, 200, 200, 0.5) solid;
-    /* border-radius: 8px; */
     flex: 1 1 0px;
     overflow-y: auto;
     box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5);
@@ -115,15 +109,15 @@
 }
 
 .NewOrganization .validation-error {
-    border: 1px transparent solid;
+    /* border-bottom: 1px transparent solid; */
 }
 
 .NewOrganization .validation-error {
-    border: 1px red solid;
+    border-bottom: 1px red solid;
 }
 
 .NewOrganization .sync-dirty {
-    border: 1px orange solid;
+    border-bottom: 1px orange solid;
 }
 
 /* New editor layout */
@@ -143,14 +137,25 @@
     margin-bottom: 5px;
 }
 
-.NewOrganization-col1 {
+.NewOrganization-body {
     flex: 1 1 0px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.NewOrganization-col1 {
+    flex: 0 0 10em;
     margin-right: 5px;
 }
 
 .NewOrganization-col2 {
+    flex: 1 1 0px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.NewOrganization-col3 {
     flex: 1 1 0px;
     margin-left: 5px;
 }
@@ -158,7 +163,7 @@
 /* Form rows */
 
 .NewOrganization-formLabel {
-    flex: 0 0 7em;
+    flex: 0 0 10em;
     font-weight: bold;
     text-align: left;
 }
@@ -172,7 +177,6 @@
 .NewOrganization-preview-name {}
 
 .NewOrganization-preview-researchInterests {
-    /* max-height: 5em; */
     overflow-y: scroll;
 }
 
@@ -187,8 +191,6 @@
 }
 
 .NewOrganization-preview-description {
-    /* min-height: 5em;
-    max-height: 15em; */
     overflow-y: scroll;
 }
 

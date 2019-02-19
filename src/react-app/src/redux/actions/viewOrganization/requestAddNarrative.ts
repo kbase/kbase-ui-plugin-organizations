@@ -1,14 +1,16 @@
 import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
-import { ActionFlag } from './index'
-import { AppError, StoreState, Narrative } from '../../types'
-
-import * as orgModel from '../../data/models/organization/model'
-import * as narrativeModel from '../../data/models/narrative'
-import * as requestModel from '../../data/models/requests'
-import { AnError } from '../../lib/error';
-import { makeError } from '../../combo/error/api';
-import { OrganizationNarrative } from '../../data/models/narrative';
+import { ActionFlag } from '../index'
+import {
+    StoreState, Narrative, View, ViewOrgViewModelKind,
+    RequestNarrativeViewModel
+} from '../../../types'
+import * as orgModel from '../../../data/models/organization/model'
+import * as narrativeModel from '../../../data/models/narrative'
+import * as requestModel from '../../../data/models/requests'
+import { AnError } from '../../../lib/error'
+import { makeError } from '../../../combo/error/api'
+import { OrganizationNarrative } from '../../../data/models/narrative'
 
 export interface Load extends Action {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD
@@ -27,7 +29,7 @@ export interface LoadSuccess extends Action {
 
 export interface LoadError extends Action {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD_ERROR
-    error: AppError
+    error: AnError
 }
 
 export function loadStart(): LoadStart {
@@ -43,7 +45,7 @@ export function loadSuccess(organization: orgModel.Organization, narratives: Arr
     }
 }
 
-export function loadError(error: AppError): LoadError {
+export function loadError(error: AnError): LoadError {
     return {
         type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD_ERROR,
         error: error
@@ -85,10 +87,10 @@ export function load(organizationId: string) {
             dispatch(loadSuccess(org, narratives, relation))
         } catch (ex) {
             console.error('loading error', ex)
-            dispatch(loadError({
+            dispatch(loadError(makeError({
                 code: ex.name,
                 message: ex.message
-            }))
+            })))
         }
     }
 }
@@ -110,7 +112,7 @@ export interface SelectNarrativeSuccess {
 
 export interface SelectNarrativeError {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_SELECT_NARRATIVE_ERROR
-    error: AppError
+    error: AnError
 }
 
 export function selectNarrativeStart(): SelectNarrativeStart {
@@ -126,7 +128,7 @@ export function selectNarrativeSuccess(narrative: OrganizationNarrative): Select
     }
 }
 
-export function selectNarrativeError(error: AppError): SelectNarrativeError {
+export function selectNarrativeError(error: AnError): SelectNarrativeError {
     return {
         type: ActionFlag.REQUEST_ADD_NARRATIVE_SELECT_NARRATIVE_ERROR,
         error: error
@@ -164,7 +166,7 @@ export interface SendRequestSuccess {
 
 export interface SendRequestError {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_SEND_ERROR,
-    error: AppError
+    error: AnError
 }
 
 
@@ -181,7 +183,7 @@ export function sendRequestSuccess(request: requestModel.Request | boolean): Sen
     }
 }
 
-export function sendRequestError(error: AppError): SendRequestError {
+export function sendRequestError(error: AnError): SendRequestError {
     return {
         type: ActionFlag.REQUEST_ADD_NARRATIVE_SEND_ERROR,
         error: error
@@ -205,10 +207,10 @@ export function sendRequest(groupId: string, workspaceId: number) {
             const request = await orgClient.addOrRequestNarrativeToGroup(groupId, workspaceId)
             dispatch(sendRequestSuccess(request))
         } catch (ex) {
-            dispatch(sendRequestError({
+            dispatch(sendRequestError(makeError({
                 code: ex.name,
                 message: ex.message
-            }))
+            })))
         }
     }
 }
@@ -246,6 +248,25 @@ export interface SortError {
     error: AnError
 }
 
+function ensureView(state: StoreState): View<RequestNarrativeViewModel> {
+    const {
+        views: {
+            viewOrgView: { viewModel }
+        }
+    } = state
+    if (viewModel === null) {
+        throw new Error('select user invalid state -- no view value')
+    }
+    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+        throw new Error('select user invalid state -- no view value')
+    }
+    const { requestNarrativeView } = viewModel.subViews
+    if (requestNarrativeView === null) {
+        throw new Error('select user invalid state -- no view value')
+    }
+    return requestNarrativeView
+}
+
 export function sort(sort: narrativeModel.Sort) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch({
@@ -254,14 +275,26 @@ export function sort(sort: narrativeModel.Sort) {
 
         const state = getState()
 
-        const viewModel = state.views.requestNarrativeView.viewModel
-
-        if (viewModel === null) {
+        let view: View<RequestNarrativeViewModel>
+        try {
+            view = ensureView(state)
+        } catch (ex) {
             dispatch({
                 type: ActionFlag.REQUEST_ADD_NARRATIVE_SORT_ERROR,
                 error: makeError({
                     code: 'error',
-                    message: 'viewmodel missing'
+                    message: ex.message
+                })
+            })
+            return
+        }
+
+        if (view.viewModel === null) {
+            dispatch({
+                type: ActionFlag.REQUEST_ADD_NARRATIVE_SORT_ERROR,
+                error: makeError({
+                    code: 'error',
+                    message: 'missing view model'
                 })
             })
             return
@@ -280,7 +313,7 @@ export function sort(sort: narrativeModel.Sort) {
         })
 
         try {
-            const sorted = narrativeClient.sortOrganizationNarratives(viewModel.narratives, sort)
+            const sorted = narrativeClient.sortOrganizationNarratives(view.viewModel.narratives, sort)
             dispatch({
                 type: ActionFlag.REQUEST_ADD_NARRATIVE_SORT_SUCCESS,
                 narratives: sorted

@@ -45,7 +45,7 @@
 }
 
 .ViewOrganization-Narratives-narrative {
-    margin: 0 0 10px 0;
+    /* margin: 0 0 10px 0; */
     flex: 1 1 0px;
     display: flex;
     flex-direction: row;

@@ -1,18 +1,17 @@
 import * as React from 'react'
-import { Redirect, NavLink } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import { Marked } from 'marked-ts'
-import { Button, Icon, Modal, Input, Checkbox, Tooltip } from 'antd'
+import { Button, Icon, Modal, Input, Checkbox, Tooltip, Collapse } from 'antd'
 import md5 from 'md5'
-
-import { EditableOrganization, SaveState, ValidationState, EditState, AppError, Editable, ValidationErrorType, SyncState } from '../../../types';
-
+import {
+    EditableOrganization, SaveState, ValidationState, EditState,
+    AppError, Editable, ValidationErrorType, SyncState
+} from '../../../types';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox'
+import OrgLogo from '../../OrgLogo'
+import TextArea from 'antd/lib/input/TextArea'
+import MainMenu from '../../menu/component'
 import './component.css'
-
-import Header from '../../Header';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import OrgLogo from '../../OrgLogo';
-import TextArea from 'antd/lib/input/TextArea';
-import MainMenu from '../../menu/component';
 
 export interface NewOrganizationProps {
     editState: EditState,
@@ -36,7 +35,6 @@ export interface NewOrganizationState {
 }
 
 class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizationState> {
-
     origin: string;
 
     constructor(props: NewOrganizationProps) {
@@ -50,81 +48,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         this.origin = document.location!.origin
     }
 
-    onShowInfo() {
-        Modal.info({
-            title: 'New Organization Help',
-            width: '50em',
-            content: (
-                <div>
-                    <p>
-                        As a KBase user, you may create your own organizations.
-                    </p>
-                    <p>
-                        Once you have created an Organization, you will be the sole owner of it, forever.
-                    </p>
-                    <p>
-                        In order to create an Org, you need to complete the following fields.
-                    </p>
-                    <dl>
-                        <dt>
-                            name
-                        </dt>
-                        <dd>
-                            The organization <i>name</i> is whatever you wish to have your Org known as. It may be
-                            composed of any text (including unicode characters) up to 200 characters in length. You
-                            may also change it at any time.
-                        </dd>
-                        <dt>
-                            logo
-                        </dt>
-                        <dd>
-                            <p>
-                                Logo support has undergone a redesign, but has not yet been implemented. The new
-                                design supports direct image upload, and removes gravatar support.
-                            </p>
-                            <p>
-                                For now, gravatar is the only support for org logo
-                            </p>
-                            <p>
-                                In order to display a custom logo for your organization, you need to associate
-                                your Organization with an avatar hosted with the Gravatar service.
-                                To do so,
-                                simply enter the email address associated with your gravatar and press the update
-                                button. This will calculate a new "gravatar hash" and associate it with your organization.
-                            </p>
-                        </dd>
-                        <dt>
-                            id
-                        </dt>
-                        <dd>
-                            <p>
-                                Your Org <i>id</i> forms a url endpoint for your org as well as the identifier used throughout
-                            KBase to, well, identify your organization uniquely among all current and future organizations.
-                            As such, the Org ID may not be changed once created.
-                            </p>
-                            <p>
-                                The id may only be composed of the restricted characters a-Z, A-Z, 0-9 and _, and is also
-                                restricted to 100 characters in length.
-                            </p>
-
-                        </dd>
-                        <dt>
-                            description
-                        </dt>
-                        <dd>
-                            <p>
-                                Up to 4000 characters, a description allows you to express to other KBase users the purpose,
-                            history, associations, and science domain of your Org.</p>
-                            <p>
-                                The description is in "markdown" format, and the editor will show you a preview of the
-                                rendered description.
-                            </p>
-                        </dd>
-                    </dl>
-                </div>
-            )
-        })
-    }
 
     onClickCancelToBrowser() {
         if (!this.isModified()) {
@@ -216,16 +139,16 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             // case (ValidationErrorType.OK):
             //     return 'validation-ok'
             case (ValidationErrorType.ERROR):
-                return 'validation-error'
+                return 'validation-error Lite'
             case (ValidationErrorType.REQUIRED_MISSING):
-                return 'validation-error'
+                return 'validation-error Lite'
         }
 
         switch (field.syncState) {
             case (SyncState.DIRTY):
-                return 'sync-dirty'
+                return 'sync-dirty Lite'
             default:
-                return 'validation-ok'
+                return 'validation-ok Lite'
         }
     }
 
@@ -243,173 +166,552 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         }
     }
 
-    renderEditor() {
+    renderNameRow() {
+        const tooltip = (
+            <React.Fragment>
+                <p>
+                    This is the name for your organization as you want KBase users to see it; you may change it at any time.
+                </p>
+                <p>
+                    It may be composed of ordinary text, but does not accept formatting.
+                </p>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>
+                                required
+                            </th>
+                            <td>
+                                yes
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                max length
+                            </th>
+                            <td>
+                                1024 characters
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </React.Fragment>
+        )
+        const placeholder = 'Enter the display name for the Organization'
         return (
-            <form id="newOrganizationForm" className="NewOrganization-editor" onSubmit={this.onSubmit.bind(this)}>
-                <div className="NewOrganization-row">
-                    <div className="NewOrganization-col1">
-                        <div style={{ flex: '1 1 0px' }}>
-                            <h3>Create Your Organization</h3>
-                        </div>
-                    </div>
-                    <div className="NewOrganization-col2">
-                        <h3>Preview</h3>
+            <div className="NewOrganization-row">
+                <div className="NewOrganization-col1">
+                    <div className="NewOrganization-formLabel field-label">
+                        <Tooltip title={tooltip}>
+                            Name
+                        </Tooltip>
                     </div>
                 </div>
-
-                {/* Org name */}
-                <div className="NewOrganization-row">
-                    <div className="NewOrganization-col1">
-                        <div className="NewOrganization-formLabel field-label">
-                            <Tooltip title="This is the name for your organization as you want KBase users to see it">
-                                Name
-                            </Tooltip>
-                        </div>
-                        <div className="NewOrganization-formControl">
-                            <Input value={this.props.newOrganization.name.value || ''}
-                                className={this.calcFieldClass(this.props.newOrganization.name)}
-                                onChange={this.onNameChange.bind(this)} />
-                            {this.renderFieldError(this.props.newOrganization.name)}
-                        </div>
-                    </div>
-                    <div className="NewOrganization-col2">
-                        <div className="NewOrganization-preview-name">
-                            {this.props.newOrganization.name.value || ''}
-                        </div>
+                <div className="NewOrganization-col2">
+                    <div className="NewOrganization-formControl">
+                        <Input value={this.props.newOrganization.name.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.name)}
+                            placeholder={placeholder}
+                            autoFocus
+                            onChange={this.onNameChange.bind(this)} />
+                        {this.renderFieldError(this.props.newOrganization.name)}
                     </div>
                 </div>
-
-                {/* Org ID */}
-                <div className="NewOrganization-row">
-                    <div className="NewOrganization-col1">
-                        <div className="NewOrganization-formLabel field-label">
-                            ID
-                        </div>
-                        <div className="NewOrganization-formControl">
-                            <Input value={this.props.newOrganization.id.value || ''}
-                                className={this.calcFieldClass(this.props.newOrganization.id)}
-                                onChange={this.onIdChange.bind(this)} />
-                            {this.renderFieldError(this.props.newOrganization.id)}
-                        </div>
-                    </div>
-                    <div className="NewOrganization-col2">
-                        <div className="NewOrganization-preview-id">
-                            <span style={{ color: 'silver' }}>{this.origin}/#org/</span>
-                            {this.props.newOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
-                        </div>
+                <div className="NewOrganization-col3">
+                    <div className="NewOrganization-preview-name">
+                        {this.props.newOrganization.name.value || ''}
                     </div>
                 </div>
-
-                {/* Logo URL */}
-                <div className="NewOrganization-row">
-                    <div className="NewOrganization-col1">
-                        <div className="NewOrganization-formLabel field-label">
-                            Logo URL
-                        </div>
-                        <div className="NewOrganization-formControl">
-                            <Input value={this.props.newOrganization.logoUrl.value || ''}
-                                className={this.calcFieldClass(this.props.newOrganization.logoUrl)}
-                                onChange={this.onLogoUrlChange.bind(this)} />
-                            {this.renderFieldError(this.props.newOrganization.logoUrl)}
-                        </div>
-                    </div>
-                    <div className="NewOrganization-col2">
-                        <div className="NewOrganization-preview-logo">
-                            {this.renderLogoPreview()}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Home Page URL */}
-                <div className="NewOrganization-row">
-                    <div className="NewOrganization-col1">
-                        <div className="NewOrganization-formLabel field-label">
-                            Home Page URL
-                        </div>
-                        <div className="NewOrganization-formControl">
-                            <Input value={this.props.newOrganization.homeUrl.value || ''}
-                                className={this.calcFieldClass(this.props.newOrganization.homeUrl)}
-                                onChange={this.onHomeUrlChange.bind(this)} />
-                            {this.renderFieldError(this.props.newOrganization.homeUrl)}
-                        </div>
-                    </div>
-                    <div className="NewOrganization-col2">
-                        <div className="NewOrganization-field-name">
-                            <a href={this.props.newOrganization.homeUrl.value || ''} target="_blank">{this.props.newOrganization.homeUrl.value || ''}</a>
-                        </div>
-                    </div>
-                </div>
-
-
-                {/* Is Private? */}
-                <div className="NewOrganization-row">
-                    <div className="NewOrganization-col1">
-                        <div className="NewOrganization-formLabel field-label">
-                            Is Private?
-                        </div>
-                        <div className="NewOrganization-formControl">
-                            <Checkbox
-                                checked={this.props.newOrganization.isPrivate.value}
-                                className={this.calcFieldClass(this.props.newOrganization.isPrivate)}
-                                onChange={this.onIsPrivateChange.bind(this)} />
-                            {this.renderFieldError(this.props.newOrganization.isPrivate)}
-                        </div>
-                    </div>
-                    <div className="NewOrganization-col2">
-                        <div className="NewOrganization-preview-isPrivate">
-                            {this.renderIsPrivate(this.props.newOrganization.isPrivate.value)}
-                        </div>
-                    </div>
-                </div>
-
-
-                {/* Research Interests */}
-                <div className="NewOrganization-row">
-                    <div className="NewOrganization-col1">
-                        <div className="NewOrganization-formLabel field-label">
-                            Research Interests
-                        </div>
-                        <div className="NewOrganization-formControl">
-                            <TextArea value={this.props.newOrganization.researchInterests.value || ''}
-                                className={this.calcFieldClass(this.props.newOrganization.researchInterests) + ' NewOrganization-control-researchInterests'}
-                                autosize={{ minRows: 2, maxRows: 2 }}
-                                onChange={this.onResearchInterestsChange.bind(this)} />
-                            {this.renderFieldError(this.props.newOrganization.researchInterests)}
-                        </div>
-                    </div>
-                    <div className="NewOrganization-col2">
-                        <div className="NewOrganization-preview-researchInterests">
-                            {this.props.newOrganization.researchInterests.value || ''}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Description*/}
-                <div className="NewOrganization-row">
-                    <div className="NewOrganization-col1">
-                        <div className="NewOrganization-formLabel field-label">
-                        </div>
-                        <div className="NewOrganization-formControl">
-                            <TextArea value={this.props.newOrganization.description.value || ''}
-                                className={this.calcFieldClass(this.props.newOrganization.description) + ' NewOrganization-control-description'}
-                                autosize={{ minRows: 5, maxRows: 15 }}
-                                onChange={this.onDescriptionChange.bind(this)} />
-                            {this.renderFieldError(this.props.newOrganization.description)}
-                        </div>
-                    </div>
-                    <div className="NewOrganization-col2">
-                        <div className="NewOrganization-preview-description"
-                            dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.newOrganization.description.value || '') })}
-                        />
-                    </div>
-                </div>
-            </form >
+            </div>
         )
     }
 
+    renderIDRow() {
+        const tooltip = (
+            <React.Fragment>
+                <p>
+                    Each Organization has a unique identifier. The ID is set when the organization is created, and are permanent: It may never be changed.
+                </p>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>
+                                required
+                            </th>
+                            <td>
+                                yes
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                max length
+                            </th>
+                            <td>
+                                100 characters
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                allowed
+                            </th>
+                            <td>
+                                a to z, 0 to 9, -
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </React.Fragment>
+        )
+        const placeholder = "Enter the unique ID"
+        return (
+            <div className="NewOrganization-row">
+                <div className="NewOrganization-col1">
+                    <div className="NewOrganization-formLabel field-label">
+                        <Tooltip title={tooltip}>
+                            ID
+                        </Tooltip>
+                    </div>
+                </div>
+                <div className="NewOrganization-col2">
+                    <div className="NewOrganization-formControl">
+                        <Input value={this.props.newOrganization.id.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.id)}
+                            placeholder={placeholder}
+                            onChange={this.onIdChange.bind(this)} />
+                        {this.renderFieldError(this.props.newOrganization.id)}
+                    </div>
+                </div>
+                <div className="NewOrganization-col3">
+                    <div className="NewOrganization-preview-id">
+                        <span style={{ color: 'silver' }}>{this.origin}/#org/</span>
+                        {this.props.newOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    renderLogoURLRow() {
+        const tooltip = (
+            <React.Fragment>
+                <p>
+                    Each Organization will display a logo. You may specific your own logo by entering the URL for an image, or leave
+                    this field blank and a default logo will be displayed, using the first letter of your org name and a randomly
+                    generated color (based on your org id).
+                </p>
+                <p>
+                    Please don't use large images, and try to keep them roughly square. The logo image display will be constrained
+                    to no larger than 100 pixels wide. Non-square logos may not look good in the Orgs list or on your Org page.
+                </p>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>
+                                required
+                            </th>
+                            <td>
+                                no
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                max length
+                            </th>
+                            <td>
+                                1000 characters
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                allowed
+                            </th>
+                            <td>
+                                a full https:// url. E.g. https://my.org/myimage.png<br />
+                                note that only <i>https</i> urls are accepted.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </React.Fragment>
+        )
+        const placeholder = "Enter a URL for your Organization's logo (optional)"
+        return (
+            <div className="NewOrganization-row">
+                <div className="NewOrganization-col1">
+                    <div className="NewOrganization-formLabel field-label">
+                        <Tooltip title={tooltip}>
+                            Logo URL
+                        </Tooltip>
+                    </div>
+                </div>
+                <div className="NewOrganization-col2">
+                    <div className="NewOrganization-formControl">
+                        <Input value={this.props.newOrganization.logoUrl.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.logoUrl)}
+                            placeholder={placeholder}
+                            onChange={this.onLogoUrlChange.bind(this)} />
+                        {this.renderFieldError(this.props.newOrganization.logoUrl)}
+                    </div>
+                </div>
+                <div className="NewOrganization-col3">
+                    <div className="NewOrganization-preview-logo">
+                        {this.renderLogoPreview()}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    renderHomeURLRow() {
+        const tooltip = (
+            <React.Fragment>
+                <p>
+                    Each Organization may display a home page url. This should be considered the canonical home for your Organization, if
+                    it also exists outside of KBase.
+                </p>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>
+                                required
+                            </th>
+                            <td>
+                                no
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                max length
+                            </th>
+                            <td>
+                                1000 characters
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                allowed
+                            </th>
+                            <td>
+                                a full url. E.g. http://my.org/myimage.png<br />
+                                note that both <i>http></i> and <i>https</i> urls are accepted.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </React.Fragment>
+        )
+        const placeholder = "Enter the url for your Organization's home page (optional)"
+        return (
+            <div className="NewOrganization-row">
+                <div className="NewOrganization-col1">
+                    <div className="NewOrganization-formLabel field-label">
+                        <Tooltip title={tooltip}>
+                            Home Page URL
+                        </Tooltip>
+                    </div>
+                </div>
+                <div className="NewOrganization-col2">
+                    <div className="NewOrganization-formControl">
+                        <Input value={this.props.newOrganization.homeUrl.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.homeUrl)}
+                            placeholder={placeholder}
+                            onChange={this.onHomeUrlChange.bind(this)} />
+                        {this.renderFieldError(this.props.newOrganization.homeUrl)}
+                    </div>
+                </div>
+                <div className="NewOrganization-col3">
+                    <div className="NewOrganization-field-name">
+                        <a href={this.props.newOrganization.homeUrl.value || ''} target="_blank">{this.props.newOrganization.homeUrl.value || ''}</a>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    renderCollapse(content: JSX.Element) {
+        const style = {
+            background: 'transparent',
+            borderRadius: 0,
+            margin: 0,
+            border: 0,
+            overflow: 'hidden'
+        }
+        return (
+            <Collapse bordered={false}>
+                <Collapse.Panel header="What about inviting users?" key="invite" style={style}>
+                    {content}
+                </Collapse.Panel>
+            </Collapse>
+        )
+    }
+
+    renderPrivatePublicRow() {
+        const tooltip = (
+            <React.Fragment>
+                <p>
+                    Set the Organization to "hidden" to prevent it from appearing in the listing and from being exposed
+                    as an Org page for any non-member.
+                </p>
+                <p>
+                    You may invite users directly to your org. When doing so they will receive a notification with a link to the
+                    org page. When a user lands on the org page they will not be shown information about the org, but will be available
+                    to accept the invitation and instantly have access to it.
+                </p>
+                <p>
+                    A user with an invitation who lands on the org page will not see information about the org, but will be able to
+                    submit a Join request.
+                </p>
+                {/* {this.renderCollapse((
+                    <React.Fragment>
+                        <p>
+                            You may invite users directly to your org. When doing so they will receive a notification with a link to the
+                            org page. When a user lands on the org page they will not be shown information about the org, but will be available
+                            to accept the invitation and instantly have access to it.
+                        </p>
+                        <p>
+                            A user with an invitation who lands on the org page will not see information about the org, but will be able to
+                            submit a Join request.
+                        </p>
+                    </React.Fragment>
+                ))} */}
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>
+                                required
+                            </th>
+                            <td>
+                                no
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </React.Fragment>
+        )
+        return (
+            <div className="NewOrganization-row">
+                <div className="NewOrganization-col1">
+                    <div className="NewOrganization-formLabel field-label">
+                        <Tooltip title={tooltip}>
+                            Hidden?
+                        </Tooltip>
+                    </div>
+                </div>
+                <div className="NewOrganization-col2">
+                    <div className="NewOrganization-formControl">
+                        <Checkbox
+                            checked={this.props.newOrganization.isPrivate.value}
+                            className={this.calcFieldClass(this.props.newOrganization.isPrivate)}
+                            onChange={this.onIsPrivateChange.bind(this)} />
+                        {this.renderFieldError(this.props.newOrganization.isPrivate)}
+                    </div>
+                </div>
+                <div className="NewOrganization-col3">
+                    <div className="NewOrganization-preview-isPrivate">
+                        {this.renderIsPrivate(this.props.newOrganization.isPrivate.value)}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    renderResearchInterestsRow() {
+        const tooltip = (
+            <React.Fragment>
+                <p>
+                    Each organization must have a short description of research interests or purpose.
+                </p>
+                <p>
+                    This text is displayed in the organizations list and the organization's page. It is most helpful
+                    in the list context to help users quickly scan the list.
+                </p>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>
+                                required
+                            </th>
+                            <td>
+                                yes
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                max length
+                            </th>
+                            <td>
+                                200 characters
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                allowed
+                            </th>
+                            <td>
+                                unformatted text
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </React.Fragment>
+        )
+        const placeholder = 'Enter a short statement of your Organization\'s research interests or purpose'
+        return (
+            <div className="NewOrganization-row">
+                <div className="NewOrganization-col1">
+                    <div className="NewOrganization-formLabel field-label">
+                        <Tooltip title={tooltip}>
+                            Research Interests
+                        </Tooltip>
+                    </div>
+                </div>
+                <div className="NewOrganization-col2">
+                    <div className="NewOrganization-formControl">
+                        <TextArea value={this.props.newOrganization.researchInterests.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.researchInterests) + ' NewOrganization-control-researchInterests'}
+                            autosize={{ minRows: 2, maxRows: 2 }}
+                            placeholder={placeholder}
+                            onChange={this.onResearchInterestsChange.bind(this)} />
+                        {this.renderFieldError(this.props.newOrganization.researchInterests)}
+                    </div>
+                </div>
+                <div className="NewOrganization-col3">
+                    <div className="NewOrganization-preview-researchInterests">
+                        {this.props.newOrganization.researchInterests.value || ''}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    renderDescriptionRow() {
+        const tooltip = (
+            <React.Fragment>
+                <p>
+                    Each organization must have a description which communicates the purpose of this organization.
+                </p>
+                <p>
+                    The description is in <a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown</a> format
+                    and may be quite long. It will be presented in a scrolling area.
+                </p>
+                <p>
+                    Please be mindful of embedding large images or other content which may interfere with the display of your Organization.
+                </p>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>
+                                required
+                            </th>
+                            <td>
+                                yes
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                max length
+                            </th>
+                            <td>
+                                1024 characters
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                allowed
+                            </th>
+                            <td>
+                                standard <a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </React.Fragment>
+        )
+        const placeholder = 'Enter the required organization description Description'
+        return (
+            <div className="NewOrganization-row">
+                <div className="NewOrganization-col1">
+                    <div className="NewOrganization-formLabel field-label">
+                        <Tooltip title={tooltip}>
+                            Description
+                        </Tooltip>
+                    </div>
+                </div>
+                <div className="NewOrganization-col2">
+                    <div className="NewOrganization-formControl">
+                        <TextArea value={this.props.newOrganization.description.value || ''}
+                            className={this.calcFieldClass(this.props.newOrganization.description) + ' NewOrganization-control-description'}
+                            autosize={{ minRows: 5, maxRows: 15 }}
+                            placeholder={placeholder}
+                            onChange={this.onDescriptionChange.bind(this)} />
+                        {this.renderFieldError(this.props.newOrganization.description)}
+                    </div>
+                </div>
+                <div className="NewOrganization-col3">
+                    <div className="NewOrganization-preview-description"
+                        dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.newOrganization.description.value || '') })}
+                    />
+                </div>
+            </div>
+        )
+    }
+
+    renderEditorHeader() {
+        return (
+            <div className="NewOrganization-row">
+                <div className="NewOrganization-col1">
+                </div>
+                <div className="NewOrganization-col2">
+                    <div style={{ flex: '1 1 0px' }}>
+                        <h3>Create Your Organization</h3>
+                    </div>
+                </div>
+                <div className="NewOrganization-col3">
+                    <h3>Preview</h3>
+                </div>
+            </div>
+        )
+    }
+
+    renderEditor() {
+        return (
+            <form id="newOrganizationForm" className="NewOrganization-editor  scrollable-flex-column" onSubmit={this.onSubmit.bind(this)}>
+                {this.renderEditorHeader()}
+                <div className="NewOrganization-body">
+                    {this.renderNameRow()}
+                    {this.renderIDRow()}
+                    {this.renderLogoURLRow()}
+                    {this.renderHomeURLRow()}
+                    {this.renderPrivatePublicRow()}
+                    {this.renderResearchInterestsRow()}
+                    {this.renderDescriptionRow()}
+                    <div className="NewOrganization-row">
+                        <div className="NewOrganization-col1">
+                        </div>
+                        <div className="NewOrganization-col2" style={{ textAlign: 'center' }}>
+                            <div className="ButtonSet">
+                                <span className="ButtonSet-button">
+                                    {this.renderSaveButton()}
+                                </span>
+                                <span className="ButtonSet-button">
+                                    {this.renderCancelButton()}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="NewOrganization-col3">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        )
+    }
 
     charAt(inString: string, position: number) {
-        // const c1 = inString.charAt(position)
         const c1 = inString.charCodeAt(position)
         if (c1 >= 0xD800 && c1 <= 0xDBFF && inString.length > position + 1) {
             const c2 = inString.charCodeAt(position + 1)
@@ -430,13 +732,13 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         if (isPrivate) {
             return (
                 <span>
-                    <Icon type="lock" />{' '}Private
+                    <Icon type="lock" />{' '}Hidden - will be visible <b>only</b> for members of this organization
                 </span>
             )
         }
         return (
             <span>
-                <Icon type="global" />{' '}Public
+                <Icon type="global" />{' '}Visible - will be visible to all KBase users.
             </span>
         )
     }
@@ -485,46 +787,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         this.setState({ showError: !this.state.showError })
     }
 
-    renderHeader() {
-        const orgName = this.props.newOrganization!.name.value || (<span style={{ fontStyle: 'italic', color: 'gray' }}>org name will appear here when you edit the name field</span>)
-        let errorButton
-        if (this.props.error) {
-            errorButton = (
-                <Button shape="circle" icon="exclamation" type="danger" onClick={this.toggleError.bind(this)}></Button>
-            )
-        }
-        const breadcrumbs = (
-            <React.Fragment>
-                <span>
-                    {/* <FaPlusCircle style={{ verticalAlign: 'middle' }} /> */}
-                    <Icon type="plus-circle" />
-                    {' '}
-                    Adding a New Org "
-                            {orgName}
-                    "
-                        </span>
-            </React.Fragment>
-        )
-        const buttons = (
-            <React.Fragment>
-                <Button icon="save"
-                    form="newOrganizationForm"
-                    key="submit"
-                    disabled={!this.canSave.call(this)}
-                    htmlType="submit">
-                    {/* <Icon type="save" /> */}
-                    {/* <FaSave style={{ verticalAlign: 'center' }} /> */}
-                    Save
-                        </Button>
-
-                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
-                {errorButton}
-            </React.Fragment>
-        )
-        return (
-            <Header breadcrumbs={breadcrumbs} buttons={buttons} />
-        )
-    }
 
     renderError() {
         if (this.props.error && this.state.showError) {
@@ -565,10 +827,29 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                         {this.props.error.message}
                     </div>
                     {trace}
-
                 </Modal>
             )
         }
+    }
+
+    renderSaveButton() {
+        return (
+            <Button icon="save"
+                form="newOrganizationForm"
+                key="submit"
+                disabled={!this.canSave.call(this)}
+                htmlType="submit">
+                Save
+            </Button>
+        )
+    }
+
+    renderCancelButton() {
+        return (
+            <Button type="danger" onClick={this.onClickCancelToBrowser.bind(this)} >
+                <Icon type="close" />{' '}Cancel
+            </Button>
+        )
     }
 
     renderMenuButtons() {
@@ -589,13 +870,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     </Button>
                 </span>
                 <span className="ButtonSet-button">
-                    <Button icon="save"
-                        form="newOrganizationForm"
-                        key="submit"
-                        disabled={!this.canSave.call(this)}
-                        htmlType="submit">
-                        Save
-                </Button>
+                    {this.renderSaveButton()}
                 </span>
                 {/* <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button> */}
                 {errorButton}

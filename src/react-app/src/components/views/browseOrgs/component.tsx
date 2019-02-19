@@ -403,10 +403,10 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     onChange={this.onFilterByPrivacyChange.bind(this)}
                     value={this.state.filterByPrivacy}>
                     <Radio value="any" style={radioStyle}>Any</Radio>
-                    <Radio value="public" style={radioStyle}>Public</Radio>
-                    <Radio value="private" style={radioStyle}>Private</Radio>
+                    <Radio value="public" style={radioStyle}>Visible</Radio>
+                    <Radio value="private" style={radioStyle}>Hidden</Radio>
                 </Radio.Group>
-            </React.Fragment >
+            </React.Fragment>
         )
     }
 
@@ -438,7 +438,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                 {this.renderFilterByRole()}
 
                 {this.state.showAdvancedControls ? (
-                    <div className="field-label" style={{ marginTop: '10px' }}>by privacy</div>
+                    <div className="field-label" style={{ marginTop: '10px' }}>visibility</div>
                 ) : (null)}
                 {this.renderFilterByPrivacy()}
             </React.Fragment>

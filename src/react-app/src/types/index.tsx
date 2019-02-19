@@ -154,70 +154,6 @@ export interface Member {
     type: MemberType
 }
 
-
-
-// export interface User extends UserBase {
-
-// }
-
-// export interface Owner extends UserBase {
-
-// }
-
-// export interface Member extends UserBase {
-
-// }
-
-// export interface Admin extends UserBase {
-
-// }
-
-// export enum UserRelationToOrganization {
-//     NONE = 0,
-//     VIEW,
-//     MEMBER_REQUEST_PENDING,
-//     MEMBER_INVITATION_PENDING,
-//     MEMBER,
-//     ADMIN,
-//     OWNER
-// }
-
-// export interface UserOrgRelation {
-//     type: UserRelationToOrganization
-// }
-
-// export interface NoRelation extends UserOrgRelation {
-//     type: UserRelationToOrganization.NONE
-// }
-
-// export interface ViewRelation extends UserOrgRelation {
-//     type: UserRelationToOrganization.VIEW
-// }
-
-// export interface MembershipRequestPendingRelation extends UserOrgRelation {
-//     type: UserRelationToOrganization.MEMBER_REQUEST_PENDING,
-//     requestId: string
-// }
-
-// export interface MembershipInvitationPendingRelation extends UserOrgRelation {
-//     type: UserRelationToOrganization.MEMBER_INVITATION_PENDING,
-//     requestId: string
-// }
-
-// export interface MemberRelation extends UserOrgRelation {
-//     type: UserRelationToOrganization.MEMBER
-// }
-
-// export interface AdminRelation extends UserOrgRelation {
-//     type: UserRelationToOrganization.ADMIN
-// }
-
-// export interface OwnerRelation extends UserOrgRelation {
-//     type: UserRelationToOrganization.OWNER
-// }
-
-
-
 export enum RequestType {
     REQUEST = 0,
     INVITATION
@@ -239,9 +175,6 @@ export enum RequestStatus {
 
 export type Username = string
 
-
-// export type Request = UserRequest | UserInvitation | WorkspaceRequest | WorkspaceInvitation | AppRequest | AppInvitation
-
 export interface App {
     id: string,
     module: string,
@@ -254,23 +187,6 @@ export interface App {
 export interface AppResource {
     id: string
 }
-
-// REVIVE in a different form? Or not? This is the old Organization
-// export interface Organization {
-//     id: string
-//     name: string
-//     gravatarHash: string | null
-//     description: string
-//     owner: Member
-//     relation: UserOrgRelation
-//     createdAt: Date
-//     modifiedAt: Date,
-//     members: Array<Member>,
-//     // admins: Array<Admin>,
-//     adminRequests: Array<requestModel.Request>,
-//     narratives: Array<NarrativeResource>,
-//     apps: Array<AppResource>
-// }
 
 export interface EditedOrganization {
     id: {
@@ -414,6 +330,8 @@ export interface OrganizationUser {
     relation: orgModel.UserRelationToOrganization
 }
 
+// View Model / Invite User (for admins)
+
 export interface InviteUserViewModel {
     organization: orgModel.Organization
     users: Array<OrganizationUser> | null
@@ -424,12 +342,7 @@ export interface InviteUserViewModel {
     editState: InviteUserViewState
 }
 
-// export interface InviteUserView {
-//     loadingState: ComponentLoadingState
-//     viewModel: InviteUserViewModel | null
-//     error: AppError | null
-//     // viewState: AppError | InviteUserValue | null
-// }
+
 
 export interface ManageMembershipViewModel {
     organization: orgModel.Organization
@@ -456,20 +369,9 @@ export interface Narrative {
     objectId: number
     title: string
     status: NarrativeState
-    // inOrganization: boolean,
-    // createdAt: Date,
     owner: Username
     modifiedAt: Date
 }
-
-// export enum UserWorkspacePermission {
-//     NONE = 0,
-//     READ,
-//     WRITE,
-//     ADMIN,
-//     OWN
-// }
-
 
 export enum ProcessingState {
     NONE = 0,
@@ -488,21 +390,18 @@ export enum RequestNarrativeState {
     SENT
 }
 
+// ViewModel / RequestAddNarrative
 
 export interface RequestNarrativeViewModel {
     organization: orgModel.Organization
     narratives: Array<narrativeModel.OrganizationNarrative>
     selectedNarrative: narrativeModel.OrganizationNarrative | null
     relation: orgModel.Relation
-    error: AppError | null
+    error: AnError | null
     saveState: SaveState
 }
 
-export interface RequestNarrativeView {
-    loadingState: ComponentLoadingState
-    error: AppError | null
-    viewModel: RequestNarrativeViewModel | null
-}
+// Add Org
 
 export interface AddOrgViewModel {
     editState: EditState
@@ -518,6 +417,8 @@ export interface AddOrgView {
     viewModel: AddOrgViewModel | null
 }
 
+// Entities
+
 export interface UserEntity {
     userId: string
     profile: userProfile.UserProfile
@@ -531,18 +432,6 @@ export interface OrganizationEntity {
 export interface RequestEntity {
     requestId: string
     request: groups.Request
-}
-
-export interface OrganizationCentricView {
-    loadingState: ComponentLoadingState
-    error: AppError | null
-    viewModel: OrganizationCentricViewModel | null
-}
-export interface OrganizationCentricViewModel {
-    organization: orgModel.Organization
-    pendingJoinRequest: requestModel.UserRequest | null
-    pendingJoinInvitation: requestModel.UserInvitation | null
-    relation: orgModel.Relation
 }
 
 export enum ViewOrgViewModelKind {
@@ -569,6 +458,7 @@ export interface ViewOrgViewModel {
     subViews: {
         manageRelatedOrganizationsView: View<ManageRelatedOrgsViewModel>
         inviteUserView: View<InviteUserViewModel>
+        requestNarrativeView: View<RequestNarrativeViewModel>
     }
 }
 
@@ -686,8 +576,8 @@ export interface StoreState {
         viewMembersView: ViewMembersView
         // inviteUserView: InviteUserView
         manageMembershipView: ManageMembershipView
-        requestNarrativeView: RequestNarrativeView
-        organizationCentricView: OrganizationCentricView
+        // requestNarrativeView: RequestNarrativeView
+        // organizationCentricView: OrganizationCentricView
     }
     updateOrg: {
         pending: boolean

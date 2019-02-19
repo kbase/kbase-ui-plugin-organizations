@@ -6,7 +6,6 @@
 
 .EditOrganization h3 {
     padding: 8px;
-    /* background-color: rgba(200, 200, 200, 0.5); */
     border-bottom: 2px rgba(200, 200, 200, 0.8) solid;
     text-align: center;
 }
@@ -21,6 +20,13 @@
 
 /* Top level grid */
 
+.EditOrganization-body {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
 .EditOrganization-row {
     flex: 0 0 auto;
     display: flex;
@@ -29,13 +35,17 @@
 }
 
 .EditOrganization-col1 {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: row;
+    flex: 0 0 10em;
     margin-right: 5px;
 }
 
 .EditOrganization-col2 {
+    flex: 1 1 0px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.EditOrganization-col3 {
     flex: 1 1 0px;
     margin-left: 5px;
 }
@@ -43,7 +53,7 @@
 /* Form rows */
 
 .EditOrganization-formLabel {
-    flex: 0 0 7em;
+    flex: 0 0 10em;
     font-weight: bold;
     text-align: left;
 }
@@ -57,7 +67,6 @@
 .EditOrganization-preview-name {}
 
 .EditOrganization-preview-researchInterests {
-    /* max-height: 5em; */
     overflow-y: scroll;
 }
 
@@ -72,8 +81,6 @@
 }
 
 .EditOrganization-preview-description {
-    /* min-height: 5em;
-    max-height: 15em; */
     overflow-y: scroll;
 }
 
@@ -123,7 +130,6 @@
     min-height: 30px;
     display: flex;
     flex-direction: row;
-    /* height: 30px; */
     margin: 4px 0;
 }
 
@@ -131,15 +137,12 @@
     flex: 0 0 7em;
     font-weight: bold;
     text-align: left;
-    /* color: rgba(100, 100, 100, 1); */
-    /* border: 1px silver solid; */
 }
 
 .EditOrganization .col2 {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
-    /* border: 1px silver solid; */
 }
 
 .EditOrganization .editor input {
@@ -172,7 +175,6 @@
 .EditOrganization .preview .description {
     padding: 8px;
     border: 1px rgba(200, 200, 200, 0.5) solid;
-    /* border-radius: 8px; */
     flex: 1 1 0px;
     overflow-y: auto;
     box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5);
@@ -183,17 +185,13 @@
 }
 
 .EditOrganization .ant-checkbox-wrapper.validation-ok {
-    border: 1px transparent solid;
+    border-bottom: 1px transparent solid;
 }
 
 .EditOrganization .validation-error {
-    border: 1px transparent solid;
-}
-
-.EditOrganization .validation-error {
-    border: 1px red solid;
+    border-bottom: 1px red solid;
 }
 
 .EditOrganization .sync-dirty {
-    border: 1px orange solid;
+    border-bottom: 1px orange solid;
 }

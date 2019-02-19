@@ -1,13 +1,11 @@
 import { Dispatch, Action } from 'redux'
-
 import { connect } from 'react-redux'
-
 import * as types from '../../../../../types'
-
 import Component from './component'
-import * as actions from '../../../../../redux/actions/requestAddNarrative'
+import * as actions from '../../../../../redux/actions/viewOrganization/requestAddNarrative'
 import * as orgModel from '../../../../../data/models/organization/model'
 import * as narrativeModel from '../../../../../data/models/narrative'
+import { RequestNarrativeViewModel } from '../../../../../types';
 
 export interface OwnProps {
     onFinish: () => void
@@ -31,25 +29,27 @@ interface DispatchProps {
 }
 
 function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
-    if (state.views.requestNarrativeView.viewModel === null) {
-        throw new Error('view value is not defined!')
+    const viewModel = state.views.viewOrgView.viewModel
+    if (!viewModel) {
+        throw new Error('argh, view model missing')
+    }
+    if (viewModel.kind !== types.ViewOrgViewModelKind.NORMAL) {
+        throw new Error("argh, wrong org kind")
+    }
+    if (viewModel.subViews.requestNarrativeView.viewModel === null) {
+        throw new Error("argh, null subview view model")
     }
 
+    const subViewModel: RequestNarrativeViewModel = viewModel.subViews.requestNarrativeView.viewModel
+
     const {
-        views: {
-            requestNarrativeView: {
-                viewModel: {
-                    organization, relation, narratives, selectedNarrative,
-                }
-            }
-        }
-    } = state
+        organization, relation, narratives, selectedNarrative,
+    } = subViewModel
 
     return {
         organization, relation, narratives, selectedNarrative,
         searching: false,
         sortBy: 'title',
-        // sortDirection: types.SortDirection.ASCENDING,
         filter: ''
     }
 }

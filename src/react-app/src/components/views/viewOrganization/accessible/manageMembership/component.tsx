@@ -1,12 +1,13 @@
 import * as React from 'react'
-import Header from '../../../../Header';
-import { Icon, Button, Modal, Input } from 'antd';
-import { NavLink } from 'react-router-dom';
-import './component.css'
+import { Button, Modal, Input } from 'antd';
 import * as orgModel from '../../../../../data/models/organization/model'
 import * as userModel from '../../../../../data/models/user'
-import { Editable, ValidationErrorType, SyncState, EditState, SaveState, ValidationState } from '../../../../../types'
+import {
+    Editable, ValidationErrorType, SyncState, EditState,
+    SaveState, ValidationState
+} from '../../../../../types'
 import MainMenu from '../../../../menu/component'
+import './component.css'
 
 export interface ManageMembershipProps {
     username: userModel.Username
@@ -76,19 +77,6 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
     onTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
         e.persist()
         this.props.onUpdateTitle(e.target.value)
-    }
-
-    doShowInfo() {
-        // this.setState({ showInfo: true })
-        Modal.info({
-            title: 'Manage My Membership Help',
-            width: '50em',
-            content: (
-                <div>
-                    <p>This is the view to help you manage your membership...</p>
-                </div>
-            )
-        })
     }
 
     renderOrgName(name: string) {

@@ -1,10 +1,9 @@
 import * as React from 'react'
-
 import Container from './container'
 
 export interface Props {
     organizationId: string
-    view: types.RequestNarrativeView
+    view: View<RequestNarrativeViewModel | NoneViewModel>
     onLoad: (organizationId: string) => void
     onUnload: () => void
     onFinish: () => void
@@ -30,7 +29,7 @@ class Loader extends React.Component<Props, State> {
         )
     }
 
-    renderError(error: types.AppError) {
+    renderError(error: AnError) {
         return (
             <div>
                 Error!
@@ -42,19 +41,19 @@ class Loader extends React.Component<Props, State> {
     }
 
     render() {
-        switch (this.props.view.loadingState) {
-            case types.ComponentLoadingState.NONE:
+        switch (this.props.view.state) {
+            case ViewState.NONE:
                 return this.renderLoading()
-            case types.ComponentLoadingState.LOADING:
+            case ViewState.LOADING:
                 return this.renderLoading()
-            case types.ComponentLoadingState.ERROR:
+            case ViewState.ERROR:
                 if (this.props.view.error) {
                     return this.renderError(this.props.view.error)
                 } else {
-                    return this.renderError({
+                    return this.renderError(makeError({
                         code: 'Missing Error',
                         message: 'The error appears to be missing'
-                    })
+                    }))
                 }
             default:
                 return (
@@ -64,8 +63,8 @@ class Loader extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        switch (this.props.view.loadingState) {
-            case types.ComponentLoadingState.NONE:
+        switch (this.props.view.state) {
+            case ViewState.NONE:
                 this.props.onLoad(this.props.organizationId)
         }
     }
@@ -80,16 +79,20 @@ class Loader extends React.Component<Props, State> {
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
 
-import * as types from '../../../../../types'
-import * as actions from '../../../../../redux/actions/requestAddNarrative'
-import { Icon, Alert } from 'antd';
+import * as actions from '../../../../../redux/actions/viewOrganization/requestAddNarrative'
+import { Icon, Alert } from 'antd'
+import {
+    View, RequestNarrativeViewModel, StoreState, ViewOrgViewModelKind,
+    ViewState, NoneViewModel
+} from '../../../../../types'
+import { AnError, makeError } from '../../../../../lib/error';
 
 export interface OwnProps {
     organizationId: string
 }
 
 interface StateProps {
-    view: types.RequestNarrativeView
+    view: View<RequestNarrativeViewModel>
 }
 
 interface DispatchProps {
@@ -97,9 +100,20 @@ interface DispatchProps {
     onUnload: () => void
 }
 
-function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
+function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
+    // This bit deals with the fact that we are a subview 
+    // and it keeps TS happy.
+    const v = state.views.viewOrgView
+    const vm1 = v.viewModel
+    if (vm1 === null) {
+        throw new Error('vm is null')
+    }
+    if (vm1.kind !== ViewOrgViewModelKind.NORMAL) {
+        throw new Error('not the right vm')
+    }
+    console.log('going in!', vm1.subViews)
     return {
-        view: state.views.requestNarrativeView
+        view: vm1.subViews.requestNarrativeView
     }
 }
 
@@ -114,4 +128,4 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.Load>): DispatchPr
     }
 }
 
-export default connect<StateProps, DispatchProps, OwnProps, types.StoreState>(mapStateToProps, mapDispatchToProps)(Loader)
+export default connect<StateProps, DispatchProps, OwnProps, StoreState>(mapStateToProps, mapDispatchToProps)(Loader)

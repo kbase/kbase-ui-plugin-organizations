@@ -10,10 +10,8 @@ import manageOrganizatiopRequests from './manageOrganizationRequests'
 import viewMembers from './viewMembers'
 import inviteUser from './viewOrganization/inviteUser'
 import manageMembership from './manageMembership'
-import requestAddNarrative from './requestAddNarrative'
+import requestAddNarrative from './viewOrganization/requestAddNarrative'
 import entities from './entities'
-import organizationCentric from './organizationCentric'
-// import global from './global'
 import dataServices from './dataServices'
 
 
@@ -30,8 +28,6 @@ export function reducer(state: StoreState, action: Action): StoreState {
         manageMembership(state, action) ||
         requestAddNarrative(state, action) ||
         entities(state, action) ||
-        organizationCentric(state, action) ||
-        // global(state, action) ||
         dataServices(state, action) ||
         state;
 }

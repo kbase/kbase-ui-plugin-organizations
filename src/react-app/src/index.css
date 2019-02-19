@@ -218,3 +218,9 @@ a:hover {
 .Organizations p+p {
     margin-top: 1em;
 }
+
+.Lite.ant-input {
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px rgba(200, 200, 200, 0.5) solid;
+}

@@ -1,20 +1,10 @@
 import {
-    StoreState, SortDirection, AuthState, AppState,
-    EditState, SaveState, ValidationState, BrowseOrgsState, ComponentLoadingState
+    StoreState, AuthState, AppState,
+    ComponentLoadingState
 } from "../types"
 
 import * as orgModel from '../data/models/organization/model'
 
-// rawOrganizations: [],
-//                         organizations: [],
-//                         totalCount: 0,
-//                         filteredCount: 0,
-//                         sortBy: 'name',
-//                         sortDirection: SortDirection.ASCENDING,
-//                         filter: 'all',
-//                         searchTerms: [],
-//                         selectedOrganizationId: null,
-//                         searching: false
 export class StateInstances {
     static makeInitialState(): StoreState {
         return {
@@ -46,11 +36,6 @@ export class StateInstances {
                     error: null,
                     viewModel: null
                 },
-                organizationCentricView: {
-                    loadingState: ComponentLoadingState.NONE,
-                    error: null,
-                    viewModel: null
-                },
                 addOrgView: {
                     loadingState: ComponentLoadingState.NONE,
                     error: null,
@@ -60,12 +45,6 @@ export class StateInstances {
                     loadingState: ComponentLoadingState.NONE,
                     error: null,
                     viewModel: null
-                    // organizationId: '',
-                    // editState: EditState.NONE,
-                    // saveState: SaveState.NONE,
-                    // validationState: ValidationState.NONE,
-                    // editedOrganization: StaticData.makeEmptyEditableOrganization(),
-                    // organization: null
                 },
                 manageOrganizationRequestsView: {
                     loadingState: ComponentLoadingState.NONE,
@@ -87,19 +66,17 @@ export class StateInstances {
                     error: null,
                     viewModel: null
                 },
-                requestNarrativeView: {
-                    loadingState: ComponentLoadingState.NONE,
-                    error: null,
-                    viewModel: null
-                },
+                // requestNarrativeView: {
+                //     loadingState: ComponentLoadingState.NONE,
+                //     error: null,
+                //     viewModel: null
+                // },
                 viewOrgView: {
                     loadingState: ComponentLoadingState.NONE,
                     error: null,
                     viewModel: null
-                },
+                }
             },
-
-
             auth: {
                 status: AuthState.NONE,
                 message: '',
@@ -111,7 +88,6 @@ export class StateInstances {
                 }
             },
             error: null,
-
             app: {
                 status: AppState.NONE,
                 config: {

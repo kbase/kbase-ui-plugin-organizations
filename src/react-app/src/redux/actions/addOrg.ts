@@ -564,9 +564,9 @@ export function updateHomeUrl(homeUrl: string | null) {
     }
 }
 
-export function updateResearchInterests(researchInterests: string | null) {
+export function updateResearchInterests(researchInterests: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
-        const [validatedResearchInterests, error] = Validation.validateOrgHomeUrl(researchInterests)
+        const [validatedResearchInterests, error] = Validation.validateOrgResearchInterests(researchInterests)
 
         if (error.type !== ValidationErrorType.OK) {
             dispatch({
