@@ -197,7 +197,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </table>
             </React.Fragment>
         )
-        const placeholder = 'Enter the display name for the Organization'
+        const placeholder = 'Your Organization\'s display name'
         return (
             <div className="NewOrganization-row">
                 <div className="NewOrganization-col1">
@@ -262,7 +262,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </table>
             </React.Fragment>
         )
-        const placeholder = "Enter the unique ID"
+        const placeholder = "A unique ID for your Organization"
         return (
             <div className="NewOrganization-row">
                 <div className="NewOrganization-col1">
@@ -335,7 +335,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </table>
             </React.Fragment>
         )
-        const placeholder = "Enter a URL for your Organization's logo (optional)"
+        const placeholder = "The URL for your Organization's logo (optional)"
         return (
             <div className="NewOrganization-row">
                 <div className="NewOrganization-col1">
@@ -402,7 +402,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </table>
             </React.Fragment>
         )
-        const placeholder = "Enter the url for your Organization's home page (optional)"
+        const placeholder = "The url for your Organization's home page (optional)"
         return (
             <div className="NewOrganization-row">
                 <div className="NewOrganization-col1">
@@ -559,7 +559,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </table>
             </React.Fragment>
         )
-        const placeholder = 'Enter a short statement of your Organization\'s research interests or purpose'
+        const placeholder = 'List your areas of interest. Systems biology, microbial ecology, plant genomics'
         return (
             <div className="NewOrganization-row">
                 <div className="NewOrganization-col1">
@@ -632,7 +632,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </table>
             </React.Fragment>
         )
-        const placeholder = 'Enter the required organization description Description'
+        const placeholder = 'Text or Markdown describing your Organization'
         return (
             <div className="NewOrganization-row">
                 <div className="NewOrganization-col1">
