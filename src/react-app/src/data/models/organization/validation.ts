@@ -187,7 +187,6 @@ export default class Validation {
     }
 
     static validateOrgResearchInterests(researchInterests: string): [string, ValidationState] {
-        console.log('validating research interests', researchInterests, researchInterests === null, researchInterests === '')
         if (researchInterests.length === 0) {
             return [
                 name, {
@@ -213,7 +212,6 @@ export default class Validation {
     }
 
     static validateOrgDescription(description: string): [string, ValidationState] {
-        console.log('validating description', description, description === null, description === '')
         if (description.length === 0) {
             // return [name, {
             //     type: ValidationErrorType.OK,

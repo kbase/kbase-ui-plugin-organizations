@@ -111,7 +111,6 @@ function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
     if (vm1.kind !== ViewOrgViewModelKind.NORMAL) {
         throw new Error('not the right vm')
     }
-    console.log('going in!', vm1.subViews)
     return {
         view: vm1.subViews.requestNarrativeView
     }

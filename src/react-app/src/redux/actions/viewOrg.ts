@@ -578,18 +578,22 @@ export function load(organizationId: string) {
             let openRequest
             let orgRequests: Array<requestModel.Request> | null
             let orgInvitations: Array<requestModel.Request> | null
+            let requestInbox: Array<requestModel.Request>
             if (relation.type === orgModel.UserRelationToOrganization.OWNER ||
                 relation.type === orgModel.UserRelationToOrganization.ADMIN) {
                 orgRequests = await requestClient.getPendingOrganizationRequestsForOrg(organizationId)
                 orgInvitations = await requestClient.getOrganizationInvitationsForOrg(organizationId)
                 openRequest = await orgClient.getOpenRequestStatus({ organizationId })
+                requestInbox = await requestClient.getCombinedRequestInboxForOrg(organizationId)
             } else {
                 orgRequests = null
                 orgInvitations = null
                 openRequest = orgModel.RequestStatus.INAPPLICABLE
+                requestInbox = []
             }
 
-            const requestInbox: Array<requestModel.Request> = await requestClient.getCombinedRequestInboxForOrg(organizationId)
+
+            // const requestInbox: Array<requestModel.Request> = await requestClient.getCombinedRequestInboxForOrg(organizationId)
             const requestOutbox: Array<requestModel.Request> = await requestClient.getRequestOutboxForOrg(organizationId)
 
             // default narrative sort?
