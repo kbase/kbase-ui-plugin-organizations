@@ -752,11 +752,8 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             )
         }
         const initial = this.charAt(this.props.newOrganization.name.value, 0).toUpperCase()
-        // const initial = this.props.organizationName.substr(0, 1).toUpperCase()
         const hash = md5(this.props.newOrganization.id.value)
-
         const size = 60;
-
         const color = hash.substr(0, 6)
         return (
             <svg width={size} height={size} style={{ border: '1px rgba(200, 200, 200, 0.5) solid' }}>
@@ -774,7 +771,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
-
     renderState() {
         const { editState, validationState, saveState } = this.props;
         const label = 'edit: ' + editState + ', valid: ' + validationState + ', save: ' + saveState
@@ -786,7 +782,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
     toggleError() {
         this.setState({ showError: !this.state.showError })
     }
-
 
     renderError() {
         if (this.props.error && this.state.showError) {
@@ -847,7 +842,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
     renderCancelButton() {
         return (
             <Button type="danger" onClick={this.onClickCancelToBrowser.bind(this)} >
-                <Icon type="close" />{' '}Cancel
+                <Icon type="close" />{' '}Close
             </Button>
         )
     }
@@ -861,7 +856,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </span>
             )
         }
-
         return (
             <div className="ButtonSet">
                 <span className="ButtonSet-button">
@@ -872,7 +866,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <span className="ButtonSet-button">
                     {this.renderSaveButton()}
                 </span>
-                {/* <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button> */}
                 {errorButton}
             </div>
         )
@@ -890,7 +883,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
         return (
             <div className="NewOrganization">
-                <MainMenu buttons={this.renderMenuButtons()} />
                 {this.renderEditor()}
                 {this.renderError()}
             </div>

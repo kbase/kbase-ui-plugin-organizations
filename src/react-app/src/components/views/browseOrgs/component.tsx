@@ -30,14 +30,10 @@ export interface OrganizationsBrowserState {
     // filterByPrivacyType: Array<CheckboxValueType>
 }
 
-type CBVT = CheckboxValueType
-
 class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, OrganizationsBrowserState> {
-
     searchInput: React.RefObject<HTMLInputElement>;
     searchButton: React.RefObject<Button>;
     filterByRoleValues: Array<any>
-
 
     constructor(props: OrganizationsBrowserProps) {
         super(props)
@@ -195,41 +191,41 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
     renderSearchFeedback() {
         if (this.props.totalCount === 0) {
             return (
-                <span>
+                <div className="OrganizationsBrowser-searchFeedback">
                     None available
-                </span>
+                </div>
             )
         }
         if (this.props.filteredCount === 0) {
             return (
-                <span>
+                <div className="OrganizationsBrowser-searchFeedback">
                     Ø
                     /
                     {this.props.totalCount}
                     {' '}
                     orgs
-                </span>
+                </div>
             )
 
         }
         if (this.props.totalCount === this.props.filteredCount) {
             return (
-                <span>
+                <div className="OrganizationsBrowser-searchFeedback">
                     <b>{this.props.totalCount}</b>
                     {' '}
                     orgs
-                </span>
+                </div>
             )
         }
 
         return (
-            <span>
+            <div className="OrganizationsBrowser-searchFeedback">
                 <b>{this.props.filteredCount}</b>
                 /
                 {this.props.totalCount}
                 {' '}
                 orgs
-            </span>
+            </div>
         )
     }
 
@@ -263,6 +259,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     icon="close"
                 >
                 </Button>
+                {this.renderSearchFeedback()}
             </form>
         )
     }
@@ -274,7 +271,8 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     {this.renderSearchForm()}
                 </div>
                 <div className="OrganizationsBrowser-searchBarCol2">
-                    {this.renderSearchFeedback()}
+                    <NavLink to="/newOrganization"><Button icon="plus-circle" style={{ marginRight: '10px' }}>Create Organization</Button></NavLink>
+
                 </div>
                 {/* <div className="OrganizationsBrowser-searchBarCol3">
                 </div> */}
@@ -343,7 +341,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
             height: '30px',
             lineHeight: '30px'
         }
-
         if (this.state.showAdvancedControls) {
             return (
                 <React.Fragment>
@@ -391,12 +388,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
             lineHeight: '30px',
             margin: '0px'
         }
-        const checkboxStyle = {
-            display: 'block',
-            height: '30px',
-            lineHeight: '30px',
-            margin: '0 0 0 6px'
-        }
         return (
             <React.Fragment>
                 <Radio.Group
@@ -428,8 +419,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
     renderFilterColumn() {
         return (
             <React.Fragment>
-
-
                 <div className="field-label">sort by</div>
                 {this.renderSortByControl()}
 
@@ -445,19 +434,9 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         )
     }
 
-    renderMenuButtons() {
-        return (
-            <React.Fragment>
-                <NavLink to="/newOrganization"><Button icon="plus-circle" style={{ marginRight: '10px' }}>Create Organization</Button></NavLink>
-                {' '}
-            </React.Fragment>
-        )
-    }
-
     render() {
         return (
             <div className="OrganizationsBrowser scrollable-flex-column">
-                <MainMenu buttons={this.renderMenuButtons()} />
                 {this.renderSearchBar()}
                 <div className="OrganizationsBrowser-bodyRow">
                     <div className="OrganizationsBrowser-bodyCol scrollable-flex-column">

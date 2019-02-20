@@ -1,0 +1,153 @@
+.BriefOrganization {
+    /* flex: 1 1 0px; */
+    flex: 0 0 auto;
+    /* min-height: 0; */
+}
+
+/* .BriefOrganization:hover {
+    background-color: rgba(200, 200, 200, 0.3)
+}
+
+*/
+
+.BriefOrganizationHeader-body {
+    padding: 4px;
+    display: flex;
+    display: flex;
+    flex-direction: row;
+}
+
+.BriefOrganizationHeader-freshnessCol {
+    flex: 0 0 32px;
+}
+
+.BriefOrganizationHeader-logoCol {
+    flex: 0 0 80px;
+    display: flex;
+    flex-direction: column;
+}
+
+.BriefOrganizationHeader-infoCol {
+    flex: 1 1 0px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.BriefOrganizationHeader-infoCol-row {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.BriefOrganizationHeader-infoCol-col1 {
+    flex: 1 1 0px;
+    /* margin-left: 10px; */
+    display: flex;
+    flex-direction: column;
+}
+
+.BriefOrganizationHeader-infoCol-col2 {
+    flex: 0 0 25em;
+    /* margin-left: 10px; */
+    display: flex;
+    flex-direction: column;
+}
+
+.BriefOrganizationHeader-infoCol-col3 {
+    flex: 1 1 0px;
+    /* margin-left: 10px; */
+    display: flex;
+    flex-direction: column;
+}
+
+.BriefOrganizationHeader-orgName {
+    font-weight: bold;
+    font-size: 130%;
+    cursor: pointer;
+}
+
+.BriefOrganizationHeader-infoTable {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.BriefOrganizationHeader-infoTableRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.BriefOrganizationHeader-infoTableCol1 {
+    flex: 0 0 5.5em;
+    text-align: right;
+}
+
+.BriefOrganizationHeader-infoTableCol2 {
+    flex: 1 1 0px;
+}
+
+.BriefOrganizationHeader-researchInterests {
+    font-style: italic;
+}
+
+/* logo column */
+
+.BriefOrganizationHeader-logoRow {
+    flex: 0 0 auto;
+    min-height: 80px;
+}
+
+.BriefOrganizationHeader-statusRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.BriefOrganizationHeader-freshnessRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.BriefOrganizationHeader-homeLinkCol {
+    flex: 1 1 0px;
+    text-align: center;
+}
+
+.BriefOrganizationHeader-privacyCol {
+    flex: 1 1 0px;
+    text-align: center;
+}
+
+.BriefOrganizationHeader-relationCol {
+    flex: 1 1 0px;
+    text-align: center;
+}
+
+.BriefOrganizationHeader-orgFreshnessCol {
+    flex: 1 1 0px;
+    text-align: center;
+}
+
+.BriefOrganizationHeader-openRequestsCol {
+    flex: 1 1 0px;
+    text-align: center;
+}
+
+.BriefOrganizationHeader-openNewRequestsCol {
+    flex: 1 1 0px;
+    text-align: center;
+}
+
+.BriefOrganizationHeader-fieldLabel {
+    width: 5em;
+    text-align: left;
+    display: inline-block;
+    padding: 0;
+}
+
+.BriefOrganizationHeader-buttonsRow {
+    text-align: right;
+}

@@ -159,3 +159,8 @@
     display: block;
     margin-bottom: 4px;
 }
+
+.OrganizationsBrowser-searchFeedback {
+    width: 12em;
+    text-align: center;
+}

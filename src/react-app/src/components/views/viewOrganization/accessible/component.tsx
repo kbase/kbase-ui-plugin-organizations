@@ -1,15 +1,14 @@
 import * as React from 'react'
 import { Marked } from 'marked-ts'
 import { NavLink, Redirect } from 'react-router-dom'
-import { ViewOrgViewModel } from '../../../../types'
+import { ViewOrgViewModel, SubViews } from '../../../../types'
 import { Button, Modal, Icon, Tooltip, Card, Dropdown, Menu, Alert, Tabs } from 'antd'
 import Header from '../../../Header'
 import Member from '../../../entities/MemberContainer'
-
 import MainMenu from '../../../menu/component'
 import Members from './members/reduxAdapter'
 import Requests from './requests/container'
-import BriefOrganization from '../../../BriefOrganization'
+import BriefOrganizationHeader from './BriefOrganizationHeader'
 import RelatedOrganizations from './relatedOrgs/reduxAdapter'
 import ManageRelatedOrganizations from './manageRelatedOrganizations/loader'
 import InviteUser from './inviteUser/loader'
@@ -20,6 +19,7 @@ import RequestAddNarrative from './requestAddNarrative/loader'
 import * as requestModel from '../../../../data/models/requests'
 import * as orgModel from '../../../../data/models/organization/model'
 import './component.css'
+import OrgMenu from './OrgMenu';
 
 enum NavigateTo {
     NONE = 0,
@@ -32,15 +32,6 @@ enum NavigateTo {
 enum AccordionState {
     UP = 0,
     DOWN
-}
-
-enum SubViews {
-    NORMAL = 0,
-    MANAGE_RELATED_ORGS,
-    INVITE_USER,
-    MANAGE_MEMBERSHIP,
-    EDIT_ORGANIZATION,
-    ADD_NARRATIVE
 }
 
 export interface ViewOrganizationState {
@@ -89,6 +80,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
     onInviteUser() {
         this.setState({ subView: SubViews.INVITE_USER })
+    }
+
+    onChangeSubView(subView: SubViews) {
+        console.log('new subview?', subView)
+        this.setState({ subView })
     }
 
     onViewMembers() {
@@ -312,76 +308,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
     }
 
-    renderInfo() {
-        // apparently TS is not smart enough to know this from the conditional branch in render()!
-        if (!this.props.viewModel.organization) {
-            return
-        }
-        return (
-            <Card
-                title={<span><Icon type="info-circle"></Icon> info</span>}
-                headStyle={{ backgroundColor: 'gray', color: 'white' }}
-                className="slimCard">
-                <div>
-                    <div>
-                        <div className="label">owner</div>
-                    </div>
-                    <div className="ViewOrganization-ownerTable">
-                        <Member member={this.props.viewModel.organization.owner} avatarSize={50} />
-                        {/* TODO: fix avatar component */}
-                        {/* <div className="avatarCol">
-                            <Avatar user={this.props.organization.owner.username} size={60} />
-                        </div>
-                        <div className="proprietorCol">
-                            <div className="owner">
-                                <a href={"/#people/" + this.props.organization.owner.user.username} target="_blank">{this.props.organization.owner.user.realname}</a>
-                                {' '}
-                                ❨{this.props.organization.owner.user.username}❩
-                                        </div>
-                            <div className="profileOrganization">
-                                {this.props.organization.owner.user.organization}
-                            </div>
-                            <div className="profileOrganization">
-                                {this.props.organization.owner.user.city}, {this.props.organization.owner.user.state}, {this.props.organization.owner.user.country}
-                            </div>
-                        </div> */}
-                    </div>
-                    <div className='ViewOrganization-infoTable'>
-                        <div className="row">
-                            <div className="col1">
-                                <span className="label">established</span>
-                            </div>
-                            <div className="col2">
-                                <div className="createdAt">
-                                    {Intl.DateTimeFormat('en-US', {
-                                        month: 'long',
-                                        day: 'numeric',
-                                        year: 'numeric'
-                                    }).format(this.props.viewModel.organization.createdAt)}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col1">
-                                <span className="label">last updated</span>
-                            </div>
-                            <div className="col2">
-                                <div className="modifiedAt">
-                                    {Intl.DateTimeFormat('en-US', {
-                                        month: 'long',
-                                        day: 'numeric',
-                                        year: 'numeric'
-                                    }).format(this.props.viewModel.organization.modifiedAt)}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </Card>
-        )
-    }
-
     renderGroupRequestsRow() {
         const relation = this.props.viewModel.relation
         const requests = this.props.viewModel.groupRequests
@@ -475,36 +401,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 </div>
             )
         }
-        // return (
-        //     <div className="row">
-        //         <div className="col1">
-        //             <span className="label">admin</span>
-        //         </div>
-        //         <div className="col2">
-        //             <div className="relation">
-        //                 {inner}
-        //             </div>
-        //         </div>
-        //     </div>
-
-        // )
-
-        // return (
-        //     <div>
-        //         <div>
-        //             <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" /> group has
-        //             {' '}
-        //             <span style={{ fontWeight: 'bold' }}>{org.adminRequests.length}</span>
-        //             {' '}
-        //             pending request{org.adminRequests.length > 1 ? 's' : ''}
-        //         </div>
-        //         <div>
-        //             <NavLink to={"/manageOrganizationRequests/" + this.props.organization!.id}>
-        //                 <Button>Manage Requests</Button>
-        //             </NavLink>
-        //         </div>
-        //     </div>
-        // )
     }
 
     renderRelationClass(relation: orgModel.Relation) {
@@ -769,13 +665,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         <Icon type="rollback" />{' '}Back
                     </Button>
                 </span>
-                <span className="ButtonSet-button">
-                    {this.renderOrgMenu()}
-                </span>
-
-                {/* <span className="ButtonSet-button">
-                    <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
-                </span> */}
             </span>
         )
     }
@@ -1119,11 +1008,27 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         const uorg = this.props.viewModel.organization as unknown
         const borg = uorg as orgModel.BriefOrganization
 
+        // TODO: only doing this here so I don't have to do a redux adapter for the menu today...
+
+        const orgMenu = <OrgMenu
+            viewModel={this.props.viewModel}
+            onJoinOrg={this.props.onJoinOrg}
+            onCancelJoinRequest={this.props.onCancelJoinRequest}
+            onAcceptInvitation={this.props.onAcceptInvitation}
+            onRejectInvitation={this.props.onRejectInvitation}
+            onChangeSubView={this.onChangeSubView.bind(this)}
+        />
+
+
         return (
             <div className="ViewOrganization  scrollable-flex-column">
-                <MainMenu buttons={this.renderMenuButtons()} />
                 <div className="ViewOrganization-organizationBox">
-                    <BriefOrganization organization={borg} openRequestsStatus={this.props.viewModel.openRequest} />
+                    <BriefOrganizationHeader
+                        organization={borg}
+                        openRequestsStatus={this.props.viewModel.openRequest}
+                        orgMenu={orgMenu}
+                        onNavigateToBrowser={this.onNavigateToBrowser.bind(this)}
+                    />
                 </div>
                 {this.getSubView()}
             </div>

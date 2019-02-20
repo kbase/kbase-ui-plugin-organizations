@@ -439,6 +439,16 @@ export enum ViewOrgViewModelKind {
     PRIVATE_INACCESSIBLE
 }
 
+// TODO: just for view org view, should be namespaced or something.
+export enum SubViews {
+    NORMAL = 0,
+    MANAGE_RELATED_ORGS,
+    INVITE_USER,
+    MANAGE_MEMBERSHIP,
+    EDIT_ORGANIZATION,
+    ADD_NARRATIVE
+}
+
 export interface ViewOrgViewModel {
     kind: ViewOrgViewModelKind.NORMAL,
     organization: orgModel.Organization
