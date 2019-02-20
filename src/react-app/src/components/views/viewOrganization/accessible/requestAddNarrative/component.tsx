@@ -201,7 +201,6 @@ export class RequestAddNarrative extends React.Component<Props, State> {
     }
 
     onSearchSubmit() {
-        console.log('searching...')
         return
     }
 

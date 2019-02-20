@@ -76,7 +76,6 @@ export default class RelatedOrganizations extends React.Component<RelatedOrganiz
             )
         }
         const Wrapped = withRouter<any>(OrganizationEntity)
-        // console.log('hmm???', OrganizationEntity, Wrapped)
         const relatedOrgs = this.props.relatedOrganizations.map((organizationId: string) => {
             return (
                 <div key={organizationId} className="RelatedOrganizations-orgRow simpleCard">

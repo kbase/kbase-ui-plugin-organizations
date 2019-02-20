@@ -83,7 +83,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     onChangeSubView(subView: SubViews) {
-        console.log('new subview?', subView)
         this.setState({ subView })
     }
 
