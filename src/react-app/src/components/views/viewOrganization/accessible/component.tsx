@@ -661,9 +661,12 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         return (
             <span className="ButtonSet">
                 <span className="ButtonSet-button">
-                    <Button type="default" onClick={this.onNavigateToBrowser.bind(this)} >
-                        <Icon type="rollback" />{' '}Back
-                    </Button>
+                    <div className="IconButton" onClick={this.onNavigateToBrowser.bind(this)} >
+                        <Icon type="close" />
+                    </div>
+                    {/* <Button type="default" onClick={this.onNavigateToBrowser.bind(this)} >
+                        <Icon type="close" />{' '}Back
+                    </Button> */}
                 </span>
             </span>
         )

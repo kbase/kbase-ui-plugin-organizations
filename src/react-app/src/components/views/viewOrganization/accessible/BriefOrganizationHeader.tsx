@@ -68,7 +68,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             </React.Fragment>
         )
         return (
-            <div className="BriefOrganization-homeUrl">
+            <div className="BriefOrganizationHeader-homeUrl">
                 <Tooltip
                     placement="bottomRight"
                     mouseEnterDelay={0.5}
@@ -347,31 +347,31 @@ export default class BriefOrganization extends React.Component<BriefOrganization
     renderLogoColumn(org: orgModel.BriefOrganization) {
         return (
             <React.Fragment>
-                <div className="BriefOrganization-logoRow">
+                <div className="BriefOrganizationHeader-logoRow">
                     <NavLink to={`/viewOrganization/${org.id}`}>
                         {this.renderLogo(org)}
                     </NavLink>
                 </div>
-                <div className="BriefOrganization-statusRow">
-                    <div className="BriefOrganization-relationCol">
+                <div className="BriefOrganizationHeader-statusRow">
+                    <div className="BriefOrganizationHeader-relationCol">
                         {this.renderRelation(org)}
                     </div>
-                    <div className="BriefOrganization-privacyCol">
+                    <div className="BriefOrganizationHeader-privacyCol">
                         {this.renderPrivacy()}
                     </div>
 
-                    <div className="BriefOrganization-homeLinkCol">
+                    <div className="BriefOrganizationHeader-homeLinkCol">
                         {this.renderHomeUrl(org)}
                     </div>
                 </div>
-                <div className="BriefOrganization-freshnessRow">
-                    <div className="BriefOrganization-orgFreshnessCol">
+                <div className="BriefOrganizationHeader-freshnessRow">
+                    <div className="BriefOrganizationHeader-orgFreshnessCol">
                         {this.renderOrgFreshness(org)}
                     </div>
-                    <div className="BriefOrganization-openRequestsCol">
+                    <div className="BriefOrganizationHeader-openRequestsCol">
                         {this.renderRequests()}
                     </div>
-                    <div className="BriefOrganization-openNewRequestsCol">
+                    <div className="BriefOrganizationHeader-openNewRequestsCol">
                         {this.renderPermalink()}
                     </div>
                 </div>
@@ -394,30 +394,30 @@ export default class BriefOrganization extends React.Component<BriefOrganization
     renderInfoCol(org: orgModel.BriefOrganization) {
         return (
             <React.Fragment>
-                <div className="BriefOrganization-orgName BriefOrganization-infoTableRow">
+                <div className="BriefOrganizationHeader-orgName BriefOrganizationHeader-infoTableRow">
                     <NavLink to={`/viewOrganization/${org.id}`}>
                         {org.name}
                     </NavLink>
                 </div>
 
-                <div className="BriefOrganization-researchInterests BriefOrganization-infoTableRow">
+                <div className="BriefOrganizationHeader-researchInterests BriefOrganizationHeader-infoTableRow">
                     {org.researchInterests}
                 </div>
 
-                <div className="BriefOrganization-orgOwner BriefOrganization-infoTableRow">
-                    <div className="BriefOrganization-infoTableCol1">
-                        <span className="field-label BriefOrganization-fieldLabel">owner</span>
+                <div className="BriefOrganizationHeader-orgOwner BriefOrganizationHeader-infoTableRow">
+                    <div className="BriefOrganizationHeader-infoTableCol1">
+                        <span className="field-label BriefOrganizationHeader-fieldLabel">owner</span>
                     </div>
-                    <div className="BriefOrganization-infoTableCol2">
+                    <div className="BriefOrganizationHeader-infoTableCol2">
                         {/* TODO: render as Member or Owner component */}
                         <Owner username={org.owner.username} avatarSize={16} showAvatar={false} />
                     </div>
                 </div>
-                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                    <div className="BriefOrganization-infoTableCol1">
-                        <span className="field-label BriefOrganization-fieldLabel">created</span>
+                <div className="BriefOrganizationHeader-orgCreated BriefOrganizationHeader-infoTableRow">
+                    <div className="BriefOrganizationHeader-infoTableCol1">
+                        <span className="field-label BriefOrganizationHeader-fieldLabel">created</span>
                     </div>
-                    <div className="BriefOrganization-infoTableCol2">
+                    <div className="BriefOrganizationHeader-infoTableCol2">
                         {/* {niceElapsed(org.createdAt, 30)} */}
                         <Tooltip
                             placement="bottomRight"
@@ -433,11 +433,11 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         </Tooltip>
                     </div>
                 </div>
-                <div className="BriefOrganization-orgOwner BriefOrganization-infoTableRow">
-                    <div className="BriefOrganization-infoTableCol1">
-                        <span className="field-label BriefOrganization-fieldLabel">updated</span>
+                <div className="BriefOrganizationHeader-orgOwner BriefOrganizationHeader-infoTableRow">
+                    <div className="BriefOrganizationHeader-infoTableCol1">
+                        <span className="field-label">updated</span>
                     </div>
-                    <div className="BriefOrganization-infoTableCol2">
+                    <div className="BriefOrganizationHeader-infoTableCol2">
                         <NiceElapsedTime time={org.modifiedAt} showTooltip={false} />
                     </div>
                 </div>
@@ -471,11 +471,11 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         }
         return (
             <Tooltip placement="bottomRight" title={memberCountTooltip}>
-                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                    <div className="BriefOrganization-infoTableCol1">
+                <div className="BriefOrganizationHeader-orgCreated BriefOrganizationHeader-infoTableRow">
+                    <div className="BriefOrganizationHeader-infoTableCol1">
                         <span className="field-label"><Icon type="team" /></span>
                     </div>
-                    <div className="BriefOrganization-infoTableCol2">
+                    <div className="BriefOrganizationHeader-infoTableCol2">
                         {this.renderMemberCount(org)}
                     </div>
                 </div>
@@ -509,11 +509,11 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         }
         return (
             <Tooltip placement="bottomRight" title={tooltip}>
-                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                    <div className="BriefOrganization-infoTableCol1">
+                <div className="BriefOrganizationHeader-orgCreated BriefOrganizationHeader-infoTableRow">
+                    <div className="BriefOrganizationHeader-infoTableCol1">
                         <span className="field-label"><Icon type="file" /></span>
                     </div>
-                    <div className="BriefOrganization-infoTableCol2">
+                    <div className="BriefOrganizationHeader-infoTableCol2">
                         {this.renderNarrativeCount(org)}
                     </div>
                 </div>
@@ -531,11 +531,11 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         )
         return (
             <Tooltip placement="bottomRight" title={tooltip}>
-                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
-                    <div className="BriefOrganization-infoTableCol1">
+                <div className="BriefOrganizationHeader-orgCreated BriefOrganizationHeader-infoTableRow">
+                    <div className="BriefOrganizationHeader-infoTableCol1">
                         <span className="field-label"><Icon type="save" /></span>
                     </div>
-                    <div className="BriefOrganization-infoTableCol2">
+                    <div className="BriefOrganizationHeader-infoTableCol2">
                         <NiceElapsedTime time={org.modifiedAt} showTooltip={false} />
                     </div>
                 </div>
@@ -556,10 +556,14 @@ export default class BriefOrganization extends React.Component<BriefOrganization
     renderStatsCol(org: orgModel.BriefOrganization) {
         return (
             <div className="BriefOrganizationHeader-buttonsCol">
-                <div className="BriefOrganizationHeader-buttonsRow">
-                    <Button type="default" onClick={this.props.onNavigateToBrowser}>
-                        <Icon type="rollback" />{' '}Back
-                    </Button>
+                <div className="BriefOrganizationHeader-buttonsRow" style={{ marginBottom: '10px' }}>
+                    <div className="ButtonSet">
+                        <div className="IconButton"
+                            onClick={this.props.onNavigateToBrowser}
+                            style={{ color: 'red' }}>
+                            <Icon type="close" />
+                        </div>
+                    </div>
                 </div>
                 <div className="BriefOrganizationHeader-buttonsRow">
                     {this.renderButtonsRow()}
@@ -572,17 +576,17 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         const org = this.props.organization
         return (
             <div className="BriefOrganization">
-                <div className="BriefOrganization-body">
-                    <div className="BriefOrganization-logoCol">
+                <div className="BriefOrganizationHeader-body">
+                    <div className="BriefOrganizationHeader-logoCol">
                         {this.renderLogoColumn(org)}
                     </div>
-                    <div className="BriefOrganization-infoCol">
+                    <div className="BriefOrganizationHeader-infoCol">
 
-                        <div className="BriefOrganization-infoCol-row">
-                            <div className="BriefOrganization-infoCol-col1">
+                        <div className="BriefOrganizationHeader-infoCol-row">
+                            <div className="BriefOrganizationHeader-infoCol-col1">
                                 {this.renderInfoCol(org)}
                             </div>
-                            <div className="BriefOrganization-infoCol-col2">
+                            <div className="BriefOrganizationHeader-infoCol-col2">
                                 {this.renderStatsCol(org)}
                             </div>
                         </div>

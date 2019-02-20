@@ -80,8 +80,8 @@
 }
 
 .BriefOrganizationHeader-infoTableCol1 {
-    flex: 0 0 5.5em;
-    text-align: right;
+    flex: 0 0 4.5em;
+    text-align: left;
 }
 
 .BriefOrganizationHeader-infoTableCol2 {
@@ -142,7 +142,7 @@
 }
 
 .BriefOrganizationHeader-fieldLabel {
-    width: 5em;
+    width: 4.5em;
     text-align: left;
     display: inline-block;
     padding: 0;
