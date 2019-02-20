@@ -1,6 +1,6 @@
 import { Action } from 'redux'
 import * as actions from '../../actions/viewOrganization/viewMembers'
-import { StoreState, ComponentLoadingState, MemberType, ViewOrgViewModelKind } from '../../../types'
+import { StoreState, MemberType, ViewOrgViewModelKind } from '../../../types'
 import { ActionFlag } from '../../actions'
 
 // export function loadStart(state: StoreState, action: actions.LoadStart) {
@@ -84,7 +84,17 @@ export function promoteToAdminSuccess(state: StoreState, action: actions.Promote
     // TODO: probably better is to have to have the action handler do a call to get the members
     // and to populate the orgs membership struct from that...
     const members = viewModel.organization.members.map((member) => {
+        if (member.username === action.memberUsername) {
+            return {
+                ...member,
+                type: MemberType.ADMIN
+            }
+        } else {
+            return member
+        }
+    })
 
+    const sortedMembers = viewModel.members.map((member) => {
         if (member.username === action.memberUsername) {
             return {
                 ...member,
@@ -106,7 +116,8 @@ export function promoteToAdminSuccess(state: StoreState, action: actions.Promote
                     organization: {
                         ...viewModel.organization,
                         members: members
-                    }
+                    },
+                    members: sortedMembers
                 }
             }
         }
@@ -140,6 +151,17 @@ export function demoteToMemberSuccess(state: StoreState, action: actions.DemoteT
         }
     })
 
+    const sortedMembers = viewModel.members.map((member) => {
+        if (member.username === action.memberUsername) {
+            return {
+                ...member,
+                type: MemberType.MEMBER
+            }
+        } else {
+            return member
+        }
+    })
+
     return {
         ...state,
         views: {
@@ -151,7 +173,8 @@ export function demoteToMemberSuccess(state: StoreState, action: actions.DemoteT
                     organization: {
                         ...viewModel.organization,
                         members: members
-                    }
+                    },
+                    members: sortedMembers
                 }
             }
         }
