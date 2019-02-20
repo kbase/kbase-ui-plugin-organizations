@@ -8,10 +8,10 @@
   "runtime~main.js": "./static/js/runtime~main.4a686d48.js",
   "runtime~main.js.map": "./static/js/runtime~main.4a686d48.js.map",
   "static/media/nouserpic.png": "./static/media/nouserpic.9af42ba9.png",
-  "static/media/index.css": "./static/media/oxygen-latin-300.58a4de4f.woff2",
-  "static/css/main.74ce1891.chunk.css.map": "./static/css/main.74ce1891.chunk.css.map",
+  "static/media/index.css": "./static/media/oxygen-latin-400.d3ab48d8.woff",
   "static/css/1.5904bca1.chunk.css.map": "./static/css/1.5904bca1.chunk.css.map",
+  "static/css/main.74ce1891.chunk.css.map": "./static/css/main.74ce1891.chunk.css.map",
   "index.html": "./index.html",
-  "precache-manifest.e296dbe0d7b24e4a4bffff5cc0d33ade.js": "./precache-manifest.e296dbe0d7b24e4a4bffff5cc0d33ade.js",
+  "precache-manifest.1a1e6faafb6568c7c9022ffc1aae5316.js": "./precache-manifest.1a1e6faafb6568c7c9022ffc1aae5316.js",
   "service-worker.js": "./service-worker.js"
 }

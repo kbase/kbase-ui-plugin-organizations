@@ -23,12 +23,17 @@ define([
             // So we can deterministically find the iframe
             this.id = 'frame_' + html.genId();
 
+            this.useChannel = config.channelId ? true : false;
+
             const params = {
                 frameId: this.id,
                 parentHost: document.location.origin,
-                params: config.params,
-                channelId: config.channelId
+                params: config.params
             };
+
+            if (config.channelId) {
+                params.channelId = config.channelId;
+            }
 
             // All plugins need to follow this pattern for the index for now (but that
             // could be part of the constructor...)
@@ -124,21 +129,21 @@ define([
         // Lifecycle
 
         /*
-                                iframe messages lifecycle.
+                                    iframe messages lifecycle.
 
-                                create iframe, don't set source yet
-                                set up postmessage listener on the iframe content window
-                                listem for 'ready' message
-                                load content for iframe
-                                content will set up listening on window's postmessage too
-                                content sends 'ready' message
-                                host receives ready message and finishes setting up postmessage listener for the
-                                    iframe client
-                                host sets up all listeners to support client
-                                life goes on
-                                when client is being removed e.g. for navigation it is sent the 'stop' message given
-                                    some interval in which to finish this work before it is just axed.
-                                */
+                                    create iframe, don't set source yet
+                                    set up postmessage listener on the iframe content window
+                                    listem for 'ready' message
+                                    load content for iframe
+                                    content will set up listening on window's postmessage too
+                                    content sends 'ready' message
+                                    host receives ready message and finishes setting up postmessage listener for the
+                                        iframe client
+                                    host sets up all listeners to support client
+                                    life goes on
+                                    when client is being removed e.g. for navigation it is sent the 'stop' message given
+                                        some interval in which to finish this work before it is just axed.
+                                    */
 
         setupChannel() {
             this.channel = new WindowChannel.Channel({
@@ -233,8 +238,8 @@ define([
         start() {
             return new Promise((resolve, reject) => {
                 this.iframe.start();
-                const useChannel = false;
-                if (useChannel) {
+
+                if (this.useChannel) {
                     try {
                         this.iframe.iframe.addEventListener('load', () => {
                             this.setupChannel();
@@ -257,7 +262,9 @@ define([
             currentURL.search = '';
             history.pushState(null, '', currentURL.toString());
 
-            return this.channel.stop();
+            if (this.channel) {
+                return this.channel.stop();
+            }
         }
     }
 
