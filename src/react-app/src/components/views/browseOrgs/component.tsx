@@ -430,6 +430,11 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     <div className="field-label" style={{ marginTop: '10px' }}>visibility</div>
                 ) : (null)}
                 {this.renderFilterByPrivacy()}
+
+                <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                    <hr style={{ border: 0, borderTop: '1px solid rgba(200, 200, 200, 0.4)', width: '80%' }} />
+                    <a href="https://docs.google.com/document/d/1xRpFjD3pqPIrHBjNDGht3hX-3y6A0eQRr_v51A5j2hk" target="_blank">FAQ</a>
+                </div>
             </React.Fragment>
         )
     }
