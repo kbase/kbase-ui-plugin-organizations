@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './component.css';
-import { Alert } from 'antd';
+import { Alert, Button } from 'antd';
 import * as orgModel from '../../../../data/models/organization/model'
 import BriefOrganization from '../../../BriefOrganization';
 
@@ -40,6 +40,36 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
         return singular
     }
 
+    renderNoOrgs() {
+        const browseButton = (
+            <Button size="small" type="default">browse</Button>
+        )
+        const createButton = (
+            <Button size="small" type="default">create</Button>
+        )
+        const message = (
+            <div>
+                <p>
+                    You neither own nor are a member of any Organizations, so there is nothing to show you here.
+                </p>
+                <p>
+                    You may use the <b>Create Organization</b> button on the upper right to
+                    create your own Organization, or use the <b>All Orgs</b> filter on the right
+                    to browse and search all public Organizations.
+                </p>
+                {/* <p>
+                    You can use the filter on the right to {browseButton} through existing public Organizations,
+                    or you may {createButton} your own Organization.
+                </p> */}
+            </div>
+        )
+        return (
+            <Alert type="warning"
+                style={{ maxWidth: '50em', margin: '20px auto 0 auto' }}
+                message={message} />
+        )
+    }
+
     renderOrgs() {
         if (this.props.organizations.length > 0) {
             return (
@@ -53,11 +83,7 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
                 })
             )
         } else {
-            return (
-                <Alert type="warning"
-                    style={{ maxWidth: '20em', margin: '20px auto 0 auto' }}
-                    message="Sorry, no organizations were found." />
-            )
+            return this.renderNoOrgs()
         }
     }
 
