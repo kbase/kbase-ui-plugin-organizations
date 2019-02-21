@@ -6,8 +6,9 @@
 
 .NewOrganization h3 {
     padding: 8px;
-    border-bottom: 2px rgba(200, 200, 200, 0.8) solid;
+    /* border-bottom: 2px rgba(200, 200, 200, 0.8) solid; */
     text-align: center;
+    margin-bottom: 10px;
 }
 
 .NewOrganization .mainRow {
@@ -112,11 +113,13 @@
     /* border-bottom: 1px transparent solid; */
 }
 
-.NewOrganization .validation-error {
+.NewOrganization input.validation-error,
+.NewOrganization textarea.validation-error {
     border-bottom: 1px red solid;
 }
 
-.NewOrganization .sync-dirty {
+.NewOrganization input.sync-dirty,
+.NewOrganization textarea.sync-dirty {
     border-bottom: 1px orange solid;
 }
 
@@ -130,18 +133,20 @@
 
 /* Top level grid */
 
-.NewOrganization-row {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 5px;
-}
+.NewOrganization-editorArea {}
 
 .NewOrganization-body {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+}
+
+.NewOrganization-row {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
 }
 
 .NewOrganization-col1 {
@@ -168,8 +173,19 @@
     text-align: left;
 }
 
+.NewOrganization-formField {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
 .NewOrganization-formControl {
     flex: 1 1 0px;
+}
+
+.NewOrganization-formFieldPreview {
+    flex: 0 0 auto;
+    margin-left: 4px;
 }
 
 /* individual fields */
@@ -192,6 +208,16 @@
 
 .NewOrganization-preview-description {
     overflow-y: scroll;
+}
+
+.NewOrganization-previewBox {
+    width: 30px;
+    height: 30px;
+    background-color: rgba(200, 200, 200, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 /* new editor layout ends */

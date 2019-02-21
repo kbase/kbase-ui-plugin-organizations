@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Redirect } from 'react-router-dom'
 import { Marked } from 'marked-ts'
-import { Button, Icon, Modal, Input, Checkbox, Tooltip, Collapse } from 'antd'
+import { Button, Icon, Modal, Input, Checkbox, Tooltip, Collapse, Tabs } from 'antd'
 import md5 from 'md5'
 import {
     EditableOrganization, SaveState, ValidationState, EditState,
@@ -213,11 +213,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                         {this.renderFieldError(this.props.newOrganization.name)}
                     </div>
                 </div>
-                <div className="NewOrganization-col3">
-                    <div className="NewOrganization-preview-name">
-                        {this.props.newOrganization.name.value || ''}
-                    </div>
-                </div>
             </div>
         )
     }
@@ -275,12 +270,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                             placeholder={placeholder}
                             onChange={this.onIdChange.bind(this)} />
                         {this.renderFieldError(this.props.newOrganization.id)}
-                    </div>
-                </div>
-                <div className="NewOrganization-col3">
-                    <div className="NewOrganization-preview-id">
-                        <span style={{ color: 'silver' }}>{this.origin}/#org/</span>
-                        {this.props.newOrganization.id.value || (<span style={{ fontStyle: 'italic' }}>organization id here</span>)}
                     </div>
                 </div>
             </div>
@@ -342,21 +331,48 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     </div>
                 </div>
                 <div className="NewOrganization-col2">
-                    <div className="NewOrganization-formControl">
-                        <Input value={this.props.newOrganization.logoUrl.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.logoUrl)}
-                            placeholder={placeholder}
-                            onChange={this.onLogoUrlChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.logoUrl)}
-                    </div>
-                </div>
-                <div className="NewOrganization-col3">
-                    <div className="NewOrganization-preview-logo">
-                        {this.renderLogoPreview()}
+                    <div className="NewOrganization-formField">
+                        <div className="NewOrganization-formControl">
+                            <Input value={this.props.newOrganization.logoUrl.value || ''}
+                                className={this.calcFieldClass(this.props.newOrganization.logoUrl)}
+                                placeholder={placeholder}
+                                onChange={this.onLogoUrlChange.bind(this)} />
+                            {this.renderFieldError(this.props.newOrganization.logoUrl)}
+                        </div>
+                        <div className="NewOrganization-formFieldPreview">
+                            {this.renderLogoPreview()}
+                        </div>
                     </div>
                 </div>
             </div>
         )
+    }
+
+    renderHomeURLPreview() {
+        const homeUrl = this.props.newOrganization.homeUrl
+        if (homeUrl.value &&
+            homeUrl.validationState.type === ValidationErrorType.OK) {
+            const url = homeUrl.value
+            const tooltipTitle = 'Try out your url by clicking this link'
+            return (
+                <div className="NewOrganization-previewBox">
+                    <Tooltip title={tooltipTitle} >
+                        <a href={url} target="_blank">
+                            <Icon type="link" />
+                        </a>
+                    </Tooltip>
+                </div>
+            )
+        } else {
+            const tooltipTitle = 'When you have completed your url, you may preview it here.'
+            return (
+                <div className="NewOrganization-previewBox">
+                    <Tooltip title={tooltipTitle}>
+                        <Icon type="link" style={{ color: 'gray' }} />
+                    </Tooltip>
+                </div>
+            )
+        }
     }
 
     renderHomeURLRow() {
@@ -409,17 +425,17 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     </div>
                 </div>
                 <div className="NewOrganization-col2">
-                    <div className="NewOrganization-formControl">
-                        <Input value={this.props.newOrganization.homeUrl.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.homeUrl)}
-                            placeholder={placeholder}
-                            onChange={this.onHomeUrlChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.homeUrl)}
-                    </div>
-                </div>
-                <div className="NewOrganization-col3">
-                    <div className="NewOrganization-field-name">
-                        <a href={this.props.newOrganization.homeUrl.value || ''} target="_blank">{this.props.newOrganization.homeUrl.value || ''}</a>
+                    <div className="NewOrganization-formField">
+                        <div className="NewOrganization-formControl">
+                            <Input value={this.props.newOrganization.homeUrl.value || ''}
+                                className={this.calcFieldClass(this.props.newOrganization.homeUrl)}
+                                placeholder={placeholder}
+                                onChange={this.onHomeUrlChange.bind(this)} />
+                            {this.renderFieldError(this.props.newOrganization.homeUrl)}
+                        </div>
+                        <div className="NewOrganization-formFieldPreview">
+                            {this.renderHomeURLPreview()}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -498,16 +514,14 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </div>
                 <div className="NewOrganization-col2">
                     <div className="NewOrganization-formControl">
-                        <Checkbox
-                            checked={this.props.newOrganization.isPrivate.value}
-                            className={this.calcFieldClass(this.props.newOrganization.isPrivate)}
-                            onChange={this.onIsPrivateChange.bind(this)} />
+                        <div>
+                            <Checkbox
+                                checked={this.props.newOrganization.isPrivate.value}
+                                className={this.calcFieldClass(this.props.newOrganization.isPrivate)}
+                                onChange={this.onIsPrivateChange.bind(this)} />
+                            {this.renderIsPrivate(this.props.newOrganization.isPrivate.value)}
+                        </div>
                         {this.renderFieldError(this.props.newOrganization.isPrivate)}
-                    </div>
-                </div>
-                <div className="NewOrganization-col3">
-                    <div className="NewOrganization-preview-isPrivate">
-                        {this.renderIsPrivate(this.props.newOrganization.isPrivate.value)}
                     </div>
                 </div>
             </div>
@@ -567,17 +581,13 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </div>
                 <div className="NewOrganization-col2">
                     <div className="NewOrganization-formControl">
+
                         <TextArea value={this.props.newOrganization.researchInterests.value || ''}
                             className={this.calcFieldClass(this.props.newOrganization.researchInterests) + ' NewOrganization-control-researchInterests'}
                             autosize={{ minRows: 2, maxRows: 2 }}
                             placeholder={placeholder}
                             onChange={this.onResearchInterestsChange.bind(this)} />
                         {this.renderFieldError(this.props.newOrganization.researchInterests)}
-                    </div>
-                </div>
-                <div className="NewOrganization-col3">
-                    <div className="NewOrganization-preview-researchInterests">
-                        {this.props.newOrganization.researchInterests.value || ''}
                     </div>
                 </div>
             </div>
@@ -640,18 +650,22 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </div>
                 <div className="NewOrganization-col2">
                     <div className="NewOrganization-formControl">
-                        <TextArea value={this.props.newOrganization.description.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.description) + ' NewOrganization-control-description'}
-                            autosize={{ minRows: 5, maxRows: 15 }}
-                            placeholder={placeholder}
-                            onChange={this.onDescriptionChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.description)}
+                        <Tabs defaultActiveKey="editor" animated={false}>
+                            <Tabs.TabPane tab="Editor" key="editor">
+                                <TextArea value={this.props.newOrganization.description.value || ''}
+                                    className={this.calcFieldClass(this.props.newOrganization.description) + ' NewOrganization-control-description'}
+                                    autosize={{ minRows: 5, maxRows: 15 }}
+                                    placeholder={placeholder}
+                                    onChange={this.onDescriptionChange.bind(this)} />
+                                {this.renderFieldError(this.props.newOrganization.description)}
+                            </Tabs.TabPane>
+                            <Tabs.TabPane tab="Preview" key="preview">
+                                <div className="NewOrganization-preview-description"
+                                    dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.newOrganization.description.value || '') })}
+                                />
+                            </Tabs.TabPane>
+                        </Tabs>
                     </div>
-                </div>
-                <div className="NewOrganization-col3">
-                    <div className="NewOrganization-preview-description"
-                        dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.newOrganization.description.value || '') })}
-                    />
                 </div>
             </div>
         )
@@ -666,9 +680,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     <div style={{ flex: '1 1 0px' }}>
                         <h3>Create Your Organization</h3>
                     </div>
-                </div>
-                <div className="NewOrganization-col3">
-                    <h3>Preview</h3>
                 </div>
             </div>
         )
@@ -698,8 +709,6 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                                     {this.renderCancelButton()}
                                 </span>
                             </div>
-                        </div>
-                        <div className="NewOrganization-col3">
                         </div>
                     </div>
                 </div>
@@ -741,15 +750,17 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
     renderDefaultLogo() {
         if (!(this.props.newOrganization.name.value && this.props.newOrganization.id.value)) {
+            const tooltipTitle = 'Add a logo url or complete the name and id fields for a Default logo'
             return (
-                <div>
-                    Default logo preview available when the Organization name and id are completed
-                </div>
+                <Tooltip title={tooltipTitle}>
+                    <Icon type="question" style={{ color: 'gray' }} />
+                    {/* <div style={{ height: '30px', width: '30px' }}></div> */}
+                </Tooltip>
             )
         }
         const initial = this.charAt(this.props.newOrganization.name.value, 0).toUpperCase()
         const hash = md5(this.props.newOrganization.id.value)
-        const size = 60;
+        const size = 30;
         const color = hash.substr(0, 6)
         return (
             <svg width={size} height={size} style={{ border: '1px rgba(200, 200, 200, 0.5) solid' }}>
@@ -760,10 +771,16 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
     renderLogoPreview() {
         if (!this.props.newOrganization.logoUrl.value) {
-            return this.renderDefaultLogo()
+            return (
+                <div className="NewOrganization-previewBox">
+                    {this.renderDefaultLogo()}
+                </div>
+            )
         }
         return (
-            <img src={this.props.newOrganization.logoUrl.value} width={60} />
+            <div className="NewOrganization-previewBox">
+                <img src={this.props.newOrganization.logoUrl.value} width={30} />
+            </div>
         )
     }
 
@@ -879,7 +896,10 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
         return (
             <div className="NewOrganization">
-                {this.renderEditor()}
+                <div style={{ minWidth: '50em', maxWidth: '100em', margin: '0 auto' }}>
+                    {this.renderEditor()}
+                </div>
+                {/* TODO: improve error display*/}
                 {this.renderError()}
             </div>
         )
