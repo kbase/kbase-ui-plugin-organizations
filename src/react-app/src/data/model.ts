@@ -221,39 +221,6 @@ export class Model {
             })
     }
 
-
-
-
-    // async ownGroups(username: string): Promise<Array<Group>> {
-    //     const orgs = await this.getOrgs(username)
-
-    //     const groupsClient = new GroupsClient({
-    //         url: this.params.groupsServiceURL,
-    //         token: this.params.token
-    //     })
-
-    //     const groups = await groupsClient.getGroups()
-
-    //     return groups.filter((group: Group) => {
-    //         if (group.owner === username) {
-    //             return true
-    //         }
-    //         if (group.members.find((member) => {
-    //             return (member === username)
-    //         })) {
-    //             return true
-    //         }
-    //         if (group.admins.find((member) => {
-    //             return (member === username)
-    //         })) {
-    //             return true
-    //         }
-    //         return false
-    //     })
-    // }
-
-
-
     profileToUser(profile: userProfile.UserProfile): User {
         let jobTitle
         if (!profile.profile.userdata) {

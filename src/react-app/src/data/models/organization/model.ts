@@ -804,14 +804,6 @@ export class OrganizationModel {
         }))
     }
 
-    async getAllOrgs(): Promise<Array<Organization | InaccessiblePrivateOrganization>> {
-        const groups = await this.groupsClient.getGroups()
-        const ids = groups.map((group) => {
-            return group.id
-        })
-        return this.getOrgs(ids)
-    }
-
     async getOwnOrgs(): Promise<Array<BriefOrganization>> {
         const orgs = await this.getAllOrgs2()
 
@@ -863,14 +855,19 @@ export class OrganizationModel {
     }
 
     async getAllOrgs2(): Promise<Array<BriefOrganization>> {
-        const groups = await this.groupsClient.listGroups()
-        return groups.map((group) => {
+        let allGroups: Array<groupsApi.BriefGroup> = []
+        let groups: Array<groupsApi.BriefGroup>
+        do {
+            groups = await this.groupsClient.listGroups()
+            allGroups = allGroups.concat(groups)
+        } while (groups.length === groupsApi.MAX_GROUPS_PER_LIST_REQUEST)
+
+        return allGroups.map((group) => {
             return this.listGroupToBriefOrganization(group)
         })
     }
 
     async queryOrgs(query: Query): Promise<QueryResults> {
-        // const orgs = await this.getAllOrgs()
         const orgs = await this.getAllOrgs2()
 
         const filtered = applyFilter(orgs, query.filter, query.username)

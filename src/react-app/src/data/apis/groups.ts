@@ -1,5 +1,6 @@
 import { AppException } from "../../types";
-import { string } from "prop-types";
+
+export const MAX_GROUPS_PER_LIST_REQUEST = 100
 
 export interface GroupsServiceInfo {
     servname: string;
@@ -315,44 +316,18 @@ export class GroupsClient {
     // }
 
     async listGroups(): Promise<Array<BriefGroup>> {
-        return fetch(this.url + '/group', {
+        const response = await fetch(this.url + '/group', {
             headers: {
                 Authorization: this.token,
                 Accept: 'application/json'
             },
             mode: 'cors'
         })
-            .then((response) => {
-                if (response.status !== 200) {
-                    console.error('error fetching groups', response)
-                    throw new Error('Error fetching groups')
-                }
-                return response.json()
-            })
-    }
-
-
-    getGroups(): Promise<Array<Group | InaccessiblePrivateGroup>> {
-        return fetch(this.url + '/group', {
-            headers: {
-                Authorization: this.token,
-                Accept: 'application/json'
-            },
-            mode: 'cors'
-        })
-            .then((response) => {
-                if (response.status !== 200) {
-                    console.error('error fetching groups', response)
-                    throw new Error('Error fetching groups')
-                }
-                return response.json()
-            })
-            .then((result: Array<BriefGroup>) => {
-                return Promise.all(result.map((group) => (this.getGroupById(group.id))))
-            })
-            .then((result) => {
-                return result;
-            })
+        if (response.status !== 200) {
+            console.error('error fetching groups', response)
+            throw new Error('Error fetching groups')
+        }
+        return await response.json()
     }
 
     getGroupById(id: string): Promise<Group | InaccessiblePrivateGroup> {
