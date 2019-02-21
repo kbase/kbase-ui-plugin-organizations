@@ -5,7 +5,7 @@ import { Button, Icon, Modal, Input, Checkbox, Tooltip, Collapse, Tabs } from 'a
 import md5 from 'md5'
 import {
     EditableOrganization, SaveState, ValidationState, EditState,
-    AppError, Editable, ValidationErrorType, SyncState
+    AppError, Editable, ValidationErrorType, SyncState, EditableString, EditableNullableString, EditableBoolean
 } from '../../../types';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import OrgLogo from '../../OrgLogo'
@@ -79,7 +79,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         this.props.onSave();
     }
 
-    onNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    onNameChange(e: React.ChangeEvent<HTMLInputElement>): void {
         e.persist();
         this.props.onUpdateName(e.target.value);
     }
@@ -162,7 +162,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         }
     }
 
-    renderNameRow() {
+    renderNameRow(nameField: EditableString, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void) {
         const tooltip = (
             <React.Fragment>
                 <p>
@@ -205,19 +205,19 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </div>
                 <div className="NewOrganization-col2">
                     <div className="NewOrganization-formControl">
-                        <Input value={this.props.newOrganization.name.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.name)}
+                        <Input value={nameField.value || ''}
+                            className={this.calcFieldClass(nameField)}
                             placeholder={placeholder}
                             autoFocus
-                            onChange={this.onNameChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.name)}
+                            onChange={onChange} />
+                        {this.renderFieldError(nameField)}
                     </div>
                 </div>
             </div>
         )
     }
 
-    renderIDRow() {
+    renderIDRow(idField: EditableString, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void) {
         const tooltip = (
             <React.Fragment>
                 <p>
@@ -265,18 +265,18 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </div>
                 <div className="NewOrganization-col2">
                     <div className="NewOrganization-formControl">
-                        <Input value={this.props.newOrganization.id.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.id)}
+                        <Input value={idField.value || ''}
+                            className={this.calcFieldClass(idField)}
                             placeholder={placeholder}
-                            onChange={this.onIdChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.id)}
+                            onChange={onChange} />
+                        {this.renderFieldError(idField)}
                     </div>
                 </div>
             </div>
         )
     }
 
-    renderLogoURLRow() {
+    renderLogoURLRow(logoUrlField: EditableNullableString, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void) {
         const tooltip = (
             <React.Fragment>
                 <p>
@@ -333,14 +333,14 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="NewOrganization-col2">
                     <div className="NewOrganization-formField">
                         <div className="NewOrganization-formControl">
-                            <Input value={this.props.newOrganization.logoUrl.value || ''}
-                                className={this.calcFieldClass(this.props.newOrganization.logoUrl)}
+                            <Input value={logoUrlField.value || ''}
+                                className={this.calcFieldClass(logoUrlField)}
                                 placeholder={placeholder}
                                 onChange={this.onLogoUrlChange.bind(this)} />
-                            {this.renderFieldError(this.props.newOrganization.logoUrl)}
+                            {this.renderFieldError(logoUrlField)}
                         </div>
                         <div className="NewOrganization-formFieldPreview">
-                            {this.renderLogoPreview()}
+                            {this.renderLogoPreview(logoUrlField)}
                         </div>
                     </div>
                 </div>
@@ -348,11 +348,10 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
-    renderHomeURLPreview() {
-        const homeUrl = this.props.newOrganization.homeUrl
-        if (homeUrl.value &&
-            homeUrl.validationState.type === ValidationErrorType.OK) {
-            const url = homeUrl.value
+    renderHomeURLPreview(homeUrlField: EditableNullableString) {
+        if (homeUrlField.value &&
+            homeUrlField.validationState.type === ValidationErrorType.OK) {
+            const url = homeUrlField.value
             const tooltipTitle = 'Try out your url by clicking this link'
             return (
                 <div className="NewOrganization-previewBox">
@@ -375,7 +374,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         }
     }
 
-    renderHomeURLRow() {
+    renderHomeURLRow(homeUrlField: EditableNullableString, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void) {
         const tooltip = (
             <React.Fragment>
                 <p>
@@ -427,14 +426,14 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="NewOrganization-col2">
                     <div className="NewOrganization-formField">
                         <div className="NewOrganization-formControl">
-                            <Input value={this.props.newOrganization.homeUrl.value || ''}
-                                className={this.calcFieldClass(this.props.newOrganization.homeUrl)}
+                            <Input value={homeUrlField.value || ''}
+                                className={this.calcFieldClass(homeUrlField)}
                                 placeholder={placeholder}
-                                onChange={this.onHomeUrlChange.bind(this)} />
-                            {this.renderFieldError(this.props.newOrganization.homeUrl)}
+                                onChange={onChange} />
+                            {this.renderFieldError(homeUrlField)}
                         </div>
                         <div className="NewOrganization-formFieldPreview">
-                            {this.renderHomeURLPreview()}
+                            {this.renderHomeURLPreview(homeUrlField)}
                         </div>
                     </div>
                 </div>
@@ -459,7 +458,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
-    renderPrivatePublicRow() {
+    renderPrivatePublicRow(isPrivateField: EditableBoolean, onChange: (e: CheckboxChangeEvent) => void) {
         const tooltip = (
             <React.Fragment>
                 <p>
@@ -516,19 +515,19 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     <div className="NewOrganization-formControl">
                         <div>
                             <Checkbox
-                                checked={this.props.newOrganization.isPrivate.value}
-                                className={this.calcFieldClass(this.props.newOrganization.isPrivate)}
-                                onChange={this.onIsPrivateChange.bind(this)} />
-                            {this.renderIsPrivate(this.props.newOrganization.isPrivate.value)}
+                                checked={isPrivateField.value}
+                                className={this.calcFieldClass(isPrivateField)}
+                                onChange={onChange} />
+                            {this.renderIsPrivate(isPrivateField.value)}
                         </div>
-                        {this.renderFieldError(this.props.newOrganization.isPrivate)}
+                        {this.renderFieldError(isPrivateField)}
                     </div>
                 </div>
             </div>
         )
     }
 
-    renderResearchInterestsRow() {
+    renderResearchInterestsRow(researchInterestsField: EditableString, onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void) {
         const tooltip = (
             <React.Fragment>
                 <p>
@@ -582,19 +581,19 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="NewOrganization-col2">
                     <div className="NewOrganization-formControl">
 
-                        <TextArea value={this.props.newOrganization.researchInterests.value || ''}
-                            className={this.calcFieldClass(this.props.newOrganization.researchInterests) + ' NewOrganization-control-researchInterests'}
+                        <TextArea value={researchInterestsField.value || ''}
+                            className={this.calcFieldClass(researchInterestsField) + ' NewOrganization-control-researchInterests'}
                             autosize={{ minRows: 2, maxRows: 2 }}
                             placeholder={placeholder}
-                            onChange={this.onResearchInterestsChange.bind(this)} />
-                        {this.renderFieldError(this.props.newOrganization.researchInterests)}
+                            onChange={onChange} />
+                        {this.renderFieldError(researchInterestsField)}
                     </div>
                 </div>
             </div>
         )
     }
 
-    renderDescriptionRow() {
+    renderDescriptionRow(descriptionField: EditableString, onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void) {
         const tooltip = (
             <React.Fragment>
                 <p>
@@ -652,16 +651,16 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                     <div className="NewOrganization-formControl">
                         <Tabs defaultActiveKey="editor" animated={false}>
                             <Tabs.TabPane tab="Editor" key="editor">
-                                <TextArea value={this.props.newOrganization.description.value || ''}
-                                    className={this.calcFieldClass(this.props.newOrganization.description) + ' NewOrganization-control-description'}
+                                <TextArea value={descriptionField.value || ''}
+                                    className={this.calcFieldClass(descriptionField) + ' NewOrganization-control-description'}
                                     autosize={{ minRows: 5, maxRows: 15 }}
                                     placeholder={placeholder}
-                                    onChange={this.onDescriptionChange.bind(this)} />
-                                {this.renderFieldError(this.props.newOrganization.description)}
+                                    onChange={onChange} />
+                                {this.renderFieldError(descriptionField)}
                             </Tabs.TabPane>
                             <Tabs.TabPane tab="Preview" key="preview">
                                 <div className="NewOrganization-preview-description"
-                                    dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.newOrganization.description.value || '') })}
+                                    dangerouslySetInnerHTML={({ __html: Marked.parse(descriptionField.value || '') })}
                                 />
                             </Tabs.TabPane>
                         </Tabs>
@@ -690,13 +689,13 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             <form id="newOrganizationForm" className="NewOrganization-editor  scrollable-flex-column" onSubmit={this.onSubmit.bind(this)}>
                 {this.renderEditorHeader()}
                 <div className="NewOrganization-body">
-                    {this.renderNameRow()}
-                    {this.renderIDRow()}
-                    {this.renderLogoURLRow()}
-                    {this.renderHomeURLRow()}
-                    {this.renderPrivatePublicRow()}
-                    {this.renderResearchInterestsRow()}
-                    {this.renderDescriptionRow()}
+                    {this.renderNameRow(this.props.newOrganization.name, this.onNameChange.bind(this))}
+                    {this.renderIDRow(this.props.newOrganization.id, this.onIdChange.bind(this))}
+                    {this.renderLogoURLRow(this.props.newOrganization.logoUrl, this.onLogoUrlChange.bind(this))}
+                    {this.renderHomeURLRow(this.props.newOrganization.homeUrl, this.onHomeUrlChange.bind(this))}
+                    {this.renderPrivatePublicRow(this.props.newOrganization.isPrivate, this.onIsPrivateChange.bind(this))}
+                    {this.renderResearchInterestsRow(this.props.newOrganization.researchInterests, this.onResearchInterestsChange.bind(this))}
+                    {this.renderDescriptionRow(this.props.newOrganization.description, this.onDescriptionChange.bind(this))}
                     <div className="NewOrganization-row">
                         <div className="NewOrganization-col1">
                         </div>
@@ -769,8 +768,8 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
-    renderLogoPreview() {
-        if (!this.props.newOrganization.logoUrl.value) {
+    renderLogoPreview(logoUrlField: EditableNullableString) {
+        if (!logoUrlField.value) {
             return (
                 <div className="NewOrganization-previewBox">
                     {this.renderDefaultLogo()}
@@ -779,7 +778,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         }
         return (
             <div className="NewOrganization-previewBox">
-                <img src={this.props.newOrganization.logoUrl.value} width={30} />
+                <img src={logoUrlField.value} width={30} />
             </div>
         )
     }
