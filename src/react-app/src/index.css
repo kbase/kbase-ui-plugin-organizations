@@ -219,10 +219,16 @@ a:hover {
     margin-top: 1em;
 }
 
-.Lite.ant-input {
+input.Lite.ant-input {
     border: none;
     border-radius: 0;
     border-bottom: 1px rgba(200, 200, 200, 0.5) solid;
+}
+
+textarea.Lite.ant-input {
+    border: none;
+    border-radius: 0;
+    border: 1px rgba(200, 200, 200, 0.5) solid;
 }
 
 .IconButton {

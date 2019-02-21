@@ -626,9 +626,103 @@ class Debouncer {
 
 let activeDebouncer: Debouncer | null = null
 
+abstract class DebouncingProcess {
+
+    delay: number
+    canceled: boolean
+    timer: number | null
+
+    constructor({ delay }: { delay: number }) {
+        this.delay = delay
+        this.canceled = false
+        this.timer = null
+    }
+
+    abstract async task(): Promise<void>
+
+    start() {
+        if (this.timer) {
+            window.clearTimeout(this.timer)
+        }
+        this.timer = window.setTimeout(async () => {
+            if (!this.canceled) {
+                try {
+                    // TODO: left off here. we need to be able to deny
+                    // the consequence of the check if we have canceled...
+                    // so inside the fun
+                    await this.task()
+                } catch (ex) {
+                    console.warn('debouncing process exception: ' + ex.message)
+                }
+            } else {
+                this.canceled = false;
+            }
+            this.timer = null;
+        }, this.delay)
+    }
+
+    cancel() {
+        if (this.timer) {
+            this.canceled = true;
+        }
+    }
+}
+
+class CheckIfExistsProcess extends DebouncingProcess {
+    model: orgModel.OrganizationModel
+    dispatch: ThunkDispatch<StoreState, void, Action>
+    id: string
+    constructor({ delay, model, dispatch, id }: { delay: number, model: orgModel.OrganizationModel, dispatch: ThunkDispatch<StoreState, void, Action>, id: string }) {
+        super({ delay })
+
+        this.model = model
+        this.dispatch = dispatch
+        this.id = id
+    }
+
+    async task(): Promise<void> {
+        try {
+            const exists = await this.model.orgExists(this.id)
+            if (this.canceled) {
+                return
+            }
+            if (exists) {
+                this.dispatch(updateIdError(this.id, {
+                    type: ValidationErrorType.ERROR,
+                    validatedAt: new Date(),
+                    message: 'This org id is already in use'
+                }))
+            } else {
+                this.dispatch(updateIdSuccess(this.id))
+            }
+        } catch (ex) {
+            if (this.canceled) {
+                return
+            }
+            this.dispatch(updateIdError(this.id, {
+                type: ValidationErrorType.ERROR,
+                validatedAt: new Date(),
+                message: 'Error checking for org id existence'
+            }))
+        }
+        this.dispatch(addOrgEvaluate())
+    }
+}
+
+let checkIDProcess: DebouncingProcess
+
+/*
+updateId
+
+Handles updating an org id update from the new organization form.
+
+This action handles the normal field validation, but also requires a check
+that the org id is not in use. This requires an api call to the groups 
+service, which introduces an indeterminate latency, and thus special handling.
+*/
+
 export function updateId(id: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(updateIdPass(id))
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const [validatedId, error] = Validation.validateOrgId(id)
         if (error.type !== ValidationErrorType.OK) {
             dispatch(updateIdError(validatedId, error))
@@ -636,6 +730,11 @@ export function updateId(id: string) {
             return
         }
 
+        // this is an unusual action -- it is in intermediate "success" -- the field
+        // has passed the synchronous syntax validation, so we need to feed the value 
+        // back to the form, but the eventual success occurs later.
+        dispatch(updateIdPass(id))
+
         const {
             views: {
                 addOrgView: { viewModel }
@@ -647,81 +746,30 @@ export function updateId(id: string) {
             return
         }
 
-        const lastValidatedAt = viewModel.newOrganization.id.validationState.validatedAt
-        const now = new Date().getTime()
-        const debounce = 500 // ms
-        if (lastValidatedAt) {
-            const elapsed = now - lastValidatedAt.getTime()
-            if (elapsed < debounce) {
-                if (!activeDebouncer) {
-                    activeDebouncer = new Debouncer(500, () => {
-                        dispatch(evaluateId())
-                    })
-                }
-                return
-            }
-        }
-
-        if (activeDebouncer) {
-            activeDebouncer.cancel()
-        }
-        activeDebouncer = null
+        // For the id existence check, we want to ensure that we don't trip up the
+        // user experience. 
+        // Think of the org id check as an async process.
+        // If that process is active when an update appears here, cancel it and proceed.
+        // Launch an existence check process which will initiate the check after some
+        // period of time (e.g. 100ms). This ensures that a fast typist will not trigger
+        // a sequence of existence checks. 
+        // In that process, after the existence check, look to see if the process has
+        // been canceled (see step 1 above). If so, do not issue any redux events.
+        // Otherwise, issue the success or error events as appropriate.
 
         const model = orgModelFromState(getState())
-        model.orgExists(validatedId)
-            .then((exists) => {
-                if (exists) {
-                    dispatch(updateIdError(validatedId, {
-                        type: ValidationErrorType.ERROR,
-                        validatedAt: new Date(),
-                        message: 'This org id is already in use'
-                    }))
-                } else {
-                    dispatch(updateIdSuccess(validatedId))
-                }
-
-                dispatch(addOrgEvaluate())
-            })
-    }
-}
-
-export function evaluateId() {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-
-        const {
-            views: {
-                addOrgView: { viewModel }
-            }
-        } = getState()
-        if (!viewModel) {
-            // do nothing
-            return
+        if (checkIDProcess) {
+            checkIDProcess.cancel()
         }
 
-        const id = viewModel.newOrganization.id
+        checkIDProcess = new CheckIfExistsProcess({
+            delay: 100,
+            id: validatedId,
+            dispatch: dispatch,
+            model: model
+        })
 
-        const [validatedId, error] = Validation.validateOrgId(id.value)
-        if (error.type !== ValidationErrorType.OK) {
-            dispatch(updateIdError(validatedId, error))
-            dispatch(addOrgEvaluate())
-            return
-        }
-
-        const model = orgModelFromState(getState())
-        model.orgExists(validatedId)
-            .then((exists) => {
-                if (exists) {
-                    dispatch(updateIdError(validatedId, {
-                        type: ValidationErrorType.ERROR,
-                        message: 'This org id is already in use',
-                        validatedAt: new Date()
-                    }))
-                } else {
-                    dispatch(updateIdSuccess(validatedId))
-                }
-
-                dispatch(addOrgEvaluate())
-            })
+        checkIDProcess.start()
     }
 }
 
