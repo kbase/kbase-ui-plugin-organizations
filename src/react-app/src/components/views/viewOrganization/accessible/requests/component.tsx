@@ -247,7 +247,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                 <Icon type="arrow-right" />
                 <Icon type="team" />
                 {' '}
-                Request to Add Narrative
+                Request to Associate Narrative
             </span>
         )
 

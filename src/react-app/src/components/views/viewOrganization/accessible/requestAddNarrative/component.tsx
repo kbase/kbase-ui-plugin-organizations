@@ -350,9 +350,26 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 </div>
             )
         } else {
-            return (
-                <Alert type="info" message="Select a narrative on the left to show it here and be able to add it to this organization." />
-            )
+            if (this.props.relation.type === orgModel.UserRelationToOrganization.MEMBER) {
+                const message = (
+                    <p>
+                        Select a narrative on the left to show it here and be able to request association of
+                        it with this Organization.
+                    </p>
+                )
+                return (
+                    <Alert type="info" message={message} />
+                )
+            } else {
+                const message = (
+                    <p>
+                        Select a narrative on the left to show it here and be able to associate it with this Organization.
+                    </p>
+                )
+                return (
+                    <Alert type="info" message={message} />
+                )
+            }
         }
     }
 
@@ -370,18 +387,92 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         )
     }
 
+    renderAlert() {
+        if (this.props.relation.type === orgModel.UserRelationToOrganization.MEMBER) {
+            const warning = (
+                <React.Fragment>
+                    <p>
+                        As an Organization member, you are able to request association of any Narrative you
+                        own with this Organization.
+                    </p>
+                    <p>
+                        If your Narrative association request is accepted by an Organization administrator,
+                        it will appear for all members on the main Organization page.
+                    </p>
+                    <p>
+                        Members will be able to gain view share access to the Narrative.
+                    </p>
+                    <p>
+                        Only Organization administrators will be able to disassociate the Narrative from the Organization.
+                    </p>
+                </React.Fragment>
+            )
+            return (
+                <Alert type="warning"
+                    message={warning}
+                    style={{ marginBottom: '10px' }} />
+            )
+        } else {
+            const warning = (
+                <React.Fragment>
+                    <p>
+                        As an Organization administrator, you will be able to immediate associate a Narrative you
+                        own with this Organization.
+                    </p>
+                    <p>
+                        Members will be able to gain view share access to the Narrative.
+                    </p>
+                    <p>
+                        Only Organization administrators will be able to disassociate the Narrative from the Organization.
+                    </p>
+                </React.Fragment>
+
+            )
+            return (
+                <Alert type="warning"
+                    message={warning}
+                    style={{ marginBottom: '10px' }} />
+            )
+        }
+    }
+
+    renderSelectedAlert() {
+        if (this.props.selectedNarrative && this.props.selectedNarrative.status === NarrativeState.NONE) {
+            if (this.props.relation.type === orgModel.UserRelationToOrganization.MEMBER) {
+                const warning = (
+                    <React.Fragment>
+                        <p>
+                            Please be aware that if your request to associate this Narrative is accepted,
+                            you will be unable to directly remove it from the Organization.
+                    </p>
+                        <p>
+                            Only Organization administrators are able to remove associated Narratives from the Organization.
+                    </p>
+                    </React.Fragment>
+                )
+                return (
+                    <Alert type="warning"
+                        message={warning}
+                        style={{ marginBottom: '10px', marginTop: '10px' }} />
+                )
+            }
+        }
+    }
+
     render() {
         return (
             <div className="RequestNarrative scrollable-flex-column">
                 <MainMenu buttons={this.renderMenuButtons()} />
                 <div className="RequestNarrative-body scrollable-flex-column">
                     <div className="RequestNarrative-selectNarrativeCol scrollable-flex-column">
-                        <h3>Select a Narrative</h3>
+                        <h3>Select a Narrative to Associate with this Organization</h3>
                         {this.renderNarrativeSelector()}
                     </div>
                     <div className="RequestNarrative-selectedNarrativeCol">
                         <h3>Selected Narrative</h3>
+                        {/* {this.renderAlert()} */}
                         {this.renderSelectedNarrative()}
+                        {this.renderSelectedAlert()}
                         <div className="RequestNarrative-selectedNarrativeButtonBar">
                             {this.renderSelectedNarrativeButton()}
                         </div>

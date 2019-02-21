@@ -117,7 +117,7 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
                             <Icon type="user" />{' '}Manage My Membership
                         </Menu.Item>
                         <Menu.Item key="addNarrative">
-                            <Icon type="file" />{' '}Add Narrative
+                            <Icon type="file" />{' '}Associate Narratives
                         </Menu.Item>
                     </Menu>
                 )
@@ -161,7 +161,7 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
                             <Icon type="mail" />{' '}Invite User
                         </Menu.Item>
                         <Menu.Item key="addNarrative">
-                            <Icon type="file" />{' '}Add Narrative
+                            <Icon type="file" />{' '}Associate Narratives
                         </Menu.Item>
                         <Menu.Item key="manageRelatedOrgs">
                             <Icon type="team" />{' '}Manage Related Orgs

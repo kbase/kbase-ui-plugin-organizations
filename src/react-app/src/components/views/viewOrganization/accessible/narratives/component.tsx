@@ -26,8 +26,6 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
     }
 
     onRequestAddNarrative() {
-        // this.setState({ navigateTo: NavigateTo.REQUEST_ADD_NARRATIVE })
-        // alert('will add narrative')
         this.props.onRequestAddNarrative()
     }
 
@@ -142,7 +140,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
                 key="addNarrative"
                 size="small"
                 onClick={this.onRequestAddNarrative.bind(this)}>
-                <Icon type="plus" />  Add a Narrative
+                <Icon type="plus" />  Associate Narratives
             </Button>
         )]
 

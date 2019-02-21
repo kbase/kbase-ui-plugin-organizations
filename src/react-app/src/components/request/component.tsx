@@ -149,7 +149,7 @@ export class Request extends React.Component<RequestProps, RequestState> {
                 <Icon type="arrow-right" />
                 <Icon type="team" />
                 {' '}
-                Request to Add Narrative
+                Request to Associate Narrative
             </span>
         )
         const actions = [
