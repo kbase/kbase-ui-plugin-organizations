@@ -10,7 +10,6 @@ import {
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import OrgLogo from '../../OrgLogo'
 import TextArea from 'antd/lib/input/TextArea'
-import MainMenu from '../../menu/component'
 import './component.css'
 
 export interface NewOrganizationProps {
@@ -39,15 +38,12 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
     constructor(props: NewOrganizationProps) {
         super(props)
-
         this.state = {
             cancelToBrowser: false,
             showError: true
         }
-
         this.origin = document.location!.origin
     }
-
 
     onClickCancelToBrowser() {
         if (!this.isModified()) {
@@ -878,7 +874,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
         // TODO: this is just a prop for today.
         if (this.props.saveState === SaveState.SAVED) {
-            return <Redirect push to={"/editOrganization/" + this.props.newOrganization.id.value} />
+            return <Redirect push to={"/viewOrganization/" + this.props.newOrganization.id.value} />
         }
 
         return (
