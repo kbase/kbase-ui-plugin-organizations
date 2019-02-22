@@ -82,7 +82,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
                 menu = (
                     <Menu onClick={({ key }) => { this.onNarrativeMenu(key, narrative) }}>
                         <Menu.Item key="removeNarrative">
-                            <Icon type="delete" /> Remove Narrative from Organization
+                            <Icon type="delete" style={{ color: "#f5222d" }} /> Remove Narrative from Organization
                         </Menu.Item>
                     </Menu>
                 )
