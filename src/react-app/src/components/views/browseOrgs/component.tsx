@@ -271,7 +271,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     {this.renderSearchForm()}
                 </div>
                 <div className="OrganizationsBrowser-searchBarCol2">
-                    <NavLink to="/newOrganization"><Button icon="plus-circle" style={{ marginRight: '10px' }}>Create Organization</Button></NavLink>
+                    <NavLink to="/newOrganization"><Button type="primary" icon="plus-circle" style={{ marginRight: '10px' }}>Create Organization</Button></NavLink>
 
                 </div>
                 {/* <div className="OrganizationsBrowser-searchBarCol3">
