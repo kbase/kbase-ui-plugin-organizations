@@ -1,17 +1,17 @@
 {
-  "main.css": "./static/css/main.cb28da8d.chunk.css",
-  "main.js": "./static/js/main.8e62c1fe.chunk.js",
-  "main.js.map": "./static/js/main.8e62c1fe.chunk.js.map",
+  "main.css": "./static/css/main.8e561999.chunk.css",
+  "main.js": "./static/js/main.2c678321.chunk.js",
+  "main.js.map": "./static/js/main.2c678321.chunk.js.map",
   "static/css/1.5904bca1.chunk.css": "./static/css/1.5904bca1.chunk.css",
   "static/js/1.97b33372.chunk.js": "./static/js/1.97b33372.chunk.js",
   "static/js/1.97b33372.chunk.js.map": "./static/js/1.97b33372.chunk.js.map",
   "runtime~main.js": "./static/js/runtime~main.4a686d48.js",
   "runtime~main.js.map": "./static/js/runtime~main.4a686d48.js.map",
   "static/media/nouserpic.png": "./static/media/nouserpic.9af42ba9.png",
-  "static/media/index.css": "./static/media/oxygen-latin-300.58a4de4f.woff2",
-  "static/css/main.cb28da8d.chunk.css.map": "./static/css/main.cb28da8d.chunk.css.map",
+  "static/media/index.css": "./static/media/oxygen-latin-400.d3ab48d8.woff",
+  "static/css/main.8e561999.chunk.css.map": "./static/css/main.8e561999.chunk.css.map",
   "static/css/1.5904bca1.chunk.css.map": "./static/css/1.5904bca1.chunk.css.map",
   "index.html": "./index.html",
-  "precache-manifest.c8ecb3d0fc5291d037336ae831a2c7f9.js": "./precache-manifest.c8ecb3d0fc5291d037336ae831a2c7f9.js",
+  "precache-manifest.0ec529813e1be9812721cf7dfb523b0f.js": "./precache-manifest.0ec529813e1be9812721cf7dfb523b0f.js",
   "service-worker.js": "./service-worker.js"
 }

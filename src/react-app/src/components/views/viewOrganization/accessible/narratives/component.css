@@ -7,7 +7,7 @@
 .ViewOrganization-Narratives-toolbar {
     display: flex;
     flex-direction: row;
-    padding: 4px;
+    padding: 0 0 4px 0;
 }
 
 .ViewOrganization-Narratives-toolbar-searchCol {
@@ -38,7 +38,7 @@
 
 .ViewOrganization-Narratives-narrativesTable {
     /* border: 1px silver solid; */
-    padding: 4px;
+    /* padding: 4px; */
     margin: 0 0 10px 0;
     flex: 1 1 0px;
     overflow-y: auto;
@@ -77,9 +77,9 @@
     flex: 0 0 auto;
     display: flex;
     flex-direction: row;
-    border-bottom: 1px rgba(200, 200, 200, 0.5) solid;
+    /* border-bottom: 1px rgba(200, 200, 200, 0.5) solid; */
     margin-bottom: 4px;
-    padding: 4px;
+    padding: 0 0 4px 0;
 }
 
 .ViewOrganization-Narratives-headerCol1 {
