@@ -524,7 +524,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     <div className="ViewOrganization-tabPaneToolbar">
                         <Tooltip placement="bottomRight"
                             title="Invite one or more users to this organization">
-                            <Button size="small" onClick={this.onInviteUser.bind(this)}><Icon type="mail" />Invite Users</Button>
+                            <Button
+                                size="small"
+                                style={{ width: '100%' }}
+                                onClick={this.onInviteUser.bind(this)}><Icon type="mail" />Invite Users</Button>
                         </Tooltip>
                     </div>
                 )
@@ -533,7 +536,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     <div className="ViewOrganization-tabPaneToolbar">
                         <Tooltip placement="bottomRight"
                             title="Invite one or more users to this organization">
-                            <Button size="small" onClick={this.onInviteUser.bind(this)}><Icon type="mail" />Invite Users</Button>
+                            <Button
+                                size="small"
+                                style={{ width: '100%' }}
+                                onClick={this.onInviteUser.bind(this)}><Icon type="mail" />Invite Users</Button>
                         </Tooltip>
                     </div>
                 )
