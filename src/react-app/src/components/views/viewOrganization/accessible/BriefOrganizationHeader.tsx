@@ -6,7 +6,6 @@ import { Icon, Tooltip, Menu, Dropdown, Modal, Button } from 'antd'
 import Owner from '../../../entities/OwnerContainer'
 import { ComponentView, SubViews } from '../../../../types'
 import NiceElapsedTime from '../../../NiceElapsedTime'
-import OrgMenu from './OrgMenu'
 import './BriefOrganizationHeader.css'
 
 export interface BriefOrganizationProps {
@@ -553,16 +552,28 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         )
     }
 
+    renderBackButton() {
+        // return (
+        //     <div className="IconButton"
+        //         onClick={this.props.onNavigateToBrowser}
+        //         style={{ color: 'rgba(145, 43, 43, 1)' }}>
+        //         back
+        //     </div>
+        // )
+
+        return (
+            <Button type="danger" onClick={this.props.onNavigateToBrowser}>
+                back
+            </Button>
+        )
+    }
+
     renderStatsCol(org: orgModel.BriefOrganization) {
         return (
             <div className="BriefOrganizationHeader-buttonsCol">
                 <div className="BriefOrganizationHeader-buttonsRow" style={{ marginBottom: '10px' }}>
                     <div className="ButtonSet">
-                        <div className="IconButton"
-                            onClick={this.props.onNavigateToBrowser}
-                            style={{ color: 'red' }}>
-                            <Icon type="close" />
-                        </div>
+                        {this.renderBackButton()}
                     </div>
                 </div>
                 <div className="BriefOrganizationHeader-buttonsRow">

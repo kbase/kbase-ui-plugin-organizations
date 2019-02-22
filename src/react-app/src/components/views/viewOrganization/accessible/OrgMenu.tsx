@@ -123,7 +123,7 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
                 )
                 return (
                     <Dropdown overlay={menu} trigger={['click']}>
-                        <Icon type="setting" theme="filled" style={{ fontSize: '300%' }} />
+                        <Icon type="setting" theme="filled" className="IconButton OrgMenu-menuButton" />
                     </Dropdown>
                 )
             case (orgModel.UserRelationToOrganization.ADMIN):
@@ -145,7 +145,7 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
                 )
                 return (
                     <Dropdown overlay={adminMenu} trigger={['click']}>
-                        <Icon type="setting" theme="filled" className="IconButton" style={{ fontSize: '300%' }} />
+                        <Icon type="setting" theme="filled" className="IconButton OrgMenu-menuButton" />
                     </Dropdown>
                 )
             case (orgModel.UserRelationToOrganization.OWNER):
@@ -170,7 +170,7 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
                 )
                 return (
                     <Dropdown overlay={ownerMenu} trigger={['click']}>
-                        <Icon type="setting" theme="filled" className="IconButton" style={{ fontSize: '300%' }} />
+                        <Icon type="setting" theme="filled" className="IconButton OrgMenu-menuButton" />
                     </Dropdown>
                 )
         }

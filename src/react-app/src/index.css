@@ -170,6 +170,7 @@ a:hover {
 
 .IconButton-hover {
     padding: 3px;
+    cursor: pointer;
 }
 
 .IconButton-hover:hover {
@@ -233,6 +234,7 @@ textarea.Lite.ant-input {
 
 .IconButton {
     padding: 3px;
+    cursor: pointer;
 }
 
 .IconButton:hover {
