@@ -11,6 +11,7 @@ import * as requestModel from '../../../data/models/requests'
 import { AnError } from '../../../lib/error'
 import { makeError } from '../../../combo/error/api'
 import { OrganizationNarrative } from '../../../data/models/narrative'
+import * as viewOrgActions from '../viewOrg'
 
 export interface Load extends Action {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD
@@ -144,8 +145,6 @@ export function selectNarrative(narrative: OrganizationNarrative) {
             app: { config } } = getState()
 
         // TODO: fetch narrative and populate the selected narrative accordingly...
-
-
         dispatch(selectNarrativeSuccess(narrative))
     }
 }
@@ -206,6 +205,7 @@ export function sendRequest(groupId: string, workspaceId: number) {
         try {
             const request = await orgClient.addOrRequestNarrativeToGroup(groupId, workspaceId)
             dispatch(sendRequestSuccess(request))
+            dispatch(viewOrgActions.reload(groupId))
         } catch (ex) {
             dispatch(sendRequestError(makeError({
                 code: ex.name,

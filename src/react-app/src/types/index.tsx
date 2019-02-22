@@ -386,8 +386,16 @@ export enum RequestNarrativeState {
     LOADING,
     ERROR,
     LOADED,
+    SELECTING,
+    SELECTED,
     SENDING,
     SENT
+}
+
+export enum SelectionState {
+    NONE = 0,
+    SELECTING,
+    SELECTED
 }
 
 // ViewModel / RequestAddNarrative
@@ -398,6 +406,7 @@ export interface RequestNarrativeViewModel {
     selectedNarrative: narrativeModel.OrganizationNarrative | null
     relation: orgModel.Relation
     error: AnError | null
+    selectionState: SelectionState
     saveState: SaveState
 }
 

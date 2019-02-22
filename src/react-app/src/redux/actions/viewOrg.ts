@@ -46,6 +46,21 @@ export interface LoadNormalSuccess extends Action {
     members: Array<orgModel.Member>
 }
 
+export interface ReloadNormalSuccess extends Action {
+    type: ActionFlag.VIEW_ORG_RELOAD_NORMAL_SUCCESS
+    organization: orgModel.Organization
+    relation: orgModel.Relation
+    openRequest: orgModel.RequestStatus
+    groupRequests: Array<requestModel.Request> | null
+    groupInvitations: Array<requestModel.Request> | null
+    requestInbox: Array<requestModel.Request>
+    requestOutbox: Array<requestModel.Request>
+    narrativesSortBy: string
+    narratives: Array<orgModel.NarrativeResource>
+    sortMembersBy: string,
+    members: Array<orgModel.Member>
+}
+
 export interface LoadInaccessiblePrivateSuccess extends Action {
     type: ActionFlag.VIEW_ORG_LOAD_INACCESSIBLE_PRIVATE_SUCCESS
     organization: orgModel.InaccessiblePrivateOrganization
@@ -237,7 +252,6 @@ export function removeNarrative(narrative: orgModel.NarrativeResource) {
 
         try {
             await orgClient.removeNarrativeFromOrg(groupId, narrative.workspaceId)
-
             dispatch(removeNarrativeSuccess(narrative.workspaceId))
         } catch (ex) {
             dispatch(removeNarrativeError({
@@ -392,6 +406,28 @@ export function loadNormalSuccess(
     members: Array<orgModel.Member>): LoadNormalSuccess {
     return {
         type: ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS,
+        organization, relation, openRequest,
+        groupRequests, groupInvitations,
+        requestInbox, requestOutbox,
+        narrativesSortBy,
+        narratives, sortMembersBy, members
+    }
+}
+
+export function reloadNormalSuccess(
+    organization: orgModel.Organization,
+    relation: orgModel.Relation,
+    openRequest: orgModel.RequestStatus,
+    groupRequests: Array<requestModel.Request> | null,
+    groupInvitations: Array<requestModel.Request> | null,
+    requestInbox: Array<requestModel.Request>,
+    requestOutbox: Array<requestModel.Request>,
+    narrativesSortBy: string,
+    narratives: Array<orgModel.NarrativeResource>,
+    sortMembersBy: string,
+    members: Array<orgModel.Member>): ReloadNormalSuccess {
+    return {
+        type: ActionFlag.VIEW_ORG_RELOAD_NORMAL_SUCCESS,
         organization, relation, openRequest,
         groupRequests, groupInvitations,
         requestInbox, requestOutbox,
@@ -703,7 +739,7 @@ export function reload(organizationId: string) {
                 searchBy: viewModel.searchMembersBy
             })
 
-            dispatch(loadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations,
+            dispatch(reloadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations,
                 requestInbox, requestOutbox, narrativesSortBy, narratives, sortMembersBy, members))
         } catch (ex) {
             dispatch(loadError({

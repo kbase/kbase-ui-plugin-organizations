@@ -71,6 +71,46 @@ export function loadNormalSuccess(state: types.StoreState, action: actions.LoadN
     }
 }
 
+export function reloadNormalSuccess(state: types.StoreState, action: actions.ReloadNormalSuccess): types.StoreState {
+    const viewModel = state.views.viewOrgView.viewModel
+    if (viewModel === null) {
+        return state
+    }
+    if (viewModel.kind !== types.ViewOrgViewModelKind.NORMAL) {
+        return state
+    }
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            viewOrgView: {
+                ...state.views.viewOrgView,
+                loadingState: types.ComponentLoadingState.SUCCESS,
+                error: null,
+                viewModel: {
+                    kind: types.ViewOrgViewModelKind.NORMAL,
+                    organization: action.organization,
+                    relation: action.relation,
+                    openRequest: action.openRequest,
+                    groupRequests: action.groupRequests,
+                    groupInvitations: action.groupInvitations,
+                    requestInbox: action.requestInbox,
+                    requestOutbox: action.requestOutbox,
+                    sortNarrativesBy: action.narrativesSortBy,
+                    searchNarrativesBy: '',
+                    narratives: action.narratives,
+                    sortMembersBy: action.sortMembersBy,
+                    members: action.members,
+                    searchMembersBy: '',
+                    subViews: {
+                        ...viewModel.subViews,
+                    }
+                } as types.ViewOrgViewModel
+            }
+        }
+    }
+}
+
 export function loadInaccessiblePrivateSuccess(state: types.StoreState, action: actions.LoadInaccessiblePrivateSuccess): types.StoreState {
     return {
         ...state,
@@ -144,9 +184,10 @@ export function removeNarrativeSuccess(state: types.StoreState, action: actions.
                     ...state.views.viewOrgView.viewModel,
                     organization: {
                         ...state.views.viewOrgView.viewModel.organization,
-                        narratives: newNarratives
+                        narratives: newNarratives,
+                        narrativeCount: newNarratives.length
                     },
-                    narratives: newDisplayNarratives
+                    narratives: newDisplayNarratives,
                 }
             }
         }
@@ -233,6 +274,8 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
             return loadStart(state, action as actions.LoadStart)
         case ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS:
             return loadNormalSuccess(state, action as actions.LoadNormalSuccess)
+        case ActionFlag.VIEW_ORG_RELOAD_NORMAL_SUCCESS:
+            return reloadNormalSuccess(state, action as actions.ReloadNormalSuccess)
         case ActionFlag.VIEW_ORG_LOAD_INACCESSIBLE_PRIVATE_SUCCESS:
             return loadInaccessiblePrivateSuccess(state, action as actions.LoadInaccessiblePrivateSuccess)
         case ActionFlag.VIEW_ORG_LOAD_ERROR:

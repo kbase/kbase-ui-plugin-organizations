@@ -3,7 +3,8 @@ import * as actions from '../../actions/viewOrganization/requestAddNarrative'
 import {
     StoreState, SaveState, NarrativeState, View,
     RequestNarrativeViewModel, ViewOrgViewModelKind,
-    ViewState
+    ViewState,
+    SelectionState
 } from '../../../types'
 import { ActionFlag } from '../../actions'
 
@@ -27,6 +28,7 @@ export function loadSuccess(state: View<RequestNarrativeViewModel>, action: acti
             selectedNarrative: null,
             relation: action.relation,
             error: null,
+            selectionState: SelectionState.NONE,
             saveState: SaveState.SAVED
         }
     }
@@ -65,7 +67,6 @@ export function sendRequestSuccess(state: View<RequestNarrativeViewModel>, actio
             ...state.viewModel,
             saveState: SaveState.SAVED
         }
-
     }
 
     const viewModel = newState.viewModel
@@ -113,7 +114,7 @@ export function sendRequestError(state: View<RequestNarrativeViewModel>, action:
     }
 }
 
-export function selectNarrativeSuccess(state: View<RequestNarrativeViewModel>, action: actions.SelectNarrativeSuccess): View<RequestNarrativeViewModel> {
+export function selectNarrativeStart(state: View<RequestNarrativeViewModel>, action: actions.SelectNarrativeStart): View<RequestNarrativeViewModel> {
     if (state.viewModel === null) {
         return state
     }
@@ -121,10 +122,24 @@ export function selectNarrativeSuccess(state: View<RequestNarrativeViewModel>, a
         ...state,
         error: null,
         viewModel: {
+            ...state.viewModel
+        }
+    }
+}
+
+export function selectNarrativeSuccess(state: View<RequestNarrativeViewModel>, action: actions.SelectNarrativeSuccess): View<RequestNarrativeViewModel> {
+    if (state.viewModel === null) {
+        return state
+    }
+    const newState = {
+        ...state,
+        error: null,
+        viewModel: {
             ...state.viewModel,
             selectedNarrative: action.narrative
         }
     }
+    return newState
 }
 
 export function unload(state: View<RequestNarrativeViewModel>, action: actions.Unload): View<RequestNarrativeViewModel> {
@@ -162,6 +177,8 @@ function localReducer(state: View<RequestNarrativeViewModel>, action: Action): V
             return sendRequestSuccess(state, action as actions.SendRequestSuccess)
         case ActionFlag.REQUEST_ADD_NARRATIVE_LOAD_ERROR:
             return sendRequestStart(state, action as actions.SendRequestStart)
+        case ActionFlag.REQUEST_ADD_NARRATIVE_SELECT_NARRATIVE_START:
+            return selectNarrativeStart(state, action as actions.SelectNarrativeStart)
         case ActionFlag.REQUEST_ADD_NARRATIVE_SELECT_NARRATIVE_SUCCESS:
             return selectNarrativeSuccess(state, action as actions.SelectNarrativeSuccess)
         case ActionFlag.REQUEST_ADD_NARRATIVE_UNLOAD:
