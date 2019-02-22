@@ -11,15 +11,17 @@ interface LoaderProps {
 }
 
 interface LoaderState {
-
 }
 
 class Loader extends React.Component<LoaderProps, LoaderState> {
+    times: number
     constructor(props: LoaderProps) {
         super(props)
+        this.times = 0
     }
 
     render() {
+        this.times += 1;
         if (this.props.user) {
             return (
                 <Owner user={this.props.user} avatarSize={this.props.avatarSize} showAvatar={this.props.showAvatar} />
@@ -27,7 +29,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
         } else {
             return (
                 <div>
-                    Loading user...
+                    <Icon type="loading" />{' '}Loading owner...
                 </div>
             )
         }
@@ -45,6 +47,7 @@ import { connect } from 'react-redux'
 import { StoreState } from '../../types';
 import * as actions from '../../redux/actions/entities'
 import * as orgModel from '../../data/models/organization/model'
+import { Icon } from 'antd'
 
 
 export interface OwnProps {

@@ -401,7 +401,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     </div>
                     <div className="BriefOrganization-infoTableCol2">
                         {/* TODO: render as Member or Owner component */}
-                        <Owner username={org.owner.username} avatarSize={16} showAvatar={false} />
+                        <Owner username={org.owner.username} avatarSize={16} showAvatar={false} key={org.owner.username} />
                     </div>
                 </div>
                 <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">

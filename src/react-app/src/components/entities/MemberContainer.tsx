@@ -26,7 +26,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
         } else {
             return (
                 <div>
-                    Loading user...
+                    <Icon type="loading" />{' '}Loading member...
                 </div>
             )
         }
@@ -44,6 +44,7 @@ import { connect } from 'react-redux'
 import { StoreState } from '../../types';
 import * as actions from '../../redux/actions/entities'
 import * as orgModel from '../../data/models/organization/model'
+import { Icon } from 'antd'
 
 
 export interface OwnProps {

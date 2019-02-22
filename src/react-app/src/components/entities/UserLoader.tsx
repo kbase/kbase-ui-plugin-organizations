@@ -27,7 +27,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
         } else {
             return (
                 <div>
-                    Loading user...
+                    <Icon type="loading" />{' '}Loading user...
                 </div>
             )
         }
@@ -44,6 +44,7 @@ import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
 import { StoreState } from '../../types';
 import * as actions from '../../redux/actions/entities'
+import { Icon } from 'antd'
 
 
 export interface OwnProps {
