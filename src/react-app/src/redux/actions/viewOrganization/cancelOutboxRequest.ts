@@ -1,17 +1,12 @@
 import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
-
 import { ActionFlag } from '../index'
 import {
     StoreState,
-    AppError,
-    UIError,
-    UIErrorType,
     ViewOrgViewModelKind
 } from '../../../types'
-
 import * as requestModel from '../../../data/models/requests'
-import { AnError, makeError } from '../../../lib/error';
+import { AnError, makeError } from '../../../lib/error'
 
 export interface CancelJoinRequest extends Action {
     type: ActionFlag.VIEW_ORG_CANCEL_JOIN_REQUEST
@@ -75,8 +70,7 @@ export function cancelRequest(requestId: requestModel.RequestID) {
         })
 
         try {
-            await requestClient.cancelRequest(requestId)
-
+            const request = await requestClient.cancelRequest(requestId)
             const requests: Array<requestModel.Request> = await requestClient.getRequestOutboxForOrg(viewModel.organization.id)
 
             dispatch({

@@ -9,6 +9,7 @@ import {
 } from '../../../types'
 
 import * as requestModel from '../../../data/models/requests'
+import * as viewOrgActions from '../viewOrg'
 
 
 export interface AcceptRequestAction<T> extends Action<T> {
@@ -78,7 +79,7 @@ export function acceptRequest(requestId: requestModel.RequestID) {
         })
 
         try {
-            await requestClient.acceptRequest(requestId)
+            const request = await requestClient.acceptRequest(requestId)
 
             // refetch the inbox
             const inbox = await requestClient.getCombinedRequestInboxForOrg(viewModel.organization.id)
@@ -87,9 +88,7 @@ export function acceptRequest(requestId: requestModel.RequestID) {
                 type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_SUCCESS,
                 requests: inbox
             })
-
-
-
+            dispatch(viewOrgActions.reload(request.organizationId))
             // send the inbox in the success
         } catch (ex) {
             dispatch({

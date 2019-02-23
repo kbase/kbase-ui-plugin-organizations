@@ -14,9 +14,9 @@ import { UserQuery } from '../../../data/model'
 import * as orgModel from '../../../data/models/organization/model'
 import * as userModel from '../../../data/models/user'
 import * as requestModel from '../../../data/models/requests'
-import { AnError } from '../../../combo/error/api';
-import { makeError } from '../../../lib/error';
-
+import { AnError } from '../../../combo/error/api'
+import { makeError } from '../../../lib/error'
+import * as viewOrgActions from '../viewOrg'
 // View Loading
 
 export interface Load extends Action {
@@ -520,6 +520,7 @@ export function sendInvitation() {
         requestClient.inviteUserToJoinOrg(id, selectedUser.user.username)
             .then((request) => {
                 dispatch(sendInvitationSuccess())
+                dispatch(viewOrgActions.reload(id))
             })
             .catch((err) => {
                 dispatch(sendInvitationError(makeError({
