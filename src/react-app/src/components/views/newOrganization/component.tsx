@@ -5,7 +5,8 @@ import { Button, Icon, Modal, Input, Checkbox, Tooltip, Collapse, Tabs } from 'a
 import md5 from 'md5'
 import {
     EditableOrganization, SaveState, ValidationState, EditState,
-    AppError, Editable, ValidationErrorType, SyncState, EditableString, EditableNullableString, EditableBoolean
+    AppError, Editable, ValidationErrorType, SyncState, EditableString,
+    EditableNullableString, EditableBoolean
 } from '../../../types';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import OrgLogo from '../../OrgLogo'
@@ -894,8 +895,8 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         }
 
         return (
-            <div className="NewOrganization">
-                <div style={{ minWidth: '50em', maxWidth: '100em', margin: '0 auto' }}>
+            <div className="NewOrganization scrollable-flex-column">
+                <div className="NewOrganization-main scrollable-flex-column">
                     {this.renderEditor()}
                 </div>
                 {/* TODO: improve error display*/}

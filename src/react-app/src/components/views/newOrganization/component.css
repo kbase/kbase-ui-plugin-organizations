@@ -220,4 +220,13 @@
     justify-content: center;
 }
 
+/* minWidth: '50em', maxWidth: '100em', margin: '0 auto' */
+
+.NewOrganization-main {
+    flex: 1 1 0px;
+    min-width: 50em;
+    max-width: 100em;
+    margin: 0 auto;
+}
+
 /* new editor layout ends */

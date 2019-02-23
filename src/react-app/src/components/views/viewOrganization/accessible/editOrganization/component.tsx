@@ -461,77 +461,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-    // renderLogoURLRowx() {
-    //     const tooltip = (
-    //         <React.Fragment>
-    //             <p>
-    //                 Each Organization will display a logo. You may specific your own logo by entering the URL for an image, or leave
-    //                 this field blank and a default logo will be displayed, using the first letter of your org name and a randomly
-    //                 generated color (based on your org id).
-    //             </p>
-    //             <p>
-    //                 Please don't use large images, and try to keep them roughly square. The logo image display will be constrained
-    //                 to no larger than 100 pixels wide. Non-square logos may not look good in the Orgs list or on your Org page.
-    //             </p>
-    //             <table>
-    //                 <tbody>
-    //                     <tr>
-    //                         <th>
-    //                             required
-    //                         </th>
-    //                         <td>
-    //                             no
-    //                         </td>
-    //                     </tr>
-
-    //                     <tr>
-    //                         <th>
-    //                             max length
-    //                         </th>
-    //                         <td>
-    //                             1000 characters
-    //                         </td>
-    //                     </tr>
-    //                     <tr>
-    //                         <th>
-    //                             allowed
-    //                         </th>
-    //                         <td>
-    //                             a full https:// url. E.g. https://my.org/myimage.png<br />
-    //                             note that only <i>https</i> urls are accepted.
-    //                         </td>
-    //                     </tr>
-    //                 </tbody>
-    //             </table>
-    //         </React.Fragment>
-    //     )
-    //     const placeholder = "The URL for your Organization's logo (optional)"
-    //     return (
-    //         <div className="EditOrganization-row">
-    //             <div className="EditOrganization-col1">
-    //                 <div className="EditOrganization-formLabel field-label">
-    //                     <Tooltip title={tooltip}>
-    //                         Logo URL
-    //                     </Tooltip>
-    //                 </div>
-    //             </div>
-    //             <div className="EditOrganization-col2">
-    //                 <div className="EditOrganization-formControl">
-    //                     <Input value={this.props.editedOrganization.logoUrl.value || ''}
-    //                         className={this.calcFieldClass(this.props.editedOrganization.logoUrl)}
-    //                         placeholder={placeholder}
-    //                         onChange={this.onLogoUrlChange.bind(this)} />
-    //                     {this.renderFieldError(this.props.editedOrganization.logoUrl)}
-    //                 </div>
-    //             </div>
-    //             <div className="EditOrganization-col3">
-    //                 <div className="EditOrganization-preview-logo">
-    //                     {this.renderLogoPreview()}
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     )
-    // }
 
     renderLogoURLRow(logoUrlField: EditableNullableString, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void) {
         const tooltip = (
@@ -605,72 +534,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-    // renderHomeURLRow() {
-    //     const tooltip = (
-    //         <React.Fragment>
-    //             <p>
-    //                 Each Organization may display a home page url. This should be considered the canonical home for your Organization, if
-    //                 it also exists outside of KBase.
-    //             </p>
-    //             <table>
-    //                 <tbody>
-    //                     <tr>
-    //                         <th>
-    //                             required
-    //                         </th>
-    //                         <td>
-    //                             no
-    //                         </td>
-    //                     </tr>
-
-    //                     <tr>
-    //                         <th>
-    //                             max length
-    //                         </th>
-    //                         <td>
-    //                             1000 characters
-    //                         </td>
-    //                     </tr>
-    //                     <tr>
-    //                         <th>
-    //                             allowed
-    //                         </th>
-    //                         <td>
-    //                             a full url. E.g. http://my.org/myimage.png<br />
-    //                             note that both <i>http></i> and <i>https</i> urls are accepted.
-    //                         </td>
-    //                     </tr>
-    //                 </tbody>
-    //             </table>
-    //         </React.Fragment>
-    //     )
-    //     const placeholder = "The URL for your Organization's home page (optional)"
-    //     return (
-    //         <div className="EditOrganization-row">
-    //             <div className="EditOrganization-col1">
-    //                 <div className="EditOrganization-formLabel field-label">
-    //                     <Tooltip title={tooltip}>
-    //                         Home Page URL
-    //                     </Tooltip>
-    //                 </div>
-    //             </div>
-    //             <div className="EditOrganization-col2">
-    //                 <div className="EditOrganization-formControl">
-    //                     <Input value={this.props.editedOrganization.homeUrl.value || ''}
-    //                         className={this.calcFieldClass(this.props.editedOrganization.homeUrl)}
-    //                         placeholder={placeholder}
-    //                         onChange={this.onHomeUrlChange.bind(this)} />
-    //                     {this.renderFieldError(this.props.editedOrganization.homeUrl)}
-    //                 </div>
-    //             </div>
-    //             <div className="EditOrganization-col3">
-    //                 <div className="EditOrganization-field-name">
-    //                     <a href={this.props.editedOrganization.homeUrl.value || ''} target="_blank">{this.props.editedOrganization.homeUrl.value || ''}</a>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     )
-    // }
 
     renderHomeURLPreview(homeUrlField: EditableNullableString) {
         if (homeUrlField.value &&
@@ -782,77 +645,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-    // renderPrivatePublicRow() {
-    //     const tooltip = (
-    //         <React.Fragment>
-    //             <p>
-    //                 Set the Organization to "hidden" to prevent it from appearing in the listing and from being exposed
-    //                 as an Org page for any non-member.
-    //             </p>
-    //             <p>
-    //                 You may invite users directly to your org. When doing so they will receive a notification with a link to the
-    //                 org page. When a user lands on the org page they will not be shown information about the org, but will be available
-    //                 to accept the invitation and instantly have access to it.
-    //             </p>
-    //             <p>
-    //                 A user with an invitation who lands on the org page will not see information about the org, but will be able to
-    //                 submit a Join request.
-    //             </p>
-    //             {/* {this.renderCollapse((
-    //                 <React.Fragment>
-    //                     <p>
-    //                         You may invite users directly to your org. When doing so they will receive a notification with a link to the
-    //                         org page. When a user lands on the org page they will not be shown information about the org, but will be available
-    //                         to accept the invitation and instantly have access to it.
-    //                     </p>
-    //                     <p>
-    //                         A user with an invitation who lands on the org page will not see information about the org, but will be able to
-    //                         submit a Join request.
-    //                     </p>
-    //                 </React.Fragment>
-    //             ))} */}
-
-    //             <table>
-    //                 <tbody>
-    //                     <tr>
-    //                         <th>
-    //                             required
-    //                         </th>
-    //                         <td>
-    //                             no
-    //                         </td>
-    //                     </tr>
-    //                 </tbody>
-    //             </table>
-    //         </React.Fragment>
-    //     )
-    //     return (
-    //         <div className="EditOrganization-row">
-    //             <div className="EditOrganization-col1">
-    //                 <div className="EditOrganization-formLabel field-label">
-    //                     <Tooltip title={tooltip}>
-    //                         Hidden?
-    //                     </Tooltip>
-    //                 </div>
-    //             </div>
-    //             <div className="EditOrganization-col2">
-    //                 <div className="EditOrganization-formControl">
-    //                     <Checkbox
-    //                         checked={this.props.editedOrganization.isPrivate.value}
-    //                         className={this.calcFieldClass(this.props.editedOrganization.isPrivate)}
-    //                         onChange={this.onIsPrivateChange.bind(this)} />
-    //                     {this.renderFieldError(this.props.editedOrganization.isPrivate)}
-    //                 </div>
-    //             </div>
-    //             <div className="EditOrganization-col3">
-    //                 <div className="EditOrganization-preview-isPrivate">
-    //                     {this.renderIsPrivate(this.props.editedOrganization.isPrivate.value)}
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     )
-    // }
-
     renderPrivatePublicRow(isPrivateField: EditableBoolean, onChange: (e: CheckboxChangeEvent) => void) {
         const tooltip = (
             <React.Fragment>
@@ -922,75 +714,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
-    // renderResearchInterestsRow() {
-    //     const tooltip = (
-    //         <React.Fragment>
-    //             <p>
-    //                 Each organization must have a short description of research interests or purpose.
-    //             </p>
-    //             <p>
-    //                 This text is displayed in the organizations list and the organization's page. It is most helpful
-    //                 in the list context to help users quickly scan the list.
-    //             </p>
-    //             <table>
-    //                 <tbody>
-    //                     <tr>
-    //                         <th>
-    //                             required
-    //                         </th>
-    //                         <td>
-    //                             yes
-    //                         </td>
-    //                     </tr>
-
-    //                     <tr>
-    //                         <th>
-    //                             max length
-    //                         </th>
-    //                         <td>
-    //                             200 characters
-    //                         </td>
-    //                     </tr>
-    //                     <tr>
-    //                         <th>
-    //                             allowed
-    //                         </th>
-    //                         <td>
-    //                             unformatted text
-    //                         </td>
-    //                     </tr>
-    //                 </tbody>
-    //             </table>
-    //         </React.Fragment>
-    //     )
-    //     const placeholder = 'List your areas of interest. Systems biology, microbial ecology, plant genomics'
-    //     return (
-    //         <div className="EditOrganization-row">
-    //             <div className="EditOrganization-col1">
-    //                 <div className="EditOrganization-formLabel field-label">
-    //                     <Tooltip title={tooltip}>
-    //                         Research Interests
-    //                     </Tooltip>
-    //                 </div>
-    //             </div>
-    //             <div className="EditOrganization-col2">
-    //                 <div className="EditOrganization-formControl">
-    //                     <TextArea value={this.props.editedOrganization.researchInterests.value || ''}
-    //                         className={this.calcFieldClass(this.props.editedOrganization.researchInterests) + ' EditOrganization-control-researchInterests'}
-    //                         autosize={{ minRows: 2, maxRows: 2 }}
-    //                         placeholder={placeholder}
-    //                         onChange={this.onResearchInterestsChange.bind(this)} />
-    //                     {this.renderFieldError(this.props.editedOrganization.researchInterests)}
-    //                 </div>
-    //             </div>
-    //             <div className="EditOrganization-col3">
-    //                 <div className="EditOrganization-preview-researchInterests">
-    //                     {this.props.editedOrganization.researchInterests.value || ''}
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     )
-    // }
 
     renderResearchInterestsRow(researchInterestsField: EditableString, onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void) {
         const tooltip = (
@@ -1057,79 +780,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
             </div>
         )
     }
-
-    // renderDescriptionRow() {
-    //     const tooltip = (
-    //         <React.Fragment>
-    //             <p>
-    //                 Each organization must have a description which communicates the purpose of this organization.
-    //             </p>
-    //             <p>
-    //                 The description is in <a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown</a> format
-    //                 and may be quite long. It will be presented in a scrolling area.
-    //             </p>
-    //             <p>
-    //                 Please be mindful of embedding large images or other content which may interfere with the display of your Organization.
-    //             </p>
-    //             <table>
-    //                 <tbody>
-    //                     <tr>
-    //                         <th>
-    //                             required
-    //                         </th>
-    //                         <td>
-    //                             yes
-    //                         </td>
-    //                     </tr>
-
-    //                     <tr>
-    //                         <th>
-    //                             max length
-    //                         </th>
-    //                         <td>
-    //                             1024 characters
-    //                         </td>
-    //                     </tr>
-    //                     <tr>
-    //                         <th>
-    //                             allowed
-    //                         </th>
-    //                         <td>
-    //                             standard <a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown</a>
-    //                         </td>
-    //                     </tr>
-    //                 </tbody>
-    //             </table>
-    //         </React.Fragment>
-    //     )
-    //     const placeholder = 'Text or Markdown describing your Organization'
-    //     return (
-    //         <div className="EditOrganization-row">
-    //             <div className="EditOrganization-col1">
-    //                 <div className="EditOrganization-formLabel field-label">
-    //                     <Tooltip title={tooltip}>
-    //                         Description
-    //                     </Tooltip>
-    //                 </div>
-    //             </div>
-    //             <div className="EditOrganization-col2">
-    //                 <div className="EditOrganization-formControl">
-    //                     <TextArea value={this.props.editedOrganization.description.value || ''}
-    //                         className={this.calcFieldClass(this.props.editedOrganization.description) + ' EditOrganization-control-description'}
-    //                         autosize={{ minRows: 5, maxRows: 15 }}
-    //                         placeholder={placeholder}
-    //                         onChange={this.onDescriptionChange.bind(this)} />
-    //                     {this.renderFieldError(this.props.editedOrganization.description)}
-    //                 </div>
-    //             </div>
-    //             <div className="EditOrganization-col3">
-    //                 <div className="EditOrganization-preview-description"
-    //                     dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.editedOrganization.description.value || '') })}
-    //                 />
-    //             </div>
-    //         </div>
-    //     )
-    // }
 
     renderDescriptionRow(descriptionField: EditableString, onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void) {
         const tooltip = (
@@ -1247,18 +897,6 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     renderEditor() {
         return (
             <form id="editOrganizationForm" className="EditOrganization-editor scrollable-flex-column" onSubmit={this.onSubmit.bind(this)}>
-                {/* <div className="EditOrganization-row">
-                    <div className="EditOrganization-col1">
-                    </div>
-                    <div className="EditOrganization-col2">
-                        <div style={{ flex: '1 1 0px' }}>
-                            <h3>Edit Your Organization</h3>
-                        </div>
-                    </div>
-                    <div className="EditOrganization-col3">
-                        <h3>Preview</h3>
-                    </div>
-                </div> */}
                 {this.renderEditorHeader()}
                 <div className="EditOrganization-body">
                     {this.renderNameRow(this.props.editedOrganization.name, this.onNameChange.bind(this))}
@@ -1384,12 +1022,9 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         if (this.state.cancelToViewer) {
             return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />
         }
-
         return (
-            <div className="EditOrganization">
-                {/* <MainMenu buttons={this.renderMenuButtons()} /> */}
-
-                <div style={{ minWidth: '50em', maxWidth: '100em', margin: '0 auto' }}>
+            <div className="EditOrganization scrollable-flex-column">
+                <div className="EditOrganization-main scrollable-flex-column">
                     {this.renderEditor()}
                 </div>
             </div >
