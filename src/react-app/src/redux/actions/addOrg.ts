@@ -6,6 +6,7 @@ import { StoreState, AppError, UIError, UIErrorType, EditableOrganization, EditS
 
 import * as orgModel from '../../data/models/organization/model'
 import Validation from '../../data/models/organization/validation'
+import DebouncingProcess from '../../lib/DebouncingProcess'
 
 // ACTIONS
 
@@ -289,7 +290,7 @@ export function updateIdPass(id: string): UpdateIdPass {
     }
 }
 
-// Update Gravatar Hash
+// Update Logo URL Hash
 
 export function updateLogoUrlSuccess(logoUrl: string | null): UpdateLogoUrlSuccess {
     return {
@@ -306,6 +307,22 @@ export function updateLogoUrlError(logoUrl: string | null, error: ValidationStat
     }
 }
 
+// Update Home URL Hash
+
+export function updateHomeUrlSuccess(logoUrl: string | null): UpdateHomeUrlSuccess {
+    return {
+        type: ActionFlag.ADD_ORG_UPDATE_HOME_URL_SUCCESS,
+        homeUrl: logoUrl
+    }
+}
+
+export function updateHomeUrlError(logoUrl: string | null, error: ValidationState): UpdateHomeUrlError {
+    return {
+        type: ActionFlag.ADD_ORG_UPDATE_HOME_URL_ERROR,
+        homeUrl: logoUrl,
+        error: error
+    }
+}
 
 // Update Id
 
@@ -545,6 +562,71 @@ export function updateLogoUrl(name: string | null) {
     }
 }
 
+let checkHomeUrlProcess: DebouncingProcess
+
+class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
+    dispatch: ThunkDispatch<StoreState, void, Action>
+    url: string
+    constructor({ delay, dispatch, url }: { delay: number, dispatch: ThunkDispatch<StoreState, void, Action>, url: string }) {
+        super({ delay })
+
+        this.dispatch = dispatch
+        this.url = url
+    }
+
+    async task(): Promise<void> {
+        try {
+            const result = await fetch(this.url, {
+                method: 'HEAD',
+                // mode: 'no-cors'
+            })
+            if (this.canceled) {
+                return
+            }
+            let isError = false
+            if (result.status === 404) {
+                this.dispatch(updateHomeUrlError(this.url, {
+                    type: ValidationErrorType.ERROR,
+                    validatedAt: new Date(),
+                    message: 'This home url does not exist'
+                }))
+                isError = true
+            } else if (result.status !== 200) {
+                this.dispatch(updateHomeUrlError(this.url, {
+                    type: ValidationErrorType.ERROR,
+                    validatedAt: new Date(),
+                    message: 'This home url responded with a ' + result.status + ' code'
+                }))
+                isError = true
+            } else {
+                const contentType = result.headers.get('Content-Type')
+                if (contentType === null ||
+                    !/^text\/html$\//.test(contentType)) {
+                    this.dispatch(updateHomeUrlError(this.url, {
+                        type: ValidationErrorType.ERROR,
+                        validatedAt: new Date(),
+                        message: 'This home url does not not appear to be html'
+                    }))
+                    isError = true
+                }
+            }
+            if (!isError) {
+                this.dispatch(updateHomeUrlSuccess(this.url))
+            }
+        } catch (ex) {
+            if (this.canceled) {
+                return
+            }
+            this.dispatch(updateHomeUrlError(this.url, {
+                type: ValidationErrorType.ERROR,
+                validatedAt: new Date(),
+                message: 'Error checking for home url'
+            }))
+        }
+        this.dispatch(addOrgEvaluate())
+    }
+}
+
 export function updateHomeUrl(homeUrl: string | null) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
         const [validatedHomeUrl, error] = Validation.validateOrgHomeUrl(homeUrl)
@@ -555,12 +637,28 @@ export function updateHomeUrl(homeUrl: string | null) {
                 homeUrl: homeUrl,
                 error: error
             } as UpdateHomeUrlError)
-        } else {
-            dispatch({
-                type: ActionFlag.ADD_ORG_UPDATE_HOME_URL_SUCCESS,
-                homeUrl: validatedHomeUrl
-            })
+            return
+
         }
+
+        // initial success, but the check may invalidate it.
+        dispatch({
+            type: ActionFlag.ADD_ORG_UPDATE_HOME_URL_SUCCESS,
+            homeUrl: validatedHomeUrl
+        })
+
+        dispatch(addOrgEvaluate())
+
+        // if (validatedHomeUrl !== null) {
+
+        //     checkHomeUrlProcess = new CheckIfHomeUrlExistsProcess({
+        //         delay: 100,
+        //         url: validatedHomeUrl,
+        //         dispatch: dispatch
+        //     })
+
+        //     checkHomeUrlProcess.start()
+        // }
     }
 }
 
@@ -626,47 +724,7 @@ class Debouncer {
 
 let activeDebouncer: Debouncer | null = null
 
-abstract class DebouncingProcess {
 
-    delay: number
-    canceled: boolean
-    timer: number | null
-
-    constructor({ delay }: { delay: number }) {
-        this.delay = delay
-        this.canceled = false
-        this.timer = null
-    }
-
-    abstract async task(): Promise<void>
-
-    start() {
-        if (this.timer) {
-            window.clearTimeout(this.timer)
-        }
-        this.timer = window.setTimeout(async () => {
-            if (!this.canceled) {
-                try {
-                    // TODO: left off here. we need to be able to deny
-                    // the consequence of the check if we have canceled...
-                    // so inside the fun
-                    await this.task()
-                } catch (ex) {
-                    console.warn('debouncing process exception: ' + ex.message)
-                }
-            } else {
-                this.canceled = false;
-            }
-            this.timer = null;
-        }, this.delay)
-    }
-
-    cancel() {
-        if (this.timer) {
-            this.canceled = true;
-        }
-    }
-}
 
 class CheckIfExistsProcess extends DebouncingProcess {
     model: orgModel.OrganizationModel
