@@ -163,14 +163,6 @@ export default class Validation {
                         validatedAt: new Date()
                     }]
             }
-            if (!url.protocol.match(/^https:$/)) {
-                return [
-                    homeUrl, {
-                        type: ValidationErrorType.ERROR,
-                        message: 'Only https (secure) urls are supported',
-                        validatedAt: new Date()
-                    }]
-            }
         } catch (ex) {
             return [
                 homeUrl, {
