@@ -106,7 +106,8 @@ export function removeOrganization(organizationId: orgModel.OrganizationID, rela
         }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
         try {
             await orgClient.removeRelatedOrganization({ organizationId, relatedOrganizationId })

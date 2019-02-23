@@ -8,6 +8,7 @@ import { Filter } from '../../../data/models/organization/model'
 import MainMenu from '../../menu/component'
 import { NavLink } from 'react-router-dom'
 import './component.css'
+import { filter } from 'bluebird';
 
 export interface OrganizationsBrowserProps {
     totalCount: number;
@@ -410,8 +411,21 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     description={this.props.error.message} />
             )
         } else {
+            let myOrgsUnfiltered: boolean
+            // TODO: the filter values should be enums.
+            if (this.props.filter.roleType === 'myorgs' &&
+                this.props.filter.roles.length === 0 &&
+                this.props.filter.privacy === 'any' &&
+                // todo should be based on parsed search
+                (!this.searchInput.current ||
+                    this.searchInput.current.value.length === 0)) {
+                myOrgsUnfiltered = true
+            } else {
+                myOrgsUnfiltered = false
+            }
+
             return (
-                <Organizations />
+                <Organizations myOrgsUnfiltered={myOrgsUnfiltered} />
             )
         }
     }

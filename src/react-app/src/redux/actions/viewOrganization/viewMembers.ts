@@ -158,7 +158,8 @@ export function promoteToAdmin(memberUsername: string) {
         }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         orgClient.memberToAdmin(viewModel.organization.id, memberUsername)
@@ -233,7 +234,8 @@ export function demoteToMember(memberUsername: string) {
         }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         orgClient.adminToMember(viewModel.organization.id, memberUsername)
@@ -308,7 +310,8 @@ export function removeMember(memberUsername: string) {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         orgClient.removeMember(viewModel.organization.id, memberUsername)

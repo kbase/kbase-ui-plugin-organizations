@@ -35,7 +35,8 @@ export class UberModel {
 
         const orgClient = new orgModel.OrganizationModel({
             token: this.params.token, username: this.params.username,
-            groupsServiceURL: this.params.groupsServiceURL
+            groupsServiceURL: this.params.groupsServiceURL,
+            userProfileServiceURL: this.params.userProfileServiceURL
         })
 
         const requestClient = new requestModel.RequestsModel({

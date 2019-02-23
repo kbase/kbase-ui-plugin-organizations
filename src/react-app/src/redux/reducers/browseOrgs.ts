@@ -74,6 +74,7 @@ export function searchOrgsStart(state: BrowseOrgsView, action: actions.SearchOrg
         ...state,
         viewModel: {
             ...state.viewModel,
+            searchTerms: action.searchTerms,
             searching: true
         }
     }

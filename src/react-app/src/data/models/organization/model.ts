@@ -5,9 +5,7 @@ import {
 import * as requestModel from '../requests'
 import * as userModel from '../user'
 import Validation from './validation'
-
-// import Member from '../../../components/entities/Member';
-
+import { string } from 'prop-types';
 
 export interface OrganizationUpdate {
     name: string
@@ -89,6 +87,7 @@ export enum MemberType {
 }
 export interface Member {
     username: groupsApi.Username
+    realname: string
     joinedAt: Date
     lastVisitedAt: Date | null
     type: MemberType
@@ -291,10 +290,21 @@ function groupPermissionToWorkspacePermission(groupsPermission: string): UserWor
     }
 }
 
-export function groupToOrganization(group: groupsApi.Group, currentUser: Username): Organization {
+function getRealname(users: Map<userModel.Username, userModel.User>, username: string, defaultValue: string) {
+    const user = users.get(username)
+    if (!user) {
+        return defaultValue
+    }
+    return user.realname
+}
+
+export function groupToOrganization(group: groupsApi.Group, currentUser: Username, users: Map<userModel.Username, userModel.User>): Organization {
+
+
 
     const owner: Member = {
         username: group.owner.name,
+        realname: getRealname(users, group.owner.name, 'n/a'),
         joinedAt: new Date(group.owner.joined),
         lastVisitedAt: group.owner.lastvisit ? new Date(group.owner.lastvisit) : null,
         type: MemberType.OWNER,
@@ -307,6 +317,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
     ]).concat(group.admins.map((admin) => {
         return {
             username: admin.name,
+            realname: getRealname(users, admin.name, 'n/a'),
             joinedAt: new Date(admin.joined),
             lastVisitedAt: admin.lastvisit ? new Date(admin.lastvisit) : null,
             type: MemberType.ADMIN,
@@ -315,6 +326,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
     })).concat(group.members.map((member) => {
         return {
             username: member.name,
+            realname: getRealname(users, member.name, 'n/a'),
             joinedAt: new Date(member.joined),
             lastVisitedAt: member.lastvisit ? new Date(member.lastvisit) : null,
             type: MemberType.MEMBER,
@@ -375,50 +387,9 @@ export function groupToPrivateOrganization(group: groupsApi.InaccessiblePrivateG
     }
 }
 
-// export function determineRelation(group: Group, username: userModel.Username) {
-//     let relation: UserOrgRelation
-//     // TODO: when we have access to members, admins, and group publication status, we can 
-//     // flesh out all user relations.
-//     // const orgMembers: Array<username> = this.membersAndAdminsToMembers(members, admins, profileMap)
-
-//     if (username === group.owner) {
-//         relation = {
-//             type: UserRelationToOrganization.OWNER
-//         } as OwnerRelation
-//     } else if (group.admins.indexOf(username) >= 0) {
-//         relation = {
-//             type: UserRelationToOrganization.ADMIN
-//         } as AdminRelation
-//     } else if (group.members.indexOf(username) >= 0) {
-//         relation = {
-//             type: UserRelationToOrganization.MEMBER
-//         } as MemberRelation
-//     } else if (pendingRequests.has(group.id)) {
-//         relation = {
-//             type: UserRelationToOrganization.MEMBER_REQUEST_PENDING,
-//             requestId: pendingRequests.get(group.id)!.id
-//         } as MembershipRequestPendingRelation
-//     } else if (pendingInvites.has(group.id)) {
-//         relation = {
-//             type: UserRelationToOrganization.MEMBER_INVITATION_PENDING,
-//             requestId: pendingInvites.get(group.id)!.id
-//         } as MembershipInvitationPendingRelation
-//     } else {
-//         relation = {
-//             type: UserRelationToOrganization.VIEW
-//         } as ViewRelation
-//     }
-// }
-
 export type GroupID = string
 export type OrganizationID = GroupID
 
-
-export interface ConstructorParams {
-    groupsServiceURL: string
-    token: string
-    username: groupsApi.Username
-}
 
 export interface QueryResults {
     organizations: Array<BriefOrganization>
@@ -444,7 +415,8 @@ export function applySearch(orgs: Array<BriefOrganization>, searchTerms: Array<s
         return searchTermsRe.every((termRe) => {
             return termRe.test(org.name) ||
                 termRe.test(org.researchInterests || '') ||
-                termRe.test(org.owner.username)
+                termRe.test(org.owner.username) ||
+                termRe.test(org.owner.realname)
         })
     })
     return filteredOrgs
@@ -553,74 +525,7 @@ function applyFilter(organizations: Array<BriefOrganization>, { roleType, roles,
     return organizations.filter((org) => {
         return applyRoleType(org) && applyRole(org) && applyPrivacy(org)
     })
-
-    // switch (filter) {
-    //     case 'role:all':
-    //         return organizations
-    //     case 'notMemberOf':
-    //         return organizations.filter((org) => {
-    //             return (org.relation === UserRelationToOrganization.NONE)
-    //         })
-    //     case 'memberOf':
-    //         return organizations.filter((org) => {
-    //             return (org.relation !== UserRelationToOrganization.NONE)
-    //         })
-    //     case 'role:member':
-    //         return organizations.filter((org) => {
-    //             return (org.relation === UserRelationToOrganization.MEMBER)
-    //         })
-    //     case 'role:myorgs':
-    //         return organizations.filter((org) => {
-    //             return [
-    //                 UserRelationToOrganization.MEMBER,
-    //                 UserRelationToOrganization.ADMIN,
-    //                 UserRelationToOrganization.OWNER
-    //             ].includes(org.relation)
-    //         })
-    //     case 'role:notmyorgs':
-    //         return organizations.filter((org) => {
-    //             return ![
-    //                 UserRelationToOrganization.MEMBER,
-    //                 UserRelationToOrganization.ADMIN,
-    //                 UserRelationToOrganization.OWNER
-    //             ].includes(org.relation)
-    //         })
-
-    //     case 'role:owner':
-    //         return organizations.filter((org) => (org.relation === UserRelationToOrganization.OWNER))
-    //     case 'role:notowner':
-    //         return organizations.filter((org) => (org.relation !== UserRelationToOrganization.OWNER))
-    //     case 'role:admin':
-    //         return organizations.filter((org) => (org.relation === UserRelationToOrganization.OWNER ||
-    //             org.relation === UserRelationToOrganization.ADMIN))
-    //     case 'privacy:private':
-    //         return organizations.filter((org) => {
-    //             return org.private
-    //         })
-    //     case 'privacy:public':
-    //         return organizations.filter((org) => {
-    //             return !org.private
-    //         })
-
-    //     // TODO: re-enable when have relation again...
-    //     // case 'pending':
-    //     //     return organizations.filter((org) => (
-    //     //         org.relation.type === UserRelationToOrganization.MEMBER_INVITATION_PENDING ||
-    //     //         org.relation.type === UserRelationToOrganization.MEMBER_REQUEST_PENDING
-    //     //     ))
-    //     // case 'groupPending':
-    //     //     return organizations.filter((org) => (
-    //     //         (org.relation.type === UserRelationToOrganization.ADMIN ||
-    //     //             org.relation.type === UserRelationToOrganization.OWNER) &&
-    //     //         (org.adminRequests && org.adminRequests.length > 0)
-    //     //     ))
-    //     default:
-    //         console.warn('unknown filter : ' + filter)
-    //         return organizations
-    // }
 }
-
-
 
 // Narrative Sort and Search
 function narrativeSortByToComparator(sortBy: string) {
@@ -764,10 +669,19 @@ export function queryMembers(members: Array<Member>, query: MembersQuery) {
 //     return null
 // }
 
+
+export interface ConstructorParams {
+    groupsServiceURL: string
+    userProfileServiceURL: string
+    token: string
+    username: groupsApi.Username
+}
+
 export class OrganizationModel {
 
     params: ConstructorParams
     groupsClient: groupsApi.GroupsClient
+    usersClient: userModel.UserModel
     // organizations: Map<OrganizationID, Organization | InaccessiblePrivateOrganization>
 
     constructor(params: ConstructorParams) {
@@ -776,18 +690,50 @@ export class OrganizationModel {
             url: this.params.groupsServiceURL,
             token: this.params.token
         })
+        this.usersClient = new userModel.UserModel({
+            userProfileServiceURL: this.params.userProfileServiceURL,
+            token: this.params.token
+        })
         // this.organizations = new Map<OrganizationID, Organization>()
     }
 
     async getOrg(id: OrganizationID): Promise<Organization | InaccessiblePrivateOrganization> {
-        return this.groupsClient.getGroupById(id)
-            .then((group) => {
-                if (group.role === "None" && group.private) {
-                    return groupToPrivateOrganization(group as groupsApi.InaccessiblePrivateGroup, this.params.username)
-                } else {
-                    return groupToOrganization(group as groupsApi.Group, this.params.username)
-                }
+        const group = await this.groupsClient.getGroupById(id)
+
+        // get users from user model (profile)
+
+        if (group.role === "None" && group.private) {
+            return groupToPrivateOrganization(group as groupsApi.InaccessiblePrivateGroup, this.params.username)
+        } else {
+            const g = group as groupsApi.Group
+            // gather usernames from group
+            const usernames: Array<string> = []
+            usernames.push(g.owner.name)
+            g.admins.forEach((admin) => {
+                usernames.push(admin.name)
             })
+            g.members.forEach((member) => {
+                usernames.push(member.name)
+            })
+
+            const users = await this.usersClient.getUsers(usernames)
+
+            return groupToOrganization(g, this.params.username, users)
+        }
+    }
+
+    async getGroupUsers(group: groupsApi.Group) {
+        // gather usernames from group
+        const usernames: Array<string> = []
+        usernames.push(group.owner.name)
+        group.admins.forEach((admin) => {
+            usernames.push(admin.name)
+        })
+        group.members.forEach((member) => {
+            usernames.push(member.name)
+        })
+
+        return await this.usersClient.getUsers(usernames)
     }
 
     async getOrganization(id: OrganizationID): Promise<Organization> {
@@ -795,7 +741,10 @@ export class OrganizationModel {
         if (group.role === "None" && group.private) {
             throw new Error('Inaccessible Organization')
         }
-        return groupToOrganization(group as groupsApi.Group, this.params.username)
+
+        const users = await this.getGroupUsers(<groupsApi.Group>group)
+
+        return groupToOrganization(group as groupsApi.Group, this.params.username, users)
     }
 
     async getOrgs(ids: Array<OrganizationID>): Promise<Array<Organization | InaccessiblePrivateOrganization>> {
@@ -817,7 +766,7 @@ export class OrganizationModel {
         return ownOrgs
     }
 
-    listGroupToBriefOrganization(group: groupsApi.BriefGroup): BriefOrganization {
+    listGroupToBriefOrganization(group: groupsApi.BriefGroup, users: Map<userModel.Username, userModel.User>): BriefOrganization {
         return {
             id: group.id,
             name: group.name,
@@ -827,20 +776,12 @@ export class OrganizationModel {
             researchInterests: group.custom.researchinterests || null,
             owner: {
                 username: group.owner,
+                realname: getRealname(users, group.owner, 'n/a'),
                 lastVisitedAt: null,
                 type: MemberType.OWNER,
                 joinedAt: new Date(group.createdate),
                 title: 'Owner'
             },
-
-            // owner: {
-            //     username: group.owner.name,
-            //     lastVisitedAt: group.owner.lastvisit ? new Date(group.owner.lastvisit) : null,
-            //     type: MemberType.OWNER,
-            //     joinedAt: new Date(group.owner.joined),
-            //     title: group.owner.custom ? group.owner.custom.title : null
-            // },
-            // fix these...
             relation: groupRoleToUserRelation(group.role),
             isMember: (group.role !== "None"),
             isAdmin: (group.role === "Admin" || group.role === "Owner"),
@@ -862,8 +803,16 @@ export class OrganizationModel {
             allGroups = allGroups.concat(groups)
         } while (groups.length === groupsApi.MAX_GROUPS_PER_LIST_REQUEST)
 
+        const usernames: Set<string> = new Set()
+        allGroups.forEach((g) => {
+            usernames.add(g.owner)
+        })
+
+
+        const users = await this.usersClient.getUsers(Array.from(usernames.values()))
+
         return allGroups.map((group) => {
-            return this.listGroupToBriefOrganization(group)
+            return this.listGroupToBriefOrganization(group, users)
         })
     }
 
@@ -919,7 +868,7 @@ export class OrganizationModel {
             return Promise.reject(new Error('One or more fields are invalid'))
         }
 
-        return groupsClient.createGroup({
+        const group = await groupsClient.createGroup({
             id: newOrg.id.value,
             name: newOrg.name.value,
             logoUrl: newOrg.logoUrl.value,
@@ -928,9 +877,11 @@ export class OrganizationModel {
             description: newOrg.description.value,
             isPrivate: newOrg.isPrivate.value
         })
-            .then((group) => {
-                return groupToOrganization(group, username)
-            })
+
+        const users = await this.getGroupUsers(group)
+
+        return groupToOrganization(group, username, users)
+
     }
 
     async orgExists(id: string): Promise<boolean> {

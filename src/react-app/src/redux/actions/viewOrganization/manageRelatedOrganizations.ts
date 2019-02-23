@@ -50,7 +50,8 @@ export function load() {
         const { organization } = viewModel
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         try {
@@ -136,7 +137,8 @@ export function addOrganization(organizationId: orgModel.OrganizationID, related
         }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
         try {
             await orgClient.addRelatedOrganization({ organizationId, relatedOrganizationId })
@@ -195,7 +197,8 @@ export function removeOrganization(organizationId: orgModel.OrganizationID, rela
         }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
         try {
             await orgClient.removeRelatedOrganization({ organizationId, relatedOrganizationId })
@@ -281,7 +284,8 @@ export function search(query: string) {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
         try {
             const availableOrgs = applyQuery(vm.availableOrganizations.organizations, query)

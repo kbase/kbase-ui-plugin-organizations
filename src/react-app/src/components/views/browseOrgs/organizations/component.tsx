@@ -10,6 +10,7 @@ import BriefOrganization from '../../../BriefOrganization';
 export interface OrganizationsProps {
     organizations: Array<orgModel.BriefOrganization>
     openRequests: Map<orgModel.OrganizationID, orgModel.RequestStatus>
+    myOrgsUnfiltered: boolean
 }
 
 export interface OrganizationsState {
@@ -47,22 +48,34 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
         const createButton = (
             <Button size="small" type="default">create</Button>
         )
-        const message = (
-            <div>
-                <p>
-                    You neither own nor are a member of any Organizations, so there is nothing to show you here.
-                </p>
-                <p>
-                    You may use the <b>Create Organization</b> button on the upper right to
-                    create your own Organization, or use the <b>All Orgs</b> filter on the right
-                    to browse and search all public Organizations.
-                </p>
-                {/* <p>
-                    You can use the filter on the right to {browseButton} through existing public Organizations,
-                    or you may {createButton} your own Organization.
-                </p> */}
-            </div>
-        )
+        let message
+        if (this.props.myOrgsUnfiltered) {
+            message = (
+                <div>
+                    <p>
+                        You neither own nor are a member of any Organizations, so there is nothing to show you here.
+                    </p>
+                    <p>
+                        You may use the <b>Create Organization</b> button on the upper right to
+                        create your own Organization, or use the <b>All Orgs</b> filter on the right
+                        to browse and search all public Organizations.
+                    </p>
+                    {/* <p>
+                        You can use the filter on the right to {browseButton} through existing public Organizations,
+                        or you may {createButton} your own Organization.
+                    </p> */}
+                </div>
+            )
+        } else {
+            message = (
+                <div>
+                    <p>
+                        Sorry, no Organizations found.
+                    </p>
+                </div>
+            )
+        }
+
         return (
             <Alert type="warning"
                 style={{ maxWidth: '50em', margin: '20px auto 0 auto' }}

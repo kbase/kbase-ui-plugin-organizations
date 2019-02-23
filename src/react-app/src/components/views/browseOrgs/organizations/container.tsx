@@ -1,8 +1,21 @@
-import { Organizations, OrganizationsProps } from './component';
-import { StoreState } from '../../../../types';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux'
+import { Dispatch, Action } from 'redux'
+import * as orgModel from '../../../../data/models/organization/model'
+import { Organizations } from './component'
+import { StoreState } from '../../../../types'
 
-export function mapStateToProps(state: StoreState): OrganizationsProps {
+export interface OwnProps {
+    myOrgsUnfiltered: boolean
+}
+export interface StateProps {
+    organizations: Array<orgModel.BriefOrganization>
+    openRequests: Map<orgModel.OrganizationID, orgModel.RequestStatus>
+}
+
+export interface DispatchProps {
+}
+
+export function mapStateToProps(state: StoreState): StateProps {
     // TODO: wow, should not do this here
     if (state.views.browseOrgsView.viewModel === null) {
         throw new Error('view not ready')
@@ -15,25 +28,13 @@ export function mapStateToProps(state: StoreState): OrganizationsProps {
         }
     } = state;
 
-    // associate the last visited by id with the org.
-    // const updatedOrgs = organizations.map((org: BriefOrganization) => {
-    //     const lastVisitedAt = lastVisitedAtById.get(org.id) || null
-    //     if (lastVisitedAt && lastVisitedAt.lastVisitedAt) {
-    //         return {
-    //             organization: org,
-    //             lastVisitedAt: lastVisitedAt.lastVisitedAt
-    //         }
-    //     } else {
-    //         return {
-    //             organization: org,
-    //             lastVisitedAt: null
-    //         }
-    //     }
-    // })
-
     return {
         organizations, openRequests
     }
 }
 
-export default connect(mapStateToProps)(Organizations);
+export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
+    return {}
+}
+
+export default connect<StateProps, DispatchProps, OwnProps, StoreState>(mapStateToProps, mapDispatchToProps)(Organizations)

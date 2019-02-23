@@ -246,7 +246,8 @@ export function removeNarrative(narrative: orgModel.NarrativeResource) {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
 
@@ -342,7 +343,8 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         try {
@@ -559,7 +561,8 @@ export function unload() {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         if (viewModel.organization.relation === orgModel.UserRelationToOrganization.MEMBER ||
@@ -600,7 +603,8 @@ export function load(organizationId: string) {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         try {
@@ -678,7 +682,8 @@ export function reload(organizationId: string) {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         try {
@@ -772,7 +777,8 @@ export function viewOrgJoinRequest() {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         try {

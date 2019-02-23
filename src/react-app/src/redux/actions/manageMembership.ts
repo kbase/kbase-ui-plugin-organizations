@@ -70,7 +70,8 @@ export function load(organizationId: string) {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         // TODO: here is where we would hook into the store state entities for groups
@@ -162,7 +163,8 @@ export function leaveOrg(organizationId: orgModel.OrganizationID) {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         try {
@@ -332,7 +334,8 @@ export function save() {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         try {

@@ -91,11 +91,6 @@ export function sortOrgsStart(sortField: string, sortDirection: SortDirection): 
 
 // SEARCHING
 
-export interface SearchOrgs extends Action<ActionFlag.BROWSE_ORGS_SEARCH> {
-    type: ActionFlag.BROWSE_ORGS_SEARCH,
-    searchTerms: Array<string>
-}
-
 // Called upon the start of a search call
 // Sets the ui state to enable a spinner
 // and also search query data to be reflected in the ui
@@ -105,7 +100,8 @@ export interface SearchOrgs extends Action<ActionFlag.BROWSE_ORGS_SEARCH> {
 }
 
 export interface SearchOrgsStart extends Action<ActionFlag.BROWSE_ORGS_SEARCH_START> {
-    type: ActionFlag.BROWSE_ORGS_SEARCH_START
+    type: ActionFlag.BROWSE_ORGS_SEARCH_START,
+    searchTerms: Array<string>
 }
 
 // Called upon successful completion of a search
@@ -126,9 +122,10 @@ export interface SearchOrgsError extends Action<ActionFlag.BROWSE_ORGS_SEARCH_ER
 
 
 // searchTerms: Array<string>
-function searchOrgsStart(): SearchOrgsStart {
+function searchOrgsStart(searchTerms: Array<string>): SearchOrgsStart {
     return {
-        type: ActionFlag.BROWSE_ORGS_SEARCH_START
+        type: ActionFlag.BROWSE_ORGS_SEARCH_START,
+        searchTerms
     }
 }
 
@@ -180,7 +177,8 @@ export function load() {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         const defaultSearchTerms: Array<string> = []
@@ -246,7 +244,7 @@ export function load() {
 // TODO: proper typing here 
 export function searchOrgs(searchTerms: Array<string>) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(searchOrgsStart())
+        dispatch(searchOrgsStart(searchTerms))
 
         const {
             views: { browseOrgsView },
@@ -265,7 +263,8 @@ export function searchOrgs(searchTerms: Array<string>) {
         const { viewModel: { sortField, sortDirection, filter } } = browseOrgsView
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         try {
@@ -315,7 +314,8 @@ export function sortOrgs(sortField: string, sortDirection: SortDirection) {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         if (browseOrgsView.viewModel === null) {
@@ -375,7 +375,8 @@ export function filterOrgs(filter: orgModel.Filter) {
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
-            groupsServiceURL: config.services.Groups.url
+            groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         if (browseOrgsView.viewModel === null) {

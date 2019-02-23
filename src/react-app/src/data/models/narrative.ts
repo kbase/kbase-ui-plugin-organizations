@@ -85,6 +85,7 @@ interface NarrativeModelParams {
     workspaceServiceURL: string
     serviceWizardURL: string
     groupsServiceURL: string
+    userProfileServiceURL: string
     username: string
     token: string
 }
@@ -109,7 +110,8 @@ export class NarrativeModel {
         const groupsClient = new orgModel.OrganizationModel({
             token: this.params.token,
             username: this.params.username,
-            groupsServiceURL: this.params.groupsServiceURL
+            groupsServiceURL: this.params.groupsServiceURL,
+            userProfileServiceURL: this.params.userProfileServiceURL
         })
 
 

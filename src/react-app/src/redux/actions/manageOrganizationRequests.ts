@@ -216,6 +216,7 @@ export function getViewAccess(requestId: string) {
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         // get requests 
@@ -273,6 +274,7 @@ export function load(organizationId: string) {
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
+            userProfileServiceURL: config.services.UserProfile.url
         })
 
         const requestClient = new requestModel.RequestsModel({

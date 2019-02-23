@@ -42,7 +42,7 @@ interface DispatchProps {
 // should know nothing about this business
 // type Props = StateProps & DispatchProps & OwnProps
 
-function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
+function mapStateToProps(state: StoreState): StateProps {
     const viewModel = state.views.viewOrgView.viewModel
     if (!viewModel) {
         throw new Error('argh, view model missing')
