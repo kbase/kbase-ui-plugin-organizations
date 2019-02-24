@@ -110,6 +110,47 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
     }
 
     renderEditor() {
+        let leaveOrgButton
+        switch (this.props.organization.relation) {
+            case orgModel.UserRelationToOrganization.MEMBER:
+                leaveOrgButton = (
+                    <div className="ButtonSet-button">
+                        <Button icon="delete"
+                            type="danger"
+                            onClick={this.doLeaveOrg.bind(this)}
+                        >
+                            Leave Organization
+                                </Button>
+                    </div>
+                )
+                break
+            case orgModel.UserRelationToOrganization.ADMIN:
+                leaveOrgButton = (
+                    <div className="ButtonSet-button">
+                        <Button icon="stop"
+                            type="default"
+                            disabled={true}
+                        >
+                            Only regular members may leave Organization
+                        </Button>
+                    </div>
+                )
+                break
+            case orgModel.UserRelationToOrganization.OWNER:
+                leaveOrgButton = (
+                    <div className="ButtonSet-button">
+                        <Button icon="stop"
+                            type="default"
+                            disabled={true}
+                        >
+                            Only regular members may leave Organization
+                        </Button>
+                    </div>
+                )
+                break
+        }
+
+
         return (
             <form id="editMembership"
                 className="ManageMembership-editorTable"
@@ -150,16 +191,10 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                                 disabled={!this.canSave.call(this)}
                                 htmlType="submit">
                                 Save
-                    </Button>
+                            </Button>
                         </div>
-                        <div className="ButtonSet-button">
-                            <Button icon="save"
-                                type="danger"
-                                onClick={this.doLeaveOrg.bind(this)}
-                            >
-                                Leave Organization
-                    </Button>
-                        </div>
+                        {leaveOrgButton}
+
                     </div>
                 </div>
             </form >
