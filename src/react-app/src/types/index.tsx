@@ -352,11 +352,11 @@ export interface ManageMembershipViewModel {
     validationState: ValidationState
 }
 
-export interface ManageMembershipView {
-    loadingState: ComponentLoadingState
-    error: AnError | null
-    viewModel: ManageMembershipViewModel | null
-}
+// export interface ManageMembershipView {
+//     loadingState: ComponentLoadingState
+//     error: AnError | null
+//     viewModel: ManageMembershipViewModel | null
+// }
 
 export enum NarrativeState {
     NONE = 0,
@@ -478,6 +478,7 @@ export interface ViewOrgViewModel {
         manageRelatedOrganizationsView: View<ManageRelatedOrgsViewModel>
         inviteUserView: View<InviteUserViewModel>
         requestNarrativeView: View<RequestNarrativeViewModel>
+        manageMembershipView: View<ManageMembershipViewModel>
     }
 }
 
@@ -594,7 +595,7 @@ export interface StoreState {
         manageOrganizationRequestsView: ManageOrganizationRequestsView
         viewMembersView: ViewMembersView
         // inviteUserView: InviteUserView
-        manageMembershipView: ManageMembershipView
+        // manageMembershipView: ManageMembershipView
         // requestNarrativeView: RequestNarrativeView
         // organizationCentricView: OrganizationCentricView
     }

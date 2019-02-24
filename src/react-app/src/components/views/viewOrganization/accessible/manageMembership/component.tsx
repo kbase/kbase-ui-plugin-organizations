@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Modal, Input } from 'antd';
+import { Button, Modal, Input, Tooltip } from 'antd';
 import * as orgModel from '../../../../../data/models/organization/model'
 import * as userModel from '../../../../../data/models/user'
 import {
@@ -17,6 +17,7 @@ export interface ManageMembershipProps {
     saveState: SaveState
     validationState: ValidationState
     onLeaveOrganization: (organizationId: string) => void
+    onDemoteSelfToMember: (organizationId: string) => void
     onUpdateTitle: (title: string) => void
     onSave: () => void
     onFinish: () => void
@@ -56,6 +57,30 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         // alert('this will leave you the org')
         this.props.onLeaveOrganization(this.props.organization.id)
         this.props.onFinish()
+    }
+
+    onDemoteSelfToMember() {
+        const confirmed = (() => {
+            this.onDemoteSelfToMemberConfirmed()
+        }).bind(this)
+        Modal.confirm({
+            title: 'Confirm Demotion to Regular Member',
+            content: (
+                <p>
+                    Upon removing administrator privileges for yourself, you will
+                    not be able to restore them without the assistance of the
+                    Organization's owner or an administrator
+                </p>
+            ),
+            width: '50em',
+            onOk: () => {
+                confirmed()
+            }
+        })
+    }
+
+    onDemoteSelfToMemberConfirmed() {
+        this.props.onDemoteSelfToMember(this.props.organization.id)
     }
 
     canSave() {
@@ -109,7 +134,7 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         }
     }
 
-    renderEditor() {
+    renderLeaveOrgButton() {
         let leaveOrgButton
         switch (this.props.organization.relation) {
             case orgModel.UserRelationToOrganization.MEMBER:
@@ -125,14 +150,29 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                 )
                 break
             case orgModel.UserRelationToOrganization.ADMIN:
+                const tooltip = (
+                    <React.Fragment>
+                        <p>
+                            As an organization administrator, you may not leave
+                            the organization.
+                        </p>
+                        <p>
+                            In order to leave the organization, you will need to
+                            become a regular member first.
+                        </p>
+                    </React.Fragment>
+                )
                 leaveOrgButton = (
                     <div className="ButtonSet-button">
-                        <Button icon="stop"
-                            type="default"
-                            disabled={true}
-                        >
-                            Only regular members may leave Organization
+                        <Tooltip
+                            title={tooltip}>
+                            <Button icon="stop"
+                                type="default"
+                                disabled={true}
+                            >
+                                Only a regular member may leave Organization
                         </Button>
+                        </Tooltip>
                     </div>
                 )
                 break
@@ -143,14 +183,32 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                             type="default"
                             disabled={true}
                         >
-                            Only regular members may leave Organization
+                            Only a regular member may leave Organization
                         </Button>
                     </div>
                 )
                 break
         }
+        return leaveOrgButton
+    }
 
+    renderDemoteToMemberButton() {
+        switch (this.props.organization.relation) {
+            case orgModel.UserRelationToOrganization.ADMIN:
+                return (
+                    <div className="ButtonSet-button">
+                        <Button icon="user"
+                            type="default"
+                            onClick={this.onDemoteSelfToMember.bind(this)}>
+                            Demote Self to Member
+                        </Button>
 
+                    </div>
+                )
+        }
+    }
+
+    renderEditor() {
         return (
             <form id="editMembership"
                 className="ManageMembership-editorTable"
@@ -193,8 +251,8 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                                 Save
                             </Button>
                         </div>
-                        {leaveOrgButton}
-
+                        {this.renderLeaveOrgButton()}
+                        {this.renderDemoteToMemberButton()}
                     </div>
                 </div>
             </form >

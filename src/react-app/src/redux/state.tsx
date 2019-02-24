@@ -61,11 +61,11 @@ export class StateInstances {
                 //     error: null,
                 //     viewModel: null
                 // },
-                manageMembershipView: {
-                    loadingState: ComponentLoadingState.NONE,
-                    error: null,
-                    viewModel: null
-                },
+                // manageMembershipView: {
+                //     loadingState: ComponentLoadingState.NONE,
+                //     error: null,
+                //     viewModel: null
+                // },
                 // requestNarrativeView: {
                 //     loadingState: ComponentLoadingState.NONE,
                 //     error: null,
