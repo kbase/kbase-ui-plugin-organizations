@@ -182,7 +182,10 @@ export function load() {
         })
 
         const defaultSearchTerms: Array<string> = []
-        const defaultSortField = 'changed'
+        // TODO: the sort field and direction are still set directly at this level;
+        // in the ui narrativeCount is a single sortBy field, with the direction
+        // fixed in the model's applySortComparison
+        const defaultSortField = 'narrativeCount'
         const defaultSortDirection = SortDirection.DESCENDING
         const defaultFilter = { roleType: 'myorgs', roles: [], privacy: 'any' }
 

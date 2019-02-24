@@ -58,7 +58,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
                 return this.renderError()
             case ComponentLoadingState.SUCCESS:
                 return (
-                    <Container sortBy="recentlyChanged" />
+                    <Container sortBy="narrativeCount" />
                 )
         }
     }
