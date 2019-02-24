@@ -4,8 +4,9 @@ import { ThunkDispatch } from 'redux-thunk'
 import * as orgModel from '../../data/models/organization/model'
 import { StoreState, SyncState, ValidationErrorType } from '../../types'
 import { AnError, makeError } from '../../lib/error'
-import Validation from '../../data/models/organization/validation';
-import { ActionFlag } from '.';
+import Validation from '../../data/models/organization/validation'
+import { ActionFlag } from '.'
+import * as viewOrgActions from './viewOrg'
 
 // Loading
 
@@ -172,6 +173,7 @@ export function leaveOrg(organizationId: orgModel.OrganizationID) {
             dispatch({
                 type: ActionFlag.MANAGE_MEMBERSHIP_LEAVE_ORG_SUCCESS
             })
+            dispatch(viewOrgActions.reload(organizationId))
         } catch (ex) {
             console.error('ERROR leaving org', ex)
             dispatch({

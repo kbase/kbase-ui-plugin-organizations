@@ -31,8 +31,6 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
     }
 
     doLeaveOrg() {
-        // alert('this will leave you the org')
-        // this.props.onLeaveOrganization(this.props.organization.id)
         const confirmed = (() => {
             this.doLeaveOrgConfirmed()
         }).bind(this)
@@ -57,6 +55,7 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
     doLeaveOrgConfirmed() {
         // alert('this will leave you the org')
         this.props.onLeaveOrganization(this.props.organization.id)
+        this.props.onFinish()
     }
 
     canSave() {
@@ -143,15 +142,27 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                     </div>
                 </div>
                 <div className="ManageMembership-editorFooter">
-                    <Button icon="save"
-                        form="editMembership"
-                        key="submit"
-                        disabled={!this.canSave.call(this)}
-                        htmlType="submit">
-                        Save
-                </Button>
+                    <div className="ButtonSet">
+                        <div className="ButtonSet-button">
+                            <Button icon="save"
+                                form="editMembership"
+                                key="submit"
+                                disabled={!this.canSave.call(this)}
+                                htmlType="submit">
+                                Save
+                    </Button>
+                        </div>
+                        <div className="ButtonSet-button">
+                            <Button icon="save"
+                                type="danger"
+                                onClick={this.doLeaveOrg.bind(this)}
+                            >
+                                Leave Organization
+                    </Button>
+                        </div>
+                    </div>
                 </div>
-            </form>
+            </form >
         )
     }
 
