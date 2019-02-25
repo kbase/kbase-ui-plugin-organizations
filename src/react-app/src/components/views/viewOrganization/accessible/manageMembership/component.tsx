@@ -150,7 +150,7 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                 )
                 break
             case orgModel.UserRelationToOrganization.ADMIN:
-                const tooltip = (
+                const adminTooltip = (
                     <React.Fragment>
                         <p>
                             As an organization administrator, you may not leave
@@ -165,26 +165,37 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
                 leaveOrgButton = (
                     <div className="ButtonSet-button">
                         <Tooltip
-                            title={tooltip}>
+                            title={adminTooltip}>
                             <Button icon="stop"
                                 type="default"
                                 disabled={true}
                             >
                                 Only a regular member may leave Organization
-                        </Button>
+                            </Button>
                         </Tooltip>
                     </div>
                 )
                 break
             case orgModel.UserRelationToOrganization.OWNER:
+                const ownerTooltip = (
+                    <React.Fragment>
+                        <p>
+                            As an organization owner, you are the only permanent member
+                            of this organization.
+                        </p>
+                    </React.Fragment>
+                )
                 leaveOrgButton = (
                     <div className="ButtonSet-button">
-                        <Button icon="stop"
-                            type="default"
-                            disabled={true}
-                        >
-                            Only a regular member may leave Organization
+                        <Tooltip
+                            title={ownerTooltip}>
+                            <Button icon="stop"
+                                type="default"
+                                disabled={true}
+                            >
+                                Cannot leave Organization
                         </Button>
+                        </Tooltip>
                     </div>
                 )
                 break
@@ -208,51 +219,77 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
         }
     }
 
+    renderTitleRow() {
+        const tooltip = (
+            <p>
+                This is your title within this Organization.
+            </p>
+        )
+        return (
+            <div className="ManageMembership-editorTable-row">
+                <div className="ManageMembership-editCol ManageMembership-editCell">
+                    <div className="ManageMembership-editorTable-labelCol">
+                        <span className="field-label ManageMembership-titleLabel">
+                            <Tooltip title={tooltip}>
+                                title
+                                </Tooltip>
+                        </span>
+                    </div>
+                    <div className="ManageMembership-editorTable-controlCol">
+                        <Input value={this.props.editableMemberProfile.title.value || ''}
+                            className={this.calcFieldClass(this.props.editableMemberProfile.title)}
+                            onChange={this.onTitleChange.bind(this)} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    renderCancelButton() {
+        return (
+            <div className="ButtonSet-button">
+                <Button icon="delete"
+                    type="danger"
+                    onClick={this.onDone.bind(this)}>
+                    Cancel
+                </Button>
+            </div>
+        )
+    }
+
+    renderSaveButton() {
+        return (
+            <div className="ButtonSet-button">
+                <Button icon="save"
+                    form="editMembership"
+                    key="submit"
+                    disabled={!this.canSave.call(this)}
+                    htmlType="submit">
+                    Save
+                </Button>
+            </div>
+        )
+    }
+
     renderEditor() {
         return (
             <form id="editMembership"
-                className="ManageMembership-editorTable"
+                className="ManageMembership-editorTable scrollable-flex-column"
                 onSubmit={this.onSubmit.bind(this)}>
                 <div className="ManageMembership-headerRow">
                     <div className="ManageMembership-editCol ManageMembership-headerCol">
-                        Edit
-                    </div>
-                    <div className="ManageMembership-editCol ManageMembership-headerCol">
-                        Preview
+                        Edit Your Organization Profile
                     </div>
                 </div>
-                <div className="ManageMembership-editorTable-row">
-                    <div className="ManageMembership-editCol ManageMembership-editCell">
-                        <div className="ManageMembership-editorTable-labelCol">
-                            <span className="field-label ManageMembership-titleLabel">
-                                title
-                            </span>
+                <div className="ManageMembership-formRow">
+                    {this.renderTitleRow()}
+                    <div className="ManageMembership-editorFooter">
+                        <div className="ButtonSet">
+                            {this.renderSaveButton()}
+                            {this.renderCancelButton()}
+                            {this.renderLeaveOrgButton()}
+                            {this.renderDemoteToMemberButton()}
                         </div>
-                        <div className="ManageMembership-editorTable-controlCol">
-                            <Input value={this.props.editableMemberProfile.title.value || ''}
-                                className={this.calcFieldClass(this.props.editableMemberProfile.title)}
-                                onChange={this.onTitleChange.bind(this)} />
-                        </div>
-                    </div>
-                    <div className="ManageMembership-previewCol ManageMembership-previewCell">
-                        <div className="ManageMembership-titlePreview">
-                            {this.props.editableMemberProfile.title.value}
-                        </div>
-                    </div>
-                </div>
-                <div className="ManageMembership-editorFooter">
-                    <div className="ButtonSet">
-                        <div className="ButtonSet-button">
-                            <Button icon="save"
-                                form="editMembership"
-                                key="submit"
-                                disabled={!this.canSave.call(this)}
-                                htmlType="submit">
-                                Save
-                            </Button>
-                        </div>
-                        {this.renderLeaveOrgButton()}
-                        {this.renderDemoteToMemberButton()}
                     </div>
                 </div>
             </form >
@@ -276,13 +313,11 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
     render() {
         return (
             <div className="ManageMembership scrollable-flex-column">
-                <MainMenu buttons={this.renderMenuButtons()} />
-                <h3>
-                    Edit Your Membership Profile
-                </h3>
-
-                <div className="ManageMembership-body">
-                    {this.renderEditor()}
+                {/* <MainMenu buttons={this.renderMenuButtons()} title="Manage My Membership" /> */}
+                <div className="ManageMembership-body scrollable-flex-column">
+                    <div className="ManageMembership-main scrollable-flex-column">
+                        {this.renderEditor()}
+                    </div>
                 </div>
 
             </div>

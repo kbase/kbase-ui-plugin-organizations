@@ -5,9 +5,9 @@
 }
 
 .ManageMembership-body {
-    flex: 0 0 auto;
+    flex: 1 1 0px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .ManageMembership-editCell {
@@ -90,4 +90,18 @@
     font-style: bold;
     font-size: 120%;
     color: rgba(150, 150, 150, 1)
+}
+
+.ManageMembership-main {
+    flex: 1 1 0px;
+    min-width: 50em;
+    max-width: 100em;
+    margin: 0 auto;
+}
+
+.ManageMembership-formRow {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 }
