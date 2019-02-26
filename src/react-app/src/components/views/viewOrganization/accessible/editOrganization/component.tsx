@@ -536,20 +536,8 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
 
 
     renderHomeURLPreview(homeUrlField: EditableNullableString) {
-        if (homeUrlField.value &&
-            homeUrlField.validationState.type === ValidationErrorType.OK) {
-            const url = homeUrlField.value
-            const tooltipTitle = 'Try out your url by clicking this link'
-            return (
-                <div className="NewOrganization-previewBox">
-                    <Tooltip title={tooltipTitle} >
-                        <a href={url} target="_blank">
-                            <Icon type="link" />
-                        </a>
-                    </Tooltip>
-                </div>
-            )
-        } else {
+        if (homeUrlField.value === null ||
+            homeUrlField.validationState.type !== ValidationErrorType.OK) {
             const tooltipTitle = 'When you have completed your url, you may preview it here.'
             return (
                 <div className="NewOrganization-previewBox">
@@ -559,6 +547,17 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                 </div>
             )
         }
+
+        const tooltipTitle = 'Try out your url by clicking this link'
+        return (
+            <div className="NewOrganization-previewBox">
+                <Tooltip title={tooltipTitle} >
+                    <a href={homeUrlField.value} target="_blank">
+                        <Icon type="link" />
+                    </a>
+                </Tooltip>
+            </div>
+        )
     }
 
     renderHomeURLRow(homeUrlField: EditableNullableString, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void) {
@@ -962,7 +961,8 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     }
 
     renderLogoPreview(logoUrlField: EditableNullableString) {
-        if (!logoUrlField.value) {
+        if (logoUrlField.value === null ||
+            logoUrlField.validationState.type !== ValidationErrorType.OK) {
             return (
                 <div className="NewOrganization-previewBox">
                     {this.renderDefaultLogo()}

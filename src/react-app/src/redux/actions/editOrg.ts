@@ -2,9 +2,14 @@ import { Action } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
-import { StoreState, AppError, EditableOrganization, ValidationState, EditState, ValidationErrorType, SyncState } from '../../types'
+import {
+    StoreState, AppError, EditableOrganization, ValidationState,
+    ValidationErrorType, SyncState
+} from '../../types'
 import Validation from '../../data/models/organization/validation'
 import * as orgModel from '../../data/models/organization/model'
+import DebouncingProcess from '../../lib/DebouncingProcess'
+import { UIServiceClient } from '../../data/apis/uiService'
 
 // ACTIONS
 
@@ -86,17 +91,17 @@ export interface EditOrgUpdateNameError extends Action {
 
 // Updating logo url field
 
-export interface EditOrgUpdateLogoUrl extends Action {
+export interface UpdateLogoUrl extends Action {
     type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL,
     name: string | null
 }
 
-export interface EditOrgUpdateLogoUrlSuccess {
+export interface UpdateLogoUrlSuccess {
     type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_SUCCESS,
     logoUrl: string | null
 }
 
-export interface EditOrgUpdateLogoUrlError extends Action {
+export interface UpdateLogoUrlError extends Action {
     type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_ERROR,
     logoUrl: string | null,
     error: ValidationState
@@ -273,14 +278,14 @@ export function editOrgUpdateNameError(name: string, error: ValidationState): Ed
 
 // Update Logo Url
 
-export function editOrgUpdateLogoUrlSuccess(logoUrl: string | null): EditOrgUpdateLogoUrlSuccess {
+export function updateLogoUrlSuccess(logoUrl: string | null): UpdateLogoUrlSuccess {
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_SUCCESS,
         logoUrl: logoUrl
     }
 }
 
-export function editOrgUpdateLogoUrlError(logoUrl: string | null, error: ValidationState): EditOrgUpdateLogoUrlError {
+export function updateLogoUrlError(logoUrl: string | null, error: ValidationState): UpdateLogoUrlError {
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_ERROR,
         logoUrl: logoUrl,
@@ -522,21 +527,219 @@ export function updateName(name: string) {
     }
 }
 
+let checkLogoUrlProcess: DebouncingProcess
+
+class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
+    dispatch: ThunkDispatch<StoreState, void, Action>
+    url: string
+    timeout: number
+    serviceWizardURL: string
+    token: string
+    constructor({ delay, dispatch, url, timeout, serviceWizardURL, token }: { delay: number, dispatch: ThunkDispatch<StoreState, void, Action>, url: string, timeout: number, serviceWizardURL: string, token: string }) {
+        super({ delay })
+
+        this.dispatch = dispatch
+        this.url = url
+        this.serviceWizardURL = serviceWizardURL
+        this.token = token
+        this.timeout = timeout
+    }
+
+    async task(): Promise<void> {
+        try {
+            const client = new UIServiceClient({
+                url: this.serviceWizardURL,
+                token: this.token
+            })
+            const result = await client.checkImageURL({ url: this.url, timeout: this.timeout })
+
+            if (this.canceled) {
+                return
+            }
+
+            if (result.is_valid) {
+                this.dispatch(updateLogoUrlSuccess(this.url))
+            } else {
+                switch (result.error.code) {
+                    case 'not-found':
+                        this.dispatch(updateLogoUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'This logo url does not exist'
+                        }))
+                        break
+                    case 'invalid-content-type':
+                        this.dispatch(updateLogoUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'Invalid content type: ' + result.error.info['content-type']
+                        }))
+                        break
+                    case 'missing-content-type':
+                        this.dispatch(updateLogoUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'Missing content type'
+                        }))
+                        break
+                    default:
+                        this.dispatch(updateLogoUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'unknown error'
+                        }))
+                        break
+                }
+            }
+        } catch (ex) {
+            if (this.canceled) {
+                return
+            }
+            this.dispatch(updateLogoUrlError(this.url, {
+                type: ValidationErrorType.ERROR,
+                validatedAt: new Date(),
+                message: 'Error checking logo url: ' + ex.message
+            }))
+        }
+        this.dispatch(editOrgEvaluate())
+    }
+}
+
 export function updateLogoUrl(logoUrl: string | null) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        if (checkLogoUrlProcess) {
+            checkLogoUrlProcess.cancel()
+        }
         const [validatedLogoUrl, error] = Validation.validateOrgLogoUrl(logoUrl)
 
         if (error.type !== ValidationErrorType.OK) {
-            dispatch(editOrgUpdateLogoUrlError(validatedLogoUrl, error))
-        } else {
-            dispatch(editOrgUpdateLogoUrlSuccess(validatedLogoUrl))
+            dispatch(updateLogoUrlError(validatedLogoUrl, error))
+            dispatch(editOrgEvaluate())
+            return
         }
+
+        dispatch(updateLogoUrlSuccess(validatedLogoUrl))
+
         dispatch(editOrgEvaluate())
+
+        if (validatedLogoUrl !== null) {
+            const {
+                auth: { authorization: { token } },
+                app: { config: { services: { ServiceWizard: { url: serviceWizardURL } } } }
+            } = getState()
+
+            checkLogoUrlProcess = new CheckIfLogoUrlExistsProcess({
+                delay: 100,
+                url: validatedLogoUrl,
+                timeout: 1000,
+                dispatch, serviceWizardURL, token
+            })
+
+            checkLogoUrlProcess.start()
+        }
+    }
+}
+
+// Home Url
+
+let checkHomeUrlProcess: DebouncingProcess
+
+class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
+    dispatch: ThunkDispatch<StoreState, void, Action>
+    url: string
+    timeout: number
+    serviceWizardURL: string
+    token: string
+    constructor({ delay, dispatch, url, timeout, serviceWizardURL, token }: { delay: number, dispatch: ThunkDispatch<StoreState, void, Action>, url: string, timeout: number, serviceWizardURL: string, token: string }) {
+        super({ delay })
+
+        this.dispatch = dispatch
+        this.url = url
+        this.serviceWizardURL = serviceWizardURL
+        this.token = token
+        this.timeout = timeout
+    }
+
+    async task(): Promise<void> {
+        try {
+            const client = new UIServiceClient({
+                url: this.serviceWizardURL,
+                token: this.token
+            })
+            const result = await client.checkHTMLURL({ url: this.url, timeout: this.timeout })
+
+            if (this.canceled) {
+                return
+            }
+
+            if (result.is_valid) {
+                this.dispatch(updateHomeUrlSuccess(this.url))
+            } else {
+                switch (result.error.code) {
+                    case 'not-found':
+                        this.dispatch(updateHomeUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'This home url does not exist'
+                        }))
+                        break
+                    case 'invalid-content-type':
+                        this.dispatch(updateHomeUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'Invalid content type: ' + result.error.info['content-type']
+                        }))
+                        break
+                    case 'missing-content-type':
+                        this.dispatch(updateHomeUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'Missing content type'
+                        }))
+                        break
+                    default:
+                        this.dispatch(updateHomeUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'unknown error'
+                        }))
+                        break
+                }
+            }
+        } catch (ex) {
+            if (this.canceled) {
+                return
+            }
+            this.dispatch(updateHomeUrlError(this.url, {
+                type: ValidationErrorType.ERROR,
+                validatedAt: new Date(),
+                message: 'Error checking home url: ' + ex.message
+            }))
+        }
+        this.dispatch(editOrgEvaluate())
+    }
+}
+
+function updateHomeUrlSuccess(homeUrl: string): UpdateHomeUrlSuccess {
+    return {
+        type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_SUCCESS,
+        homeUrl
+    }
+}
+
+function updateHomeUrlError(homeUrl: string, error: ValidationState): UpdateHomeUrlError {
+    return {
+        type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_ERROR,
+        homeUrl, error
     }
 }
 
 export function updateHomeUrl(homeUrl: string | null) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        if (checkHomeUrlProcess) {
+            checkHomeUrlProcess.cancel()
+        }
+
         const [validatedHomeUrl, error] = Validation.validateOrgHomeUrl(homeUrl)
 
         if (error.type !== ValidationErrorType.OK) {
@@ -545,13 +748,31 @@ export function updateHomeUrl(homeUrl: string | null) {
                 homeUrl: validatedHomeUrl,
                 error: error
             } as UpdateHomeUrlError)
-        } else {
-            dispatch({
-                type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_SUCCESS,
-                homeUrl: validatedHomeUrl
-            } as UpdateHomeUrlSuccess)
+            dispatch(editOrgEvaluate())
+            return
         }
+        dispatch({
+            type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_SUCCESS,
+            homeUrl: validatedHomeUrl
+        } as UpdateHomeUrlSuccess)
+
         dispatch(editOrgEvaluate())
+
+        if (validatedHomeUrl !== null) {
+            const {
+                auth: { authorization: { token } },
+                app: { config: { services: { ServiceWizard: { url: serviceWizardURL } } } }
+            } = getState()
+
+            checkHomeUrlProcess = new CheckIfHomeUrlExistsProcess({
+                delay: 100,
+                url: validatedHomeUrl,
+                timeout: 1000,
+                dispatch, serviceWizardURL, token
+            })
+
+            checkHomeUrlProcess.start()
+        }
     }
 }
 

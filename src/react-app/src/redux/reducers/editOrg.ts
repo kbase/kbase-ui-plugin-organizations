@@ -1,5 +1,8 @@
 import { Action } from 'redux'
-import { StoreState, EditState, SaveState, ComponentLoadingState, ValidationErrorType, SyncState, ValidationState, ValidationStateOk, EditOrgViewModel } from '../../types';
+import {
+    StoreState, EditState, SaveState, ComponentLoadingState,
+    ValidationErrorType, SyncState, ValidationState, ValidationStateOk, EditOrgViewModel
+} from '../../types';
 import { ActionFlag } from '../actions';
 import {
     LoadStart, LoadSuccess, LoadError,
@@ -8,7 +11,9 @@ import {
     EditOrgUpdateNameSuccess, EditOrgUpdateNameError,
     // EditOrgUpdateIdSuccess, EditOrgUpdateIdError,
     EditOrgUpdateDescriptionSuccess, EditOrgUpdateDescriptionError,
-    UpdateIsPrivateSuccess, EditOrgUpdateLogoUrlSuccess, EditOrgUpdateLogoUrlError, UpdateHomeUrlSuccess, UpdateHomeUrlError, UpdateResearchInterestsError, UpdateResearchInterestsSuccess, Unload
+    UpdateIsPrivateSuccess, UpdateLogoUrlSuccess, UpdateLogoUrlError,
+    UpdateHomeUrlSuccess, UpdateHomeUrlError, UpdateResearchInterestsError,
+    UpdateResearchInterestsSuccess, Unload
 } from '../actions/editOrg'
 import { StateInstances } from '../state';
 
@@ -360,7 +365,7 @@ export function editOrgUpdateNameError(state: StoreState, action: EditOrgUpdateN
 }
 
 // Logo url
-export function editOrgUpdateLogoUrlSuccess(state: StoreState, action: EditOrgUpdateLogoUrlSuccess): StoreState {
+export function editOrgUpdateLogoUrlSuccess(state: StoreState, action: UpdateLogoUrlSuccess): StoreState {
     if (!state.views.editOrgView.viewModel) {
         return state
     }
@@ -407,7 +412,7 @@ export function editOrgUpdateLogoUrlSuccess(state: StoreState, action: EditOrgUp
     }
 }
 
-export function editOrgUpdateLogoUrlError(state: StoreState, action: EditOrgUpdateLogoUrlError): StoreState {
+export function editOrgUpdateLogoUrlError(state: StoreState, action: UpdateLogoUrlError): StoreState {
     if (!state.views.editOrgView.viewModel) {
         return state
     }
@@ -762,9 +767,9 @@ export function reducer(state: StoreState, action: Action): StoreState | null {
             return editOrgUpdateNameError(state, action as EditOrgUpdateNameError)
 
         case ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_SUCCESS:
-            return editOrgUpdateLogoUrlSuccess(state, action as EditOrgUpdateLogoUrlSuccess)
+            return editOrgUpdateLogoUrlSuccess(state, action as UpdateLogoUrlSuccess)
         case ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_ERROR:
-            return editOrgUpdateLogoUrlError(state, action as EditOrgUpdateLogoUrlError)
+            return editOrgUpdateLogoUrlError(state, action as UpdateLogoUrlError)
 
         case ActionFlag.EDIT_ORG_UPDATE_HOME_URL_SUCCESS:
             return editOrgUpdateHomeUrlSuccess(state, action as UpdateHomeUrlSuccess)

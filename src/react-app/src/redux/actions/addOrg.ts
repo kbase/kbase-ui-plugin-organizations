@@ -7,6 +7,7 @@ import { StoreState, AppError, UIError, UIErrorType, EditableOrganization, EditS
 import * as orgModel from '../../data/models/organization/model'
 import Validation from '../../data/models/organization/validation'
 import DebouncingProcess from '../../lib/DebouncingProcess'
+import { UIServiceClient } from '../../data/apis/uiService'
 
 // ACTIONS
 
@@ -551,69 +552,203 @@ export function updateName(name: string) {
     }
 }
 
-export function updateLogoUrl(name: string | null) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
-        const [validatedLogoUrl, error] = Validation.validateOrgLogoUrl(name)
+let checkLogoUrlProcess: DebouncingProcess
 
-        if (error.type !== ValidationErrorType.OK) {
-            dispatch(updateLogoUrlError(validatedLogoUrl, error))
-        } else {
-            dispatch(updateLogoUrlSuccess(validatedLogoUrl))
+class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
+    dispatch: ThunkDispatch<StoreState, void, Action>
+    url: string
+    timeout: number
+    serviceWizardURL: string
+    token: string
+    constructor({ delay, dispatch, url, timeout, serviceWizardURL, token }: { delay: number, dispatch: ThunkDispatch<StoreState, void, Action>, url: string, timeout: number, serviceWizardURL: string, token: string }) {
+        super({ delay })
+
+        this.dispatch = dispatch
+        this.url = url
+        this.serviceWizardURL = serviceWizardURL
+        this.token = token
+        this.timeout = timeout
+    }
+
+    async task(): Promise<void> {
+        try {
+            const client = new UIServiceClient({
+                url: this.serviceWizardURL,
+                token: this.token
+            })
+            const result = await client.checkImageURL({ url: this.url, timeout: this.timeout })
+
+            if (this.canceled) {
+                return
+            }
+
+            if (result.is_valid) {
+                this.dispatch(updateLogoUrlSuccess(this.url))
+            } else {
+                switch (result.error.code) {
+                    case 'not-found':
+                        this.dispatch(updateLogoUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'This logo url does not exist'
+                        }))
+                        break
+                    case 'invalid-content-type':
+                        this.dispatch(updateLogoUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'Invalid content type: ' + result.error.info['content-type']
+                        }))
+                        break
+                    case 'missing-content-type':
+                        this.dispatch(updateLogoUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'Missing content type'
+                        }))
+                        break
+                    default:
+                        this.dispatch(updateLogoUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'unknown error'
+                        }))
+                        break
+                }
+            }
+        } catch (ex) {
+            if (this.canceled) {
+                return
+            }
+            this.dispatch(updateLogoUrlError(this.url, {
+                type: ValidationErrorType.ERROR,
+                validatedAt: new Date(),
+                message: 'Error checking logo url: ' + ex.message
+            }))
         }
-        dispatch(addOrgEvaluate())
+        this.dispatch(addOrgEvaluate())
     }
 }
+
+export function updateLogoUrl(logoUrl: string | null) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        if (checkLogoUrlProcess) {
+            checkLogoUrlProcess.cancel()
+        }
+
+        const [validatedLogoUrl, error] = Validation.validateOrgLogoUrl(logoUrl)
+
+        if (error.type !== ValidationErrorType.OK) {
+            dispatch({
+                type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_ERROR,
+                logoUrl: logoUrl,
+                error: error
+            } as UpdateLogoUrlError)
+            return
+        }
+
+        // initial success, but the check may invalidate it.
+        dispatch({
+            type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_SUCCESS,
+            logoUrl: validatedLogoUrl
+        })
+
+        dispatch(addOrgEvaluate())
+
+        if (validatedLogoUrl !== null) {
+            const {
+                auth: { authorization: { token } },
+                app: { config: { services: { ServiceWizard: { url: serviceWizardURL } } } }
+            } = getState()
+
+            checkLogoUrlProcess = new CheckIfLogoUrlExistsProcess({
+                delay: 100,
+                url: validatedLogoUrl,
+                timeout: 1000,
+                dispatch, serviceWizardURL, token
+            })
+
+            checkLogoUrlProcess.start()
+        }
+    }
+}
+
+// export function updateLogoUrl(name: string | null) {
+//     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+//         const [validatedLogoUrl, error] = Validation.validateOrgLogoUrl(name)
+
+//         if (error.type !== ValidationErrorType.OK) {
+//             dispatch(updateLogoUrlError(validatedLogoUrl, error))
+//         } else {
+//             dispatch(updateLogoUrlSuccess(validatedLogoUrl))
+//         }
+//         dispatch(addOrgEvaluate())
+//     }
+// }
 
 let checkHomeUrlProcess: DebouncingProcess
 
 class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
     dispatch: ThunkDispatch<StoreState, void, Action>
     url: string
-    constructor({ delay, dispatch, url }: { delay: number, dispatch: ThunkDispatch<StoreState, void, Action>, url: string }) {
+    timeout: number
+    serviceWizardURL: string
+    token: string
+    constructor({ delay, dispatch, url, timeout, serviceWizardURL, token }: { delay: number, dispatch: ThunkDispatch<StoreState, void, Action>, url: string, timeout: number, serviceWizardURL: string, token: string }) {
         super({ delay })
 
         this.dispatch = dispatch
         this.url = url
+        this.serviceWizardURL = serviceWizardURL
+        this.token = token
+        this.timeout = timeout
     }
 
     async task(): Promise<void> {
         try {
-            const result = await fetch(this.url, {
-                method: 'HEAD',
-                // mode: 'no-cors'
+            const client = new UIServiceClient({
+                url: this.serviceWizardURL,
+                token: this.token
             })
+            const result = await client.checkHTMLURL({ url: this.url, timeout: this.timeout })
+
             if (this.canceled) {
                 return
             }
-            let isError = false
-            if (result.status === 404) {
-                this.dispatch(updateHomeUrlError(this.url, {
-                    type: ValidationErrorType.ERROR,
-                    validatedAt: new Date(),
-                    message: 'This home url does not exist'
-                }))
-                isError = true
-            } else if (result.status !== 200) {
-                this.dispatch(updateHomeUrlError(this.url, {
-                    type: ValidationErrorType.ERROR,
-                    validatedAt: new Date(),
-                    message: 'This home url responded with a ' + result.status + ' code'
-                }))
-                isError = true
-            } else {
-                const contentType = result.headers.get('Content-Type')
-                if (contentType === null ||
-                    !/^text\/html$\//.test(contentType)) {
-                    this.dispatch(updateHomeUrlError(this.url, {
-                        type: ValidationErrorType.ERROR,
-                        validatedAt: new Date(),
-                        message: 'This home url does not not appear to be html'
-                    }))
-                    isError = true
-                }
-            }
-            if (!isError) {
+
+            if (result.is_valid) {
                 this.dispatch(updateHomeUrlSuccess(this.url))
+            } else {
+                switch (result.error.code) {
+                    case 'not-found':
+                        this.dispatch(updateHomeUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'This home url does not exist'
+                        }))
+                        break
+                    case 'invalid-content-type':
+                        this.dispatch(updateHomeUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'Invalid content type: ' + result.error.info['content-type']
+                        }))
+                        break
+                    case 'missing-content-type':
+                        this.dispatch(updateHomeUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'Missing content type'
+                        }))
+                        break
+                    default:
+                        this.dispatch(updateHomeUrlError(this.url, {
+                            type: ValidationErrorType.ERROR,
+                            validatedAt: new Date(),
+                            message: 'unknown error'
+                        }))
+                        break
+                }
             }
         } catch (ex) {
             if (this.canceled) {
@@ -622,7 +757,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
             this.dispatch(updateHomeUrlError(this.url, {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
-                message: 'Error checking for home url'
+                message: 'Error checking home url: ' + ex.message
             }))
         }
         this.dispatch(addOrgEvaluate())
@@ -630,7 +765,11 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
 }
 
 export function updateHomeUrl(homeUrl: string | null) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        if (checkHomeUrlProcess) {
+            checkHomeUrlProcess.cancel()
+        }
+
         const [validatedHomeUrl, error] = Validation.validateOrgHomeUrl(homeUrl)
 
         if (error.type !== ValidationErrorType.OK) {
@@ -640,7 +779,6 @@ export function updateHomeUrl(homeUrl: string | null) {
                 error: error
             } as UpdateHomeUrlError)
             return
-
         }
 
         // initial success, but the check may invalidate it.
@@ -651,16 +789,21 @@ export function updateHomeUrl(homeUrl: string | null) {
 
         dispatch(addOrgEvaluate())
 
-        // if (validatedHomeUrl !== null) {
+        if (validatedHomeUrl !== null) {
+            const {
+                auth: { authorization: { token } },
+                app: { config: { services: { ServiceWizard: { url: serviceWizardURL } } } }
+            } = getState()
 
-        //     checkHomeUrlProcess = new CheckIfHomeUrlExistsProcess({
-        //         delay: 100,
-        //         url: validatedHomeUrl,
-        //         dispatch: dispatch
-        //     })
+            checkHomeUrlProcess = new CheckIfHomeUrlExistsProcess({
+                delay: 100,
+                url: validatedHomeUrl,
+                timeout: 1000,
+                dispatch, serviceWizardURL, token
+            })
 
-        //     checkHomeUrlProcess.start()
-        // }
+            checkHomeUrlProcess.start()
+        }
     }
 }
 
@@ -694,39 +837,6 @@ export function updateIsPrivate(isPrivate: boolean) {
         dispatch(addOrgEvaluate())
     }
 }
-
-class Debouncer {
-
-    delay: number
-    fun: () => void
-    canceled: boolean
-    timer: number | null
-
-    constructor(delay: number, fun: () => void) {
-        this.delay = delay
-        this.fun = fun
-        this.canceled = false
-        this.timer = null
-        this.startWaiting()
-    }
-
-    startWaiting() {
-        if (this.timer) {
-            window.clearTimeout(this.timer)
-        }
-        this.timer = window.setTimeout(() => {
-            this.fun()
-        }, this.delay)
-    }
-
-    cancel() {
-        this.canceled = true
-    }
-}
-
-let activeDebouncer: Debouncer | null = null
-
-
 
 class CheckIfExistsProcess extends DebouncingProcess {
     model: orgModel.OrganizationModel
@@ -762,7 +872,7 @@ class CheckIfExistsProcess extends DebouncingProcess {
             this.dispatch(updateIdError(this.id, {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
-                message: 'Error checking for org id existence'
+                message: 'Error checking for org id existence: ' + ex.message
             }))
         }
         this.dispatch(addOrgEvaluate())
@@ -783,6 +893,10 @@ service, which introduces an indeterminate latency, and thus special handling.
 
 export function updateId(id: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        if (checkIDProcess) {
+            checkIDProcess.cancel()
+        }
+
         const [validatedId, error] = Validation.validateOrgId(id)
         if (error.type !== ValidationErrorType.OK) {
             dispatch(updateIdError(validatedId, error))
@@ -818,9 +932,6 @@ export function updateId(id: string) {
         // Otherwise, issue the success or error events as appropriate.
 
         const model = orgModelFromState(getState())
-        if (checkIDProcess) {
-            checkIDProcess.cancel()
-        }
 
         checkIDProcess = new CheckIfExistsProcess({
             delay: 100,

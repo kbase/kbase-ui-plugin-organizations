@@ -155,6 +155,9 @@ export default class Validation {
         }
         try {
             const url = new URL(homeUrl)
+            // ensure either http or https, followed by :// and then
+            // something then a dot then something then anything
+            // if (!url.protocol.match(/^http[s]?:\/\/[^.]+[.][^.]+.*$/)) {
             if (!url.protocol.match(/^http[s]?:$/)) {
                 return [
                     homeUrl, {
