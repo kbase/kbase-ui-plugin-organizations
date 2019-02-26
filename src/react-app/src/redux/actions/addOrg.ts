@@ -655,7 +655,7 @@ export function updateLogoUrl(logoUrl: string | null) {
 
         dispatch(addOrgEvaluate())
 
-        if (validatedLogoUrl !== null) {
+        if (validatedLogoUrl !== null && validatedLogoUrl.length > 0) {
             const {
                 auth: { authorization: { token } },
                 app: { config: { services: { ServiceWizard: { url: serviceWizardURL } } } }
@@ -789,7 +789,7 @@ export function updateHomeUrl(homeUrl: string | null) {
 
         dispatch(addOrgEvaluate())
 
-        if (validatedHomeUrl !== null) {
+        if (validatedHomeUrl !== null && validatedHomeUrl.length > 0) {
             const {
                 auth: { authorization: { token } },
                 app: { config: { services: { ServiceWizard: { url: serviceWizardURL } } } }

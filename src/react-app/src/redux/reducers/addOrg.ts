@@ -1,5 +1,8 @@
 import { Action } from 'redux'
-import { StoreState, EditState, SaveState, UIErrorType, ValidationState, ComponentLoadingState, SyncState, ValidationErrorType } from '../../types';
+import {
+    StoreState, EditState, SaveState, ComponentLoadingState,
+    SyncState, ValidationErrorType
+} from '../../types';
 import { ActionFlag } from '../actions';
 import {
     LoadStart, Unload,
@@ -17,7 +20,6 @@ import {
     UpdateResearchInterestsSuccess,
     UpdateResearchInterestsError
 } from '../actions/addOrg'
-import Validation from '../../data/models/organization/validation';
 
 // ADD ORG
 
@@ -219,12 +221,7 @@ export function updateNameSuccess(state: StoreState, action: UpdateNameSuccess):
                             validationState: {
                                 type: ValidationErrorType.OK,
                                 validatedAt: new Date()
-                            },
-                            // editState: EditState.EDITED,
-                            // validatedAt: new Date(),
-                            // error: {
-                            //     type: UIErrorType.NONE
-                            // }
+                            }
                         }
                     }
                 }
@@ -254,9 +251,6 @@ export function updateNameError(state: StoreState, action: UpdateNameError): Sto
                             value: action.name,
                             syncState: SyncState.DIRTY,
                             validationState: action.error
-                            // editState: EditState.EDITED,
-                            // validatedAt: new Date(),
-                            // error: action.error
                         }
                     }
                 }
@@ -471,7 +465,6 @@ export function updateIdSuccess(state: StoreState, action: UpdateIdSuccess): Sto
                         ...state.views.addOrgView.viewModel.newOrganization,
                         id: {
                             ...state.views.addOrgView.viewModel.newOrganization.id,
-                            // value: action.id,
                             syncState: SyncState.DIRTY,
                             validationState: {
                                 type: ValidationErrorType.OK,

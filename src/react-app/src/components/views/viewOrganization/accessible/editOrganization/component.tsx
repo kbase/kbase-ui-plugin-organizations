@@ -535,15 +535,31 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     }
 
 
+    renderBrokenHomeURL() {
+        const tooltipTitle = 'The Home URL is broken; either correct it or leave it empty'
+        return (
+            <Tooltip title={tooltipTitle}>
+                <Icon type="exclamation-circle" style={{ color: 'gray' }} />
+            </Tooltip>
+        )
+    }
+
     renderHomeURLPreview(homeUrlField: EditableNullableString) {
-        if (homeUrlField.value === null ||
-            homeUrlField.validationState.type !== ValidationErrorType.OK) {
+        if (homeUrlField.value === null) {
             const tooltipTitle = 'When you have completed your url, you may preview it here.'
             return (
                 <div className="NewOrganization-previewBox">
                     <Tooltip title={tooltipTitle}>
                         <Icon type="link" style={{ color: 'gray' }} />
                     </Tooltip>
+                </div>
+            )
+        }
+
+        if (homeUrlField.validationState.type !== ValidationErrorType.OK) {
+            return (
+                <div className="NewOrganization-previewBox">
+                    {this.renderBrokenHomeURL()}
                 </div>
             )
         }
@@ -960,15 +976,32 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
         )
     }
 
+    renderBrokenLogo() {
+        const tooltipTitle = 'The Logo URL is broken; either correct it or empty the field for the default logo'
+        return (
+            <Tooltip title={tooltipTitle}>
+                <Icon type="exclamation-circle" style={{ color: 'gray' }} />
+            </Tooltip>
+        )
+    }
+
     renderLogoPreview(logoUrlField: EditableNullableString) {
-        if (logoUrlField.value === null ||
-            logoUrlField.validationState.type !== ValidationErrorType.OK) {
+        if (logoUrlField.value === null) {
             return (
                 <div className="NewOrganization-previewBox">
                     {this.renderDefaultLogo()}
                 </div>
             )
         }
+
+        if (logoUrlField.validationState.type !== ValidationErrorType.OK) {
+            return (
+                <div className="NewOrganization-previewBox">
+                    {this.renderBrokenLogo()}
+                </div>
+            )
+        }
+
         return (
             <div className="NewOrganization-previewBox">
                 <img src={logoUrlField.value} width={30} />

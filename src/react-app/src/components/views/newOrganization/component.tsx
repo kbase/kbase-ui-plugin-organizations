@@ -349,21 +349,17 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
+    renderBrokenHomeURL() {
+        const tooltipTitle = 'The Home URL is broken; either correct it or leave it empty'
+        return (
+            <Tooltip title={tooltipTitle}>
+                <Icon type="exclamation-circle" style={{ color: 'gray' }} />
+            </Tooltip>
+        )
+    }
+
     renderHomeURLPreview(homeUrlField: EditableNullableString) {
-        if (homeUrlField.value &&
-            homeUrlField.validationState.type === ValidationErrorType.OK) {
-            const url = homeUrlField.value
-            const tooltipTitle = 'Try out your url by clicking this link'
-            return (
-                <div className="NewOrganization-previewBox">
-                    <Tooltip title={tooltipTitle} >
-                        <a href={url} target="_blank">
-                            <Icon type="link" />
-                        </a>
-                    </Tooltip>
-                </div>
-            )
-        } else {
+        if (homeUrlField.value === null || homeUrlField.value.length === 0) {
             const tooltipTitle = 'When you have completed your url, you may preview it here.'
             return (
                 <div className="NewOrganization-previewBox">
@@ -373,6 +369,25 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 </div>
             )
         }
+
+        if (homeUrlField.validationState.type !== ValidationErrorType.OK) {
+            return (
+                <div className="NewOrganization-previewBox">
+                    {this.renderBrokenHomeURL()}
+                </div>
+            )
+        }
+
+        const tooltipTitle = 'Try out your url by clicking this link'
+        return (
+            <div className="NewOrganization-previewBox">
+                <Tooltip title={tooltipTitle} >
+                    <a href={homeUrlField.value} target="_blank">
+                        <Icon type="link" />
+                    </a>
+                </Tooltip>
+            </div>
+        )
     }
 
     renderHomeURLRow(homeUrlField: EditableNullableString, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void) {
@@ -769,14 +784,32 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         )
     }
 
+    renderBrokenLogo() {
+        const tooltipTitle = 'The Logo URL is broken; either correct it or empty the field for the default logo'
+        return (
+            <Tooltip title={tooltipTitle}>
+                <Icon type="exclamation-circle" style={{ color: 'gray' }} />
+            </Tooltip>
+        )
+    }
+
     renderLogoPreview(logoUrlField: EditableNullableString) {
-        if (!logoUrlField.value) {
+        if (logoUrlField.value === null || logoUrlField.value.length === 0) {
             return (
                 <div className="NewOrganization-previewBox">
                     {this.renderDefaultLogo()}
                 </div>
             )
         }
+
+        if (logoUrlField.validationState.type !== ValidationErrorType.OK) {
+            return (
+                <div className="NewOrganization-previewBox">
+                    {this.renderBrokenLogo()}
+                </div>
+            )
+        }
+
         return (
             <div className="NewOrganization-previewBox">
                 <img src={logoUrlField.value} width={30} />
