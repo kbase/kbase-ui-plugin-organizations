@@ -4,9 +4,10 @@ import { Icon, Button, Alert, Select, Tooltip } from 'antd';
 import './component.css'
 import * as orgModel from '../../../../../data/models/organization/model'
 import * as narrativeModel from '../../../../../data/models/narrative'
-import MainMenu from '../../../../menu/component';
-import { OrganizationNarrative, AccessibleNarrative } from '../../../../../data/models/narrative';
-import NiceElapsedTime from '../../../../NiceElapsedTime';
+import MainMenu from '../../../../menu/component'
+import { OrganizationNarrative, AccessibleNarrative } from '../../../../../data/models/narrative'
+import NiceElapsedTime from '../../../../NiceElapsedTime'
+import { FlexibleColumnWrapper, Renderable } from './FlexibleColumnWrapper'
 
 export interface Props {
     organization: orgModel.Organization
@@ -25,12 +26,43 @@ export interface Props {
 interface State {
 }
 
+class NarrativeRenderer extends Renderable {
+    rowRenderer: (index: number) => JSX.Element
+    rowCount: number
+    constructor(rowRenderer: (index: number) => JSX.Element, rowCount: number) {
+        super()
+
+        this.rowRenderer = rowRenderer
+        this.rowCount = rowCount
+    }
+
+    size() {
+        return this.rowCount
+    }
+
+    render(index: number) {
+        return this.rowRenderer(index)
+    }
+
+    renderEmpty() {
+        return (
+            <div className="RequestNarrative-narrative-skeleton">
+                <div className="RequestNarrative-narrative-skeleton-row" style={{ width: '20em' }}>&nbsp;</div>
+                <div className="RequestNarrative-narrative-skeleton-row" style={{ width: '5em' }}>&nbsp;</div>
+                <div className="RequestNarrative-narrative-skeleton-row" style={{ width: '10em' }}>&nbsp;</div>
+            </div>
+        )
+    }
+}
+
 export class RequestAddNarrative extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
 
         this.state = {
+            containerDimensions: null
         }
+
     }
 
     onFinish() {
@@ -141,6 +173,57 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         )
     }
 
+    renderOrgNarrative(orgNarrative: OrganizationNarrative) {
+        const { status, narrative } = orgNarrative
+        let isSelected
+        if (this.props.selectedNarrative &&
+            narrative.workspaceId === this.props.selectedNarrative.narrative.workspaceId) {
+            isSelected = true
+        } else {
+            isSelected = false
+        }
+        let classNames = ['RequestNarrative-narrativeCell']
+        if (isSelected) {
+            classNames.push('RequestNarrative-selected')
+        }
+        let flag
+        switch (status) {
+            case NarrativeState.ASSOCIATED:
+                classNames.push('RequestNarrative-narrativeInOrg')
+                flag = (
+                    <Tooltip title="This narrative is already associated with this organization">
+                        <Icon type="check" style={{ color: 'green' }} />
+                    </Tooltip>
+                )
+                break
+            case NarrativeState.REQUESTED:
+                classNames.push('RequestNarrative-narrativeInOrg')
+                flag = (
+                    <Tooltip title="You have already requested that this narrative be added to this organization">
+                        <Icon type="loading" style={{ color: 'orange' }} />
+                    </Tooltip>
+                )
+                break
+            default:
+                classNames.push('RequestNarrative-narrativeNotInOrg')
+        }
+
+        return (
+            <div
+                className={classNames.join(' ')}
+                onClick={() => { this.doSelectNarrative.call(this, orgNarrative) }}
+            >
+                <div className="RequestNarrative-narrativeFlag">
+                    {flag}
+                </div>
+                <div className="RequestNarrative-narrative">
+
+                    {this.renderNarrative(orgNarrative.narrative)}
+                </div>
+            </div>
+        )
+    }
+
     renderNarratives() {
         if (this.props.narratives.length === 0) {
             return (
@@ -149,55 +232,13 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                 </div>
             )
         }
-        return this.props.narratives.map((orgNarrative, index) => {
-            const { status, narrative } = orgNarrative
-            let isSelected
-            if (this.props.selectedNarrative &&
-                narrative.workspaceId === this.props.selectedNarrative.narrative.workspaceId) {
-                isSelected = true
-            } else {
-                isSelected = false
-            }
-            let classNames = ['RequestNarrative-narrativeCell']
-            if (isSelected) {
-                classNames.push('RequestNarrative-selected')
-            }
-            let flag
-            switch (status) {
-                case NarrativeState.ASSOCIATED:
-                    classNames.push('RequestNarrative-narrativeInOrg')
-                    flag = (
-                        <Tooltip title="This narrative is already associated with this organization">
-                            <Icon type="check" style={{ color: 'green' }} />
-                        </Tooltip>
-                    )
-                    break
-                case NarrativeState.REQUESTED:
-                    classNames.push('RequestNarrative-narrativeInOrg')
-                    flag = (
-                        <Tooltip title="You have already requested that this narrative be added to this organization">
-                            <Icon type="loading" style={{ color: 'orange' }} />
-                        </Tooltip>
-                    )
-                    break
-                default:
-                    classNames.push('RequestNarrative-narrativeNotInOrg')
-            }
-
-            return (
-                <div
-                    className={classNames.join(' ')}
-                    onClick={() => { this.doSelectNarrative.call(this, orgNarrative) }}
-                    key={String(index)}>
-                    <div className="RequestNarrative-narrativeFlag">
-                        {flag}
-                    </div>
-                    <div className="RequestNarrative-narrative">
-                        {this.renderNarrative(orgNarrative.narrative)}
-                    </div>
-                </div>
-            )
-        })
+        const rowRenderer = (index: number) => {
+            return this.renderOrgNarrative(this.props.narratives[index])
+        }
+        const narrativeRenderer = new NarrativeRenderer(rowRenderer, this.props.narratives.length)
+        return (
+            <FlexibleColumnWrapper renderable={narrativeRenderer} />
+        )
     }
 
     onSearchSubmit() {
@@ -296,7 +337,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     {this.renderFeedbackBar()}
                 </div>
                 <div className="RequestNarrative-narratives scrollable-flex-column">
-                    <div className="RequestNarrative-narrativesTable">
+                    <div className="RequestNarrative-narrativesTable scrollable-flex-column"  >
                         {this.renderNarratives()}
                     </div>
                 </div>

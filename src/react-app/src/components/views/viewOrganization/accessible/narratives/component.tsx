@@ -1,8 +1,9 @@
 import * as React from 'react'
-import './component.css'
-import * as orgModel from '../../../../../data/models/organization/model'
 import { Alert, Button, Icon, Menu, Dropdown, Input, Select, Modal } from 'antd';
+import { List, ListRowRenderer, ListRowProps } from 'react-virtualized'
 import OrganizationNarrative from '../../../../OrganizationNarrative'
+import * as orgModel from '../../../../../data/models/organization/model'
+import './component.css'
 
 export interface NarrativesProps {
     organization: orgModel.Organization
@@ -134,6 +135,42 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
         )
     }
 
+    renderMemberNarrativeRow(narrative: orgModel.NarrativeResource) {
+        const lastOrgVisitAt = this.props.organization.lastVisitedAt
+        const addedAt = narrative.addedAt
+        let isNew
+        if (lastOrgVisitAt === null) {
+            if (addedAt === null) {
+                isNew = false
+            } else {
+                isNew = false
+            }
+        } else {
+            if (addedAt === null) {
+                isNew = false
+            } else {
+                isNew = lastOrgVisitAt.getTime() < addedAt.getTime()
+            }
+        }
+        const classNames = ['ViewOrganization-Narratives-narrative', 'simpleCard']
+        if (isNew) {
+            classNames.push('ViewOrganization-Narratives-newNarrative')
+        }
+        return (
+            <div className={classNames.join(' ')} key={String(narrative.workspaceId)}>
+                <div className="ViewOrganization-Narratives-dataCol">
+                    <OrganizationNarrative
+                        narrative={narrative}
+                        organization={this.props.organization}
+                        onGetViewAccess={this.props.onGetViewAccess} />
+                </div>
+                <div className="ViewOrganization-Narratives-buttonCol">
+                    {this.renderNarrativeMenu(narrative)}
+                </div>
+            </div>
+        )
+    }
+
     renderMemberNarratives() {
         const extras = [(
             <Button
@@ -144,6 +181,13 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
             </Button>
         )]
 
+        // (props: ListRowProps) => React.ReactNode
+        const rowRenderer: (props: ListRowProps) => React.ReactNode = ({
+            key,
+            index, isScrolling, isVisible, style
+        }: ListRowProps) => {
+            return this.renderMemberNarrativeRow(this.props.narratives[index])
+        }
         let narrativesTable
         if (this.props.narratives.length === 0) {
             narrativesTable = (
@@ -151,39 +195,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
             )
         } else {
             narrativesTable = this.props.narratives.map((narrative) => {
-                const lastOrgVisitAt = this.props.organization.lastVisitedAt
-                const addedAt = narrative.addedAt
-                let isNew
-                if (lastOrgVisitAt === null) {
-                    if (addedAt === null) {
-                        isNew = false
-                    } else {
-                        isNew = false
-                    }
-                } else {
-                    if (addedAt === null) {
-                        isNew = false
-                    } else {
-                        isNew = lastOrgVisitAt.getTime() < addedAt.getTime()
-                    }
-                }
-                const classNames = ['ViewOrganization-Narratives-narrative', 'simpleCard']
-                if (isNew) {
-                    classNames.push('ViewOrganization-Narratives-newNarrative')
-                }
-                return (
-                    <div className={classNames.join(' ')} key={String(narrative.workspaceId)}>
-                        <div className="ViewOrganization-Narratives-dataCol">
-                            <OrganizationNarrative
-                                narrative={narrative}
-                                organization={this.props.organization}
-                                onGetViewAccess={this.props.onGetViewAccess} />
-                        </div>
-                        <div className="ViewOrganization-Narratives-buttonCol">
-                            {this.renderNarrativeMenu(narrative)}
-                        </div>
-                    </div>
-                )
+                return this.renderMemberNarrativeRow(narrative);
             })
         }
 
