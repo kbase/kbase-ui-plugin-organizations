@@ -509,7 +509,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             <span>
                 This organization was last updated
                 {' '}
-                <NiceElapsedTime time={org.modifiedAt} showTooltip={false} />
+                <NiceElapsedTime time={org.modifiedAt} showTooltip={true} />
             </span>
         )
         return (
@@ -519,7 +519,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         <span className="field-label"><Icon type="save" /></span>
                     </div>
                     <div className="BriefOrganization-infoTableCol2">
-                        <NiceElapsedTime time={org.modifiedAt} showTooltip={false} />
+                        <NiceElapsedTime time={org.modifiedAt} showTooltip={true} />
                     </div>
                 </div>
             </Tooltip>

@@ -391,6 +391,13 @@ export default class BriefOrganization extends React.Component<BriefOrganization
     }
 
     renderInfoCol(org: orgModel.BriefOrganization) {
+        const lastUpdatedTooltip = (
+            <span>
+                This organization was last updated
+                {' '}
+                <NiceElapsedTime time={org.modifiedAt} showTooltip={true} />
+            </span>
+        )
         return (
             <React.Fragment>
                 <div className="BriefOrganizationHeader-orgName BriefOrganizationHeader-infoTableRow">
@@ -432,15 +439,16 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         </Tooltip>
                     </div>
                 </div>
+
                 <div className="BriefOrganizationHeader-orgOwner BriefOrganizationHeader-infoTableRow">
                     <div className="BriefOrganizationHeader-infoTableCol1">
                         <span className="field-label">updated</span>
                     </div>
                     <div className="BriefOrganizationHeader-infoTableCol2">
-                        <NiceElapsedTime time={org.modifiedAt} showTooltip={false} />
+                        <NiceElapsedTime time={org.modifiedAt} tooltipPrefix="This organization was last updated " />
                     </div>
                 </div>
-            </React.Fragment>
+            </React.Fragment >
         )
     }
 

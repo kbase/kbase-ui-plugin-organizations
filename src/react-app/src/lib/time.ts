@@ -1,11 +1,17 @@
-export function niceElapsed(someDate: Date, absoluteAfter?: number, compactDate: boolean = true) {
-    const nowDate = new Date()
+export interface niceElapsedOptions {
+    absoluteAfter?: number,
+    compactDate?: boolean,
+    now?: Date
+}
+
+export function niceElapsed(someDate: Date, options: niceElapsedOptions = {}) {
+    const nowDate = options.now || new Date()
 
     const elapsed = Math.round((nowDate.getTime() - someDate.getTime()) / 1000);
     const elapsedAbs = Math.abs(elapsed);
 
     let measure, measureAbs, unit;
-    const maxDays = absoluteAfter || 90
+    const maxDays = options.absoluteAfter || 90
     if (elapsedAbs < 60 * 60 * 24 * maxDays) {
         if (elapsedAbs === 0) {
             return 'now';
@@ -42,7 +48,7 @@ export function niceElapsed(someDate: Date, absoluteAfter?: number, compactDate:
         return (prefix ? prefix + ' ' : '') + measureAbs + ' ' + unit + (suffix ? ' ' + suffix : '');
     } else {
         // otherwise show the actual date, with or without the year.
-        if (compactDate && nowDate.getFullYear() === someDate.getFullYear()) {
+        if (options.compactDate && nowDate.getFullYear() === someDate.getFullYear()) {
             return Intl.DateTimeFormat('en-US', {
                 month: 'short',
                 day: 'numeric'
