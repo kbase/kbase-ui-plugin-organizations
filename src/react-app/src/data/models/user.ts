@@ -1,4 +1,5 @@
 import { UserProfileClient, UserProfile } from '../apis/userProfile'
+import { getProp } from '../../lib/props'
 
 
 export type Username = string
@@ -33,23 +34,23 @@ function profileToUser(profile: UserProfile): User {
             gravatarDefault: null
         }
     }
-    if (profile.profile.userdata.jobTitle === 'Other') {
-        jobTitle = profile.profile.userdata.jobTitleOther
+    if (getProp<string | null>(profile, 'profile.userdata.jobTitle', null) === 'Other') {
+        jobTitle = getProp<string | null>(profile, 'profile.userdata.jobTitleOther', null)
     } else {
-        jobTitle = profile.profile.userdata.jobTitle
+        jobTitle = getProp<string | null>(profile, 'profile.userdata.jobTitle', null)
     }
 
     return {
         username: profile.user.username,
         realname: profile.user.realname,
-        city: profile.profile.userdata.city,
-        state: profile.profile.userdata.state,
-        country: profile.profile.userdata.country,
+        city: getProp<string | null>(profile, 'profile.userdata.city', null),
+        state: getProp<string | null>(profile, 'profile.userdata.state', null),
+        country: getProp<string | null>(profile, 'profile.userdata.country', null),
         title: jobTitle,
-        organization: profile.profile.userdata.organization,
-        avatarOption: profile.profile.userdata.avatarOption,
-        gravatarHash: profile.profile.synced.gravatarHash,
-        gravatarDefault: profile.profile.userdata.gravatarDefault
+        organization: getProp<string | null>(profile, 'profile.userdata.organization', null),
+        avatarOption: getProp<string | null>(profile, 'profile.userdata.avatarOption', null),
+        gravatarHash: getProp<string | null>(profile, 'profile.synced.gravatarHash', null),
+        gravatarDefault: getProp<string | null>(profile, 'profile.userdata.gravatarDefault', null)
     }
 }
 

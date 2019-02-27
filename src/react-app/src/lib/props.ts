@@ -1,4 +1,4 @@
-export function getProp(obj: any, propPath: Array<string> | string, defaultValue: any): any {
+export function getProp<T>(obj: any, propPath: Array<string> | string, defaultValue: T): T {
     if (typeof propPath === 'string') {
         propPath = propPath.split('.');
     } else if (!(propPath instanceof Array)) {

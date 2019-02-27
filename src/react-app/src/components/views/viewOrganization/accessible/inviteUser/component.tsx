@@ -1,14 +1,13 @@
 import * as React from 'react'
-
-import './component.css'
 import { User, InviteUserViewState, OrganizationUser } from '../../../../../types';
-import { Button, Icon, Modal, Alert } from 'antd';
-import Header from '../../../../Header';
-import { NavLink } from 'react-router-dom';
+import { Button, Icon, Alert, Tooltip } from 'antd';
 import UserComponent from '../../../../User'
 import * as orgModel from '../../../../../data/models/organization/model'
 import * as userModel from '../../../../../data/models/user'
 import MainMenu from '../../../../menu/component'
+import UserEntityComponent from '../../../../entities/UserWrappedContainer'
+import './component.css'
+import Avatar from '../../../../entities/Avatar';
 
 export interface InviteUserProps {
     organization: orgModel.Organization,
@@ -132,6 +131,18 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                 <Alert type="warning" message="No users found" showIcon />
             )
         }
+        const renderUser = (user: userModel.User) => {
+            const tooltip = (
+                <UserComponent user={user} avatarSize={30} />
+            )
+            return (
+                <Tooltip title={tooltip}>
+                    <div className="name">
+                        <Avatar user={user} size={20} /> {user.realname} ({user.username})
+                    </div>
+                </Tooltip>
+            )
+        }
         return this.props.users.map((user) => {
             if (user.relation === orgModel.UserRelationToOrganization.NONE) {
                 return (
@@ -139,10 +150,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                         className="user notInOrganization "
                         key={user.username}
                         onClick={() => { this.onSelectUser.call(this, user) }}>
-                        <div className="name "
-                        >
-                            {user.realname} ({user.username})
-                        </div>
+                        <UserEntityComponent userId={user.username} render={renderUser} />
                     </div>
                 )
             } else {
@@ -151,10 +159,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                         className="user inOrganization"
                         key={user.username}
                         onClick={() => { this.onSelectUser.call(this, user) }}>
-                        <div className="name "
-                        >
-                            {user.realname} ({user.username})
-                        </div>
+                        <UserEntityComponent userId={user.username} render={renderUser} />
                     </div>
                 )
             }
