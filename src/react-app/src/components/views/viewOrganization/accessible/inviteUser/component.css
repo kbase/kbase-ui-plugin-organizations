@@ -9,7 +9,7 @@
     text-align: center;
 }
 
-.InviteUser .row {
+.InviteUser-row {
     flex: 1 1 0px;
     display: flex;
     flex-direction: row;
@@ -17,25 +17,31 @@
     margin-top: 10px;
 }
 
-.InviteUser .row .col1 {
+.InviteUser-col1 {
     flex: 1 1 0px;
 }
 
-.InviteUser .row .col2 {
-    flex: 2 1 0px;
+.InviteUser-selectedUser {
+    padding: 8px;
+    border: 1px rgba(200, 200, 200, 0.5) solid;
+    box-shadow: 4px 4px 4px rgba(200, 200, 200, 1);
 }
 
-.InviteUser .selectedUser .noSelection {
+.InviteUser-selectedUser .InviteUser-noSelection {
     text-align: center;
     font-style: italic;
     padding: 20px;
 }
 
-.InviteUser .firstCol {
+.InviteUser-selected {
+    background-color: rgba(200, 200, 200, 0.3);
+}
+
+.InviteUser .-firstCol {
     margin-right: 10px;
 }
 
-.InviteUser .lastCol {
+.InviteUser .-lastCol {
     margin-left: 10px;
 }
 
@@ -52,51 +58,59 @@
     width: 100%;
 }
 
-.InviteUser .selectedUser {
-    padding: 8px;
-    border: 1px rgba(200, 200, 200, 0.5) solid;
-    box-shadow: 4px 4px 4px rgba(200, 200, 200, 1);
-}
-
 .InviteUser .users {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
 }
 
-.InviteUser .usersTable {
+.InviteUser-usersTable {
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
 }
 
-.InviteUser .usersTable .user.notInOrganization .name {
+/* .InviteUser-usersTable .InviteUser-user.InviteUser-notInOrganization .InviteUser-name {
     font-weight: bold;
 }
 
-.InviteUser .usersTable .user.inOrganization .name {
+.InviteUser-usersTable .InviteUser-user.InviteUser-inOrganization .InviteUser-name {
     font-weight: normal;
     font-style: italic;
     color: rgba(100, 100, 100, 1)
+} */
+
+.InviteUser-userRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
 }
 
-.InviteUser .users .user {
+.InviteUser-statusCol {
+    flex: 0 0 2em;
+}
+
+.InviteUser-userCol {
+    flex: 1 1 0px;
+}
+
+.InviteUser-userRow {
     cursor: pointer;
     padding: 4px;
     margin: 0;
 }
 
-.InviteUser .users .user:hover {
+.InviteUser-userRow:hover {
     background-color: rgba(200, 200, 200, 0.5);
 }
 
-.InviteUser .footer {
+.InviteUser-footer {
     flex: 0 0 auto;
     min-height: 10px;
 }
 
-.InviteUser .searchBar {
+.InviteUser-searchBar {
     flex: 0 0 30px;
     display: flex;
     flex-direction: row;
@@ -104,13 +118,13 @@
     margin-bottom: 10px;
 }
 
-.InviteUser .searchBar input {
+.InviteUser-searchBar input {
     width: 20em;
     height: 100%;
     flex: 1 1 0px;
 }
 
-.InviteUser .searchBar .searchButton {
+.InviteUser-searchBar .InviteUser-searchButton {
     height: 100%;
     padding: 4px;
     flex: 0 0 auto;

@@ -136,44 +136,81 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                 <UserComponent user={user} avatarSize={30} />
             )
             return (
-                <Tooltip title={tooltip}>
-                    <div className="name">
-                        <Avatar user={user} size={20} /> {user.realname} ({user.username})
+                // <Tooltip title={tooltip}>
+                <div className="InviteUser-name">
+                    <Avatar user={user} size={20} /> {user.realname} ({user.username})
                     </div>
-                </Tooltip>
+                // </Tooltip>
             )
         }
         return this.props.users.map((user) => {
-            if (user.relation === orgModel.UserRelationToOrganization.NONE) {
-                return (
-                    <div
-                        className="user notInOrganization "
-                        key={user.username}
-                        onClick={() => { this.onSelectUser.call(this, user) }}>
-                        <UserEntityComponent userId={user.username} render={renderUser} />
-                    </div>
-                )
-            } else {
-                return (
-                    <div
-                        className="user inOrganization"
-                        key={user.username}
-                        onClick={() => { this.onSelectUser.call(this, user) }}>
-                        <UserEntityComponent userId={user.username} render={renderUser} />
-                    </div>
+            let statusIconType
+            let statusTooltip
+            let statusIconColor = '#000'
+            switch (user.relation) {
+                case orgModel.UserRelationToOrganization.NONE:
+                    // nothing
+                    break
+                case orgModel.UserRelationToOrganization.MEMBER:
+                    statusIconType = 'user'
+                    statusTooltip = 'This user is already a member of this Organization'
+                    break
+                case orgModel.UserRelationToOrganization.ADMIN:
+                    statusIconType = 'lock'
+                    statusTooltip = 'This user is already an administrator of this Organization'
+                    break
+                case orgModel.UserRelationToOrganization.OWNER:
+                    statusIconType = 'crown'
+                    statusTooltip = 'This user is the owner of this organization'
+                    break
+                case orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING:
+                    statusIconType = 'inbox'
+                    statusTooltip = 'This user has already requested membership to this Organization (check your requests inbox)'
+                    statusIconColor = 'orange'
+                    break
+                case orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING:
+                    statusIconType = 'mail'
+                    statusTooltip = 'This user has already been invited to join this Organization'
+                    statusIconColor = 'orange'
+                    break
+            }
+            let statusIcon
+            if (statusIconType) {
+                statusIcon = (
+                    <Tooltip title={statusTooltip}>
+                        <Icon type={statusIconType} style={{ color: statusIconColor }} />
+                    </Tooltip>
                 )
             }
+            const isSelected = (this.props.selectedUser && (user.username === this.props.selectedUser.user.username))
+            let classes = ['InviteUser-userRow']
+            if (isSelected) {
+                classes.push('InviteUser-selected')
+            }
+            return (
+                <div
+                    className={classes.join(' ')}
+                    key={user.username}
+                    onClick={() => { this.onSelectUser.call(this, user) }}>
+                    <div className="InviteUser-statusCol">
+                        {statusIcon}
+                    </div>
+                    <div className="InviteUser-userCol">
+                        <UserEntityComponent userId={user.username} render={renderUser} />
+                    </div>
+                </div>
+            )
         })
     }
 
     renderOrgInfo() {
         return (
             <div className="orgInfo">
-                <div className="name">
+                <div className="InviteUser-name">
                     <span className="field-label">name</span>
                     <span>{this.props.organization.name}</span>
                 </div>
-                <div className="description">
+                <div className="InviteUser-description">
                     <span className="field-label">description</span>
                     <span>{this.props.organization.description}</span>
                 </div>
@@ -296,15 +333,15 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
     renderSelectedUser() {
         if (this.props.selectedUser === null) {
             return (
-                <div className="selectedUser">
-                    <p className="noSelection">
+                <div className="InviteUser-selectedUser">
+                    <p className="InviteUser-noSelection">
                         No user yet selected
                     </p>
                 </div>
             )
         } else {
             return (
-                <div className="selectedUser">
+                <div className="InviteUser-selectedUser">
                     <UserComponent user={this.props.selectedUser.user} />
                     {this.renderRelation(this.props.selectedUser.relation)}
                 </div>
@@ -314,7 +351,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
 
     renderFooter() {
         return (
-            <div className="footer">
+            <div className="InviteUser-footer">
             </div>
         )
     }
@@ -341,10 +378,10 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         return (
             <div className="InviteUser scrollable-flex-column">
                 <MainMenu buttons={this.renderMenuButtons()} />
-                <div className="row scrollable-flex-column">
-                    <div className="col1 firstCol users scrollable-flex-column">
+                <div className="InviteUser-row scrollable-flex-column">
+                    <div className="InviteUser-col1 -firstCol InviteUser-users scrollable-flex-column">
                         <h3>Select User to Invite</h3>
-                        <form id="searchForm" className="searchBar"
+                        <form id="searchForm" className="InviteUser-searchBar"
                             onSubmit={this.onSubmit.bind(this)}>
                             <input
                                 ref={this.searchInput}
@@ -353,7 +390,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                                 placeholder="Search for a user"
                             />
                             <Button
-                                className="searchButton"
+                                className="InviteUser-searchButton"
                                 form="searchForm"
                                 key="submit"
                                 htmlType="submit"
@@ -361,11 +398,11 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
                                 {this.renderSearchButton()}
                             </Button>
                         </form>
-                        <div className="usersTable">
+                        <div className="InviteUser-usersTable">
                             {this.renderUsers()}
                         </div>
                     </div>
-                    <div className="col1 lastCol">
+                    <div className="InviteUser-col1 -lastCol">
                         <h3>Selected User</h3>
                         {this.renderSelectedUser()}
                         {this.renderInvitationForm()}

@@ -4,8 +4,8 @@ self.__precacheManifest = [
     "url": "./static/media/oxygen-latin-400.cb94a645.woff2"
   },
   {
-    "revision": "b5ed864152f359f26892",
-    "url": "./static/css/main.772ff2df.chunk.css"
+    "revision": "18da411e9c15016bfa23",
+    "url": "./static/css/main.6d7ffa19.chunk.css"
   },
   {
     "revision": "9eb600ee07a27cdad64f",
@@ -24,8 +24,8 @@ self.__precacheManifest = [
     "url": "./static/media/nouserpic.9af42ba9.png"
   },
   {
-    "revision": "b5ed864152f359f26892",
-    "url": "./static/js/main.b5ed8641.chunk.js"
+    "revision": "18da411e9c15016bfa23",
+    "url": "./static/js/main.18da411e.chunk.js"
   },
   {
     "revision": "d3ab48d863c7cc8f3c9b756bbc5ee452",
@@ -48,7 +48,7 @@ self.__precacheManifest = [
     "url": "./static/css/2.7937138c.chunk.css"
   },
   {
-    "revision": "a6225c0a2a66b05ec35e459c943a34d4",
+    "revision": "6e131426d79f274e9204b6ad65f8283d",
     "url": "./index.html"
   }
 ];

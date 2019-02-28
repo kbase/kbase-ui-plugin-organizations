@@ -8,7 +8,8 @@ import {
     RequestType, RequestResourceType, MemberType,
     OrganizationUser,
     ViewOrgViewModelKind,
-    View
+    View,
+    ViewOrgViewModel
 } from '../../../types'
 import { UserQuery } from '../../../data/model'
 import * as orgModel from '../../../data/models/organization/model'
@@ -157,7 +158,7 @@ export function inviteUserSearchUsers(query: UserQuery) {
         }
 
         const {
-            auth: { authorization: { token, username } },
+            auth: { authorization: { token } },
             app: { config },
             views: {
                 viewOrgView: { viewModel }
@@ -191,6 +192,7 @@ export function inviteUserSearchUsers(query: UserQuery) {
 
         const org = viewModel.organization
 
+
         const userClient = new userModel.UserModel({
             token,
             userProfileServiceURL: config.services.UserProfile.url
@@ -220,6 +222,7 @@ export function inviteUserSearchUsers(query: UserQuery) {
         // }))
 
         // TODO revive
+
         // org.adminRequests.forEach((request) => {
         //     if (request.resourceType === RequestResourceType.USER) {
         //         switch (request.type) {
@@ -233,6 +236,21 @@ export function inviteUserSearchUsers(query: UserQuery) {
         //         }
         //     }
         // })
+
+        const inboxRequests = viewModel.requestInbox
+        const outboxRequests = viewModel.requestOutbox
+
+        inboxRequests.forEach((request) => {
+            if (request.resourceType === RequestResourceType.USER) {
+                requested.push(request.requester)
+            }
+        })
+
+        outboxRequests.forEach((request) => {
+            if (request.resourceType === RequestResourceType.USER) {
+                invited.push(request.user)
+            }
+        })
 
         try {
             const users = await userClient.searchUsers(query)
@@ -337,7 +355,9 @@ function isUserInvitation(request: requestModel.Request, username: string): requ
     return false
 }
 
-function getUserRelation(user: User, organization: orgModel.Organization): orgModel.UserRelationToOrganization {
+function getUserRelation(user: User, viewModel: ViewOrgViewModel): orgModel.UserRelationToOrganization {
+
+    const organization = viewModel.organization
     if (user.username === organization.owner.username) {
         return orgModel.UserRelationToOrganization.OWNER
     }
@@ -355,6 +375,30 @@ function getUserRelation(user: User, organization: orgModel.Organization): orgMo
         }
     }
 
+    const inboxRequests = viewModel.requestInbox
+    const outboxRequests = viewModel.requestOutbox
+
+    if (inboxRequests.some((request) => {
+        return (request.resourceType === RequestResourceType.USER &&
+            request.requester === user.username)
+    })) {
+        return orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING
+    }
+
+    if (outboxRequests.some((request) => {
+        return (request.resourceType === RequestResourceType.USER &&
+            request.user === user.username)
+    })) {
+        return orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING
+    }
+
+
+    // outboxRequests.forEach((request) => {
+    //     if (request.resourceType === RequestResourceType.USER) {
+    //         invited.push(request.user)
+    //     }
+    // })
+
     // TODO revive
     // for (const request of organization.adminRequests) {
     //     if (isUserInvitation(request, user.username)) {
@@ -367,7 +411,7 @@ function getUserRelation(user: User, organization: orgModel.Organization): orgMo
     return orgModel.UserRelationToOrganization.VIEW
 }
 
-function ensureView(state: StoreState): View<InviteUserViewModel> {
+function ensureView(state: StoreState): [ViewOrgViewModel, View<InviteUserViewModel>] {
     const {
         views: {
             viewOrgView: { viewModel }
@@ -383,7 +427,7 @@ function ensureView(state: StoreState): View<InviteUserViewModel> {
     if (inviteUserView === null) {
         throw new Error('select user invalid state -- no view value')
     }
-    return inviteUserView
+    return [viewModel, inviteUserView]
 }
 
 // function ensureViewModel(state: StoreState): InviteUserViewModel {
@@ -397,9 +441,10 @@ export function selectUser(selectedUsername: string) {
 
         const state = getState()
 
+        let orgViewModel: ViewOrgViewModel
         let view: View<InviteUserViewModel>
         try {
-            view = ensureView(state)
+            [orgViewModel, view] = ensureView(state)
         } catch (ex) {
             dispatch(selectUserError(makeError({
                 code: 'invalid state',
@@ -428,7 +473,7 @@ export function selectUser(selectedUsername: string) {
 
         try {
             const user = await userClient.getUser(selectedUsername)
-            const relation = getUserRelation(user, view.viewModel.organization)
+            const relation = getUserRelation(user, orgViewModel)
             dispatch(selectUserSuccess(user, relation))
         } catch (ex) {
             dispatch(selectUserError(makeError({
@@ -485,7 +530,7 @@ export function sendInvitation() {
 
         let view: View<InviteUserViewModel>
         try {
-            view = ensureView(state)
+            [, view] = ensureView(state)
         } catch (ex) {
             dispatch(selectUserError(makeError({
                 code: 'invalid state',
