@@ -880,7 +880,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
-    renderNormalView() {
+    renderMainTabsx() {
         let orgRowClass
         let narrativesRowClass
         if (this.state.accordionState === AccordionState.UP) {
@@ -893,30 +893,154 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         orgRowClass += " scrollable-flex-column"
         narrativesRowClass += " scrollable-flex-column"
         return (
+            <React.Fragment>
+                <div className={orgRowClass} style={{ minHeight: '0px' }}>
+                    {this.renderOrg()}
+                </div>
+                <div className="ViewOrganization-accordionRow">
+                    {this.renderAccordionControl()}
+                </div>
+                <div className={narrativesRowClass}>
+                    {/* TODO: move these actions into a redux adapter for narratives 
+                    */}
+                    <Narratives
+                        organization={this.props.viewModel.organization}
+                        narratives={this.props.viewModel.narratives.narratives}
+                        relation={this.props.viewModel.relation}
+                        sortNarrativesBy={this.props.viewModel.narratives.sortBy}
+                        searchNarrativesBy={this.props.viewModel.narratives.searchBy}
+                        onSortNarratives={this.props.onSortNarratives}
+                        onSearchNarratives={this.props.onSearchNarratives}
+                        onRemoveNarrative={this.props.onRemoveNarrative}
+                        onGetViewAccess={this.props.onGetViewAccess}
+                        onRequestAddNarrative={this.onRequestAddNarrative.bind(this)}
+                    />
+                </div>
+            </React.Fragment>
+        )
+    }
+
+    renderDescriptionTab() {
+        if (!this.props.viewModel.organization) {
+            return
+        }
+        return (
+            <div className="ViewOrganization-org-description-org scrollable-flex-column">
+                <div className="ViewOrganization-org-description"
+                    dangerouslySetInnerHTML={({ __html: Marked.parse(this.props.viewModel.organization.description || '') })}
+                />
+            </div>
+        )
+    }
+
+    renderNarrativesTab() {
+        return (
+            <Narratives
+                organization={this.props.viewModel.organization}
+                narratives={this.props.viewModel.narratives.narratives}
+                relation={this.props.viewModel.relation}
+                sortNarrativesBy={this.props.viewModel.narratives.sortBy}
+                searchNarrativesBy={this.props.viewModel.narratives.searchBy}
+                onSortNarratives={this.props.onSortNarratives}
+                onSearchNarratives={this.props.onSearchNarratives}
+                onRemoveNarrative={this.props.onRemoveNarrative}
+                onGetViewAccess={this.props.onGetViewAccess}
+                onRequestAddNarrative={this.onRequestAddNarrative.bind(this)}
+            />
+        )
+    }
+
+    renderAppsTab() {
+        return (
+            <div>
+                <p>
+                    Coming to a Tab Near You!
+                </p>
+            </div>
+        )
+    }
+
+    renderMainTabs() {
+        const tabs = []
+
+        const aboutTabTitle = (
+            <span>
+                <Icon type="info-circle" />
+                About
+            </span>
+        )
+        tabs.push((
+            <Tabs.TabPane
+                tab={aboutTabTitle}
+                key="about"
+                style={{ flexDirection: 'column' }}>
+                {this.renderDescriptionTab()}
+            </Tabs.TabPane>
+        ))
+
+        const narrativeCount = this.props.viewModel.narratives.narratives.length
+        const narrativesTabTitle = (
+            <span>
+                <Icon type="file" />
+                Narratives
+                {' '}
+                <span className="ViewOrganization-tabCount">({narrativeCount})</span>
+            </span>
+        )
+
+        tabs.push((
+            <Tabs.TabPane
+                tab={narrativesTabTitle}
+                key="narratives"
+                style={{ flexDirection: 'column' }}>
+                {this.renderNarrativesTab()}
+            </Tabs.TabPane>
+        ))
+
+        const appCount = 0
+        const appsTabTitle = (
+            <span>
+                <Icon type="appstore" />
+                Apps
+                {' '}
+                <span className="ViewOrganization-tabCount">({appCount})</span>
+            </span>
+        )
+        tabs.push((
+            <Tabs.TabPane
+                tab={appsTabTitle}
+                key="apps"
+                style={{ flexDirection: 'column' }}>
+                {this.renderAppsTab()}
+            </Tabs.TabPane>
+        ))
+
+        let defaultActiveKey: string
+        if (this.props.viewModel.organization.isMember) {
+            defaultActiveKey = "narratives"
+        } else {
+            defaultActiveKey = "about"
+        }
+
+        return (
+            <Tabs
+                defaultActiveKey={defaultActiveKey}
+                className="ViewOrganization-tabs"
+                animated={false}
+                size="small"
+                tabPosition="top">
+                {tabs}
+
+            </Tabs>
+        )
+    }
+
+    renderNormalView() {
+
+        return (
             <div className="ViewOrganization-mainRow scrollable-flex-column">
                 <div className="ViewOrganization-mainColumn  scrollable-flex-column">
-                    <div className={orgRowClass} style={{ minHeight: '0px' }}>
-                        {this.renderOrg()}
-                    </div>
-                    <div className="ViewOrganization-accordionRow">
-                        {this.renderAccordionControl()}
-                    </div>
-                    <div className={narrativesRowClass}>
-                        {/* TODO: move these actions into a redux adapter for narratives 
-                    */}
-                        <Narratives
-                            organization={this.props.viewModel.organization}
-                            narratives={this.props.viewModel.narratives}
-                            relation={this.props.viewModel.relation}
-                            sortNarrativesBy={this.props.viewModel.sortNarrativesBy}
-                            searchNarrativesBy={this.props.viewModel.searchNarrativesBy}
-                            onSortNarratives={this.props.onSortNarratives}
-                            onSearchNarratives={this.props.onSearchNarratives}
-                            onRemoveNarrative={this.props.onRemoveNarrative}
-                            onGetViewAccess={this.props.onGetViewAccess}
-                            onRequestAddNarrative={this.onRequestAddNarrative.bind(this)}
-                        />
-                    </div>
+                    {this.renderMainTabs()}
                 </div>
                 <div className="ViewOrganization-infoColumn">
                     {this.renderCombo()}

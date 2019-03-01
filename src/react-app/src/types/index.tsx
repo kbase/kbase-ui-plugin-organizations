@@ -467,9 +467,19 @@ export interface ViewOrgViewModel {
     groupInvitations: Array<requestModel.Request> | null
     requestOutbox: Array<requestModel.Request>
     requestInbox: Array<requestModel.Request>
-    sortNarrativesBy: string
-    searchNarrativesBy: string
-    narratives: Array<orgModel.NarrativeResource>
+    narratives: {
+        sortBy: string
+        searchBy: string
+        narratives: Array<orgModel.NarrativeResource>
+    }
+    apps: {
+        sortBy: string
+        searchBy: string
+        apps: Array<orgModel.AppResource>
+    }
+    // sortNarrativesBy: string
+    // searchNarrativesBy: string
+    // narratives: Array<orgModel.NarrativeResource>
     sortMembersBy: string
     searchMembersBy: string
     members: Array<orgModel.Member>

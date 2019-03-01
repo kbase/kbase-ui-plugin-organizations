@@ -42,9 +42,16 @@ export function loadNormalSuccess(state: types.StoreState, action: actions.LoadN
                     groupInvitations: action.groupInvitations,
                     requestInbox: action.requestInbox,
                     requestOutbox: action.requestOutbox,
-                    sortNarrativesBy: action.narrativesSortBy,
-                    searchNarrativesBy: '',
-                    narratives: action.narratives,
+                    narratives: {
+                        sortBy: action.narrativesSortBy,
+                        searchBy: '',
+                        narratives: action.narratives
+                    },
+                    apps: {
+                        sortBy: '',
+                        searchBy: '',
+                        apps: action.apps
+                    },
                     sortMembersBy: action.sortMembersBy,
                     members: action.members,
                     searchMembersBy: '',
@@ -101,9 +108,11 @@ export function reloadNormalSuccess(state: types.StoreState, action: actions.Rel
                     groupInvitations: action.groupInvitations,
                     requestInbox: action.requestInbox,
                     requestOutbox: action.requestOutbox,
-                    sortNarrativesBy: action.narrativesSortBy,
-                    searchNarrativesBy: '',
-                    narratives: action.narratives,
+                    narratives: {
+                        sortBy: action.narrativesSortBy,
+                        searchBy: '',
+                        narratives: action.narratives
+                    },
                     sortMembersBy: action.sortMembersBy,
                     members: action.members,
                     searchMembersBy: '',
@@ -175,7 +184,7 @@ export function removeNarrativeSuccess(state: types.StoreState, action: actions.
     const newNarratives = narratives.filter((narrative) => {
         return (narrative.workspaceId !== action.narrativeId)
     })
-    const newDisplayNarratives = state.views.viewOrgView.viewModel.narratives.filter((narrative) => {
+    const newDisplayNarratives = state.views.viewOrgView.viewModel.narratives.narratives.filter((narrative) => {
         return (narrative.workspaceId !== action.narrativeId)
     })
     // const filteredSortedNarratives = 
@@ -192,7 +201,10 @@ export function removeNarrativeSuccess(state: types.StoreState, action: actions.
                         narratives: newNarratives,
                         narrativeCount: newNarratives.length
                     },
-                    narratives: newDisplayNarratives,
+                    narratives: {
+                        ...state.views.viewOrgView.viewModel.narratives,
+                        narratives: newDisplayNarratives,
+                    }
                 }
             }
         }
@@ -215,7 +227,11 @@ export function accessNarrativeSuccess(state: types.StoreState, action: actions.
                 viewModel: {
                     ...state.views.viewOrgView.viewModel,
                     organization: action.organization,
-                    narratives: action.narratives
+                    narratives: {
+                        ...state.views.viewOrgView.viewModel.narratives,
+                        narratives: action.narratives
+                    }
+
                 }
             }
         }
@@ -237,8 +253,11 @@ export function sortNarrativesSuccess(state: types.StoreState, action: actions.S
                 ...state.views.viewOrgView,
                 viewModel: {
                     ...state.views.viewOrgView.viewModel,
-                    sortNarrativesBy: action.sortBy,
-                    narratives: action.narratives
+                    narratives: {
+                        ...state.views.viewOrgView.viewModel.narratives,
+                        sortBy: action.sortBy,
+                        narratives: action.narratives
+                    }
                 }
             }
         }
@@ -260,8 +279,11 @@ export function searchNarrativesSuccess(state: types.StoreState, action: actions
                 ...state.views.viewOrgView,
                 viewModel: {
                     ...state.views.viewOrgView.viewModel,
-                    searchNarrativesBy: action.searchBy,
-                    narratives: action.narratives
+                    narratives: {
+                        ...state.views.viewOrgView.viewModel.narratives,
+                        searchBy: action.searchBy,
+                        narratives: action.narratives
+                    }
                 }
             }
         }

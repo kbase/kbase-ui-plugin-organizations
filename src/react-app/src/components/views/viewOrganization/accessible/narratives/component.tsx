@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Alert, Button, Icon, Menu, Dropdown, Input, Select, Modal } from 'antd';
-import { List, ListRowRenderer, ListRowProps } from 'react-virtualized'
+import { ListRowProps } from 'react-virtualized'
 import OrganizationNarrative from '../../../../OrganizationNarrative'
 import * as orgModel from '../../../../../data/models/organization/model'
 import './component.css'
@@ -176,12 +176,12 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
             <Button
                 key="addNarrative"
                 size="small"
+                style={{ width: '100%' }}
                 onClick={this.onRequestAddNarrative.bind(this)}>
                 <Icon type="plus" />  Associate Narratives
             </Button>
         )]
 
-        // (props: ListRowProps) => React.ReactNode
         const rowRenderer: (props: ListRowProps) => React.ReactNode = ({
             key,
             index, isScrolling, isVisible, style
@@ -199,23 +199,10 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
             })
         }
 
-        // const narrativeCount = this.props.narratives.length
-        const narrativeCount = this.props.organization.narrativeCount
-        const title = (
-            <span className="ViewOrganization-Narratives-title">
-                <Icon type="folder-open" style={{ marginRight: '8px' }} />
-                Narratives
-                {' '}
-                <span className="ViewOrganization-Narratives-titleCount">({narrativeCount})</span>
-            </span>
-        )
         return (
             <div className="ViewOrganization-Narratives scrollable-flex-column">
                 <div className="ViewOrganization-Narratives-header">
                     <div className="ViewOrganization-Narratives-headerCol1">
-                        {title}
-                    </div>
-                    <div className="ViewOrganization-Narratives-headerCol2">
                         {extras}
                     </div>
                 </div>

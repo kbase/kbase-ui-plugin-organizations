@@ -42,6 +42,7 @@ export interface LoadNormalSuccess extends Action {
     requestOutbox: Array<requestModel.Request>
     narrativesSortBy: string
     narratives: Array<orgModel.NarrativeResource>
+    apps: Array<orgModel.AppResource>
     sortMembersBy: string,
     members: Array<orgModel.Member>
 }
@@ -57,6 +58,7 @@ export interface ReloadNormalSuccess extends Action {
     requestOutbox: Array<requestModel.Request>
     narrativesSortBy: string
     narratives: Array<orgModel.NarrativeResource>
+    apps: Array<orgModel.AppResource>
     sortMembersBy: string,
     members: Array<orgModel.Member>
 }
@@ -331,7 +333,7 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
             return
         }
 
-        const { organization, sortNarrativesBy, searchNarrativesBy } = viewModel
+        const { organization, narratives: { sortBy, searchBy } } = viewModel
 
         const {
             auth: { authorization: { token, username } },
@@ -370,8 +372,8 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
             const narratives = org.narratives
 
             const filteredNarratives = orgModel.queryNarratives(narratives, {
-                sortBy: sortNarrativesBy,
-                searchBy: searchNarrativesBy
+                sortBy: sortBy,
+                searchBy: searchBy
             })
 
             dispatch(loadNarrative(narrative.workspaceId))
@@ -404,6 +406,7 @@ export function loadNormalSuccess(
     requestOutbox: Array<requestModel.Request>,
     narrativesSortBy: string,
     narratives: Array<orgModel.NarrativeResource>,
+    apps: Array<orgModel.AppResource>,
     sortMembersBy: string,
     members: Array<orgModel.Member>): LoadNormalSuccess {
     return {
@@ -412,7 +415,8 @@ export function loadNormalSuccess(
         groupRequests, groupInvitations,
         requestInbox, requestOutbox,
         narrativesSortBy,
-        narratives, sortMembersBy, members
+        narratives, sortMembersBy, members,
+        apps
     }
 }
 
@@ -426,6 +430,7 @@ export function reloadNormalSuccess(
     requestOutbox: Array<requestModel.Request>,
     narrativesSortBy: string,
     narratives: Array<orgModel.NarrativeResource>,
+    apps: Array<orgModel.AppResource>,
     sortMembersBy: string,
     members: Array<orgModel.Member>): ReloadNormalSuccess {
     return {
@@ -434,7 +439,8 @@ export function reloadNormalSuccess(
         groupRequests, groupInvitations,
         requestInbox, requestOutbox,
         narrativesSortBy,
-        narratives, sortMembersBy, members
+        narratives, sortMembersBy, members,
+        apps
     }
 }
 
@@ -643,6 +649,9 @@ export function load(organizationId: string) {
                 searchBy: ''
             })
 
+            // TODO: actual app sort and filter
+            const apps = organization.apps
+
             const sortMembersBy = 'added'
             const members = orgModel.queryMembers(organization.members, {
                 sortBy: sortMembersBy,
@@ -650,7 +659,7 @@ export function load(organizationId: string) {
             })
 
             dispatch(loadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations,
-                requestInbox, requestOutbox, narrativesSortBy, narratives, sortMembersBy, members))
+                requestInbox, requestOutbox, narrativesSortBy, narratives, apps, sortMembersBy, members))
         } catch (ex) {
             dispatch(loadError({
                 code: ex.name,
@@ -734,9 +743,12 @@ export function reload(organizationId: string) {
             // default narrative sort?
             const narrativesSortBy = 'added'
             const narratives = orgModel.queryNarratives(organization.narratives, {
-                sortBy: viewModel.sortNarrativesBy,
-                searchBy: viewModel.searchNarrativesBy
+                sortBy: viewModel.narratives.sortBy,
+                searchBy: viewModel.narratives.searchBy
             })
+
+            // TODO: actual app sort and filter
+            const apps = organization.apps
 
             const sortMembersBy = 'added'
             const members = orgModel.queryMembers(organization.members, {
@@ -745,7 +757,7 @@ export function reload(organizationId: string) {
             })
 
             dispatch(reloadNormalSuccess(organization, relation, openRequest, orgRequests, orgInvitations,
-                requestInbox, requestOutbox, narrativesSortBy, narratives, sortMembersBy, members))
+                requestInbox, requestOutbox, narrativesSortBy, narratives, apps, sortMembersBy, members))
         } catch (ex) {
             dispatch(loadError({
                 code: ex.name,
@@ -961,7 +973,7 @@ export function sortNarratives(sortBy: string) {
         }
 
         const { narratives } = viewModel.organization as orgModel.Organization
-        const searchBy = viewModel.searchNarrativesBy
+        const searchBy = viewModel.narratives.searchBy
 
         const sorted = orgModel.queryNarratives(narratives, {
             sortBy: sortBy,
@@ -1032,7 +1044,7 @@ export function searchNarratives(searchBy: string) {
         }
 
         const { narratives } = viewModel.organization as orgModel.Organization
-        const sortBy = viewModel.sortNarrativesBy
+        const sortBy = viewModel.narratives.sortBy
 
         const sorted = orgModel.queryNarratives(narratives, {
             sortBy: sortBy,

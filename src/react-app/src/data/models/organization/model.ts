@@ -121,8 +121,9 @@ export interface NarrativeResource {
 
 export type AppID = string
 
-export interface AppInfo {
+export interface AppResource {
     appId: AppID
+    addedAt: Date | null
 }
 
 export interface BriefOrganization {
@@ -184,7 +185,7 @@ export interface Organization {
     modifiedAt: Date
     lastVisitedAt: Date | null
     narratives: Array<NarrativeResource>
-    apps: Array<AppInfo>
+    apps: Array<AppResource>
     memberCount: number
     narrativeCount: number
     appCount: number
@@ -346,8 +347,12 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
             addedAt: info.added === null ? null : new Date(info.added)
         }
     })
-    const apps: Array<AppInfo> = []
-
+    const apps: Array<AppResource> = group.resources.catalogmethod.map((info) => {
+        return {
+            appId: info.rid,
+            addedAt: info.added === null ? null : new Date(info.added)
+        }
+    })
 
     return {
         kind: OrganizationKind.NORMAL,
@@ -369,7 +374,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         createdAt: new Date(group.createdate),
         lastVisitedAt: group.lastvisit ? new Date(group.lastvisit) : null,
         narratives: narratives,
-        apps: [],
+        apps: apps,
         memberCount: group.memcount,
         narrativeCount: group.rescount.workspace || 0,
         appCount: group.rescount.catalogmethod || 0,
