@@ -49,6 +49,6 @@ export class NarrativeServiceClient extends DynamicServiceClient {
         const [result] = await this.callFunc('list_narratives', [{
             type: type
         }])
-        return result.narratives
+        return result
     }
 }
