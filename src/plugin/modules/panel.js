@@ -53,6 +53,7 @@ define([
                     workspaceServiceURL: this.runtime.config('services.Workspace.url'),
                     serviceWizardURL: this.runtime.config('services.ServiceWizard.url'),
                     authServiceURL: this.runtime.config('services.auth2.url'),
+                    narrativeMethodStoreURL: this.runtime.config('services.NarrativeMethodStore.url'),
                     originalPath: window.location.pathname,
                     view: params.view || null,
                     viewParams: params.viewParams || null

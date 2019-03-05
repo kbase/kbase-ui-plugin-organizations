@@ -37,21 +37,19 @@ export class ServiceWizardClient extends AuthorizedServiceClient {
         super(params)
     }
 
+    async getServiceStatus(params: GetServiceStatusParams): Promise<GetServiceStatusResult> {
+        const result = await this.callFunc('get_service_status', params)
 
-    getServiceStatus(params: GetServiceStatusParams): Promise<GetServiceStatusResult> {
-        return this.callFunc('get_service_status', params)
-            .then((result) => {
-                if (result.result &&
-                    result.result.length > 0) {
-                    const theResult = result.result[0]
-                    if (!theResult) {
-                        throw new Error('Crazy at it seems, no result')
-                    }
-                    return theResult as GetServiceStatusResult
-                } else {
-                    throw new Error('Crazy at it seems, no result')
-                }
-            })
+        if (result.result &&
+            result.result.length > 0) {
+            const theResult = result.result[0]
+            if (!theResult) {
+                throw new Error('Crazy at it seems, no result')
+            }
+            return theResult as GetServiceStatusResult
+        } else {
+            throw new Error('Crazy at it seems, no result')
+        }
     }
 
 }

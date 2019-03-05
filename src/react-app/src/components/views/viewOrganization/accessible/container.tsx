@@ -34,6 +34,7 @@ interface DispatchProps {
     onAcceptRequest: (requestId: requestModel.RequestID) => void
     onSortNarratives: (sortBy: string) => void
     onSearchNarratives: (searchBy: string) => void
+    onRemoveApp: (appId: string) => void
 }
 
 // hmm this bit would be for the interface for the wrapped component.
@@ -91,6 +92,9 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         },
         onSearchNarratives: (searchBy: string) => {
             dispatch(actions.searchNarratives(searchBy) as any)
+        },
+        onRemoveApp: (appId: string) => {
+            dispatch(actions.removeApp(appId) as any)
         }
     }
 }

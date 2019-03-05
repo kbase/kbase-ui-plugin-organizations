@@ -151,6 +151,30 @@ export default class Request extends React.Component<RequestProps, RequestState>
         )
     }
 
+
+    renderAppRequest(request: requestModel.AppRequest) {
+        return (
+            <React.Fragment>
+                <div className="cardSectionHeader">
+                    REQUEST to associate App
+                </div>
+
+                <div className="miniDetail">
+                    {/* <Narrative workspaceId={parseInt(request.narrativeId, 10)} /> */}
+                    <div>
+                        apps not supported yet
+                    </div>
+                </div>
+
+                <div className="cardSectionHeader">from</div>
+
+                <div className="requester miniDetail">{this.renderRequestRequester(request)}</div>
+
+                {this.renderRequestOptions(request)}
+            </React.Fragment>
+        )
+    }
+
     renderRequestOptions(request: requestModel.Request) {
         // First, did the current user make or receive the request
         return (
@@ -202,13 +226,7 @@ export default class Request extends React.Component<RequestProps, RequestState>
                     case requestModel.RequestResourceType.WORKSPACE:
                         return this.renderWorkspaceRequest(request)
                     case requestModel.RequestResourceType.APP:
-                        return (
-                            <React.Fragment>
-                                <div>
-                                    apps not supported yet
-                            </div>
-                            </React.Fragment>
-                        )
+                        return this.renderAppRequest(request)
                 }
             case requestModel.RequestType.INVITATION:
                 switch (request.resourceType) {

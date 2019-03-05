@@ -61,7 +61,7 @@ export default class ManageRelatedOrganizations extends React.Component<ManageRe
             const selectOrg = () => {
                 this.props.onSelectOrganization(org)
             }
-            let classes = ['simpleCard', 'ManageRelatedOrganizations-availableOrganization']
+            let classes = ['SimpleCard', 'ManageRelatedOrganizations-availableOrganization']
             if (org.isSelected) {
                 classes.push('ManageRelatedOrganizations-selected')
             }

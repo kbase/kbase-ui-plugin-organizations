@@ -6,6 +6,9 @@ import * as userModel from '../../data/models/user'
 import * as orgModel from '../../data/models/organization/model'
 import * as narrativeModel from '../../data/models/narrative'
 import { AppError, StoreState } from '../../types'
+import * as appModel from '../../data/models/apps'
+import { AnError, makeError } from '../../lib/error';
+
 
 export interface EntityAction extends Action {
 }
@@ -301,6 +304,74 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
             }))
         }
 
+    }
+}
+
+// App
+
+export interface LoadApp {
+    type: ActionFlag.ENTITY_LOAD_APP
+    appId: appModel.AppID
+}
+
+export interface LoadAppStart {
+    type: ActionFlag.ENTITY_LOAD_APP_START
+}
+
+
+export interface LoadAppSuccess {
+    type: ActionFlag.ENTITY_LOAD_APP_SUCCESS,
+    app: appModel.AppFullInfo
+}
+
+export interface LoadAppError {
+    type: ActionFlag.ENTITY_LOAD_APP_ERROR,
+    error: AnError
+}
+
+function loadAppStart() {
+    return {
+        type: ActionFlag.ENTITY_LOAD_APP_START
+    }
+}
+
+function loadAppSuccess(app: appModel.AppFullInfo) {
+    return {
+        type: ActionFlag.ENTITY_LOAD_APP_SUCCESS,
+        app
+    }
+}
+
+function loadAppError(error: AnError) {
+    return {
+        type: ActionFlag.ENTITY_LOAD_APP_ERROR,
+        error: error
+    }
+}
+
+export function loadApp(appId: appModel.AppID) {
+    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(loadAppStart())
+
+        const {
+            auth: { authorization: { token, username } },
+            app: { config }
+        } = getState()
+
+        const appClient = new appModel.AppClient({
+            token,
+            narrativeMethodStoreURL: config.services.NarrativeMethodStore.url
+        })
+
+        try {
+            const app = await appClient.getApp(appId)
+            dispatch(loadAppSuccess(app))
+        } catch (ex) {
+            dispatch(loadAppError(makeError({
+                code: 'error',
+                message: ex.message
+            })))
+        }
     }
 }
 

@@ -67,6 +67,9 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
             case 'manageRelatedOrgs':
                 this.props.onChangeSubView(SubViews.MANAGE_RELATED_ORGS)
                 break
+            case 'addApp':
+                this.props.onChangeSubView(SubViews.ADD_APP)
+                break
         }
     }
 
@@ -113,12 +116,16 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
             case (orgModel.UserRelationToOrganization.MEMBER):
                 const menu = (
                     <Menu onClick={this.onMenuClick.bind(this)}>
-                        <Menu.Item key="manageMyMembership">
-                            <Icon type="user" />{' '}Manage My Membership
+                        <Menu.Item key="addApp">
+                            <Icon type="appstore" />{' '}Associate Apps
                         </Menu.Item>
                         <Menu.Item key="addNarrative">
                             <Icon type="file" />{' '}Associate Narratives
                         </Menu.Item>
+                        <Menu.Item key="manageMyMembership">
+                            <Icon type="user" />{' '}Manage My Membership
+                        </Menu.Item>
+
                     </Menu>
                 )
                 return (
@@ -129,14 +136,20 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
             case (orgModel.UserRelationToOrganization.ADMIN):
                 const adminMenu = (
                     <Menu onClick={this.onMenuClick.bind(this)}>
-                        <Menu.Item key="manageMyMembership">
-                            <Icon type="user" />{' '}Manage My Membership
+                        <Menu.Item key="addApp">
+                            <Icon type="appstore" />{' '}Associate Apps
+                        </Menu.Item>
+                        <Menu.Item key="addNarrative">
+                            <Icon type="file" />{' '}Associate Narratives
                         </Menu.Item>
                         <Menu.Item key="editOrg" >
                             <Icon type="edit" />{' '}Edit this Org
                         </Menu.Item>
                         <Menu.Item key="inviteUser">
                             <Icon type="mail" />{' '}Invite User
+                        </Menu.Item>
+                        <Menu.Item key="manageMyMembership">
+                            <Icon type="user" />{' '}Manage My Membership
                         </Menu.Item>
                         <Menu.Item key="manageRelatedOrgs">
                             <Icon type="team" />{' '}Manage Related Orgs
@@ -151,8 +164,11 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
             case (orgModel.UserRelationToOrganization.OWNER):
                 const ownerMenu = (
                     <Menu onClick={this.onMenuClick.bind(this)}>
-                        <Menu.Item key="manageMyMembership">
-                            <Icon type="user" />{' '}Manage My Membership
+                        <Menu.Item key="addApp">
+                            <Icon type="appstore" />{' '}Associate Apps
+                        </Menu.Item>
+                        <Menu.Item key="addNarrative">
+                            <Icon type="file" />{' '}Associate Narratives
                         </Menu.Item>
                         <Menu.Item key="editOrg">
                             <Icon type="edit" />{' '}Edit this Org
@@ -160,8 +176,8 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
                         <Menu.Item key="inviteUser">
                             <Icon type="mail" />{' '}Invite User
                         </Menu.Item>
-                        <Menu.Item key="addNarrative">
-                            <Icon type="file" />{' '}Associate Narratives
+                        <Menu.Item key="manageMyMembership">
+                            <Icon type="user" />{' '}Manage My Membership
                         </Menu.Item>
                         <Menu.Item key="manageRelatedOrgs">
                             <Icon type="team" />{' '}Manage Related Orgs
@@ -178,9 +194,9 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
 
     render() {
         return (
-            <React.Fragment>
+            <div className="OrgMenu">
                 {this.renderOrgMenu()}
-            </React.Fragment>
+            </div>
         )
     }
 }

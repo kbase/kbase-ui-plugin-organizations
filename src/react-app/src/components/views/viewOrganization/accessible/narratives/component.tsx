@@ -152,7 +152,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
                 isNew = lastOrgVisitAt.getTime() < addedAt.getTime()
             }
         }
-        const classNames = ['ViewOrganization-Narratives-narrative', 'simpleCard']
+        const classNames = ['ViewOrganization-Narratives-narrative', 'SimpleCard']
         if (isNew) {
             classNames.push('ViewOrganization-Narratives-newNarrative')
         }
@@ -265,7 +265,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
             narrativesTable = this.props.narratives.map((narrative) => {
                 // create buttons or not, depending on being an admin
                 return (
-                    <div className="ViewOrganization-Narratives-narrative simpleCard" key={String(narrative.workspaceId)}>
+                    <div className="ViewOrganization-Narratives-narrative SimpleCard" key={String(narrative.workspaceId)}>
                         <div className="ViewOrganization-Narratives-dataCol">
                             <OrganizationNarrative
                                 narrative={narrative}

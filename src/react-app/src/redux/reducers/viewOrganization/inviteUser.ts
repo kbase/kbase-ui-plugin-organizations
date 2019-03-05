@@ -1,6 +1,9 @@
 import { Action } from 'redux'
 import * as actions from '../../actions/viewOrganization/inviteUser'
-import { ViewOrgViewModel, StoreState, InviteUserViewModel, ViewState, View, InviteUserViewState } from '../../../types'
+import {
+    StoreState, InviteUserViewModel, ViewState,
+    View, InviteUserViewState
+} from '../../../types'
 import { ActionFlag } from '../../actions'
 import * as orgModel from '../../../data/models/organization/model'
 import { ViewOrgViewModelKind } from '../../../types';
@@ -162,21 +165,13 @@ function localReducer(state: View<InviteUserViewModel>, action: Action): View<In
 function haveReducer(action: Action): boolean {
     switch (action.type) {
         case ActionFlag.INVITE_USER_LOAD_START:
-            return true
         case ActionFlag.INVITE_USER_LOAD_SUCCESS:
-            return true
         case ActionFlag.INVITE_USER_LOAD_ERROR:
-            return true
         case ActionFlag.INVITE_USER_UNLOAD:
-            return true
         case ActionFlag.INVITE_USER_SEARCH_USERS_SUCCESS:
-            return true
         case ActionFlag.INVITE_USER_SELECT_USER_SUCCESS:
-            return true
         case ActionFlag.INVITE_USER_SEND_INVITATION_START:
-            return true
         case ActionFlag.INVITE_USER_SEND_INVITATION_SUCCESS:
-            return true
         case ActionFlag.INVITE_USER_SEND_INVITATION_ERROR:
             return true
         default:

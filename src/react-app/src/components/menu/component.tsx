@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Route } from 'react-router-dom'
 import './component.css'
-import { Icon, Menu } from 'antd';
+import { Menu } from 'antd';
 import { ClickParam } from 'antd/lib/menu'
 
 interface MainMenuProps {

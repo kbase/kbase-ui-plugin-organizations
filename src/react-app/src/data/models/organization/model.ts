@@ -300,9 +300,6 @@ function getRealname(users: Map<userModel.Username, userModel.User>, username: s
 }
 
 export function groupToOrganization(group: groupsApi.Group, currentUser: Username, users: Map<userModel.Username, userModel.User>): Organization {
-
-
-
     const owner: Member = {
         username: group.owner.name,
         realname: getRealname(users, group.owner.name, 'n/a'),
@@ -349,7 +346,7 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
     })
     const apps: Array<AppResource> = group.resources.catalogmethod.map((info) => {
         return {
-            appId: info.rid,
+            appId: info.rid.split('.').join('/'),
             addedAt: info.added === null ? null : new Date(info.added)
         }
     })
@@ -560,7 +557,6 @@ function narrativeSortByToComparator(sortBy: string) {
                         return b.addedAt.getTime() - a.addedAt.getTime()
                     }
                 }
-
             }
     }
 }
@@ -945,6 +941,22 @@ export class OrganizationModel {
         )
     }
 
+    async removeAppFromOrg(organizationId: OrganizationID, appId: string): Promise<void> {
+        const groupsClient = new groupsApi.GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        const groupFunnyAppId = appId.split('/').join('.')
+
+        return groupsClient.deleteResource(
+            organizationId,
+            'catalogmethod',
+            groupFunnyAppId
+        )
+    }
+
+
     async grantNarrativeAccess(groupId: string, resourceId: string): Promise<void> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
@@ -975,6 +987,24 @@ export class OrganizationModel {
         const request = await groupsClient.addOrRequestNarrative({
             groupId: groupId,
             workspaceId: workspaceId
+        })
+        if (request.complete === true) {
+            return true
+        } else {
+            return requestModel.groupRequestToOrgRequest(request)
+        }
+    }
+
+    async addOrRequestAppToGroup(groupId: string, appId: string): Promise<requestModel.Request | boolean> {
+        const groupsClient = new groupsApi.GroupsClient({
+            url: this.params.groupsServiceURL,
+            token: this.params.token
+        })
+
+        const request = await groupsClient.addOrRequestResource({
+            groupId,
+            type: 'catalogmethod',
+            resourceId: appId
         })
         if (request.complete === true) {
             return true

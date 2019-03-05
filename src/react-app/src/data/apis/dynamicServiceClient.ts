@@ -313,18 +313,10 @@ export class DynamicServiceClient {
 
     lookupModule() {
         return this.getCached((): Bluebird<any> => {
-            const func = 'get_service_status';
-            const params = [{
-                module_name: this.getModule(),
-                version: this.version
-            }];
-            // NB: pass null for numRets (number of return values) so we get the
-            // full return structure.
             const client = new ServiceWizardClient({
                 url: this.url,
                 token: this.token
             })
-
             return Bluebird.resolve(
                 client.getServiceStatus({
                     module_name: this.getModule(),
@@ -334,7 +326,7 @@ export class DynamicServiceClient {
         })
     }
 
-    callFunc(funcName: string, params: any) {
+    callFunc<T>(funcName: string, params: any) {
         return this.lookupModule()
             .then((serviceStatus) => {
                 const client = new AuthorizedGenericClient({
@@ -343,7 +335,7 @@ export class DynamicServiceClient {
                     token: this.token
                 })
                 return Bluebird.resolve(
-                    client.callFunc(funcName, params)
+                    client.callFunc<T>(funcName, params)
                 )
             })
             .catch((err) => {

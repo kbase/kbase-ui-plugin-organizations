@@ -18,6 +18,8 @@ import * as requestModel from '../../../../data/models/requests'
 import * as orgModel from '../../../../data/models/organization/model'
 import './component.css'
 import OrgMenu from './OrgMenu';
+import Apps from './apps/component';
+import AddApps from './addApps/loader';
 
 enum NavigateTo {
     NONE = 0,
@@ -55,6 +57,7 @@ export interface ViewOrganizationProps {
     onAcceptRequest: (requestId: requestModel.RequestID) => void
     onSortNarratives: (sortBy: string) => void
     onSearchNarratives: (searchBy: string) => void
+    onRemoveApp: (appId: string) => void
 }
 
 class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrganizationState> {
@@ -78,6 +81,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
     onInviteUser() {
         this.setState({ subView: SubViews.INVITE_USER })
+    }
+
+    onAssociateApp() {
+        this.setState({ subView: SubViews.ADD_APP })
     }
 
     onChangeSubView(subView: SubViews) {
@@ -699,137 +706,14 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             case 'addNarrative':
                 this.setState({ subView: SubViews.ADD_NARRATIVE })
                 break
+            case 'addApp':
+                this.setState({ subView: SubViews.ADD_APP })
+                break
             case 'manageRelatedOrgs':
                 this.setState({ subView: SubViews.MANAGE_RELATED_ORGS })
                 break
         }
     }
-
-    renderOrgMenu() {
-        const org = this.props.viewModel.organization
-        switch (this.props.viewModel.relation.type) {
-            case (orgModel.UserRelationToOrganization.NONE):
-                // return (
-                //     <span><Icon type="stop" />None</span>
-                // )
-                return (
-                    <span>
-                        <Button
-                            type="primary"
-                            onClick={this.onJoinClick.bind(this)}>
-                            Join this Organization
-                        </Button>
-                    </span>
-                )
-            case (orgModel.UserRelationToOrganization.VIEW):
-                return (
-                    <span>
-                        <Button
-                            type="primary"
-                            onClick={this.onJoinClick.bind(this)}>
-                            Join this Organization
-                        </Button>
-                    </span>
-                )
-            case (orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
-                return (
-                    <span>
-                        <Tooltip
-                            placement="bottom"
-                            mouseEnterDelay={0.5}
-                            title="You have requested to join this Org; you may cancel your join request with this button"
-                        >
-                            <Button icon="delete" type="danger" onClick={this.onCancelJoinRequest.bind(this)}>Cancel Join Request</Button>
-                        </Tooltip>
-                    </span>
-
-                )
-            case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
-                return (
-                    <div className="ViewOrganization-invitationPendingCard">
-                        <span>You have been invited to this organization: </span>
-                        <Button icon="check" type="default" size="small" onClick={this.onAcceptInvitation.bind(this)}>Accept</Button>
-                        <Button icon="stop" type="danger" size="small" onClick={this.onRejectInvitation.bind(this)}>Reject</Button>
-                    </div>
-                )
-            case (orgModel.UserRelationToOrganization.MEMBER):
-                const menu = (
-                    <Menu onClick={this.onMenuClick.bind(this)}>
-                        <Menu.Item key="manageMyMembership">
-                            <Icon type="user" />{' '}Manage My Membership
-                        </Menu.Item>
-                        <Menu.Item key="addNarrative">
-                            <Icon type="file" />{' '}Associate Narratives
-                        </Menu.Item>
-                    </Menu>
-                )
-                return (
-                    <span>
-                        <Dropdown overlay={menu} trigger={['click']}>
-                            <Button shape="circle">
-                                <Icon type="setting" theme="filled" style={{ fontSize: '120%' }} />
-                            </Button>
-                        </Dropdown>
-                    </span>
-                )
-            case (orgModel.UserRelationToOrganization.ADMIN):
-                const adminMenu = (
-                    <Menu onClick={this.onMenuClick.bind(this)}>
-                        <Menu.Item key="manageMyMembership">
-                            <Icon type="user" />{' '}Manage My Membership
-                        </Menu.Item>
-                        <Menu.Item key="editOrg" >
-                            <Icon type="edit" />{' '}Edit this Org
-                        </Menu.Item>
-                        <Menu.Item key="inviteUser">
-                            <Icon type="mail" />{' '}Invite User
-                        </Menu.Item>
-                        <Menu.Item key="manageRelatedOrgs">
-                            <Icon type="team" />{' '}Manage Related Orgs
-                        </Menu.Item>
-                    </Menu>
-                )
-                return (
-                    <span>
-                        <Dropdown overlay={adminMenu} trigger={['click']}>
-                            <Button shape="circle">
-                                <Icon type="setting" theme="filled" style={{ fontSize: '120%' }} />
-                            </Button>
-                        </Dropdown>
-                    </span>
-                )
-            case (orgModel.UserRelationToOrganization.OWNER):
-                const ownerMenu = (
-                    <Menu onClick={this.onMenuClick.bind(this)}>
-                        <Menu.Item key="manageMyMembership">
-                            <Icon type="user" />{' '}Manage My Membership
-                        </Menu.Item>
-                        <Menu.Item key="editOrg">
-                            <Icon type="edit" />{' '}Edit this Org
-                        </Menu.Item>
-                        <Menu.Item key="inviteUser">
-                            <Icon type="mail" />{' '}Invite User
-                        </Menu.Item>
-                        <Menu.Item key="addNarrative">
-                            <Icon type="file" />{' '}Associate Narratives
-                        </Menu.Item>
-                        <Menu.Item key="manageRelatedOrgs">
-                            <Icon type="team" />{' '}Manage Related Orgs
-                        </Menu.Item>
-                    </Menu>
-                )
-                return (
-                    <span>
-                        <Dropdown overlay={ownerMenu} trigger={['click']}>
-                            <Button shape="circle">
-                                <Icon type="setting" theme="filled" style={{ fontSize: '120%' }} />
-                            </Button>
-                        </Dropdown>
-                    </span>
-                )
-        }
-    }
-
 
     toggleAccordion() {
         this.setState({
@@ -880,46 +764,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
-    renderMainTabsx() {
-        let orgRowClass
-        let narrativesRowClass
-        if (this.state.accordionState === AccordionState.UP) {
-            orgRowClass = "ViewOrganization-orgRow ViewOrganization-accordionClosed"
-            narrativesRowClass = "ViewOrganization-narrativesRow ViewOrganization-accordionOpen"
-        } else {
-            orgRowClass = "ViewOrganization-orgRow ViewOrganization-accordionOpen"
-            narrativesRowClass = "ViewOrganization-narrativesRow ViewOrganization-accordionClosed"
-        }
-        orgRowClass += " scrollable-flex-column"
-        narrativesRowClass += " scrollable-flex-column"
-        return (
-            <React.Fragment>
-                <div className={orgRowClass} style={{ minHeight: '0px' }}>
-                    {this.renderOrg()}
-                </div>
-                <div className="ViewOrganization-accordionRow">
-                    {this.renderAccordionControl()}
-                </div>
-                <div className={narrativesRowClass}>
-                    {/* TODO: move these actions into a redux adapter for narratives 
-                    */}
-                    <Narratives
-                        organization={this.props.viewModel.organization}
-                        narratives={this.props.viewModel.narratives.narratives}
-                        relation={this.props.viewModel.relation}
-                        sortNarrativesBy={this.props.viewModel.narratives.sortBy}
-                        searchNarrativesBy={this.props.viewModel.narratives.searchBy}
-                        onSortNarratives={this.props.onSortNarratives}
-                        onSearchNarratives={this.props.onSearchNarratives}
-                        onRemoveNarrative={this.props.onRemoveNarrative}
-                        onGetViewAccess={this.props.onGetViewAccess}
-                        onRequestAddNarrative={this.onRequestAddNarrative.bind(this)}
-                    />
-                </div>
-            </React.Fragment>
-        )
-    }
-
     renderDescriptionTab() {
         if (!this.props.viewModel.organization) {
             return
@@ -952,11 +796,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
 
     renderAppsTab() {
         return (
-            <div>
-                <p>
-                    Coming to a Tab Near You!
-                </p>
-            </div>
+            <Apps
+                organization={this.props.viewModel.organization}
+                apps={this.props.viewModel.apps}
+                onAssociateApp={this.onAssociateApp.bind(this)}
+                onRemoveApp={this.props.onRemoveApp.bind(this)} />
         )
     }
 
@@ -997,7 +841,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             </Tabs.TabPane>
         ))
 
-        const appCount = 0
+        const appCount = this.props.viewModel.organization.appCount
         const appsTabTitle = (
             <span>
                 <Icon type="appstore" />
@@ -1108,6 +952,17 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
     }
 
+    renderAddApp() {
+        const onFinish = () => {
+            this.setState({
+                subView: SubViews.NORMAL
+            })
+        }
+        return (
+            <AddApps onFinish={onFinish} />
+        )
+    }
+
     getSubView() {
         switch (this.state.subView) {
             case SubViews.MANAGE_RELATED_ORGS:
@@ -1120,6 +975,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 return this.renderEditOrganization()
             case SubViews.ADD_NARRATIVE:
                 return this.renderAddNarrative()
+            case SubViews.ADD_APP:
+                return this.renderAddApp()
             case SubViews.NORMAL:
             default:
                 return this.renderNormalView()

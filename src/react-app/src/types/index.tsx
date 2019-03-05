@@ -4,6 +4,7 @@ import * as orgModel from '../data/models/organization/model'
 import * as userModel from "../data/models/user"
 import * as requestModel from '../data/models/requests'
 import * as narrativeModel from '../data/models/narrative'
+import * as appModel from '../data/models/apps'
 import { AnError } from "../combo/error/api";
 
 /* Types from the organization service (approximately) */
@@ -398,6 +399,27 @@ export enum SelectionState {
     SELECTED
 }
 
+// Add app view model
+
+export enum ResourceRelationToOrg {
+    NONE = 0,
+    ASSOCIATED,
+    ASSOCIATION_PENDING
+}
+export interface SelectableApp {
+    app: appModel.AppBriefInfo
+    selected: boolean
+    relation: ResourceRelationToOrg,
+    appId: string // according to groups (module.method, not module/method)
+}
+export interface AddAppsViewModel {
+    rawApps: Array<SelectableApp>
+    selectedApp: SelectableApp | null
+    searchBy: string
+    sortBy: string
+    apps: Array<SelectableApp>
+}
+
 // ViewModel / RequestAddNarrative
 
 export interface RequestNarrativeViewModel {
@@ -455,7 +477,8 @@ export enum SubViews {
     INVITE_USER,
     MANAGE_MEMBERSHIP,
     EDIT_ORGANIZATION,
-    ADD_NARRATIVE
+    ADD_NARRATIVE,
+    ADD_APP
 }
 
 export interface ViewOrgViewModel {
@@ -489,6 +512,7 @@ export interface ViewOrgViewModel {
         inviteUserView: View<InviteUserViewModel>
         requestNarrativeView: View<RequestNarrativeViewModel>
         manageMembershipView: View<ManageMembershipViewModel>
+        addAppsView: View<AddAppsViewModel>
     }
 }
 
@@ -582,6 +606,9 @@ export interface StoreState {
         }
         organizations: {
             byId: Map<orgModel.OrganizationID, orgModel.Organization | orgModel.InaccessiblePrivateOrganization>
+        }
+        apps: {
+            byId: Map<appModel.AppID, appModel.AppFullInfo>
         }
     }
 
@@ -689,6 +716,9 @@ export interface AppConfig {
         Auth: {
             url: string
         }
+        NarrativeMethodStore: {
+            url: string
+        }
     }
     defaultPath: string,
     channelId: string | null
@@ -715,8 +745,9 @@ export interface IFrameParams {
         workspaceServiceURL: string
         serviceWizardURL: string
         authServiceURL: string
-        originalPath: string | null,
-        view: string | null,
+        narrativeMethodStoreURL: string
+        originalPath: string | null
+        view: string | null
         viewParams: any
     },
     parentHost: string

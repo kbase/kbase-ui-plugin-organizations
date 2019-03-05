@@ -11,14 +11,53 @@ export interface JSONPayload {
     params: any
 }
 
-export interface ErrorResult {
+export interface JSONRPCError {
     name: string
     code: number
     message: string
     error: string
 }
 
-export type JSONRPCResponse = [any, ErrorResult | null]
+export interface MethodSuccessResult<T> {
+    result: T
+    error: null
+}
+
+export interface MethodErrorResult {
+    result: null
+    error: JSONRPCError
+}
+
+export type MethodResponse<T> = MethodSuccessResult<T> | MethodErrorResult
+
+export type JSONRPCResponse<T> =
+    // success
+    [T, null, null] |
+    // success, but void result
+    [null, null, null] |
+    // error returned by method, not sdk wrapper
+    [null, MethodErrorResult, null] |
+    // error returned by sdk wrapper (caught exception)
+    [null, null, JSONRPCError]
+
+export class JSONRPCException extends Error {
+    name: string
+    code: number
+    // message: string
+    error: string
+    constructor({ name, code, message, error }: JSONRPCError) {
+        super(message)
+        this.name = name
+        this.code = code
+        this.error = error
+    }
+}
+
+export class classJSONRPCServerException extends Error {
+    constructor(message: string) {
+        super(message)
+    }
+}
 
 export class GenericClient {
     url: string;
@@ -49,37 +88,34 @@ export class GenericClient {
         }
     }
 
-    async processResponse(response: Response): Promise<JSONRPCResponse> {
+    async processResponse<T>(response: Response): Promise<T> {
         if (response.status === 200) {
-            const { result, error } = await response.json()
-            if (result) {
-                return [result, null]
-            } else {
-                return [null, error]
-            }
-
+            const { result } = await response.json()
+            return result as T
         } else if (response.status === 204) {
-            return [null, null]
+            // The SDK has a weird edge case in which a method can specify no
+            // result, which is translated to a 204 response and no content.
+            // IMO it should return a valid json value, like null so we don't
+            // have to work around it.
+            // const result = null
+            // result as unknown as T
+            const result: unknown = null
+            return result as T
         }
         if (response.status === 500) {
             if (response.headers.get('Content-Type') === 'application/json') {
                 const { error } = await response.json()
-                return [null, error]
+                throw new JSONRPCException(error)
             } else {
                 const text = await response.text()
-                return [null, {
-                    code: 0,
-                    name: 'Internal Server Error (for real)',
-                    message: 'The service experienced an internal error',
-                    error: text
-                }]
+                throw new classJSONRPCServerException(text)
             }
         }
         throw new Error('Unexpected response: ' + response.status + ', ' + response.statusText)
     }
 
-    async callFunc(func: string, param: any): Promise<JSONRPCResponse> {
-        return fetch(this.url, {
+    async callFunc<T>(func: string, param: any): Promise<T> {
+        const response = await fetch(this.url, {
             method: 'POST',
             mode: 'cors',
             cache: 'no-store',
@@ -89,16 +125,23 @@ export class GenericClient {
             },
             body: JSON.stringify(this.makePayload(func, param))
         })
-            .then((response) => {
-                return this.processResponse(response)
-            })
+        // The response may be a 200 success, a 200 with method error,
+        // an sdk 500 error, an internal 500 server error, 
+        // or any other http error code.
+        return this.processResponse<T>(response)
     }
+}
+
+export interface AuthorizedGenericClientParams {
+    url: string
+    module: string
+    token: string
 }
 
 export class AuthorizedGenericClient extends GenericClient {
     token: string;
 
-    constructor(params: GenericClientParams) {
+    constructor(params: AuthorizedGenericClientParams) {
         super(params)
         if (!params.token) {
             throw new Error('Authorized client requires token')
@@ -106,7 +149,7 @@ export class AuthorizedGenericClient extends GenericClient {
         this.token = params.token
     }
 
-    async callFunc(func: string, param: any): Promise<JSONRPCResponse> {
+    async callFunc<T>(func: string, param: any): Promise<T> {
         const response = await fetch(this.url, {
             method: 'POST',
             mode: 'cors',

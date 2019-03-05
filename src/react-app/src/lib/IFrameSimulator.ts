@@ -59,6 +59,7 @@ class IFrameSimulator {
                 workspaceServiceURL: '/services/ws',
                 serviceWizardURL: '/services/service_wizard',
                 authServiceURL: '/services/auth',
+                narrativeMethodStoreURL: '/services/narrative_method_store/rpc',
                 originalPath: '',
                 view: null,
                 viewParams: null

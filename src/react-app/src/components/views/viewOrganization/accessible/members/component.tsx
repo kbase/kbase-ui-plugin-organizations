@@ -63,7 +63,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
                 <p>
                     Please confirm removal of this member from this organization.
                 </p>
-                <div className="simpleCard" style={{ marginBottom: '1em' }}>
+                <div className="SimpleCard" style={{ marginBottom: '1em' }}>
                     <Member member={member} avatarSize={20} />
                 </div>
                 <p>
@@ -187,7 +187,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
                 } else {
                     isNew = this.props.organization.lastVisitedAt.getTime() < member.joinedAt.getTime()
                 }
-                const classNames = ['Members-row', 'simpleCard']
+                const classNames = ['Members-row', 'SimpleCard']
                 if (isNew) {
                     classNames.push('Members-newMember')
                 }

@@ -26,6 +26,9 @@ export class StateInstances {
                 },
                 organizations: {
                     byId: new Map()
+                },
+                apps: {
+                    byId: new Map()
                 }
             },
             db: {
@@ -106,6 +109,9 @@ export class StateInstances {
                             url: ''
                         },
                         Auth: {
+                            url: ''
+                        },
+                        NarrativeMethodStore: {
                             url: ''
                         }
                     },

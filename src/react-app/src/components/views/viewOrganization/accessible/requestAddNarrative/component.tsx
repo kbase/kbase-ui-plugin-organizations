@@ -422,7 +422,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                         type="danger"
                         onClick={this.onFinish.bind(this)}>
                         Done
-                </Button>
+                    </Button>
                 </div>
             </div >
         )

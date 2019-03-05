@@ -1,4 +1,7 @@
-import { ServiceClientParams, ServiceClient, AuthorizedServiceClient } from "./serviceClient";
+import {
+    ServiceClientParams,
+    AuthorizedServiceClient
+} from "./serviceClient";
 
 export interface User {
     username: string,

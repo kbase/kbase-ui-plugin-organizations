@@ -2,15 +2,12 @@
     flex: 0 0 auto;
     display: flex;
     flex-direction: row;
-    /* background-color: rgba(200, 200, 200, 0.3); */
-    /* border-bottom: 1px rgba(200, 200, 200, 0.3) solid; */
     margin-bottom: 4px;
+    margin-top: 4px;
 }
 
 .MainMenu-menu {
     flex: 0 0 auto;
-    /* background-color: rgba(200, 200, 200, 0.3); */
-    /* padding: 4px; */
 }
 
 .MainMenu-contextual {
@@ -18,11 +15,6 @@
     font-weight: bold;
     font-size: 100%;
     text-align: left;
-    /* padding: 4px; */
-    /* margin-bottom: 10px; */
-    /* padding-left: 10px; */
-    /* background-color: rgba(200, 200, 200, 0.5); */
-    /* border-bottom: 1px rgba(150, 150, 150, 0.5) solid; */
     display: flex;
     flex-direction: row;
 }

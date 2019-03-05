@@ -4,7 +4,7 @@ import { ThunkDispatch } from 'redux-thunk'
 import { ActionFlag } from './index'
 import {
     StoreState,
-    AppError, UIError, UIErrorType, ViewOrgViewModelKind
+    AppError, UIError, UIErrorType, ViewOrgViewModelKind, ViewOrgViewModel
 } from '../../types'
 
 import * as orgModel from '../../data/models/organization/model'
@@ -12,7 +12,7 @@ import * as requestModel from '../../data/models/requests'
 import * as uberModel from '../../data/models/uber'
 import { loadNarrative } from './entities'
 import * as dataServices from './dataServices'
-import { AnError } from '../../lib/error';
+import { AnError, makeError } from '../../lib/error';
 import * as narrativeModel from '../../data/models/narrative'
 
 // Action Types
@@ -1060,5 +1060,104 @@ export function searchNarratives(searchBy: string) {
     }
 }
 
+// REmove app
 
+export interface RemoveApp {
+    type: ActionFlag.VIEW_ORG_REMOVE_APP,
+    appId: string
+}
 
+export interface RemoveAppStart {
+    type: ActionFlag.VIEW_ORG_REMOVE_APP_START
+}
+
+export interface RemoveAppSuccess {
+    type: ActionFlag.VIEW_ORG_REMOVE_APP_SUCCESS
+    appId: string
+}
+
+export interface RemoveAppError {
+    type: ActionFlag.VIEW_ORG_REMOVE_APP_ERROR,
+    error: AnError
+}
+
+function removeAppStart() {
+    return {
+        type: ActionFlag.VIEW_ORG_REMOVE_APP_START
+    }
+}
+
+function removeAppSuccess(appId: string) {
+    return {
+        type: ActionFlag.VIEW_ORG_REMOVE_APP_SUCCESS,
+        appId
+    }
+}
+
+function removeAppError(error: AnError) {
+    return {
+        type: ActionFlag.VIEW_ORG_REMOVE_APP_ERROR,
+        error: error
+    }
+}
+
+function ensureViewModel(state: StoreState): ViewOrgViewModel {
+    if (!state.views.viewOrgView.viewModel) {
+        throw new Error('View orgs does not have an org')
+    }
+
+    const {
+        views: {
+            viewOrgView: {
+                viewModel
+            }
+        }
+    }: StoreState = state
+
+    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+        throw new Error('View orgs does not have an org')
+    }
+
+    // const { organization } = viewModel
+
+    // if (!organization) {
+    //     dispatch(removeNarrativeError({
+    //         code: 'bad state',
+    //         message: 'View orgs does not have an org'
+    //     }))
+    //     return
+    // }
+    return viewModel
+}
+
+function orgClientFromState(state: StoreState): orgModel.OrganizationModel {
+    const {
+        auth: { authorization: { token, username } },
+        app: { config }
+    }: StoreState = state
+
+    return new orgModel.OrganizationModel({
+        token, username,
+        groupsServiceURL: config.services.Groups.url,
+        userProfileServiceURL: config.services.UserProfile.url
+    })
+}
+
+export function removeApp(appId: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch(removeAppStart())
+
+        const viewModel = ensureViewModel(getState())
+        const orgClient = orgClientFromState(getState())
+
+        try {
+            orgClient.removeAppFromOrg(viewModel.organization.id, appId)
+            dispatch(removeAppSuccess(appId))
+        } catch (ex) {
+            dispatch(removeAppError(makeError({
+                code: 'error',
+                message: ex.message
+            })))
+        }
+    }
+}

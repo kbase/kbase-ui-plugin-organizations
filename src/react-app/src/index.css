@@ -96,7 +96,7 @@ a:hover {
 
 /* a simple, rounded-corner "card" - hoverable */
 
-.simpleCard {
+.SimpleCard {
     border: 1px rgba(200, 200, 200, 0.5) solid;
     background-color: rgba(200, 200, 200, 0.3);
     border-radius: 4px;
@@ -106,15 +106,23 @@ a:hover {
     padding: 4px;
 }
 
-.simpleCard+.simpleCard {
+.SimpleCard+.SimpleCard {
     margin-top: 6px;
 }
 
-.simpleCard:hover {
+.SimpleCard:hover {
     border: 1px rgba(200, 200, 200, 0.8) solid;
     background-color: rgba(200, 200, 200, 0.4);
     margin-right: 4px;
     box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.8);
+}
+
+.SimpleCard .SimpleCard-hidden {
+    display: none;
+}
+
+.SimpleCard:hover .SimpleCard-hidden {
+    display: unset;
 }
 
 .kbCard {

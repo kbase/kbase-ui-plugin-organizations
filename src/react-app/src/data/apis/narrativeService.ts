@@ -30,59 +30,25 @@ type Metadata = {}
            the object.
    */
 
-
-
-
-export interface ListNarrativesResponseResult {
+export interface ListNarrativesResult {
     narratives: Array<{
         ws: RawWorkspaceInfo
         nar: RawObjectInfo
     }>
 }
 
-export interface ServiceResponse<T> {
-    id: string
-    version: string
-    result?: [T] | null
-    error?: any
-}
-
-
-
-// export type ListNarrativesResponse = ServiceResponse<ListNarrativesResponseResult>
-
-
-
 export class NarrativeServiceClient extends DynamicServiceClient {
-
     static module: string = 'NarrativeService'
 
     constructor(params: NarrativeServiceClientParams) {
         super(params)
     }
 
-
-    async listNarratives(type: string): Promise<ListNarrativesResponseResult> {
+    async listNarratives(type: string): Promise<ListNarrativesResult> {
         // note usage of unknown below -- Bluebird and native Promise!
-        const [result, error] = await this.callFunc('list_narratives', [{
+        const [result] = await this.callFunc('list_narratives', [{
             type: type
         }])
-        // as Promise<ServiceResponse<ListNarrativesResponseResult>>
-
-        // should check id and version, or should call func do that?
-        if (result && result[0]) {
-            return result[0]
-            // return result[0].narratives.map((nar) => {
-            //     return {
-            //         workspaceInfo: workspaceInfoToObject(nar.ws),
-            //         objectInfo: objectInfoToObject(nar.nar)
-            //     }
-            // })
-        } else {
-            // TODO: handle error
-            // console.error('Result is missing', id, version, result, error)
-            throw new Error('Result is missing!')
-        }
+        return result.narratives
     }
-
 }

@@ -3,10 +3,9 @@ import { ThunkDispatch } from 'redux-thunk'
 
 import { ActionFlag } from './index'
 import * as types from '../../types'
-import IFrameSimulator from '../../lib/IFrameSimulator';
-import { IFrameIntegration } from '../../lib/IFrameIntegration';
+import IFrameSimulator from '../../lib/IFrameSimulator'
+import { IFrameIntegration } from '../../lib/IFrameIntegration'
 
-import { } from 'react-router-dom';
 
 // Action Definitions
 
@@ -84,6 +83,9 @@ export function appStart() {
                     },
                     Auth: {
                         url: iframeParams.params.authServiceURL
+                    },
+                    NarrativeMethodStore: {
+                        url: iframeParams.params.narrativeMethodStoreURL
                     }
                 },
                 defaultPath,
@@ -109,6 +111,9 @@ export function appStart() {
                     },
                     Auth: {
                         url: iframeParams.params.authServiceURL
+                    },
+                    NarrativeMethodStore: {
+                        url: iframeParams.params.narrativeMethodStoreURL
                     }
                 },
                 defaultPath: '/organizations',

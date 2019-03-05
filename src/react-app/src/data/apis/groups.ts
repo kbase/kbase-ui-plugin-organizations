@@ -207,6 +207,12 @@ export interface RequestNarrativeParams {
     groupId: string
 }
 
+export interface RequestResourceParams {
+    type: string
+    resourceId: string
+    groupId: string
+}
+
 function promiseTry<T>(fun: () => Promise<T>): Promise<T> {
     return new Promise<T>((resolve, reject) => {
         try {
@@ -698,6 +704,40 @@ export class GroupsClient {
             'resource',
             'workspace',
             String(params.workspaceId)
+        ].join('/')
+        return fetch(url, {
+            headers: {
+                Authorization: this.token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            method: 'POST'
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then((result) => {
+                if (result.complete === false) {
+                    return result as RequestWithCompletion
+                } else {
+                    return result as Completion
+                }
+
+            })
+    }
+
+    addOrRequestResource(params: RequestResourceParams): Promise<RequestWithCompletion | Completion> {
+        const url = [
+            this.url,
+            'group',
+            params.groupId,
+            'resource',
+            params.type,
+            params.resourceId
         ].join('/')
         return fetch(url, {
             headers: {

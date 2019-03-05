@@ -14,8 +14,10 @@ import './App.css';
 
 // fontawesome setup
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSpinner, faSearch, faGlobe, faUserLock } from '@fortawesome/free-solid-svg-icons'
-library.add(faSpinner, faSearch, faGlobe, faUserLock)
+import {
+  faSpinner, faSearch, faGlobe, faUserLock, faSquare, faCube
+} from '@fortawesome/free-solid-svg-icons'
+library.add(faSpinner, faSearch, faGlobe, faUserLock, faSquare, faCube)
 
 import OrganizationsBrowser from './components/views/browseOrgs/loader'
 import NewOrganization from './components/views/newOrganization/loader'

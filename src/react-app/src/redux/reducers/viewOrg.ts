@@ -9,6 +9,7 @@ import cancelOutboxRequest from './viewOrganization/cancelOutboxRequests'
 import manageRelatedOrganizations from './viewOrganization/manageRelatedOrganizations'
 import relatedOrganizations from './viewOrganization/relatedOrganizations'
 import requestAddNarrative from './viewOrganization/requestAddNarrative'
+import addApps from './viewOrganization/addApp'
 
 
 export function loadStart(state: types.StoreState, action: actions.LoadStart): types.StoreState {
@@ -75,6 +76,11 @@ export function loadNormalSuccess(state: types.StoreState, action: actions.LoadN
                             state: types.ViewState.NONE,
                             viewModel: null,
                             error: null
+                        },
+                        addAppsView: {
+                            state: types.ViewState.NONE,
+                            viewModel: null,
+                            error: null
                         }
                     }
                 } as types.ViewOrgViewModel
@@ -112,6 +118,10 @@ export function reloadNormalSuccess(state: types.StoreState, action: actions.Rel
                         sortBy: action.narrativesSortBy,
                         searchBy: '',
                         narratives: action.narratives
+                    },
+                    apps: {
+                        ...viewModel.apps,
+                        apps: action.apps
                     },
                     sortMembersBy: action.sortMembersBy,
                     members: action.members,
@@ -290,8 +300,47 @@ export function searchNarrativesSuccess(state: types.StoreState, action: actions
     }
 }
 
+function removeAppSuccess(state: types.StoreState, action: actions.RemoveAppSuccess): types.StoreState {
+    if (!state.views.viewOrgView.viewModel) {
+        return state
+    }
+    if (state.views.viewOrgView.viewModel.kind !== types.ViewOrgViewModelKind.NORMAL) {
+        return state
+    }
 
-function reducer(state: types.StoreState, action: Action): types.StoreState | null {
+    const newOrgApps = state.views.viewOrgView.viewModel.organization.apps.filter((app) => {
+        return (app.appId !== action.appId)
+    })
+
+    const newApps = state.views.viewOrgView.viewModel.apps.apps.filter((app) => {
+        return (app.appId !== action.appId)
+    })
+
+    return {
+        ...state,
+        views: {
+            ...state.views,
+            viewOrgView: {
+                ...state.views.viewOrgView,
+                viewModel: {
+                    ...state.views.viewOrgView.viewModel,
+                    organization: {
+                        ...state.views.viewOrgView.viewModel.organization,
+                        apps: newOrgApps,
+                        appCount: newOrgApps.length
+                    },
+                    apps: {
+                        ...state.views.viewOrgView.viewModel.apps,
+                        apps: newApps
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+export default function reducer(state: types.StoreState, action: Action): types.StoreState | null {
     // NB using discriminant union nature of the ActionX types to narrow
     // the type.
 
@@ -316,6 +365,8 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
             return sortNarrativesSuccess(state, action as actions.SortNarrativesSuccess)
         case ActionFlag.VIEW_ORG_SEARCH_NARRATIVES_SUCCESS:
             return searchNarrativesSuccess(state, action as actions.SearchNarrativesSuccess)
+        case ActionFlag.VIEW_ORG_REMOVE_APP_SUCCESS:
+            return removeAppSuccess(state, action as actions.RemoveAppSuccess)
     }
 
     return acceptInboxRequest(state, action) ||
@@ -324,7 +375,7 @@ function reducer(state: types.StoreState, action: Action): types.StoreState | nu
         viewMembers(state, action) ||
         manageRelatedOrganizations(state, action) ||
         relatedOrganizations(state, action) ||
-        relatedOrganizations(state, action)
+        relatedOrganizations(state, action) ||
+        addApps(state, action)
 }
 
-export default reducer

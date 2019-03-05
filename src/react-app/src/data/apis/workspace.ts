@@ -1,69 +1,107 @@
-
-// export interface User {
-//     username: string,
-//     realname: string,
-//     thumbnail: string
-// }
-
-// export interface UserProfile {
-//     user: User,
-//     profile: any
-// }
+import {
+    AuthorizedServiceClient,
+    AuthorizedServiceClientParams
+} from "./serviceClientBase"
 
 
-
-export interface JSONPayload {
-    version: string,
-    method: string,
-    id: string,
-    params: any
+export interface ObjectIdentity {
+    workspace?: string
+    wsid?: number
+    name?: string
+    objid?: string
+    ver?: number
+    ref?: string
 }
 
-export class WorkspaceClient {
-    url: string;
-    token: string
+export interface WorkspaceIdentity {
+    workspace?: string
+    id?: number
+}
 
-    constructor({ url, token }: { url: string, token: string }) {
-        this.url = url
-        this.token = token
+export interface ObjectSpecification {
+    workspace?: string
+    wsid?: number
+    name?: string
+    objid?: number
+    ver?: number
+    ref?: string
+    obj_path?: Array<ObjectIdentity>
+    obj_ref_path?: Array<string>
+    to_obj_path?: Array<ObjectIdentity>
+    to_obj_ref_path?: Array<string>
+    find_reference_path?: number // bool 
+    included?: string
+    strict_maps?: number // bool
+    strict_arrays?: number // bool
+}
+
+export interface GetObjectInfo3Params {
+    objects: Array<ObjectSpecification>
+    includeMetadata: number // bool
+    ignoreErrors: number // bool
+}
+
+export type ObjectInfo = [
+    number, // objid
+    string, // object name
+    string, // object type
+    string, // save date timestamp YYYY-MM-DDThh:mm:ssZ
+    number, // object version
+    string, // saved by
+    number, // workspace id
+    string, // workspace name
+    string, // md5 checksum
+    number, // size in bytes
+    Map<string, string> // metadata
+]
+
+export type WorkspaceInfo = [
+    number, // workspace id
+    string, // workspace name
+    string, // workspace owner (username)
+    string, // modification timestamp (iso 8601)
+    number, // last object id
+    string, // user permission (one char)
+    string, // global permission (one char)
+    string, // lock status
+    Map<string, string>  // metadata
+]
+
+export interface GetObjectInfo3Result {
+    infos: Array<ObjectInfo>
+    paths: Array<Array<string>>
+}
+
+export interface GetWorkspaceInfoParams extends WorkspaceIdentity {
+}
+
+export interface GetWorkspaceInfoResult {
+
+}
+
+export interface WorkspaceClientParams extends AuthorizedServiceClientParams {
+}
+
+
+export class WorkspaceClient extends AuthorizedServiceClient {
+    static module: string = 'Workspace'
+
+    constructor(params: WorkspaceClientParams) {
+        super(params)
     }
 
-    makePayload(method: string, param: any): JSONPayload {
-        return {
-            version: '1.1',
-            method: 'Workspace.' + method,
-            id: String(Math.random()).slice(2),
-            params: [param]
-        }
+    // TODO: should be void not null
+    async getVersion(): Promise<string> {
+        return this.callFunc<null, string>('ver', null)
     }
 
-    makeEmptyPayload(method: string): JSONPayload {
-        return {
-            version: '1.1',
-            method: 'Workspace.' + method,
-            id: String(Math.random()).slice(2),
-            params: []
-        }
+    async getObjectInfo3(params: GetObjectInfo3Params): Promise<GetObjectInfo3Result> {
+        const objectInfo = this.callFunc<GetObjectInfo3Params, GetObjectInfo3Result>('get_object_info3', params)
+        return objectInfo
     }
 
-    getVersion(): Promise<any> {
-        return fetch(this.url, {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'no-store',
-            headers: {
-                Authorization: this.token,
-                'Content-Type': 'application/json',
-                Accept: 'application/json'
-            },
-            body: JSON.stringify(this.makeEmptyPayload('ver'))
-        })
-            .then((response) => {
-                if (response.status !== 200) {
-                    throw new Error('User profile request error: ' + response.status + ', ' + response.statusText)
-                }
-                return response.json()
-            })
+    async getWorkspaceInfo(params: GetWorkspaceInfoParams): Promise<WorkspaceInfo> {
+        return this.callFunc<GetWorkspaceInfoParams, WorkspaceInfo>('get_workspace_info', params)
     }
 
 }

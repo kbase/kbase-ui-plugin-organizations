@@ -1,6 +1,5 @@
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
-
 import * as types from '../../../../../types'
 import * as actions from '../../../../../redux/actions/viewOrganization/inviteUser'
 import InviteUser from './component'

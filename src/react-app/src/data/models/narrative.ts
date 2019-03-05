@@ -1,9 +1,10 @@
-import { AuthorizedGenericClient } from '../apis/genericClient'
-import { NarrativeServiceClient } from '../apis/narrativeService'
+
 import * as orgModel from './organization/model'
 import * as requestModel from './requests'
 import * as workspaceApi from '../apis/workspaceUtils'
 import * as userModel from './user'
+import { WorkspaceClient } from '../apis/workspace'
+import { NarrativeServiceClient } from '../apis/narrativeService'
 
 export enum NarrativeState {
     NONE = 0,
@@ -256,25 +257,24 @@ export class NarrativeModel {
     It also caches narratives.
     */
     async getNarrative(workspaceId: WorkspaceID): Promise<Narrative> {
-        const workspaceClient = new AuthorizedGenericClient({
-            module: 'Workspace',
+        const wsClient = new WorkspaceClient({
             url: this.params.workspaceServiceURL,
             token: this.params.token
         })
+
         try {
-            const [rawWorkspaceInfo, rawWorkspaceInfoError] = await workspaceClient.callFunc('get_workspace_info', [{
+            const rawWorkspaceInfo = await wsClient.getWorkspaceInfo({
                 id: workspaceId
-            }])
+            })
 
+            // if (rawWorkspaceInfoError) {
+            //     return {
+            //         workspaceId: workspaceId,
+            //         access: NarrativeAccess.NONE
+            //     }
+            // }
 
-            if (rawWorkspaceInfoError) {
-                return {
-                    workspaceId: workspaceId,
-                    access: NarrativeAccess.NONE
-                }
-            }
-
-            const workspaceInfo: NarrativeWorkspaceInfo = workspaceApi.workspaceInfoToObject(rawWorkspaceInfo[0]) as NarrativeWorkspaceInfo
+            const workspaceInfo: NarrativeWorkspaceInfo = workspaceApi.workspaceInfoToObject(rawWorkspaceInfo) as NarrativeWorkspaceInfo
 
             const narrativeId = workspaceInfo.metadata.narrative
             if (!narrativeId) {
@@ -285,23 +285,25 @@ export class NarrativeModel {
             }
             const objectId = parseInt(narrativeId, 10)
 
-            const [rawObjectInfo, rawObjectInfoError] = await workspaceClient.callFunc('get_object_info3', [{
-                objects: [{
-                    wsid: workspaceId,
-                    objid: objectId
-                }],
-                includeMetadata: 1,
-                ignoreErrors: 0
-            }])
-
-            if (rawObjectInfoError) {
+            let rawObjectInfo
+            try {
+                rawObjectInfo = await wsClient.getObjectInfo3({
+                    objects: [{
+                        wsid: workspaceId,
+                        objid: objectId
+                    }],
+                    includeMetadata: 1,
+                    ignoreErrors: 0
+                })
+            } catch (ex) {
+                // TODO: actually detect the error condition?
                 return {
                     workspaceId: workspaceId,
                     access: NarrativeAccess.NONE
                 }
             }
 
-            const objectInfo: workspaceApi.ObjectInfo = workspaceApi.objectInfoToObject(rawObjectInfo[0].infos[0])
+            const objectInfo: workspaceApi.ObjectInfo = workspaceApi.objectInfoToObject(rawObjectInfo.infos[0])
 
             let access: NarrativeAccess.VIEW | NarrativeAccess.EDIT | NarrativeAccess.ADMIN | NarrativeAccess.OWNER
             switch (workspaceInfo.userPermission) {

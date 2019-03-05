@@ -89,7 +89,7 @@ export class Organizations extends React.Component<OrganizationsProps, Organizat
                 this.props.organizations.map((organization, index) => {
                     const status = this.props.openRequests.get(organization.id) || null
                     return (
-                        <div key={String(index)} className="simpleCard">
+                        <div key={String(index)} className="SimpleCard">
                             <BriefOrganization organization={organization} openRequestsStatus={status} />
                         </div>
                     )
