@@ -203,6 +203,8 @@ a:hover {
     background-color: rgba(200, 200, 200, 0.5)
 }
 
+/* BUTTONS */
+
 .ButtonSet {
     display: inline-block;
 }
@@ -214,6 +216,18 @@ a:hover {
 .ButtonSet .ButtonSet-button+.ButtonSet-button {
     margin-left: 6px;
 }
+
+.Button-important.ant-btn {
+    background-color: rgba(210, 255, 210, 0.5);
+}
+
+.Button-important.ant-btn:hover {
+    background-color: rgba(210, 255, 210, 1);
+    border-color: green;
+    color: green;
+}
+
+/* */
 
 .Message {
     font-style: italic;

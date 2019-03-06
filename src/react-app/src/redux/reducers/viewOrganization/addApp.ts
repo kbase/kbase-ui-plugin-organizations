@@ -57,13 +57,21 @@ export function selectSuccess(state: View<AddAppsViewModel>, action: actions.Sel
     })
 
     // TODO: reapply sort and search??
+    const newApps = state.viewModel.apps.slice(0)
+    newApps.forEach((app) => {
+        if (app === action.selectedApp) {
+            app.selected = true
+        } else {
+            app.selected = false
+        }
+    })
 
 
     return {
         ...state,
         viewModel: {
             ...state.viewModel,
-            apps: newRawApps,
+            apps: newApps,
             rawApps: newRawApps,
             selectedApp: action.selectedApp
         } as AddAppsViewModel
@@ -88,16 +96,41 @@ export function requestAssociationSuccess(state: View<AddAppsViewModel>, action:
     })
 
     // TODO: reapply sort and search??
+    const newApps = state.viewModel.apps.slice(0)
+    newApps.forEach((app) => {
+        if (app.app.id === action.appId) {
+            if (action.pending) {
+                app.relation = ResourceRelationToOrg.ASSOCIATION_PENDING
+            } else {
+                app.relation = ResourceRelationToOrg.ASSOCIATED
+            }
+        }
+    })
 
 
     return {
         ...state,
         viewModel: {
             ...state.viewModel,
-            apps: newRawApps,
+            apps: newApps,
             rawApps: newRawApps
             // selectedApp: action.selectedApp
         } as AddAppsViewModel
+    }
+}
+
+// TODO: route the search and/or search expression here too???
+function searchSuccess(state: View<AddAppsViewModel>, action: actions.SearchSuccess): View<AddAppsViewModel> {
+    if (state.viewModel === null) {
+        return state
+    }
+
+    return {
+        ...state,
+        viewModel: {
+            ...state.viewModel,
+            apps: action.apps
+        }
     }
 }
 
@@ -109,6 +142,7 @@ function haveReducer(action: Action): boolean {
         case ActionFlag.VIEW_ORG_ADD_APPS_UNLOAD:
         case ActionFlag.VIEW_ORG_ADD_APPS_SELECT_SUCCESS:
         case ActionFlag.VIEW_ORG_ADD_APPS_REQUEST_ASSOCIATE_APP_SUCCESS:
+        case ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_SUCCESS:
             return true
         default: return false
     }
@@ -128,6 +162,8 @@ function localReducer(state: View<AddAppsViewModel>, action: actions.AddAppsActi
             return selectSuccess(state, action as actions.SelectSuccess)
         case ActionFlag.VIEW_ORG_ADD_APPS_REQUEST_ASSOCIATE_APP_SUCCESS:
             return requestAssociationSuccess(state, action as actions.RequestAssociationSuccess)
+        case ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_SUCCESS:
+            return searchSuccess(state, action as actions.SearchSuccess)
         default:
             return null
     }

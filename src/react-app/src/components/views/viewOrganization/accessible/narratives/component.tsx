@@ -177,6 +177,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
                 key="addNarrative"
                 size="small"
                 style={{ width: '100%' }}
+                className="Button-important"
                 onClick={this.onRequestAddNarrative.bind(this)}>
                 <Icon type="plus" />  Associate Narratives
             </Button>

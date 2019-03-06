@@ -87,6 +87,10 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         this.setState({ subView: SubViews.ADD_APP })
     }
 
+    doAddRelatedOrgs() {
+        this.setState({ subView: SubViews.MANAGE_RELATED_ORGS })
+    }
+
     onChangeSubView(subView: SubViews) {
         this.setState({ subView })
     }
@@ -525,17 +529,6 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             case orgModel.UserRelationToOrganization.MEMBER:
                 return
             case orgModel.UserRelationToOrganization.ADMIN:
-                return (
-                    <div className="ViewOrganization-tabPaneToolbar">
-                        <Tooltip placement="bottomRight"
-                            title="Invite one or more users to this organization">
-                            <Button
-                                size="small"
-                                style={{ width: '100%' }}
-                                onClick={this.onInviteUser.bind(this)}><Icon type="mail" />Invite Users</Button>
-                        </Tooltip>
-                    </div>
-                )
             case orgModel.UserRelationToOrganization.OWNER:
                 return (
                     <div className="ViewOrganization-tabPaneToolbar">
@@ -544,7 +537,31 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                             <Button
                                 size="small"
                                 style={{ width: '100%' }}
+                                className="Button-important"
                                 onClick={this.onInviteUser.bind(this)}><Icon type="mail" />Invite Users</Button>
+                        </Tooltip>
+                    </div>
+                )
+        }
+    }
+
+    renderRelatedOrgsToolbar() {
+        switch (this.props.viewModel.relation.type) {
+            case orgModel.UserRelationToOrganization.NONE:
+                return
+            case orgModel.UserRelationToOrganization.MEMBER:
+                return
+            case orgModel.UserRelationToOrganization.ADMIN:
+            case orgModel.UserRelationToOrganization.OWNER:
+                return (
+                    <div className="ViewOrganization-tabPaneToolbar">
+                        <Tooltip placement="bottomRight"
+                            title="Add one or more other organizations as 'related' to this one">
+                            <Button
+                                size="small"
+                                className="Button-important"
+                                style={{ width: '100%' }}
+                                onClick={this.doAddRelatedOrgs.bind(this)}><Icon type="team" />Add Related Orgs</Button>
                         </Tooltip>
                     </div>
                 )
@@ -647,6 +664,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         )
         tabs.push((
             <Tabs.TabPane tab={relatedOrgTab} key="relatedorgs" style={{ flexDirection: 'column' }}>
+                {this.renderRelatedOrgsToolbar()}
                 <RelatedOrganizations
                     relatedOrganizations={this.props.viewModel.organization.relatedOrganizations}
                     organization={this.props.viewModel.organization}

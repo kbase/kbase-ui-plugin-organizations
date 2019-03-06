@@ -13,6 +13,7 @@ export interface AddAppsProps {
     onFinish: () => void
     onSelectApp: (appId: string) => void
     onRequestAssociation: (appId: string) => void
+    onSearch: (searchBy: string) => void
 }
 
 interface AddAppsState {
@@ -24,7 +25,6 @@ export default class AddApps extends React.Component<AddAppsProps, AddAppsState>
     constructor(props: AddAppsProps) {
         super(props)
     }
-
 
     doSelectApp(app: SelectableApp) {
         this.props.onSelectApp(app.app.id)
@@ -38,7 +38,7 @@ export default class AddApps extends React.Component<AddAppsProps, AddAppsState>
 
     doSearch(e: ChangeEvent<HTMLInputElement>) {
         const search = e.target.value
-        console.log('search on ', search)
+        this.props.onSearch(search)
     }
 
     doSortBy(sortBy: string) {

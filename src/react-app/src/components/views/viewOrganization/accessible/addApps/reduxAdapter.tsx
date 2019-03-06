@@ -11,13 +11,6 @@ export interface OwnProps {
 interface StateProps {
     apps: Array<SelectableApp>
     selectedApp: SelectableApp | null
-    // organization: orgModel.Organization
-    // users: Array<types.OrganizationUser> | null
-    // selectedUser: {
-    //     user: types.User,
-    //     relation: orgModel.UserRelationToOrganization
-    // } | null
-    // editState: types.InviteUserViewState
 }
 
 interface DispatchProps {
@@ -26,6 +19,7 @@ interface DispatchProps {
     // onSendInvitation: () => void
     onSelectApp: (appId: string) => void
     onRequestAssociation: (appId: string) => void
+    onSearch: (searchBy: string) => void
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
@@ -63,6 +57,9 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.Load>): DispatchPr
         },
         onRequestAssociation: (appId: string) => {
             dispatch(actions.requestAssociation(appId) as any)
+        },
+        onSearch: (searchBy: string) => {
+            dispatch(actions.search(searchBy) as any)
         }
     }
 }

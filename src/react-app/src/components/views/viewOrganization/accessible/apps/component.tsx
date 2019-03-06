@@ -47,7 +47,11 @@ export default class Apps extends React.Component<AppsProps, AppsState> {
 
     renderButtonRow() {
         return (
-            <Button size="small" style={{ width: '100%' }} onClick={this.props.onAssociateApp}>
+            <Button
+                size="small"
+                style={{ width: '100%' }}
+                className="Button-important"
+                onClick={this.props.onAssociateApp}>
                 <Icon type="appstore" />
                 Associate Apps
             </Button>

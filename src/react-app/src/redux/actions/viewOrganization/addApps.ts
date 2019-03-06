@@ -12,6 +12,7 @@ import { makeError } from '../../../lib/error'
 import { NarrativeMethodStoreClient } from '../../../data/apis/narrativeMethodStore'
 import { RequestResourceType, RequestType } from '../../../data/models/requests'
 import * as viewOrgActions from '../viewOrg'
+import { AppBriefInfo } from '../../../data/models/apps';
 
 export interface AddAppsAction extends Action {
 
@@ -404,4 +405,118 @@ export function requestAssociation(appId: string) {
             return
         }
     }
+}
+
+// SEARCH
+
+export interface Search {
+    type: ActionFlag.VIEW_ORG_ADD_APPS_SEARCH,
+    searchBy: string
+}
+
+export interface SearchStart {
+    type: ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_START
+}
+
+export interface SearchSuccess {
+    type: ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_SUCCESS
+    apps: Array<SelectableApp>
+}
+
+export interface SearchError {
+    type: ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_ERROR
+    error: AnError
+}
+
+function searchStart(): SearchStart {
+    return {
+        type: ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_START
+    }
+}
+
+function searchSuccess(apps: Array<SelectableApp>): SearchSuccess {
+    return {
+        type: ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_SUCCESS,
+        apps
+    }
+}
+
+function searchError(error: AnError): SearchError {
+    return {
+        type: ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_ERROR,
+        error
+    }
+}
+
+// function ensureView(state: StoreState): View<AddAppsViewModel> {
+//     const {
+//         views: {
+//             viewOrgView: { viewModel }
+//         }
+//     } = state
+//     if (viewModel === null) {
+//         throw new Error('invalid state -- no view value')
+//     }
+//     if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+//         throw new Error('invalid state -- no view value')
+//     }
+//     const { addAppsView } = viewModel.subViews
+//     if (addAppsView === null) {
+//         throw new Error('invalid state -- no view value')
+//     }
+//     return addAppsView
+// }
+
+// function ensureViewModel(state: StoreState): AddAppsViewModel {
+//     const view = ensureView(state)
+//     if (view.viewModel === null) {
+//         throw new Error('invalid state -- no view model')
+//     }
+//     return view.viewModel
+// }
+
+
+type SearchExpression = Array<RegExp>
+
+function applySearch(apps: Array<SelectableApp>, searchExpression: SearchExpression) {
+    return apps.filter((app) => {
+        if (searchExpression.length === 0) {
+            return true
+        }
+        return searchExpression.every((expr) => {
+            return expr.test(app.app.name) ||
+                expr.test(app.app.subtitle) ||
+                expr.test(app.app.moduleName)
+        })
+    })
+}
+
+export function search(searchBy: string) {
+    return async (dispatch: ThunkDispatch<StoreState, void, AddAppsAction>, getState: () => StoreState) => {
+        try {
+            dispatch(searchStart())
+
+            // TODO: better parser
+            const searchExpression = searchBy.split(/[\s]+/).map((term) => {
+                return new RegExp(term, 'i')
+            })
+
+            const [viewOrgVM, viewModel] = ensureViewModel(getState())
+
+            const {
+                rawApps
+            } = viewModel
+
+            const foundApps = applySearch(rawApps, searchExpression)
+
+            dispatch(searchSuccess(foundApps))
+
+        } catch (ex) {
+            dispatch(searchError(makeError({
+                code: 'error',
+                message: ex.message
+            })))
+        }
+    }
+
 }
