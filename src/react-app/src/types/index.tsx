@@ -155,11 +155,6 @@ export interface Member {
     type: MemberType
 }
 
-export enum RequestType {
-    REQUEST = 0,
-    INVITATION
-}
-
 export enum RequestResourceType {
     USER = 0,
     WORKSPACE,

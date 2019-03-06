@@ -4,17 +4,42 @@ import './component.css'
 import { Icon } from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+
+enum View {
+    COMPACT = 0,
+    NORMAL
+}
+
+function reverseView(v: View) {
+    switch (v) {
+        case View.COMPACT:
+            return View.NORMAL
+        case View.NORMAL:
+            return View.COMPACT
+    }
+}
+
 export interface AppProps {
     app: appModel.AppFullInfo // for now, we'll switch to full app soon
 }
 
 interface AppState {
-
+    view: View
 }
 
 export default class App extends React.Component<AppProps, AppState> {
     constructor(props: AppProps) {
         super(props)
+
+        this.state = {
+            view: View.COMPACT
+        }
+    }
+
+    onToggleView() {
+        this.setState({
+            view: reverseView(this.state.view)
+        })
     }
 
     renderIcon() {
@@ -48,9 +73,53 @@ export default class App extends React.Component<AppProps, AppState> {
             })
     }
 
-    render() {
+    renderViewControl() {
+        return (
+            <a onClick={this.onToggleView.bind(this)}
+                className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
+            >
+                <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+            </a>
+        )
+    }
+
+
+    renderCompact() {
         return (
             <div className='App'>
+                <div className="App-controlCol">
+                    {this.renderViewControl()}
+                </div>
+                <div className="App-iconCol">
+                    {this.renderIcon()}
+                </div>
+                <div className="App-appCol">
+                    <div className='App-name'>
+                        <a href={"/#catalog/apps/" + this.props.app.id} target="_blank">
+                            {this.props.app.name}
+                        </a>
+                    </div>
+                    <div className="App-subtitle">
+                        {this.props.app.subtitle}
+                    </div>
+                    {/* <div className="App-moduleName">
+                        <span className="field-label">module</span>{this.props.app.moduleName}
+                    </div>
+                    <div className="App-authors">
+                        <span className="field-label">by</span> {this.renderAuthors()}
+                    </div> */}
+                </div>
+
+            </div>
+        )
+    }
+
+    renderNormal() {
+        return (
+            <div className='App'>
+                <div className="App-controlCol">
+                    {this.renderViewControl()}
+                </div>
                 <div className="App-iconCol">
                     {this.renderIcon()}
                 </div>
@@ -73,5 +142,22 @@ export default class App extends React.Component<AppProps, AppState> {
 
             </div>
         )
+    }
+
+    render() {
+        switch (this.state.view) {
+            case View.COMPACT:
+                return (
+                    <div className="Narrative View-COMPACT">
+                        {this.renderCompact()}
+                    </div>
+                )
+            case View.NORMAL:
+                return (
+                    <div className="Narrative View-NORMAL">
+                        {this.renderNormal()}
+                    </div>
+                )
+        }
     }
 }

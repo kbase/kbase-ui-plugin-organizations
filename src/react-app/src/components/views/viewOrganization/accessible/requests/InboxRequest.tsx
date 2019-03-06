@@ -1,11 +1,11 @@
 import * as React from 'react'
-
 import * as requestModel from '../../../../../data/models/requests'
 import { niceElapsed } from '../../../../../lib/time'
-import Narrative from '../../../../entities/NarrativeContainer';
-import User from '../../../../entities/UserContainer';
-import { Button, Icon } from 'antd';
+import Narrative from '../../../../entities/NarrativeContainer'
+import User from '../../../../entities/UserContainer'
+import { Button, Icon } from 'antd'
 import './InboxRequest.css'
+import App from '../../../../entities/app/loader'
 
 export interface RequestProps {
     request: requestModel.Request
@@ -162,7 +162,7 @@ export default class Request extends React.Component<RequestProps, RequestState>
                 <div className="miniDetail">
                     {/* <Narrative workspaceId={parseInt(request.narrativeId, 10)} /> */}
                     <div>
-                        apps not supported yet
+                        <App appId={request.appId} />
                     </div>
                 </div>
 

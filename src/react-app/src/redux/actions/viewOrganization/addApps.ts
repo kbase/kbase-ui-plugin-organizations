@@ -96,6 +96,14 @@ export function load() {
             return
         }
 
+        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+            dispatch(loadError(makeError({
+                code: 'load-error',
+                message: 'Error loading: no org view model'
+            })))
+            return
+        }
+
         const { organization } = viewModel
 
         if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
@@ -126,6 +134,34 @@ export function load() {
             token: token
         })
 
+        const hasInboxRequest = (appId: appsModel.AppID) => {
+            // const groupsAppId = appId.split('/').join('.')
+            return viewModel.requestInbox.find((request) => {
+                if (request.resourceType === RequestResourceType.APP) {
+                    if (request.type === RequestType.REQUEST) {
+                        if (request.appId === appId) {
+                            return true
+                        }
+                    }
+                }
+                return false
+            })
+        }
+
+        const hasOutboxRequest = (appId: appsModel.AppID) => {
+            // const groupsAppId = appId.split('/').join('.')
+            return viewModel.requestOutbox.find((request) => {
+                if (request.resourceType === RequestResourceType.APP) {
+                    if (request.type === RequestType.REQUEST) {
+                        if (request.appId === appId) {
+                            return true
+                        }
+                    }
+                }
+                return false
+            })
+        }
+
         try {
             const methods = await nmsClient.list_methods({ tag: 'release' })
 
@@ -144,16 +180,9 @@ export function load() {
                         return (appResource.appId === appId)
                     })) {
                         relation = ResourceRelationToOrg.ASSOCIATED
-                    } else if (viewModel.requestOutbox.find((request) => {
-                        if (request.resourceType === RequestResourceType.APP) {
-                            if (request.type === RequestType.REQUEST) {
-                                if (request.appId === appId) {
-                                    return true
-                                }
-                            }
-                        }
-                        return false
-                    })) {
+                    } else if (hasOutboxRequest(appId)) {
+                        relation = ResourceRelationToOrg.ASSOCIATION_PENDING
+                    } else if (hasInboxRequest(appId)) {
                         relation = ResourceRelationToOrg.ASSOCIATION_PENDING
                     } else {
                         relation = ResourceRelationToOrg.NONE

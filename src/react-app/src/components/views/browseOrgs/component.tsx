@@ -1,14 +1,12 @@
 import * as React from 'react'
 import Organizations from './organizations/container'
 import { SortDirection, AppError } from '../../../types'
-import { Button, Icon, Radio, Select, Modal, Alert, Checkbox } from 'antd'
+import { Button, Icon, Radio, Select, Alert, Checkbox } from 'antd'
 import { RadioChangeEvent } from 'antd/lib/radio'
 import { CheckboxValueType } from 'antd/lib/checkbox/Group'
 import { Filter } from '../../../data/models/organization/model'
-import MainMenu from '../../menu/component'
 import { NavLink } from 'react-router-dom'
 import './component.css'
-import { filter } from 'bluebird';
 
 export interface OrganizationsBrowserProps {
     totalCount: number;

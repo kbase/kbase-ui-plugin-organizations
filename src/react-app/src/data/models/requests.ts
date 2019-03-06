@@ -6,8 +6,8 @@ export type Username = string
 export type RequestID = string
 
 export enum RequestType {
-    REQUEST = 0,
-    INVITATION
+    REQUEST = 'REQUEST',
+    INVITATION = 'INVITATION'
 }
 
 export enum RequestResourceType {
@@ -177,7 +177,7 @@ export function groupRequestToOrgRequest(request: groupsApi.Request): Request {
                     requester: request.requester,
                     type: requestType,
                     status: requestStatus,
-                    appId: request.resource,
+                    appId: request.resource.split('.').join('/'),
                     createdAt: new Date(request.createdate),
                     expireAt: new Date(request.expiredate),
                     modifiedAt: new Date(request.moddate)
@@ -190,7 +190,7 @@ export function groupRequestToOrgRequest(request: groupsApi.Request): Request {
                     requester: request.requester,
                     type: requestType,
                     status: requestStatus,
-                    appId: request.resource,
+                    appId: request.resource.split('.').join('/'),
                     createdAt: new Date(request.createdate),
                     expireAt: new Date(request.expiredate),
                     modifiedAt: new Date(request.moddate)

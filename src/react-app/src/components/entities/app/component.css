@@ -18,6 +18,10 @@
     font-style: normal;
 }
 
+.App-controlCol {
+    flex: 0 0 auto;
+}
+
 .App-iconCol {
     flex: 0 0 40px;
 }

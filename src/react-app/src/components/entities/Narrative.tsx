@@ -144,14 +144,14 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                             <UserSimple avatarSize={20} userId={narrative.owner} />
                         </div>
                     </div>
-                    <div className="Narrative-attributes">
+                    {/* <div className="Narrative-attributes">
                         <div className="Narrative-userPermission">
                             <Icon type="crown" />
                         </div>
                         <div className="Narrative-global">
                             <Icon type="global" />
                         </div>
-                    </div>
+                    </div> */}
                     <div>
                         {this.renderPublicPermission(narrative)}
                     </div>

@@ -1,13 +1,15 @@
 import * as React from 'react'
 import MainMenu from '../../../../menu/component'
-import { Button, Input, Icon, Alert } from 'antd'
+import { Button, Input, Icon, Alert, Select } from 'antd'
 import './component.css'
 import { SelectableApp, ResourceRelationToOrg } from '../../../../../types';
 import App from '../../../../entities/app/loader';
+import { ChangeEvent } from 'react';
 
 export interface AddAppsProps {
     apps: Array<SelectableApp>
     selectedApp: SelectableApp | null
+    // sortBy: string
     onFinish: () => void
     onSelectApp: (appId: string) => void
     onRequestAssociation: (appId: string) => void
@@ -34,6 +36,16 @@ export default class AddApps extends React.Component<AddAppsProps, AddAppsState>
         }
     }
 
+    doSearch(e: ChangeEvent<HTMLInputElement>) {
+        const search = e.target.value
+        console.log('search on ', search)
+    }
+
+    doSortBy(sortBy: string) {
+        // const search = e.target.value
+        console.log('sort on ', sortBy)
+    }
+
     renderMenuButtons() {
         return (
             <div className="ButtonSet">
@@ -51,9 +63,22 @@ export default class AddApps extends React.Component<AddAppsProps, AddAppsState>
     renderSearchBar() {
         return (
             <div className="AddApps-searchBar">
-                <Input
-                    style={{ width: '100%' }}
-                    placeholder="Filter apps by title" />
+                <div className="AddApps-searchInput">
+                    <Input
+                        onChange={this.doSearch.bind(this)}
+                        style={{ width: '100%' }}
+                        placeholder="Filter apps by title" />
+                </div>
+                <div className="AddApps-sortControl">
+                    <Select
+                        onChange={this.doSortBy.bind(this)}
+                        defaultValue="name"
+                        style={{ width: '10em' }}
+                        dropdownMatchSelectWidth={true}>
+                        <Select.Option value="name" key="name">App Name</Select.Option>
+                        <Select.Option value="module" key="module">Module Name</Select.Option>
+                    </Select>
+                </div>
             </div>
         )
     }
@@ -64,16 +89,28 @@ export default class AddApps extends React.Component<AddAppsProps, AddAppsState>
                 return
             case (ResourceRelationToOrg.ASSOCIATED):
                 return (
-                    <Icon type="check" />
+                    <Icon type="check" style={{ color: 'green' }} />
                 )
             case (ResourceRelationToOrg.ASSOCIATION_PENDING):
                 return (
-                    <Icon type="loading" />
+                    <Icon type="loading" style={{ color: 'orange' }} />
                 )
         }
     }
 
     renderApps() {
+        if (this.props.apps.length === 0) {
+            const message = (
+                <React.Fragment>
+                    <p>
+                        You have not authored any released apps
+                    </p>
+                </React.Fragment>
+            )
+            return (
+                <Alert type="info" message={message} />
+            )
+        }
         const apps = this.props.apps.map((app, index) => {
             let classes = ['AddApps-app']
             if (app.selected) {
@@ -114,7 +151,10 @@ export default class AddApps extends React.Component<AddAppsProps, AddAppsState>
         const app = this.props.selectedApp
         let alertType: AlertType
         let message: string
-        if (app === null) {
+        if (this.props.apps.length === 0) {
+            message = 'You have not authored any released apps'
+            alertType = 'info'
+        } else if (app === null) {
             message = 'Please select an App to associate'
             alertType = 'info'
         } else {
@@ -135,7 +175,7 @@ export default class AddApps extends React.Component<AddAppsProps, AddAppsState>
         return (
             <Alert
                 type={alertType}
-                style={{ marginTop: '10px' }}
+                style={{ marginBottom: '10px' }}
                 message={message} />
         )
     }

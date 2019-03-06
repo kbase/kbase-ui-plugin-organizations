@@ -1,11 +1,9 @@
 import * as React from 'react'
-import { RequestType, RequestResourceType } from '../../types';
+import { RequestResourceType } from '../../types';
 import { Card, Icon } from 'antd';
 import User from '../entities/UserContainer';
 import './component.css'
 import { niceElapsed } from '../../lib/time'
-
-import * as orgModel from '../../data/models/organization/model'
 import * as requestModel from '../../data/models/requests'
 
 export interface RequestProps {
@@ -281,7 +279,7 @@ export class Request extends React.Component<RequestProps, RequestState> {
     renderRequest() {
         const request = this.props.request
         switch (request.type) {
-            case RequestType.REQUEST:
+            case requestModel.RequestType.REQUEST:
                 switch (request.resourceType) {
                     case RequestResourceType.USER:
                         return this.renderRequestJoinRequest(request as requestModel.UserRequest)
@@ -292,7 +290,7 @@ export class Request extends React.Component<RequestProps, RequestState> {
                     default:
                         throw new Error('Unsupported resource type: ' + request.resourceType)
                 }
-            case RequestType.INVITATION:
+            case requestModel.RequestType.INVITATION:
                 switch (request.resourceType) {
                     case RequestResourceType.USER:
                         return this.renderRequestJoinInvitation(request as requestModel.UserInvitation)

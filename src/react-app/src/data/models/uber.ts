@@ -1,6 +1,5 @@
 import * as requestModel from './requests'
 import * as orgModel from './organization/model'
-import { RequestType } from '../../types';
 
 export interface UberOrganization {
     organization: orgModel.Organization | orgModel.InaccessiblePrivateOrganization

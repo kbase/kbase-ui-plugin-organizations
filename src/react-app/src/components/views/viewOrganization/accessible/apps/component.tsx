@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as orgModel from '../../../../../data/models/organization/model'
 import './component.css'
-import { Button, Icon, Alert, Select, Input, Dropdown, Menu } from 'antd'
+import { Button, Icon, Alert, Select, Input, Dropdown, Menu, Modal } from 'antd'
 import App from '../../../../entities/app/loader'
 
 export interface AppsProps {
@@ -18,6 +18,31 @@ interface AppsState {
 export default class Apps extends React.Component<AppsProps, AppsState> {
     constructor(props: AppsProps) {
         super(props)
+    }
+
+    doRemoveApp(appId: string) {
+        const confirmed = () => {
+            this.props.onRemoveApp(appId)
+        }
+        const message = (
+            <React.Fragment>
+                <p>
+                    Please confirm the removal of this App from this Organization.
+                </p>
+                <p>
+                    All Organization members and the App authors will receive a notification.
+                </p>
+            </React.Fragment>
+        )
+        Modal.confirm({
+            title: 'Confirm',
+            content: message,
+            width: '50em',
+            okText: 'Confirm',
+            onOk: () => {
+                confirmed()
+            }
+        })
     }
 
     renderButtonRow() {
@@ -59,7 +84,7 @@ export default class Apps extends React.Component<AppsProps, AppsState> {
         const apps = this.props.apps.apps.map((app, index) => {
             const menu = (
                 <Menu>
-                    <Menu.Item key="removeApp" onClick={() => this.props.onRemoveApp(app.appId)}>
+                    <Menu.Item key="removeApp" onClick={() => this.doRemoveApp(app.appId)}>
                         <Icon type="delete" style={{ color: 'red' }} />
                         Remove App from Organization
                     </Menu.Item>

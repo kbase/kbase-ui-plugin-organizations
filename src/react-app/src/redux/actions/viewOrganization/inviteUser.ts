@@ -5,7 +5,7 @@ import { ActionFlag } from '../index'
 
 import {
     StoreState, User, InviteUserViewModel,
-    RequestType, RequestResourceType, MemberType,
+    RequestResourceType, MemberType,
     OrganizationUser,
     ViewOrgViewModelKind,
     View,
@@ -337,7 +337,7 @@ function selectUserError(error: AnError): SelectUserError {
 function isUserRequest(request: requestModel.Request, username: string): request is requestModel.UserRequest {
     const req: requestModel.UserRequest = <requestModel.UserRequest>request
     if (req.resourceType === RequestResourceType.USER &&
-        req.type === RequestType.REQUEST &&
+        req.type === requestModel.RequestType.REQUEST &&
         req.requester === username) {
         return true
     }
@@ -347,7 +347,7 @@ function isUserRequest(request: requestModel.Request, username: string): request
 function isUserInvitation(request: requestModel.Request, username: string): request is requestModel.UserRequest {
     const req: requestModel.UserInvitation = <requestModel.UserInvitation>request
     if (req.resourceType === RequestResourceType.USER &&
-        req.type === RequestType.INVITATION &&
+        req.type === requestModel.RequestType.INVITATION &&
         req.user &&
         req.user === username) {
         return true

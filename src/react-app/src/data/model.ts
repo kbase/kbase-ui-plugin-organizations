@@ -1,6 +1,5 @@
 import {
     User,
-    RequestType,
     RequestStatus,
     RequestResourceType,
 } from '../types';
@@ -10,12 +9,12 @@ import * as groups from './apis/groups'
 import * as requestModel from './models/requests'
 import * as orgModel from './models/organization/model'
 
-function stringToRequestType(type: string): RequestType {
+function stringToRequestType(type: string): requestModel.RequestType {
     switch (type) {
         case 'Invite':
-            return RequestType.INVITATION
+            return requestModel.RequestType.INVITATION
         case 'Request':
-            return RequestType.REQUEST
+            return requestModel.RequestType.REQUEST
         default:
             throw new Error('unknown request type: ' + type)
     }
