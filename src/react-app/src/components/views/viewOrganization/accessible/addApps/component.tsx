@@ -14,6 +14,7 @@ export interface AddAppsProps {
     onSelectApp: (appId: string) => void
     onRequestAssociation: (appId: string) => void
     onSearch: (searchBy: string) => void
+    onSort: (sortBy: string) => void
 }
 
 interface AddAppsState {
@@ -42,8 +43,7 @@ export default class AddApps extends React.Component<AddAppsProps, AddAppsState>
     }
 
     doSortBy(sortBy: string) {
-        // const search = e.target.value
-        console.log('sort on ', sortBy)
+        this.props.onSort(sortBy)
     }
 
     renderMenuButtons() {
@@ -75,8 +75,8 @@ export default class AddApps extends React.Component<AddAppsProps, AddAppsState>
                         defaultValue="name"
                         style={{ width: '10em' }}
                         dropdownMatchSelectWidth={true}>
-                        <Select.Option value="name" key="name">App Name</Select.Option>
-                        <Select.Option value="module" key="module">Module Name</Select.Option>
+                        <Select.Option value="name" key="name">App</Select.Option>
+                        <Select.Option value="module" key="module">Module</Select.Option>
                     </Select>
                 </div>
             </div>

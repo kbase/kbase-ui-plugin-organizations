@@ -5,7 +5,7 @@ import * as orgModel from '../../../data/models/organization/model'
 import * as appsModel from '../../../data/models/apps'
 import {
     StoreState, ViewOrgViewModelKind, SelectableApp,
-    ResourceRelationToOrg, ViewOrgViewModel, AddAppsViewModel
+    ResourceRelationToOrg, ViewOrgViewModel, AddAppsViewModel, SelectableRelatableOrganization
 } from '../../../types'
 import { AnError } from '../../../combo/error/api'
 import { makeError } from '../../../lib/error'
@@ -513,6 +513,89 @@ export function search(searchBy: string) {
 
         } catch (ex) {
             dispatch(searchError(makeError({
+                code: 'error',
+                message: ex.message
+            })))
+        }
+    }
+
+}
+
+// SORT
+
+export interface Sort {
+    type: ActionFlag.VIEW_ORG_ADD_APPS_SORT
+}
+export interface SortStart {
+    type: ActionFlag.VIEW_ORG_ADD_APPS_SORT_START
+}
+
+export interface SortSuccess {
+    type: ActionFlag.VIEW_ORG_ADD_APPS_SORT_SUCCESS
+    apps: Array<SelectableApp>
+}
+
+export interface SortError {
+    type: ActionFlag.VIEW_ORG_ADD_APPS_SORT_ERROR
+    error: AnError
+}
+
+function sortStart(): SortStart {
+    return {
+        type: ActionFlag.VIEW_ORG_ADD_APPS_SORT_START
+    }
+}
+
+function sortSuccess(apps: Array<SelectableApp>): SortSuccess {
+    return {
+        type: ActionFlag.VIEW_ORG_ADD_APPS_SORT_SUCCESS,
+        apps
+    }
+}
+
+function sortError(error: AnError): SortError {
+    return {
+        type: ActionFlag.VIEW_ORG_ADD_APPS_SORT_ERROR,
+        error
+    }
+}
+
+function applySort(apps: Array<SelectableApp>, sortBy: string) {
+    switch (sortBy) {
+        case 'name':
+            return apps.sort((a, b) => {
+                return a.app.name.localeCompare(b.app.name)
+            })
+        case 'module':
+            return apps.sort((a, b) => {
+                const moduleMatch = a.app.moduleName.localeCompare(b.app.moduleName)
+                if (!moduleMatch) {
+                    return a.app.name.localeCompare(b.app.name)
+                }
+                return moduleMatch
+            })
+        default:
+            return apps
+    }
+}
+
+export function sort(sortBy: string) {
+    return async (dispatch: ThunkDispatch<StoreState, void, AddAppsAction>, getState: () => StoreState) => {
+        try {
+            dispatch(sortStart())
+
+            const [viewOrgVM, viewModel] = ensureViewModel(getState())
+
+            const {
+                apps
+            } = viewModel
+
+            // TODO: better parser
+            const sortedApps = applySort(apps.slice(0), sortBy)
+
+            dispatch(sortSuccess(sortedApps))
+        } catch (ex) {
+            dispatch(sortError(makeError({
                 code: 'error',
                 message: ex.message
             })))

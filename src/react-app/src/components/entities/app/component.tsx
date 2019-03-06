@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as appModel from '../../../data/models/apps'
 import './component.css'
-import { Icon } from 'antd'
+import { Icon, Tooltip } from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
@@ -95,15 +95,17 @@ export default class App extends React.Component<AppProps, AppState> {
                 </div>
                 <div className="App-appCol">
                     <div className='App-name'>
-                        <a href={"/#catalog/apps/" + this.props.app.id} target="_blank">
-                            {this.props.app.name}
-                        </a>
+                        <Tooltip placement="bottomRight" title={this.props.app.subtitle}>
+                            <a href={"/#catalog/apps/" + this.props.app.id} target="_blank">
+                                {this.props.app.name}
+                            </a>
+                        </Tooltip>
                     </div>
-                    <div className="App-subtitle">
-                        {this.props.app.subtitle}
-                    </div>
-                    {/* <div className="App-moduleName">
+                    <div className="App-moduleName">
                         <span className="field-label">module</span>{this.props.app.moduleName}
+                    </div>
+                    {/* <div className="App-subtitle">
+                        {this.props.app.subtitle}
                     </div>
                     <div className="App-authors">
                         <span className="field-label">by</span> {this.renderAuthors()}
@@ -125,9 +127,11 @@ export default class App extends React.Component<AppProps, AppState> {
                 </div>
                 <div className="App-appCol">
                     <div className='App-name'>
-                        <a href={"/#catalog/apps/" + this.props.app.id} target="_blank">
-                            {this.props.app.name}
-                        </a>
+                        <Tooltip placement="bottomRight" title={this.props.app.subtitle}>
+                            <a href={"/#catalog/apps/" + this.props.app.id} target="_blank">
+                                {this.props.app.name}
+                            </a>
+                        </Tooltip>
                     </div>
                     <div className="App-subtitle">
                         {this.props.app.subtitle}
@@ -135,6 +139,7 @@ export default class App extends React.Component<AppProps, AppState> {
                     <div className="App-moduleName">
                         <span className="field-label">module</span>{this.props.app.moduleName}
                     </div>
+
                     <div className="App-authors">
                         <span className="field-label">by</span> {this.renderAuthors()}
                     </div>

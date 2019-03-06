@@ -42,9 +42,9 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
                 <p>
                     Any view permission granted to organization members will be unaffected by removing the Narrative.
                 </p>
-                <p>
+                {/* <p>
                     All Organization members and the Narrative owner will receive a notification.
-                </p>
+                </p> */}
             </React.Fragment>
         )
         Modal.confirm({

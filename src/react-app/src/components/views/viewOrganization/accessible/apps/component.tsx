@@ -29,9 +29,9 @@ export default class Apps extends React.Component<AppsProps, AppsState> {
                 <p>
                     Please confirm the removal of this App from this Organization.
                 </p>
-                <p>
+                {/* <p>
                     All Organization members and the App authors will receive a notification.
-                </p>
+                </p> */}
             </React.Fragment>
         )
         Modal.confirm({

@@ -80,6 +80,11 @@ export interface AppFullInfo {
 
 }
 
+export enum SortBy {
+    NAME = 'name',
+    MODULE = 'module'
+}
+
 const convertIcon = (icon: narrativeMethodStoreAPI.Icon): Icon => {
     if (!icon) {
         return {

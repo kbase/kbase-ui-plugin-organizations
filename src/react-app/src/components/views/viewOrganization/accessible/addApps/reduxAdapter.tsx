@@ -20,6 +20,7 @@ interface DispatchProps {
     onSelectApp: (appId: string) => void
     onRequestAssociation: (appId: string) => void
     onSearch: (searchBy: string) => void
+    onSort: (sortBy: string) => void
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
@@ -60,6 +61,9 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.Load>): DispatchPr
         },
         onSearch: (searchBy: string) => {
             dispatch(actions.search(searchBy) as any)
+        },
+        onSort: (sortBy: string) => {
+            dispatch(actions.sort(sortBy) as any)
         }
     }
 }

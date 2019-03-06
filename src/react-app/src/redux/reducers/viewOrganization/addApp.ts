@@ -134,6 +134,20 @@ function searchSuccess(state: View<AddAppsViewModel>, action: actions.SearchSucc
     }
 }
 
+function sortSuccess(state: View<AddAppsViewModel>, action: actions.SortSuccess): View<AddAppsViewModel> {
+    if (state.viewModel === null) {
+        return state
+    }
+
+    return {
+        ...state,
+        viewModel: {
+            ...state.viewModel,
+            apps: action.apps
+        }
+    }
+}
+
 function haveReducer(action: Action): boolean {
     switch (action.type) {
         case ActionFlag.VIEW_ORG_ADD_APPS_LOAD_START:
@@ -143,6 +157,7 @@ function haveReducer(action: Action): boolean {
         case ActionFlag.VIEW_ORG_ADD_APPS_SELECT_SUCCESS:
         case ActionFlag.VIEW_ORG_ADD_APPS_REQUEST_ASSOCIATE_APP_SUCCESS:
         case ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_SUCCESS:
+        case ActionFlag.VIEW_ORG_ADD_APPS_SORT_SUCCESS:
             return true
         default: return false
     }
@@ -164,6 +179,8 @@ function localReducer(state: View<AddAppsViewModel>, action: actions.AddAppsActi
             return requestAssociationSuccess(state, action as actions.RequestAssociationSuccess)
         case ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_SUCCESS:
             return searchSuccess(state, action as actions.SearchSuccess)
+        case ActionFlag.VIEW_ORG_ADD_APPS_SORT_SUCCESS:
+            return sortSuccess(state, action as actions.SortSuccess)
         default:
             return null
     }
