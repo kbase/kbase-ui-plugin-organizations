@@ -1,36 +1,40 @@
-import * as groupsApi from '../../apis/groups'
+import * as groupsApi from '../../apis/groups';
 import {
-    SortDirection, EditableOrganization, ValidationState, EditableString, ValidationErrorType
+    SortDirection,
+    EditableOrganization,
+    ValidationState,
+    EditableString,
+    ValidationErrorType
 } from '../../../types';
-import * as requestModel from '../requests'
-import * as userModel from '../user'
-import Validation from './validation'
+import * as requestModel from '../requests';
+import * as userModel from '../user';
+import Validation from './validation';
 import { string } from 'prop-types';
 
 export interface OrganizationUpdate {
-    name: string
-    logoUrl: string | null
-    description: string
-    isPrivate: boolean
-    homeUrl: string | null
-    researchInterests: string
+    name: string;
+    logoUrl: string | null;
+    description: string;
+    isPrivate: boolean;
+    homeUrl: string | null;
+    researchInterests: string;
 }
 
 export interface User {
-    username: string
-    realname: string
-    title: string | null
-    organization: string | null
-    city: string | null
-    state: string | null
-    country: string | null
-    avatarOption: string | null
-    gravatarHash: string | null
-    gravatarDefault: string | null
+    username: string;
+    realname: string;
+    title: string | null;
+    organization: string | null;
+    city: string | null;
+    state: string | null;
+    country: string | null;
+    avatarOption: string | null;
+    gravatarHash: string | null;
+    gravatarDefault: string | null;
 }
 
 export interface EditableMemberProfile {
-    title: EditableString
+    title: EditableString;
 }
 export enum UserRelationToOrganization {
     NONE = 'NONE',
@@ -43,42 +47,49 @@ export enum UserRelationToOrganization {
 }
 
 export interface UserOrgRelation {
-    type: UserRelationToOrganization
+    type: UserRelationToOrganization;
 }
 
 export interface NoRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.NONE
+    type: UserRelationToOrganization.NONE;
 }
 
 export interface ViewRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.VIEW
+    type: UserRelationToOrganization.VIEW;
 }
 
 export interface MembershipRequestPendingRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.MEMBER_REQUEST_PENDING,
-    requestId: string
+    type: UserRelationToOrganization.MEMBER_REQUEST_PENDING;
+    requestId: string;
 }
 
 export interface MembershipInvitationPendingRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.MEMBER_INVITATION_PENDING,
-    requestId: string
+    type: UserRelationToOrganization.MEMBER_INVITATION_PENDING;
+    requestId: string;
 }
 
 export interface MemberRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.MEMBER
+    type: UserRelationToOrganization.MEMBER;
 }
 
 export interface AdminRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.ADMIN
+    type: UserRelationToOrganization.ADMIN;
 }
 
 export interface OwnerRelation extends UserOrgRelation {
-    type: UserRelationToOrganization.OWNER
+    type: UserRelationToOrganization.OWNER;
 }
 
-export type Relation = NoRelation | ViewRelation | MembershipRequestPendingRelation | MembershipInvitationPendingRelation | MemberRelation | AdminRelation | OwnerRelation
+export type Relation =
+    | NoRelation
+    | ViewRelation
+    | MembershipRequestPendingRelation
+    | MembershipInvitationPendingRelation
+    | MemberRelation
+    | AdminRelation
+    | OwnerRelation;
 
-export type Username = string
+export type Username = string;
 
 export enum MemberType {
     MEMBER = 0,
@@ -86,16 +97,16 @@ export enum MemberType {
     OWNER
 }
 export interface Member {
-    username: groupsApi.Username
-    realname: string
-    joinedAt: Date
-    lastVisitedAt: Date | null
-    type: MemberType
-    title: string | null
+    username: groupsApi.Username;
+    realname: string;
+    joinedAt: Date;
+    lastVisitedAt: Date | null;
+    type: MemberType;
+    title: string | null;
 }
 
 export interface MemberUpdate {
-    title?: string
+    title?: string;
 }
 
 export enum UserWorkspacePermission {
@@ -106,48 +117,48 @@ export enum UserWorkspacePermission {
     OWNER
 }
 
-export type WorkspaceID = number
+export type WorkspaceID = number;
 
 export interface NarrativeResource {
-    workspaceId: number
-    title: string
-    permission: UserWorkspacePermission
-    isPublic: boolean
-    createdAt: Date
-    updatedAt: Date
-    addedAt: Date | null
-    description: string
+    workspaceId: number;
+    title: string;
+    permission: UserWorkspacePermission;
+    isPublic: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    addedAt: Date | null;
+    description: string;
 }
 
-export type AppID = string
+export type AppID = string;
 
 export interface AppResource {
-    appId: AppID
-    addedAt: Date | null
+    appId: AppID;
+    addedAt: Date | null;
 }
 
 export interface BriefOrganization {
-    id: string
-    name: string
-    logoUrl: string | null
-    isPrivate: boolean
-    homeUrl: string | null
-    researchInterests: string | null
+    id: string;
+    name: string;
+    logoUrl: string | null;
+    isPrivate: boolean;
+    homeUrl: string | null;
+    researchInterests: string | null;
     // TODO: we need researchInterests here
-    owner: Member
-    relation: UserRelationToOrganization
+    owner: Member;
+    relation: UserRelationToOrganization;
 
-    isMember: boolean
-    isAdmin: boolean
-    isOwner: boolean
+    isMember: boolean;
+    isAdmin: boolean;
+    isOwner: boolean;
 
-    createdAt: Date
-    modifiedAt: Date
-    lastVisitedAt: Date | null
+    createdAt: Date;
+    modifiedAt: Date;
+    lastVisitedAt: Date | null;
 
-    memberCount: number
-    narrativeCount: number
-    relatedOrganizations: Array<OrganizationID>
+    memberCount: number;
+    narrativeCount: number;
+    relatedOrganizations: Array<OrganizationID>;
 }
 
 export enum OrganizationKind {
@@ -156,40 +167,40 @@ export enum OrganizationKind {
 }
 
 export interface InaccessiblePrivateOrganization {
-    kind: OrganizationKind.INACCESSIBLE_PRIVATE
-    id: string
-    isPrivate: boolean
-    relation: UserRelationToOrganization
+    kind: OrganizationKind.INACCESSIBLE_PRIVATE;
+    id: string;
+    isPrivate: boolean;
+    relation: UserRelationToOrganization;
 }
 
 export interface Organization {
-    kind: OrganizationKind.NORMAL
-    id: string
-    name: string
+    kind: OrganizationKind.NORMAL;
+    id: string;
+    name: string;
 
-    isPrivate: boolean
-    isMember: boolean
-    isAdmin: boolean
-    isOwner: boolean
+    isPrivate: boolean;
+    isMember: boolean;
+    isAdmin: boolean;
+    isOwner: boolean;
 
-    relation: UserRelationToOrganization
-    logoUrl: string | null
-    homeUrl: string | null
-    researchInterests: string
-    description: string
-    owner: Member
-    areMembersPrivate: boolean
-    members: Array<Member>
+    relation: UserRelationToOrganization;
+    logoUrl: string | null;
+    homeUrl: string | null;
+    researchInterests: string;
+    description: string;
+    owner: Member;
+    areMembersPrivate: boolean;
+    members: Array<Member>;
     // relation: UserOrgRelation
-    createdAt: Date
-    modifiedAt: Date
-    lastVisitedAt: Date | null
-    narratives: Array<NarrativeResource>
-    apps: Array<AppResource>
-    memberCount: number
-    narrativeCount: number
-    appCount: number
-    relatedOrganizations: Array<OrganizationID>
+    createdAt: Date;
+    modifiedAt: Date;
+    lastVisitedAt: Date | null;
+    narratives: Array<NarrativeResource>;
+    apps: Array<AppResource>;
+    memberCount: number;
+    narrativeCount: number;
+    appCount: number;
+    relatedOrganizations: Array<OrganizationID>;
 }
 
 // export interface RequestStatus {
@@ -209,67 +220,67 @@ export function determineRelation(
     org: Organization | InaccessiblePrivateOrganization,
     username: userModel.Username,
     request: requestModel.UserRequest | null,
-    invitation: requestModel.UserInvitation | null): Relation {
-
+    invitation: requestModel.UserInvitation | null
+): Relation {
     if (org.kind === OrganizationKind.INACCESSIBLE_PRIVATE) {
         if (request && request.user === username) {
             return {
                 type: UserRelationToOrganization.MEMBER_REQUEST_PENDING,
                 requestId: request.id
-            } as MembershipRequestPendingRelation
+            } as MembershipRequestPendingRelation;
         } else if (invitation && invitation.user === username) {
             return {
                 type: UserRelationToOrganization.MEMBER_INVITATION_PENDING,
                 requestId: invitation.id
-            } as MembershipInvitationPendingRelation
+            } as MembershipInvitationPendingRelation;
         } else {
             return {
                 type: UserRelationToOrganization.NONE
-            } as NoRelation
+            } as NoRelation;
         }
     }
 
     if (username === org.owner.username) {
         return {
             type: UserRelationToOrganization.OWNER
-        } as OwnerRelation
+        } as OwnerRelation;
     } else {
         const member = org.members.find((member) => {
-            return (member.username === username)
-        })
+            return member.username === username;
+        });
         if (member) {
             switch (member.type) {
                 case MemberType.MEMBER:
                     return {
                         type: UserRelationToOrganization.MEMBER
-                    } as MemberRelation
+                    } as MemberRelation;
                 case MemberType.ADMIN:
                     return {
                         type: UserRelationToOrganization.ADMIN
-                    } as AdminRelation
+                    } as AdminRelation;
                 case MemberType.OWNER:
                     return {
                         type: UserRelationToOrganization.OWNER
-                    } as OwnerRelation
+                    } as OwnerRelation;
                 default:
                     return {
                         type: UserRelationToOrganization.NONE
-                    } as NoRelation
+                    } as NoRelation;
             }
         } else if (request && request.user === username) {
             return {
                 type: UserRelationToOrganization.MEMBER_REQUEST_PENDING,
                 requestId: request.id
-            } as MembershipRequestPendingRelation
+            } as MembershipRequestPendingRelation;
         } else if (invitation && invitation.user === username) {
             return {
                 type: UserRelationToOrganization.MEMBER_INVITATION_PENDING,
                 requestId: invitation.id
-            } as MembershipInvitationPendingRelation
+            } as MembershipInvitationPendingRelation;
         } else {
             return {
                 type: UserRelationToOrganization.NONE
-            } as NoRelation
+            } as NoRelation;
         }
     }
 }
@@ -277,29 +288,33 @@ export function determineRelation(
 function groupPermissionToWorkspacePermission(groupsPermission: string): UserWorkspacePermission {
     switch (groupsPermission) {
         case 'None':
-            return UserWorkspacePermission.NONE
+            return UserWorkspacePermission.NONE;
         case 'Read':
-            return UserWorkspacePermission.VIEW
+            return UserWorkspacePermission.VIEW;
         case 'Write':
-            return UserWorkspacePermission.EDIT
+            return UserWorkspacePermission.EDIT;
         case 'Admin':
-            return UserWorkspacePermission.ADMIN
+            return UserWorkspacePermission.ADMIN;
         case 'Own':
-            return UserWorkspacePermission.OWNER
+            return UserWorkspacePermission.OWNER;
         default:
-            throw new Error('Invalid groups user permission: ' + groupsPermission)
+            throw new Error('Invalid groups user permission: ' + groupsPermission);
     }
 }
 
 function getRealname(users: Map<userModel.Username, userModel.User>, username: string, defaultValue: string) {
-    const user = users.get(username)
+    const user = users.get(username);
     if (!user) {
-        return defaultValue
+        return defaultValue;
     }
-    return user.realname
+    return user.realname;
 }
 
-export function groupToOrganization(group: groupsApi.Group, currentUser: Username, users: Map<userModel.Username, userModel.User>): Organization {
+export function groupToOrganization(
+    group: groupsApi.Group,
+    currentUser: Username,
+    users: Map<userModel.Username, userModel.User>
+): Organization {
     const owner: Member = {
         username: group.owner.name,
         realname: getRealname(users, group.owner.name, 'n/a'),
@@ -307,30 +322,36 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         lastVisitedAt: group.owner.lastvisit ? new Date(group.owner.lastvisit) : null,
         type: MemberType.OWNER,
         title: group.owner.custom.title
-    }
+    };
 
     // We join admins and members, since they are all members, just different privileges in the org
     const members = (<Array<Member>>[
         // owner
-    ]).concat(group.admins.map((admin) => {
-        return {
-            username: admin.name,
-            realname: getRealname(users, admin.name, 'n/a'),
-            joinedAt: new Date(admin.joined),
-            lastVisitedAt: admin.lastvisit ? new Date(admin.lastvisit) : null,
-            type: MemberType.ADMIN,
-            title: admin.custom.title
-        }
-    })).concat(group.members.map((member) => {
-        return {
-            username: member.name,
-            realname: getRealname(users, member.name, 'n/a'),
-            joinedAt: new Date(member.joined),
-            lastVisitedAt: member.lastvisit ? new Date(member.lastvisit) : null,
-            type: MemberType.MEMBER,
-            title: member.custom.title
-        }
-    }))
+    ])
+        .concat(
+            group.admins.map((admin) => {
+                return {
+                    username: admin.name,
+                    realname: getRealname(users, admin.name, 'n/a'),
+                    joinedAt: new Date(admin.joined),
+                    lastVisitedAt: admin.lastvisit ? new Date(admin.lastvisit) : null,
+                    type: MemberType.ADMIN,
+                    title: admin.custom.title
+                };
+            })
+        )
+        .concat(
+            group.members.map((member) => {
+                return {
+                    username: member.name,
+                    realname: getRealname(users, member.name, 'n/a'),
+                    joinedAt: new Date(member.joined),
+                    lastVisitedAt: member.lastvisit ? new Date(member.lastvisit) : null,
+                    type: MemberType.MEMBER,
+                    title: member.custom.title
+                };
+            })
+        );
 
     const narratives: Array<NarrativeResource> = group.resources.workspace.map((info) => {
         return {
@@ -342,23 +363,23 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
             updatedAt: new Date(info.moddate),
             description: info.description,
             addedAt: info.added === null ? null : new Date(info.added)
-        }
-    })
+        };
+    });
     const apps: Array<AppResource> = group.resources.catalogmethod.map((info) => {
         return {
             appId: info.rid.split('.').join('/'),
             addedAt: info.added === null ? null : new Date(info.added)
-        }
-    })
+        };
+    });
 
     return {
         kind: OrganizationKind.NORMAL,
         id: group.id,
         name: group.name,
         isPrivate: group.private,
-        isMember: (group.role !== "None"),
-        isAdmin: (group.role === "Admin" || group.role === "Owner"),
-        isOwner: (group.role === "Owner"),
+        isMember: group.role !== 'None',
+        isAdmin: group.role === 'Admin' || group.role === 'Owner',
+        isOwner: group.role === 'Owner',
         relation: groupRoleToUserRelation(group.role),
         logoUrl: group.custom.logourl || null,
         homeUrl: group.custom.homeurl || null,
@@ -375,107 +396,128 @@ export function groupToOrganization(group: groupsApi.Group, currentUser: Usernam
         memberCount: group.memcount,
         narrativeCount: group.rescount.workspace || 0,
         appCount: group.rescount.catalogmethod || 0,
-        relatedOrganizations: group.custom ? group.custom.relatedgroups ? group.custom.relatedgroups.split(',') : [] : []
-    }
+        relatedOrganizations: group.custom
+            ? group.custom.relatedgroups
+                ? group.custom.relatedgroups.split(',')
+                : []
+            : []
+    };
 }
 
-export function groupToPrivateOrganization(group: groupsApi.InaccessiblePrivateGroup, currentUser: Username): InaccessiblePrivateOrganization {
+export function groupToPrivateOrganization(
+    group: groupsApi.InaccessiblePrivateGroup,
+    currentUser: Username
+): InaccessiblePrivateOrganization {
     return {
         kind: OrganizationKind.INACCESSIBLE_PRIVATE,
         id: group.id,
         isPrivate: group.private,
         // isMember: false,
         relation: groupRoleToUserRelation(group.role)
-    }
+    };
 }
 
-export type GroupID = string
-export type OrganizationID = GroupID
-
+export type GroupID = string;
+export type OrganizationID = GroupID;
 
 export interface QueryResults {
-    organizations: Array<BriefOrganization>
-    total: number
+    organizations: Array<BriefOrganization>;
+    total: number;
 }
 
 export interface Query {
-    searchTerms: Array<string>
-    username: groupsApi.Username
-    sortField: string
-    sortDirection: SortDirection
-    filter: Filter
+    searchTerms: Array<string>;
+    username: groupsApi.Username;
+    sortField: string;
+    sortDirection: SortDirection;
+    filter: Filter;
 }
 
 export function applySearch(orgs: Array<BriefOrganization>, searchTerms: Array<string>): Array<BriefOrganization> {
     const searchTermsRe = searchTerms.map((term) => {
-        return new RegExp(term, 'i')
-    })
+        return new RegExp(term, 'i');
+    });
     const filteredOrgs = orgs.filter((org) => {
         if (searchTerms.length === 0) {
             return true;
         }
         return searchTermsRe.every((termRe) => {
-            return termRe.test(org.name) ||
+            return (
+                termRe.test(org.name) ||
                 termRe.test(org.researchInterests || '') ||
                 termRe.test(org.owner.username) ||
                 termRe.test(org.owner.realname)
-        })
-    })
-    return filteredOrgs
+            );
+        });
+    });
+    return filteredOrgs;
 }
 
 function dateDays(d: Date) {
-    const t = d.getTime()
-    return Math.round(t / (1000 * 60 * 60 * 24))
+    const t = d.getTime();
+    return Math.round(t / (1000 * 60 * 60 * 24));
 }
 
 function applySortComparison(sortField: string, direction: number, a: BriefOrganization, b: BriefOrganization) {
     switch (sortField) {
         case 'created':
-            return direction * (dateDays(a.createdAt) - dateDays(b.createdAt))
+            return direction * (dateDays(a.createdAt) - dateDays(b.createdAt));
         case 'modified':
         case 'changed':
-            return direction * (dateDays(a.modifiedAt) - dateDays(b.modifiedAt))
+            return direction * (dateDays(a.modifiedAt) - dateDays(b.modifiedAt));
         case 'name':
-            return direction * a.name.localeCompare(b.name)
+            return direction * a.name.localeCompare(b.name);
         case 'owner':
             // TODO: after the dust settles for org -> brief org conversion,
             // we may need to convert the owner to a member via profile...
-            return direction * a.owner.username.localeCompare(b.owner.username)
+            return direction * a.owner.username.localeCompare(b.owner.username);
         case 'narrativeCount':
-            return direction * (a.narrativeCount - b.narrativeCount)
+            return direction * (a.narrativeCount - b.narrativeCount);
         case 'memberCount':
-            return direction * (a.memberCount - b.memberCount)
+            return direction * (a.memberCount - b.memberCount);
         default:
-            console.warn('unimplemented sort field: ' + sortField)
+            console.warn('unimplemented sort field: ' + sortField);
             return 0;
     }
 }
 
-function applySort(organizations: Array<BriefOrganization>, sortField: string, sortDirection: SortDirection): Array<BriefOrganization> {
-    const direction = sortDirection === SortDirection.ASCENDING ? 1 : -1
+function applySort(
+    organizations: Array<BriefOrganization>,
+    sortField: string,
+    sortDirection: SortDirection
+): Array<BriefOrganization> {
+    const direction = sortDirection === SortDirection.ASCENDING ? 1 : -1;
     return organizations.slice().sort((a, b) => {
-        return applySortComparison(sortField, direction, a, b) || applySortComparison('name', 1, a, b)
-    })
+        return applySortComparison(sortField, direction, a, b) || applySortComparison('name', 1, a, b);
+    });
 }
 
 function groupRoleToUserRelation(role: groupsApi.Role): UserRelationToOrganization {
     switch (role) {
-        case 'None': return UserRelationToOrganization.NONE
-        case 'Member': return UserRelationToOrganization.MEMBER
-        case 'Admin': return UserRelationToOrganization.ADMIN
-        case 'Owner': return UserRelationToOrganization.OWNER
-        default: throw new Error('Unknown role: ' + role)
+        case 'None':
+            return UserRelationToOrganization.NONE;
+        case 'Member':
+            return UserRelationToOrganization.MEMBER;
+        case 'Admin':
+            return UserRelationToOrganization.ADMIN;
+        case 'Owner':
+            return UserRelationToOrganization.OWNER;
+        default:
+            throw new Error('Unknown role: ' + role);
     }
 }
 
 export interface Filter {
-    roleType: string,
-    roles: Array<string>,
-    privacy: string
+    roleType: string;
+    roles: Array<string>;
+    privacy: string;
 }
 
-function applyFilter(organizations: Array<BriefOrganization>, { roleType, roles, privacy }: Filter, username: groupsApi.Username): Array<BriefOrganization> {
+function applyFilter(
+    organizations: Array<BriefOrganization>,
+    { roleType, roles, privacy }: Filter,
+    username: groupsApi.Username
+): Array<BriefOrganization> {
     function applyRoleType(org: BriefOrganization) {
         switch (roleType) {
             case 'myorgs':
@@ -483,50 +525,50 @@ function applyFilter(organizations: Array<BriefOrganization>, { roleType, roles,
                     UserRelationToOrganization.MEMBER,
                     UserRelationToOrganization.ADMIN,
                     UserRelationToOrganization.OWNER
-                ].includes(org.relation)
+                ].includes(org.relation);
             case 'notmyorgs':
                 return ![
                     UserRelationToOrganization.MEMBER,
                     UserRelationToOrganization.ADMIN,
                     UserRelationToOrganization.OWNER
-                ].includes(org.relation)
+                ].includes(org.relation);
             case 'all':
             default:
-                return true
+                return true;
         }
     }
     function applyRole(org: BriefOrganization) {
         if (roles.length === 0) {
-            return true
+            return true;
         }
         return roles.some((role) => {
             switch (role) {
                 case 'member':
-                    return (org.relation === UserRelationToOrganization.MEMBER)
+                    return org.relation === UserRelationToOrganization.MEMBER;
                 case 'admin':
-                    return (org.relation === UserRelationToOrganization.ADMIN)
+                    return org.relation === UserRelationToOrganization.ADMIN;
                 case 'owner':
-                    return (org.relation === UserRelationToOrganization.OWNER)
+                    return org.relation === UserRelationToOrganization.OWNER;
                 default:
-                    return false
+                    return false;
             }
-        })
+        });
     }
     function applyPrivacy(org: BriefOrganization) {
         switch (privacy) {
             case 'public':
-                return !org.isPrivate
+                return !org.isPrivate;
             case 'private':
-                return org.isPrivate
+                return org.isPrivate;
             case 'any':
-                return true
+                return true;
             default:
-                return false
+                return false;
         }
     }
     return organizations.filter((org) => {
-        return applyRoleType(org) && applyRole(org) && applyPrivacy(org)
-    })
+        return applyRoleType(org) && applyRole(org) && applyPrivacy(org);
+    });
 }
 
 // Narrative Sort and Search
@@ -534,71 +576,71 @@ function narrativeSortByToComparator(sortBy: string) {
     switch (sortBy) {
         case 'name':
             return (a: NarrativeResource, b: NarrativeResource) => {
-                return a.title.localeCompare(b.title)
-            }
+                return a.title.localeCompare(b.title);
+            };
         case 'updated':
             return (a: NarrativeResource, b: NarrativeResource) => {
-                return b.updatedAt.getTime() - a.updatedAt.getTime()
-            }
+                return b.updatedAt.getTime() - a.updatedAt.getTime();
+            };
         default:
         case 'added':
             return (a: NarrativeResource, b: NarrativeResource) => {
                 if (a.addedAt === null) {
                     if (b.addedAt === null) {
-                        return 0
+                        return 0;
                     } else {
                         // nulls sort to bottom
-                        return 1
+                        return 1;
                     }
                 } else {
                     if (b.addedAt === null) {
-                        return -1
+                        return -1;
                     } else {
-                        return b.addedAt.getTime() - a.addedAt.getTime()
+                        return b.addedAt.getTime() - a.addedAt.getTime();
                     }
                 }
-            }
+            };
     }
 }
 
 export function applyNarrativeSort(narratives: Array<NarrativeResource>, sortBy: string) {
     if (!sortBy) {
-        return narratives
+        return narratives;
     }
     return narratives.slice().sort((a: NarrativeResource, b: NarrativeResource) => {
-        const c1 = narrativeSortByToComparator(sortBy)(a, b)
+        const c1 = narrativeSortByToComparator(sortBy)(a, b);
         if (c1 === 0) {
             if (sortBy !== 'name') {
-                return narrativeSortByToComparator('name')(a, b)
+                return narrativeSortByToComparator('name')(a, b);
             }
         }
-        return c1
-    })
+        return c1;
+    });
 }
 
 export function applyNarrativeSearch(narratives: Array<NarrativeResource>, searchBy: string) {
     const tokens = searchBy.split(/\s+/).map((token) => {
-        return new RegExp(token, 'i')
-    })
+        return new RegExp(token, 'i');
+    });
     if (tokens.length === 0) {
-        return narratives
+        return narratives;
     }
     return narratives.slice().filter((narrative: NarrativeResource) => {
         return tokens.every((token: RegExp) => {
-            return (token.test(narrative.title))
-        })
-    })
+            return token.test(narrative.title);
+        });
+    });
 }
 
 export interface NarrativeQuery {
-    searchBy: string
-    sortBy: string
+    searchBy: string;
+    sortBy: string;
 }
 
 export function queryNarratives(narratives: Array<NarrativeResource>, query: NarrativeQuery) {
-    const searched = applyNarrativeSearch(narratives, query.searchBy)
-    const sorted = applyNarrativeSort(searched, query.sortBy)
-    return sorted
+    const searched = applyNarrativeSearch(narratives, query.searchBy);
+    const sorted = applyNarrativeSort(searched, query.sortBy);
+    return sorted;
 }
 
 // Members Sort and Search
@@ -609,55 +651,54 @@ function memberSortByToComparator(sortBy: string) {
             // TODO: need to use user real name
 
             return (a: Member, b: Member) => {
-                return a.username.localeCompare(b.username)
-            }
+                return a.username.localeCompare(b.username);
+            };
         default:
         case 'added':
             return (a: Member, b: Member) => {
-                return b.joinedAt.getTime() - a.joinedAt.getTime()
-            }
+                return b.joinedAt.getTime() - a.joinedAt.getTime();
+            };
     }
 }
 
 export function applyMembersSort(members: Array<Member>, sortBy: string) {
     if (!sortBy) {
-        return members
+        return members;
     }
     return members.slice().sort((a: Member, b: Member) => {
-        const c1 = memberSortByToComparator(sortBy)(a, b)
+        const c1 = memberSortByToComparator(sortBy)(a, b);
         if (c1 === 0) {
             if (sortBy !== 'name') {
-                return memberSortByToComparator('name')(a, b)
+                return memberSortByToComparator('name')(a, b);
             }
         }
-        return c1
-    })
+        return c1;
+    });
 }
 
 export function applyMembersSearch(members: Array<Member>, searchBy: string) {
     const tokens = searchBy.split(/\s+/).map((token) => {
-        return new RegExp(token, 'i')
-    })
+        return new RegExp(token, 'i');
+    });
     if (tokens.length === 0) {
-        return members
+        return members;
     }
     return members.slice().filter((member: Member) => {
         return tokens.every((token: RegExp) => {
-            return (token.test(member.username) ||
-                token.test(member.title || ''))
-        })
-    })
+            return token.test(member.username) || token.test(member.title || '');
+        });
+    });
 }
 
 export interface MembersQuery {
-    searchBy: string
-    sortBy: string
+    searchBy: string;
+    sortBy: string;
 }
 
 export function queryMembers(members: Array<Member>, query: MembersQuery) {
-    const searched = applyMembersSearch(members, query.searchBy)
-    const sorted = applyMembersSort(searched, query.sortBy)
-    return sorted
+    const searched = applyMembersSearch(members, query.searchBy);
+    const sorted = applyMembersSort(searched, query.sortBy);
+    return sorted;
 }
 
 // function getCustomField(group: groupsApi.Group | groupsApi.BriefGroup, name: string): string | null {
@@ -670,104 +711,106 @@ export function queryMembers(members: Array<Member>, query: MembersQuery) {
 //     return null
 // }
 
-
 export interface ConstructorParams {
-    groupsServiceURL: string
-    userProfileServiceURL: string
-    token: string
-    username: groupsApi.Username
+    groupsServiceURL: string;
+    userProfileServiceURL: string;
+    token: string;
+    username: groupsApi.Username;
 }
 
 export class OrganizationModel {
-
-    params: ConstructorParams
-    groupsClient: groupsApi.GroupsClient
-    usersClient: userModel.UserModel
+    params: ConstructorParams;
+    groupsClient: groupsApi.GroupsClient;
+    usersClient: userModel.UserModel;
     // organizations: Map<OrganizationID, Organization | InaccessiblePrivateOrganization>
 
     constructor(params: ConstructorParams) {
-        this.params = params
+        this.params = params;
         this.groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
         this.usersClient = new userModel.UserModel({
             userProfileServiceURL: this.params.userProfileServiceURL,
             token: this.params.token
-        })
+        });
         // this.organizations = new Map<OrganizationID, Organization>()
     }
 
     async getOrg(id: OrganizationID): Promise<Organization | InaccessiblePrivateOrganization> {
-        const group = await this.groupsClient.getGroupById(id)
+        const group = await this.groupsClient.getGroupById(id);
 
         // get users from user model (profile)
-
-        if (group.role === "None" && group.private) {
-            return groupToPrivateOrganization(group as groupsApi.InaccessiblePrivateGroup, this.params.username)
+        console.log('group to get org?', group);
+        if (group.role === 'None' && group.private) {
+            return groupToPrivateOrganization(group as groupsApi.InaccessiblePrivateGroup, this.params.username);
         } else {
-            const g = group as groupsApi.Group
+            const g = group as groupsApi.Group;
             // gather usernames from group
-            const usernames: Array<string> = []
-            usernames.push(g.owner.name)
+            const usernames: Array<string> = [];
+            usernames.push(g.owner.name);
             g.admins.forEach((admin) => {
-                usernames.push(admin.name)
-            })
+                usernames.push(admin.name);
+            });
             g.members.forEach((member) => {
-                usernames.push(member.name)
-            })
+                usernames.push(member.name);
+            });
 
-            const users = await this.usersClient.getUsers(usernames)
+            const users = await this.usersClient.getUsers(usernames);
 
-            return groupToOrganization(g, this.params.username, users)
+            return groupToOrganization(g, this.params.username, users);
         }
     }
 
     async getGroupUsers(group: groupsApi.Group) {
         // gather usernames from group
-        const usernames: Array<string> = []
-        usernames.push(group.owner.name)
+        const usernames: Array<string> = [];
+        usernames.push(group.owner.name);
         group.admins.forEach((admin) => {
-            usernames.push(admin.name)
-        })
+            usernames.push(admin.name);
+        });
         group.members.forEach((member) => {
-            usernames.push(member.name)
-        })
+            usernames.push(member.name);
+        });
 
-        return await this.usersClient.getUsers(usernames)
+        return await this.usersClient.getUsers(usernames);
     }
 
     async getOrganization(id: OrganizationID): Promise<Organization> {
-        const group = await this.groupsClient.getGroupById(id)
-        if (group.role === "None" && group.private) {
-            throw new Error('Inaccessible Organization')
+        const group = await this.groupsClient.getGroupById(id);
+        if (group.role === 'None' && group.private) {
+            throw new Error('Inaccessible Organization');
         }
 
-        const users = await this.getGroupUsers(<groupsApi.Group>group)
+        const users = await this.getGroupUsers(<groupsApi.Group>group);
 
-        return groupToOrganization(group as groupsApi.Group, this.params.username, users)
+        return groupToOrganization(group as groupsApi.Group, this.params.username, users);
     }
 
     async getOrgs(ids: Array<OrganizationID>): Promise<Array<Organization | InaccessiblePrivateOrganization>> {
-        return Promise.all(ids.map((id) => {
-            return this.getOrg(id)
-        }))
+        return Promise.all(
+            ids.map((id) => {
+                return this.getOrg(id);
+            })
+        );
     }
 
     async getOwnOrgs(): Promise<Array<BriefOrganization>> {
-        const orgs = await this.getAllOrgs2()
+        const orgs = await this.getAllOrgs2();
 
-        const ownOrgs = orgs
-            .filter((org: BriefOrganization) => {
-                // ensure that user has some relationship to the org:
-                // member, admin, or owner
-                return (org.relation !== UserRelationToOrganization.NONE)
-            })
+        const ownOrgs = orgs.filter((org: BriefOrganization) => {
+            // ensure that user has some relationship to the org:
+            // member, admin, or owner
+            return org.relation !== UserRelationToOrganization.NONE;
+        });
 
-        return ownOrgs
+        return ownOrgs;
     }
 
-    listGroupToBriefOrganization(group: groupsApi.BriefGroup, users: Map<userModel.Username, userModel.User>): BriefOrganization {
+    listGroupToBriefOrganization(
+        group: groupsApi.BriefGroup,
+        users: Map<userModel.Username, userModel.User>
+    ): BriefOrganization {
         return {
             id: group.id,
             name: group.name,
@@ -784,89 +827,93 @@ export class OrganizationModel {
                 title: 'Owner'
             },
             relation: groupRoleToUserRelation(group.role),
-            isMember: (group.role !== "None"),
-            isAdmin: (group.role === "Admin" || group.role === "Owner"),
-            isOwner: (group.role === "Owner"),
+            isMember: group.role !== 'None',
+            isAdmin: group.role === 'Admin' || group.role === 'Owner',
+            isOwner: group.role === 'Owner',
             createdAt: new Date(group.createdate),
             modifiedAt: new Date(group.moddate),
             lastVisitedAt: group.lastvisit ? new Date(group.lastvisit) : null,
             memberCount: group.memcount || 0,
             narrativeCount: group.rescount.workspace || 0,
-            relatedOrganizations: group.custom ? group.custom.relatedgroups ? group.custom.relatedgroups.split(',') : [] : []
-        }
+            relatedOrganizations: group.custom
+                ? group.custom.relatedgroups
+                    ? group.custom.relatedgroups.split(',')
+                    : []
+                : []
+        };
     }
 
     async getAllOrgs2(): Promise<Array<BriefOrganization>> {
-        let allGroups: Array<groupsApi.BriefGroup> = []
-        let groups: Array<groupsApi.BriefGroup>
+        let allGroups: Array<groupsApi.BriefGroup> = [];
+        let groups: Array<groupsApi.BriefGroup>;
         do {
-            groups = await this.groupsClient.listGroups()
-            allGroups = allGroups.concat(groups)
-        } while (groups.length === groupsApi.MAX_GROUPS_PER_LIST_REQUEST)
+            groups = await this.groupsClient.listGroups();
+            allGroups = allGroups.concat(groups);
+        } while (groups.length === groupsApi.MAX_GROUPS_PER_LIST_REQUEST);
 
-        const usernames: Set<string> = new Set()
+        const usernames: Set<string> = new Set();
         allGroups.forEach((g) => {
-            usernames.add(g.owner)
-        })
+            usernames.add(g.owner);
+        });
 
-
-        const users = await this.usersClient.getUsers(Array.from(usernames.values()))
+        const users = await this.usersClient.getUsers(Array.from(usernames.values()));
 
         return allGroups.map((group) => {
-            return this.listGroupToBriefOrganization(group, users)
-        })
+            return this.listGroupToBriefOrganization(group, users);
+        });
     }
 
     async queryOrgs(query: Query): Promise<QueryResults> {
-        const orgs = await this.getAllOrgs2()
+        const orgs = await this.getAllOrgs2();
 
-        const filtered = applyFilter(orgs, query.filter, query.username)
-        const searched = applySearch(filtered, query.searchTerms)
-        const sorted = applySort(searched, query.sortField, query.sortDirection)
+        const filtered = applyFilter(orgs, query.filter, query.username);
+        const searched = applySearch(filtered, query.searchTerms);
+        const sorted = applySort(searched, query.sortField, query.sortDirection);
 
         return {
             organizations: sorted,
             total: orgs.length
-        }
+        };
     }
 
     async ownOrgs(username: groupsApi.Username): Promise<QueryResults> {
-        const orgs = await this.getAllOrgs2()
+        const orgs = await this.getAllOrgs2();
         const ownOrgs = orgs.filter((org: BriefOrganization) => {
-            return (org.relation !== UserRelationToOrganization.NONE)
-        })
+            return org.relation !== UserRelationToOrganization.NONE;
+        });
 
         return {
             organizations: ownOrgs,
             total: ownOrgs.length
-        }
+        };
     }
 
     async grantViewAccess(requestId: string): Promise<requestModel.Request> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
-        await groupsClient.grantReadAccessToRequestedResource({ requestId })
-        const req = await groupsClient.getRequest(requestId)
-        return requestModel.groupRequestToOrgRequest(req)
+        await groupsClient.grantReadAccessToRequestedResource({ requestId });
+        const req = await groupsClient.getRequest(requestId);
+        return requestModel.groupRequestToOrgRequest(req);
     }
 
     async addOrg(newOrg: EditableOrganization, username: groupsApi.Username): Promise<Organization> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
         // do record-level validation
-        if ((newOrg.id.validationState.type !== ValidationErrorType.OK) ||
-            (newOrg.name.validationState.type !== ValidationErrorType.OK) ||
-            (newOrg.logoUrl.validationState.type !== ValidationErrorType.OK) ||
-            (newOrg.description.validationState.type !== ValidationErrorType.OK) ||
-            (newOrg.isPrivate.validationState.type !== ValidationErrorType.OK)
+        if (
+            newOrg.id.validationState.type !== ValidationErrorType.OK ||
+            newOrg.name.validationState.type !== ValidationErrorType.OK ||
+            newOrg.logoUrl.validationState.type !== ValidationErrorType.OK ||
+            newOrg.description.validationState.type !== ValidationErrorType.OK ||
+            newOrg.isPrivate.validationState.type !== ValidationErrorType.OK
         ) {
-            return Promise.reject(new Error('One or more fields are invalid'))
+            return Promise.reject(new Error('One or more fields are invalid'));
         }
 
         const group = await groupsClient.createGroup({
@@ -877,34 +924,30 @@ export class OrganizationModel {
             researchInterests: newOrg.researchInterests.value,
             description: newOrg.description.value,
             isPrivate: newOrg.isPrivate.value
-        })
+        });
 
-        const users = await this.getGroupUsers(group)
+        const users = await this.getGroupUsers(group);
 
-        return groupToOrganization(group, username, users)
-
+        return groupToOrganization(group, username, users);
     }
 
     async orgExists(id: string): Promise<boolean> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
-        return groupsClient.groupExists(id)
-            .then(({ exists }) => {
-                return exists
-            })
+        });
+        return groupsClient.groupExists(id).then(({ exists }) => {
+            return exists;
+        });
     }
 
     async updateOrg(id: string, orgUpdate: OrganizationUpdate): Promise<void> {
-
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
         // do record-level validation
-
 
         return groupsClient.updateGroup(id, {
             name: orgUpdate.name,
@@ -913,7 +956,7 @@ export class OrganizationModel {
             researchInterests: orgUpdate.researchInterests,
             description: orgUpdate.description,
             private: orgUpdate.isPrivate
-        })
+        });
     }
 
     validateOrgId(id: string): [string, ValidationState] {
@@ -921,7 +964,7 @@ export class OrganizationModel {
     }
 
     validateOrgName(name: string): [string, ValidationState] {
-        return Validation.validateOrgName(name)
+        return Validation.validateOrgName(name);
     }
 
     validateOrgDescription(description: string): [string, ValidationState] {
@@ -932,66 +975,60 @@ export class OrganizationModel {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
-        return groupsClient.deleteResource(
-            organizationId,
-            'workspace',
-            String(workspaceId)
-        )
+        return groupsClient.deleteResource(organizationId, 'workspace', String(workspaceId));
     }
 
     async removeAppFromOrg(organizationId: OrganizationID, appId: string): Promise<void> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
-        const groupFunnyAppId = appId.split('/').join('.')
+        const groupFunnyAppId = appId.split('/').join('.');
 
-        return groupsClient.deleteResource(
-            organizationId,
-            'catalogmethod',
-            groupFunnyAppId
-        )
+        return groupsClient.deleteResource(organizationId, 'catalogmethod', groupFunnyAppId);
     }
-
 
     async grantNarrativeAccess(groupId: string, resourceId: string): Promise<void> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
-        await groupsClient.grantResourceAccess(groupId, 'workspace', resourceId)
+        await groupsClient.grantResourceAccess(groupId, 'workspace', resourceId);
     }
 
     async requestMembership(id: string): Promise<requestModel.Request> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
         const request = await groupsClient.requestMembership({
             groupId: id
-        })
-        return requestModel.groupRequestToOrgRequest(request)
+        });
+        return requestModel.groupRequestToOrgRequest(request);
     }
 
-    async addOrRequestNarrativeToGroup(groupId: string, workspaceId: WorkspaceID): Promise<requestModel.Request | boolean> {
+    async addOrRequestNarrativeToGroup(
+        groupId: string,
+        workspaceId: WorkspaceID
+    ): Promise<requestModel.Request | boolean> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
         const request = await groupsClient.addOrRequestNarrative({
             groupId: groupId,
             workspaceId: workspaceId
-        })
+        });
         if (request.complete === true) {
-            return true
+            return true;
         } else {
-            return requestModel.groupRequestToOrgRequest(request)
+            return requestModel.groupRequestToOrgRequest(request);
         }
     }
 
@@ -999,17 +1036,17 @@ export class OrganizationModel {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
         const request = await groupsClient.addOrRequestResource({
             groupId,
             type: 'catalogmethod',
             resourceId: appId
-        })
+        });
         if (request.complete === true) {
-            return true
+            return true;
         } else {
-            return requestModel.groupRequestToOrgRequest(request)
+            return requestModel.groupRequestToOrgRequest(request);
         }
     }
 
@@ -1017,118 +1054,138 @@ export class OrganizationModel {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
         return groupsClient.memberToAdmin({
             groupId,
             member
-        })
+        });
     }
 
     async adminToMember(groupId: string, member: string): Promise<void> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
         return groupsClient.adminToMember({
             groupId,
             member
-        })
+        });
     }
     async removeMember(groupId: string, member: string): Promise<void> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
         return groupsClient.removeMember({
             groupId,
             member
-        })
+        });
     }
 
     async updateMember(groupId: string, memberUsername: string, update: MemberUpdate) {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
-        return groupsClient.updateMember({ groupId, memberUsername, update })
+        return groupsClient.updateMember({ groupId, memberUsername, update });
     }
 
     async visitOrg({ organizationId }: { organizationId: string }): Promise<void> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
-        return groupsClient.visitGroup({ groupId: organizationId })
+        });
+        return groupsClient.visitGroup({ groupId: organizationId });
     }
 
-    async getOpenRequestsStatus({ organizationIds }: { organizationIds: Array<OrganizationID> }): Promise<Map<OrganizationID, RequestStatus>> {
+    async getOpenRequestsStatus({
+        organizationIds
+    }: {
+        organizationIds: Array<OrganizationID>;
+    }): Promise<Map<OrganizationID, RequestStatus>> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
-        const openRequests = await groupsClient.getOpenRequests({ groupIds: organizationIds })
-        const result = new Map<OrganizationID, RequestStatus>()
+        });
+        const openRequests = await groupsClient.getOpenRequests({ groupIds: organizationIds });
+        const result = new Map<OrganizationID, RequestStatus>();
         for (const [groupId, status] of openRequests.entries()) {
-            const requestStatus: RequestStatus = stringToRequestStatus(status)
-            result.set(<OrganizationID>groupId, requestStatus)
+            const requestStatus: RequestStatus = stringToRequestStatus(status);
+            result.set(<OrganizationID>groupId, requestStatus);
         }
-        return result
+        return result;
     }
 
     async getOpenRequestStatus({ organizationId }: { organizationId: OrganizationID }): Promise<RequestStatus> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
-        const openRequests = await groupsClient.getOpenRequests({ groupIds: [organizationId] })
+        });
+        const openRequests = await groupsClient.getOpenRequests({ groupIds: [organizationId] });
         for (const [groupId, status] of openRequests.entries()) {
-            return stringToRequestStatus(status)
+            return stringToRequestStatus(status);
         }
-        throw new Error('expected request status, got none')
+        throw new Error('expected request status, got none');
     }
 
-    async addRelatedOrganization({ organizationId, relatedOrganizationId }: { organizationId: OrganizationID, relatedOrganizationId: OrganizationID }): Promise<OrganizationID> {
+    async addRelatedOrganization({
+        organizationId,
+        relatedOrganizationId
+    }: {
+        organizationId: OrganizationID;
+        relatedOrganizationId: OrganizationID;
+    }): Promise<OrganizationID> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
-        return await groupsClient.addRelatedGroup(organizationId, relatedOrganizationId)
+        });
+        return await groupsClient.addRelatedGroup(organizationId, relatedOrganizationId);
     }
 
-    async removeRelatedOrganization({ organizationId, relatedOrganizationId }: { organizationId: OrganizationID, relatedOrganizationId: OrganizationID }): Promise<OrganizationID> {
+    async removeRelatedOrganization({
+        organizationId,
+        relatedOrganizationId
+    }: {
+        organizationId: OrganizationID;
+        relatedOrganizationId: OrganizationID;
+    }): Promise<OrganizationID> {
         const groupsClient = new groupsApi.GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
-        return await groupsClient.removeRelatedGroup(organizationId, relatedOrganizationId)
+        });
+        return await groupsClient.removeRelatedGroup(organizationId, relatedOrganizationId);
     }
 }
 
 function stringToRequestStatus(status: groupsApi.RequestStatus): RequestStatus {
     switch (status.new) {
-        case 'None': return RequestStatus.NONE
-        case 'Old': return RequestStatus.OLD
-        case 'New': return RequestStatus.NEW
-        default: throw new Error('Invalid open request status: ' + status)
+        case 'None':
+            return RequestStatus.NONE;
+        case 'Old':
+            return RequestStatus.OLD;
+        case 'New':
+            return RequestStatus.NEW;
+        default:
+            throw new Error('Invalid open request status: ' + status);
     }
 }
 
 export function userPermissionToWorkspacePermission(userPermission: string, isOwner: boolean) {
     if (isOwner) {
-        return UserWorkspacePermission.OWNER
+        return UserWorkspacePermission.OWNER;
     }
     switch (userPermission) {
         case 'r':
-            return UserWorkspacePermission.VIEW
+            return UserWorkspacePermission.VIEW;
         case 'w':
-            return UserWorkspacePermission.EDIT
+            return UserWorkspacePermission.EDIT;
         case 'a':
-            return UserWorkspacePermission.ADMIN
+            return UserWorkspacePermission.ADMIN;
         default:
-            throw new Error('Invalid workspace user permission: ' + userPermission)
+            throw new Error('Invalid workspace user permission: ' + userPermission);
     }
 }

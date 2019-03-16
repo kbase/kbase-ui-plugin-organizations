@@ -1,155 +1,154 @@
-import { AppException } from "../../types";
+import { AppException } from '../../types';
 
-export const MAX_GROUPS_PER_LIST_REQUEST = 100
+export const MAX_GROUPS_PER_LIST_REQUEST = 100;
 
 export interface GroupsServiceInfo {
     servname: string;
     version: string;
     servertime: number;
-    gitcommithash: string
+    gitcommithash: string;
 }
 
-export type Username = string
-export type GroupID = string
+export type Username = string;
+export type GroupID = string;
 
 export interface Member {
-    name: Username,
-    joined: number,
-    lastvisit: number | null,
+    name: Username;
+    joined: number;
+    lastvisit: number | null;
     custom: {
-        title: string
-    }
+        title: string;
+    };
 }
 
 export interface Resource {
-    rid: string
-    added: number | null
+    rid: string;
+    added: number | null;
 }
 
 export interface WorkspaceInfo extends Resource {
-    name: string
-    narrname: string
-    narrcreate: number
-    public: boolean
-    perm: string
-    description: string
-    moddate: number
+    name: string;
+    narrname: string;
+    narrcreate: number;
+    public: boolean;
+    perm: string;
+    description: string;
+    moddate: number;
 }
 
-export interface AppInfo extends Resource {
-}
+export interface AppInfo extends Resource {}
 
-export type Role = "None" | "Member" | "Admin" | "Owner"
+export type Role = 'None' | 'Member' | 'Admin' | 'Owner';
 
 export interface GroupCustomFields {
-    logourl?: string
-    description: string
-    researchinterests: string
-    homeurl?: string
-    relatedgroups?: string
+    logourl?: string;
+    description: string;
+    researchinterests: string;
+    homeurl?: string;
+    relatedgroups?: string;
 }
 
 export interface BriefGroup {
-    id: GroupID
-    name: string
-    createdate: number
-    moddate: number
-    lastvisit: number | null
-    private: boolean
-    role: Role
+    id: GroupID;
+    name: string;
+    createdate: number;
+    moddate: number;
+    lastvisit: number | null;
+    private: boolean;
+    role: Role;
 
-    custom: GroupCustomFields
+    custom: GroupCustomFields;
     // owner: Member
-    owner: Username
+    owner: Username;
 
-    memcount: number
+    memcount: number;
     rescount: {
-        workspace: number
-    }
+        workspace: number;
+    };
 }
 
 export interface InaccessiblePrivateGroup {
-    id: GroupID
-    private: boolean
-    role: Role
+    id: GroupID;
+    private: boolean;
+    role: Role;
 }
 
 export interface Group {
-    id: GroupID
-    private: boolean
-    privatemembers: boolean
-    name: string
-    role: Role
-    owner: Member
-    admins: Array<Member>
-    members: Array<Member>
-    memcount: number
-    createdate: number
-    moddate: number
-    lastvisit: number
+    id: GroupID;
+    private: boolean;
+    privatemembers: boolean;
+    name: string;
+    role: Role;
+    owner: Member;
+    admins: Array<Member>;
+    members: Array<Member>;
+    memcount: number;
+    createdate: number;
+    moddate: number;
+    lastvisit: number;
     resources: {
-        workspace: Array<WorkspaceInfo>,
-        catalogmethod: Array<AppInfo>
-    }
+        workspace: Array<WorkspaceInfo>;
+        catalogmethod: Array<AppInfo>;
+    };
     rescount: {
-        workspace: number
-        catalogmethod: number
-    }
-    custom: GroupCustomFields
+        workspace: number;
+        catalogmethod: number;
+    };
+    custom: GroupCustomFields;
 }
 
 export interface NewGroup {
-    id: string
-    name: string
-    logoUrl: string | null
-    homeUrl: string | null
-    researchInterests: string
-    description: string
-    isPrivate: boolean
+    id: string;
+    name: string;
+    logoUrl: string | null;
+    homeUrl: string | null;
+    researchInterests: string;
+    description: string;
+    isPrivate: boolean;
 }
 
 export interface GroupUpdate {
-    name: string
-    logoUrl: string | null
-    homeUrl: string | null
-    researchInterests: string
-    description: string
-    private: boolean
+    name: string;
+    logoUrl: string | null;
+    homeUrl: string | null;
+    researchInterests: string;
+    description: string;
+    private: boolean;
 }
 
 export interface Request {
-    id: string
-    groupid: string
-    requester: Username
-    type: string
-    status: string
-    resource: string
-    resourcetype: string
-    createdate: number
-    expiredate: number
-    moddate: number
+    id: string;
+    groupid: string;
+    requester: Username;
+    type: string;
+    status: string;
+    resource: string;
+    resourcetype: string;
+    createdate: number;
+    expiredate: number;
+    moddate: number;
 }
 
 export interface RequestWithCompletion extends Request {
-    complete: false
+    complete: false;
 }
 
 export interface Completion {
-    complete: true
+    complete: true;
 }
 
 export interface ErrorInfo {
-    appcode: number
-    apperror: string
-    callid: string
-    httpcode: number
-    httpstatus: string
-    message: string
-    time: number
+    appcode: number;
+    apperror: string;
+    callid: string;
+    httpcode: number;
+    httpstatus: string;
+    message: string;
+    time: number;
 }
 
 export interface ErrorResult {
-    error: ErrorInfo
+    error: ErrorInfo;
 }
 
 // Error types: (appcode)
@@ -171,7 +170,7 @@ export interface ErrorResult {
 // 60000	Unsupported operation
 
 export interface GroupExists {
-    exists: boolean
+    exists: boolean;
 }
 
 // export interface GroupRequest {
@@ -193,52 +192,50 @@ export enum SortDirection {
 }
 
 export interface GetRequestsParams {
-    includeClosed?: boolean,
-    sortDirection?: SortDirection,
-    startAt?: Date
+    includeClosed?: boolean;
+    sortDirection?: SortDirection;
+    startAt?: Date;
 }
 
 export interface RequestMemebershipParams {
-    groupId: string
+    groupId: string;
 }
 
 export interface RequestNarrativeParams {
-    workspaceId: number
-    groupId: string
+    workspaceId: number;
+    groupId: string;
 }
 
 export interface RequestResourceParams {
-    type: string
-    resourceId: string
-    groupId: string
+    type: string;
+    resourceId: string;
+    groupId: string;
 }
 
 function promiseTry<T>(fun: () => Promise<T>): Promise<T> {
     return new Promise<T>((resolve, reject) => {
         try {
-            return resolve(fun())
+            return resolve(fun());
         } catch (ex) {
-            reject(ex)
+            reject(ex);
         }
-    })
+    });
 }
 
 export interface GroupError {
-    httpcode: number
-    httpstatus: string
-    appcode: number
-    apperror: string
-    message: string
-    callid: string
-    time: number
+    httpcode: number;
+    httpstatus: string;
+    appcode: number;
+    apperror: string;
+    message: string;
+    callid: string;
+    time: number;
 }
 
-export class Exception extends Error {
-
-}
+export class Exception extends Error {}
 
 export class GroupException extends AppException {
-    originalError: GroupError
+    originalError: GroupError;
     constructor(error: GroupError) {
         super({
             code: 'group-exception',
@@ -253,20 +250,20 @@ export class GroupException extends AppException {
                 ['callid', error.callid],
                 ['time', error.time]
             ])
-        })
-        this.name = 'GroupException'
-        this.originalError = error
+        });
+        this.name = 'GroupException';
+        this.originalError = error;
     }
 }
 
 export interface RequestStatus {
-    new: 'None' | 'New' | 'Old'
+    new: 'None' | 'New' | 'Old';
 }
 
 export class ServerException extends AppException {
     constructor(detail: string) {
-        super({ code: 'server-exception', message: 'Server Exception', detail: detail })
-        this.name = 'ServerException'
+        super({ code: 'server-exception', message: 'Server Exception', detail: detail });
+        this.name = 'ServerException';
     }
 }
 
@@ -274,9 +271,9 @@ export class GroupsClient {
     token: string;
     url: string;
 
-    constructor({ token, url }: { token: string, url: string }) {
-        this.token = token
-        this.url = url
+    constructor({ token, url }: { token: string; url: string }) {
+        this.token = token;
+        this.url = url;
     }
 
     getInfo(): Promise<GroupsServiceInfo> {
@@ -298,11 +295,11 @@ export class GroupsClient {
     groupExists(id: string): Promise<GroupExists> {
         return fetch(this.url + '/group/' + id + '/exists')
             .then((response) => {
-                return response.json()
+                return response.json();
             })
             .then((exists) => {
-                return exists as GroupExists
-            })
+                return exists as GroupExists;
+            });
     }
 
     // getGroups(): Promise<GroupList> {
@@ -328,12 +325,12 @@ export class GroupsClient {
                 Accept: 'application/json'
             },
             mode: 'cors'
-        })
+        });
         if (response.status !== 200) {
-            console.error('error fetching groups', response)
-            throw new Error('Error fetching groups')
+            console.error('error fetching groups', response);
+            throw new Error('Error fetching groups');
         }
-        return await response.json()
+        return await response.json();
     }
 
     getGroupById(id: string): Promise<Group | InaccessiblePrivateGroup> {
@@ -346,17 +343,17 @@ export class GroupsClient {
         })
             .then((response) => {
                 if (response.status === 404) {
-                    return null
+                    throw new Error('Organization "' + id + '" not found');
                 }
-                return response.json()
+                return response.json();
             })
             .then((result) => {
-                return result as Group
-            })
+                return result as Group;
+            });
     }
 
     put<T>(path: Array<string>, body: any): Promise<T> {
-        const url = ([this.url].concat(path)).join('/')
+        const url = [this.url].concat(path).join('/');
         return fetch(url, {
             headers: {
                 Authorization: this.token,
@@ -366,39 +363,35 @@ export class GroupsClient {
             mode: 'cors',
             method: 'PUT',
             body: JSON.stringify(body)
-        })
-            .then((response) => {
-                if (response.status === 500) {
-                    switch (response.headers.get('Content-Type')) {
-                        case 'application/json':
-                            return response.json()
-                                .then((result) => {
-                                    throw new GroupException(result)
-                                })
-                        case 'text/plain':
-                            return response.text()
-                                .then((result) => {
-                                    throw new ServerException(result)
-                                })
-                        default:
-                            throw new Error('Unexpected content type: ' + response.headers.get('Content-Type'))
-                    }
-                } else if (response.status === 200) {
-                    return response.json()
-                        .then((result) => {
-                            return result as T
-                        })
-                } else if (response.status === 204) {
-                    const result = null as unknown
-                    return result as T
-                } else {
-                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+        }).then((response) => {
+            if (response.status === 500) {
+                switch (response.headers.get('Content-Type')) {
+                    case 'application/json':
+                        return response.json().then((result) => {
+                            throw new GroupException(result);
+                        });
+                    case 'text/plain':
+                        return response.text().then((result) => {
+                            throw new ServerException(result);
+                        });
+                    default:
+                        throw new Error('Unexpected content type: ' + response.headers.get('Content-Type'));
                 }
-            })
+            } else if (response.status === 200) {
+                return response.json().then((result) => {
+                    return result as T;
+                });
+            } else if (response.status === 204) {
+                const result = null as unknown;
+                return result as T;
+            } else {
+                throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText);
+            }
+        });
     }
 
     async post<T>(path: Array<string>, body: any): Promise<T | null> {
-        const url = ([this.url].concat(path)).join('/')
+        const url = [this.url].concat(path).join('/');
         const response = await fetch(url, {
             headers: {
                 Authorization: this.token,
@@ -408,30 +401,30 @@ export class GroupsClient {
             mode: 'cors',
             method: 'POST',
             body: body ? JSON.stringify(body) : ''
-        })
+        });
 
         if (response.status === 500) {
             switch (response.headers.get('Content-Type')) {
                 case 'application/json':
-                    const result = await response.json()
-                    throw new GroupException(result)
+                    const result = await response.json();
+                    throw new GroupException(result);
                 case 'text/plain':
-                    const errorText = await response.text()
-                    throw new ServerException(errorText)
+                    const errorText = await response.text();
+                    throw new ServerException(errorText);
                 default:
-                    throw new Error('Unexpected content type: ' + response.headers.get('Content-Type'))
+                    throw new Error('Unexpected content type: ' + response.headers.get('Content-Type'));
             }
         } else if (response.status === 200) {
-            return await response.json() as T
+            return (await response.json()) as T;
         } else if (response.status === 204) {
-            return null
+            return null;
         } else {
-            throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+            throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText);
         }
     }
 
     async get<T>(path: Array<string>): Promise<T> {
-        const url = ([this.url].concat(path)).join('/')
+        const url = [this.url].concat(path).join('/');
         const response = await fetch(url, {
             headers: {
                 Authorization: this.token,
@@ -440,33 +433,33 @@ export class GroupsClient {
             },
             mode: 'cors',
             method: 'GET'
-        })
+        });
 
         if (response.status === 500) {
             switch (response.headers.get('Content-Type')) {
                 case 'application/json':
-                    const result = await response.json()
-                    throw new GroupException(result)
+                    const result = await response.json();
+                    throw new GroupException(result);
                 case 'text/plain':
-                    const errorText = await response.text()
-                    throw new ServerException(errorText)
+                    const errorText = await response.text();
+                    throw new ServerException(errorText);
                 default:
-                    throw new Error('Unexpected content type: ' + response.headers.get('Content-Type'))
+                    throw new Error('Unexpected content type: ' + response.headers.get('Content-Type'));
             }
         } else if (response.status === 200) {
-            return await response.json() as T
+            return (await response.json()) as T;
         } else {
-            throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+            throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText);
         }
     }
 
     createGroup(newGroup: NewGroup): Promise<Group> {
-        // argh!! description should be mandatory, but now it is a custom 
+        // argh!! description should be mandatory, but now it is a custom
         // field and it is not yet defined in the service.
         // TODO: we need the groups service to have default custom fields.
         // At that point, what IS the point of custom fields ... oh, I know that
-        // there are internal reasons for this due to re-using "group" for 
-        // organization, project, etc., but that should not leak through the 
+        // there are internal reasons for this due to re-using "group" for
+        // organization, project, etc., but that should not leak through the
         // api.
 
         // mandatory fields.
@@ -478,14 +471,14 @@ export class GroupsClient {
                 researchinterests: newGroup.researchInterests,
                 homeurl: newGroup.homeUrl
             }
-        }
+        };
 
         // optional fields
         if (newGroup.description.length > 0) {
-            payload.custom.description = newGroup.description
+            payload.custom.description = newGroup.description;
         }
 
-        return this.put<Group>(['group', newGroup.id], payload)
+        return this.put<Group>(['group', newGroup.id], payload);
     }
 
     updateGroup(id: string, groupUpdate: GroupUpdate): Promise<void> {
@@ -497,11 +490,11 @@ export class GroupsClient {
                 researchinterests: groupUpdate.researchInterests
             },
             private: groupUpdate.private
-        }
+        };
         // TODO: remove this when we have descriptions restored to the
         // groups service.
         if (groupUpdate.description) {
-            payload.custom.description = groupUpdate.description
+            payload.custom.description = groupUpdate.description;
         }
         return fetch(this.url + '/group/' + id + '/update', {
             headers: {
@@ -514,105 +507,104 @@ export class GroupsClient {
 
             // TODO: build more intelligently
             body: JSON.stringify(payload)
-        })
-            .then((response) => {
-                // response is an empty body.
-                if (response.status === 204) {
-                    return
-                }
-                throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
-            })
+        }).then((response) => {
+            // response is an empty body.
+            if (response.status === 204) {
+                return;
+            }
+            throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText);
+        });
     }
 
     async addRelatedGroup(groupId: GroupID, relatedGroupId: GroupID): Promise<string> {
         // get the existing related groups
-        const group = await this.get<Group>(['group', groupId])
+        const group = await this.get<Group>(['group', groupId]);
 
         // split into list
-        let relatedGroups: Array<GroupID>
+        let relatedGroups: Array<GroupID>;
         if (group.custom.relatedgroups) {
-            relatedGroups = group.custom.relatedgroups.split(',')
+            relatedGroups = group.custom.relatedgroups.split(',');
         } else {
-            relatedGroups = []
+            relatedGroups = [];
         }
 
         // ensure that this one is not already there
         if (relatedGroups.includes(relatedGroupId)) {
-            return relatedGroupId
+            return relatedGroupId;
         }
 
         // append it
-        relatedGroups.push(relatedGroupId)
+        relatedGroups.push(relatedGroupId);
 
         // join back into string
         const update = {
             custom: {
                 relatedgroups: relatedGroups.join(',')
             }
-        }
+        };
 
         // save as the relatedgroups property
-        await this.put<void>(['group', groupId, 'update'], update)
+        await this.put<void>(['group', groupId, 'update'], update);
 
-        return relatedGroupId
+        return relatedGroupId;
     }
 
     async removeRelatedGroup(groupId: GroupID, relatedGroupId: GroupID): Promise<string> {
         // get the existing related groups
-        const group = await this.get<Group>(['group', groupId])
+        const group = await this.get<Group>(['group', groupId]);
 
         // split into list
-        let relatedGroups: Array<GroupID>
+        let relatedGroups: Array<GroupID>;
         if (group.custom.relatedgroups) {
-            relatedGroups = group.custom.relatedgroups.split(',')
+            relatedGroups = group.custom.relatedgroups.split(',');
         } else {
-            relatedGroups = []
+            relatedGroups = [];
         }
 
         // ensure that this one is already there
         if (!relatedGroups.includes(relatedGroupId)) {
-            return relatedGroupId
+            return relatedGroupId;
         }
 
         // append it
-        relatedGroups.push(relatedGroupId)
+        relatedGroups.push(relatedGroupId);
 
         const newRelatedGroups = relatedGroups.filter((groupId) => {
-            return groupId !== relatedGroupId
-        })
+            return groupId !== relatedGroupId;
+        });
 
         // join back into string
         const update = {
             custom: {
                 relatedgroups: newRelatedGroups.join(',')
             }
-        }
+        };
 
         // save as the relatedgroups property
-        await this.put<void>(['group', groupId, 'update'], update)
+        await this.put<void>(['group', groupId, 'update'], update);
 
-        return relatedGroupId
+        return relatedGroupId;
     }
 
     async getRequest(requestId: string): Promise<Request> {
-        const path = ['request', 'id', requestId]
-        return await this.get<Request>(path)
+        const path = ['request', 'id', requestId];
+        return await this.get<Request>(path);
     }
 
     getGroupRequests(groupId: string, params: GetRequestsParams): Promise<Array<Request>> {
-        const query = new URLSearchParams()
+        const query = new URLSearchParams();
         if (params.includeClosed) {
-            query.append('closed', 'closed')
+            query.append('closed', 'closed');
         }
         if (params.sortDirection) {
             if (params.sortDirection === SortDirection.DESCENDING) {
-                query.append('order', 'desc')
+                query.append('order', 'desc');
             } else {
-                query.append('order', 'asc')
+                query.append('order', 'asc');
             }
         }
         if (params.startAt) {
-            query.append('excludeupto', String(params.startAt.getTime()))
+            query.append('excludeupto', String(params.startAt.getTime()));
         }
 
         return fetch(this.url + '/group/' + groupId + '/requests?' + query.toString(), {
@@ -623,29 +615,28 @@ export class GroupsClient {
             },
             mode: 'cors',
             method: 'GET'
-        })
-            .then((response) => {
-                if (response.status !== 200) {
-                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
-                }
-                return response.json()
-            })
+        }).then((response) => {
+            if (response.status !== 200) {
+                throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText);
+            }
+            return response.json();
+        });
     }
 
     getTargetedRequests(params: GetRequestsParams): Promise<Array<Request>> {
-        const query = new URLSearchParams()
+        const query = new URLSearchParams();
         if (params.includeClosed) {
-            query.append('closed', 'closed')
+            query.append('closed', 'closed');
         }
         if (params.sortDirection) {
             if (params.sortDirection === SortDirection.DESCENDING) {
-                query.append('order', 'desc')
+                query.append('order', 'desc');
             } else {
-                query.append('order', 'asc')
+                query.append('order', 'asc');
             }
         }
         if (params.startAt) {
-            query.append('excludeupto', String(params.startAt.getTime()))
+            query.append('excludeupto', String(params.startAt.getTime()));
         }
         return fetch(this.url + '/request/targeted?' + query.toString(), {
             headers: {
@@ -655,29 +646,28 @@ export class GroupsClient {
             },
             mode: 'cors',
             method: 'GET'
-        })
-            .then((response) => {
-                if (response.status !== 200) {
-                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
-                }
-                return response.json()
-            })
+        }).then((response) => {
+            if (response.status !== 200) {
+                throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText);
+            }
+            return response.json();
+        });
     }
 
     getCreatedRequests(params: GetRequestsParams): Promise<Array<Request>> {
-        const query = new URLSearchParams()
+        const query = new URLSearchParams();
         if (params.includeClosed) {
-            query.append('closed', 'closed')
+            query.append('closed', 'closed');
         }
         if (params.sortDirection) {
             if (params.sortDirection === SortDirection.DESCENDING) {
-                query.append('order', 'desc')
+                query.append('order', 'desc');
             } else {
-                query.append('order', 'asc')
+                query.append('order', 'asc');
             }
         }
         if (params.startAt) {
-            query.append('excludeupto', String(params.startAt.getTime()))
+            query.append('excludeupto', String(params.startAt.getTime()));
         }
         return fetch(this.url + '/request/created?' + query.toString(), {
             headers: {
@@ -687,24 +677,16 @@ export class GroupsClient {
             },
             mode: 'cors',
             method: 'GET'
-        })
-            .then((response) => {
-                if (response.status !== 200) {
-                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
-                }
-                return response.json()
-            })
+        }).then((response) => {
+            if (response.status !== 200) {
+                throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText);
+            }
+            return response.json();
+        });
     }
 
     addOrRequestNarrative(params: RequestNarrativeParams): Promise<RequestWithCompletion | Completion> {
-        const url = [
-            this.url,
-            'group',
-            params.groupId,
-            'resource',
-            'workspace',
-            String(params.workspaceId)
-        ].join('/')
+        const url = [this.url, 'group', params.groupId, 'resource', 'workspace', String(params.workspaceId)].join('/');
         return fetch(url, {
             headers: {
                 Authorization: this.token,
@@ -716,29 +698,21 @@ export class GroupsClient {
         })
             .then((response) => {
                 if (response.status !== 200) {
-                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText);
                 }
-                return response.json()
+                return response.json();
             })
             .then((result) => {
                 if (result.complete === false) {
-                    return result as RequestWithCompletion
+                    return result as RequestWithCompletion;
                 } else {
-                    return result as Completion
+                    return result as Completion;
                 }
-
-            })
+            });
     }
 
     addOrRequestResource(params: RequestResourceParams): Promise<RequestWithCompletion | Completion> {
-        const url = [
-            this.url,
-            'group',
-            params.groupId,
-            'resource',
-            params.type,
-            params.resourceId
-        ].join('/')
+        const url = [this.url, 'group', params.groupId, 'resource', params.type, params.resourceId].join('/');
         return fetch(url, {
             headers: {
                 Authorization: this.token,
@@ -750,41 +724,26 @@ export class GroupsClient {
         })
             .then((response) => {
                 if (response.status !== 200) {
-                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText);
                 }
-                return response.json()
+                return response.json();
             })
             .then((result) => {
                 if (result.complete === false) {
-                    return result as RequestWithCompletion
+                    return result as RequestWithCompletion;
                 } else {
-                    return result as Completion
+                    return result as Completion;
                 }
-
-            })
+            });
     }
 
     async grantResourceAccess(groupId: string, resourceType: string, resourceId: string): Promise<null> {
-        const path = [
-            'group',
-            groupId,
-            'resource',
-            resourceType,
-            resourceId,
-            'getperm'
-        ]
-        return this.post<null>(path, null)
+        const path = ['group', groupId, 'resource', resourceType, resourceId, 'getperm'];
+        return this.post<null>(path, null);
     }
 
     deleteResource(groupId: string, resourceType: string, resourceId: string): Promise<void> {
-        const url = [
-            this.url,
-            'group',
-            groupId,
-            'resource',
-            resourceType,
-            resourceId
-        ].join('/')
+        const url = [this.url, 'group', groupId, 'resource', resourceType, resourceId].join('/');
         return fetch(url, {
             headers: {
                 Authorization: this.token,
@@ -793,12 +752,11 @@ export class GroupsClient {
             },
             mode: 'cors',
             method: 'DELETE'
-        })
-            .then((response) => {
-                if (response.status !== 204) {
-                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
-                }
-            })
+        }).then((response) => {
+            if (response.status !== 204) {
+                throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText);
+            }
+        });
     }
 
     cancelRequest({ requestId }: { requestId: string }): Promise<Request> {
@@ -813,13 +771,13 @@ export class GroupsClient {
         })
             .then((response) => {
                 if (response.status !== 200) {
-                    throw new Error('Unexpected response: ' + response.status)
+                    throw new Error('Unexpected response: ' + response.status);
                 }
-                return response.json()
+                return response.json();
             })
             .then((result) => {
-                return result as Request
-            })
+                return result as Request;
+            });
     }
 
     acceptRequest({ requestId }: { requestId: string }): Promise<Request> {
@@ -834,20 +792,19 @@ export class GroupsClient {
         })
             .then((response) => {
                 if (response.status !== 200) {
-                    throw new Error('Unexpected response: ' + response.status)
+                    throw new Error('Unexpected response: ' + response.status);
                 }
-                return response.json()
+                return response.json();
             })
             .then((result) => {
-                return result as Request
-            })
+                return result as Request;
+            });
     }
 
     grantReadAccessToRequestedResource({ requestId }: { requestId: string }): Promise<null> {
-        const path = ['request', 'id', requestId, 'getperm']
-        return this.post<null>(path, null)
+        const path = ['request', 'id', requestId, 'getperm'];
+        return this.post<null>(path, null);
     }
-
 
     denyRequest({ requestId }: { requestId: string }): Promise<Request> {
         return fetch(this.url + '/request/id/' + requestId + '/deny', {
@@ -861,19 +818,17 @@ export class GroupsClient {
         })
             .then((response) => {
                 if (response.status !== 200) {
-                    throw new Error('Unexpected response: ' + response.status)
+                    throw new Error('Unexpected response: ' + response.status);
                 }
-                return response.json()
+                return response.json();
             })
             .then((result) => {
-                return result as Request
-            })
+                return result as Request;
+            });
     }
 
-    memberToAdmin({ groupId, member }: { groupId: string, member: string }): Promise<void> {
-        const url = [
-            this.url, 'group', groupId, 'user', member, 'admin'
-        ].join('/')
+    memberToAdmin({ groupId, member }: { groupId: string; member: string }): Promise<void> {
+        const url = [this.url, 'group', groupId, 'user', member, 'admin'].join('/');
         return fetch(url, {
             headers: {
                 Authorization: this.token,
@@ -881,19 +836,15 @@ export class GroupsClient {
             },
             mode: 'cors',
             method: 'PUT'
-        })
-            .then((response) => {
-                if (response.status !== 204) {
-                    throw new Error('Unexpected response: ' + response.status + ':' + response.statusText)
-                }
-
-            })
+        }).then((response) => {
+            if (response.status !== 204) {
+                throw new Error('Unexpected response: ' + response.status + ':' + response.statusText);
+            }
+        });
     }
 
-    adminToMember({ groupId, member }: { groupId: string, member: string }): Promise<void> {
-        const url = [
-            this.url, 'group', groupId, 'user', member, 'admin'
-        ].join('/')
+    adminToMember({ groupId, member }: { groupId: string; member: string }): Promise<void> {
+        const url = [this.url, 'group', groupId, 'user', member, 'admin'].join('/');
         return fetch(url, {
             headers: {
                 Authorization: this.token,
@@ -901,27 +852,29 @@ export class GroupsClient {
             },
             mode: 'cors',
             method: 'DELETE'
-        })
-            .then((response) => {
-                if (response.status !== 204) {
-                    throw new Error('Unexpected response: ' + response.status + ':' + response.statusText)
-                }
-
-            })
+        }).then((response) => {
+            if (response.status !== 204) {
+                throw new Error('Unexpected response: ' + response.status + ':' + response.statusText);
+            }
+        });
     }
 
-    updateMember({ groupId, memberUsername, update }: { groupId: string, memberUsername: string, update: any }): Promise<void> {
-        const path = [
-            'group', groupId, 'user', memberUsername, 'update'
-        ]
+    updateMember({
+        groupId,
+        memberUsername,
+        update
+    }: {
+        groupId: string;
+        memberUsername: string;
+        update: any;
+    }): Promise<void> {
+        const path = ['group', groupId, 'user', memberUsername, 'update'];
 
-        return this.put<void>(path, { custom: update })
+        return this.put<void>(path, { custom: update });
     }
 
-    removeMember({ groupId, member }: { groupId: string, member: string }): Promise<void> {
-        const url = [
-            this.url, 'group', groupId, 'user', member
-        ].join('/')
+    removeMember({ groupId, member }: { groupId: string; member: string }): Promise<void> {
+        const url = [this.url, 'group', groupId, 'user', member].join('/');
         return fetch(url, {
             headers: {
                 Authorization: this.token,
@@ -929,12 +882,11 @@ export class GroupsClient {
             },
             mode: 'cors',
             method: 'DELETE'
-        })
-            .then((response) => {
-                if (response.status !== 204) {
-                    throw new Error('Unexpected response: ' + response.status + ':' + response.statusText)
-                }
-            })
+        }).then((response) => {
+            if (response.status !== 204) {
+                throw new Error('Unexpected response: ' + response.status + ':' + response.statusText);
+            }
+        });
     }
 
     requestMembership(params: RequestMemebershipParams): Promise<Request> {
@@ -942,26 +894,24 @@ export class GroupsClient {
             headers: {
                 Authorization: this.token,
                 Accept: 'application/json',
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             mode: 'cors',
             method: 'POST'
         })
             .then((response) => {
                 if (response.status !== 200) {
-                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText)
+                    throw new Error('Unexpected response: ' + response.status + ' : ' + response.statusText);
                 }
-                return response.json()
+                return response.json();
             })
             .then((result) => {
-                return result as Request
-            })
+                return result as Request;
+            });
     }
 
-    inviteUserToGroup({ groupId, username }: { groupId: string, username: string }): Promise<Request> {
-        const url = [
-            this.url, 'group', groupId, 'user', username
-        ].join('/')
+    inviteUserToGroup({ groupId, username }: { groupId: string; username: string }): Promise<Request> {
+        const url = [this.url, 'group', groupId, 'user', username].join('/');
         return fetch(url, {
             headers: {
                 Authorization: this.token,
@@ -972,27 +922,27 @@ export class GroupsClient {
         })
             .then((response) => {
                 if (response.status !== 200) {
-                    throw new Error('Unexpected response: ' + response.status + ':' + response.statusText)
+                    throw new Error('Unexpected response: ' + response.status + ':' + response.statusText);
                 }
-                return response.json()
+                return response.json();
             })
             .then((result) => {
-                return result as Request
-            })
+                return result as Request;
+            });
     }
 
     async visitGroup({ groupId }: { groupId: string }): Promise<void> {
-        const path = ['group', groupId, 'visit']
-        return this.put<void>(path, null)
+        const path = ['group', groupId, 'visit'];
+        return this.put<void>(path, null);
     }
 
     async getOpenRequests({ groupIds }: { groupIds: Array<string> }): Promise<Map<GroupID, RequestStatus>> {
-        const path = ['request', 'groups', groupIds.join(','), 'new']
-        const result = await this.get<any>(path)
-        const requestStatuses = new Map<GroupID, RequestStatus>()
+        const path = ['request', 'groups', groupIds.join(','), 'new'];
+        const result = await this.get<any>(path);
+        const requestStatuses = new Map<GroupID, RequestStatus>();
         for (const [groupId, requestStatus] of Object.entries(result)) {
-            requestStatuses.set(groupId, <RequestStatus>requestStatus)
+            requestStatuses.set(groupId, <RequestStatus>requestStatus);
         }
-        return requestStatuses
+        return requestStatuses;
     }
 }
