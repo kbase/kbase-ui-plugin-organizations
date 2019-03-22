@@ -1,179 +1,182 @@
-import { Action } from 'redux'
-import { ThunkDispatch } from 'redux-thunk'
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import { ActionFlag } from './index'
+import { ActionFlag } from './index';
 import {
-    StoreState, AppError, EditableOrganization, ValidationState,
-    ValidationErrorType, SyncState
-} from '../../types'
-import Validation from '../../data/models/organization/validation'
-import * as orgModel from '../../data/models/organization/model'
-import DebouncingProcess from '../../lib/DebouncingProcess'
-import { UIServiceClient } from '../../data/apis/uiService'
+    StoreState,
+    AppError,
+    EditableOrganization,
+    ValidationState,
+    ValidationErrorType,
+    SyncState
+} from '../../types';
+import Validation from '../../data/models/organization/validation';
+import * as orgModel from '../../data/models/organization/model';
+import DebouncingProcess from '../../lib/DebouncingProcess';
+import { UIServiceClient } from '../../data/apis/uiService';
 
 // ACTIONS
 
 // Loading the editor
 export interface Load extends Action {
-    type: ActionFlag.EDIT_ORG_LOAD,
-    organizationId: string
+    type: ActionFlag.EDIT_ORG_LOAD;
+    organizationId: string;
 }
 
 export interface LoadStart extends Action {
-    type: ActionFlag.EDIT_ORG_LOAD_START
+    type: ActionFlag.EDIT_ORG_LOAD_START;
 }
 
 export interface LoadSuccess extends Action {
-    type: ActionFlag.EDIT_ORG_LOAD_SUCCESS,
-    editedOrganization: EditableOrganization,
-    organization: orgModel.Organization
+    type: ActionFlag.EDIT_ORG_LOAD_SUCCESS;
+    editedOrganization: EditableOrganization;
+    organization: orgModel.Organization;
 }
 
 export interface LoadError extends Action<ActionFlag.EDIT_ORG_LOAD_ERROR> {
-    type: ActionFlag.EDIT_ORG_LOAD_ERROR,
-    error: AppError
+    type: ActionFlag.EDIT_ORG_LOAD_ERROR;
+    error: AppError;
 }
 
 export interface Unload extends Action<ActionFlag.EDIT_ORG_UNLOAD> {
-    type: ActionFlag.EDIT_ORG_UNLOAD
+    type: ActionFlag.EDIT_ORG_UNLOAD;
 }
 
-// Evaluating state of form 
+// Evaluating state of form
 
 export interface EditOrgEvaluate extends Action<ActionFlag.EDIT_ORG_EVALUATE> {
-    type: ActionFlag.EDIT_ORG_EVALUATE
+    type: ActionFlag.EDIT_ORG_EVALUATE;
 }
 
 export interface EditOrgEvaluateOK extends Action<ActionFlag.EDIT_ORG_EVALUATE_OK> {
-    type: ActionFlag.EDIT_ORG_EVALUATE_OK
+    type: ActionFlag.EDIT_ORG_EVALUATE_OK;
 }
 
 export interface EditOrgEvaluateErrors extends Action<ActionFlag.EDIT_ORG_EVALUATE_ERRORS> {
-    type: ActionFlag.EDIT_ORG_EVALUATE_ERRORS
+    type: ActionFlag.EDIT_ORG_EVALUATE_ERRORS;
 }
 
 // Saving
 
 export interface EditOrgSave extends Action<ActionFlag.EDIT_ORG_SAVE> {
-    type: ActionFlag.EDIT_ORG_SAVE
+    type: ActionFlag.EDIT_ORG_SAVE;
 }
 
 export interface EditOrgSaveStart extends Action<ActionFlag.EDIT_ORG_SAVE_START> {
-    type: ActionFlag.EDIT_ORG_SAVE_START
+    type: ActionFlag.EDIT_ORG_SAVE_START;
 }
 
 export interface EditOrgSaveSuccess extends Action<ActionFlag.EDIT_ORG_SAVE_SUCCESS> {
-    type: ActionFlag.EDIT_ORG_SAVE_SUCCESS
+    type: ActionFlag.EDIT_ORG_SAVE_SUCCESS;
 }
 
 export interface EditOrgSaveError extends Action<ActionFlag.EDIT_ORG_SAVE_ERROR> {
-    type: ActionFlag.EDIT_ORG_SAVE_ERROR,
-    error: AppError
+    type: ActionFlag.EDIT_ORG_SAVE_ERROR;
+    error: AppError;
 }
 
 // Updating name field
 
 export interface EditOrgUpdateName extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_NAME,
-    name: string
+    type: ActionFlag.EDIT_ORG_UPDATE_NAME;
+    name: string;
 }
 
 export interface EditOrgUpdateNameSuccess {
-    type: ActionFlag.EDIT_ORG_UPDATE_NAME_SUCCESS,
-    name: string
+    type: ActionFlag.EDIT_ORG_UPDATE_NAME_SUCCESS;
+    name: string;
 }
 
 export interface EditOrgUpdateNameError extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_NAME_ERROR,
-    name: string,
-    error: ValidationState
+    type: ActionFlag.EDIT_ORG_UPDATE_NAME_ERROR;
+    name: string;
+    error: ValidationState;
 }
 
 // Updating logo url field
 
 export interface UpdateLogoUrl extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL,
-    name: string | null
+    type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL;
+    name: string | null;
 }
 
 export interface UpdateLogoUrlSuccess {
-    type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_SUCCESS,
-    logoUrl: string | null
+    type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_SUCCESS;
+    logoUrl: string | null;
 }
 
 export interface UpdateLogoUrlError extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_ERROR,
-    logoUrl: string | null,
-    error: ValidationState
+    type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_ERROR;
+    logoUrl: string | null;
+    error: ValidationState;
 }
 
 // Updating home url field
 export interface UpdateHomeUrl extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL
-    homeUrl: string | null
+    type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL;
+    homeUrl: string | null;
 }
 
 export interface UpdateHomeUrlSuccess extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_SUCCESS
-    homeUrl: string | null
+    type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_SUCCESS;
+    homeUrl: string | null;
 }
 
 export interface UpdateHomeUrlError extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_ERROR
-    homeUrl: string | null
-    error: ValidationState
+    type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_ERROR;
+    homeUrl: string | null;
+    error: ValidationState;
 }
 
 // Updating research interests field
 export interface UpdateResearchInterests extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS
-    researchInterests: string
+    type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS;
+    researchInterests: string;
 }
 
 export interface UpdateResearchInterestsSuccess extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_SUCCESS
-    researchInterests: string
+    type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_SUCCESS;
+    researchInterests: string;
 }
 
 export interface UpdateResearchInterestsError extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_ERROR
-    researchInterests: string
-    error: ValidationState
+    type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_ERROR;
+    researchInterests: string;
+    error: ValidationState;
 }
 
 // Updating description field
 
 export interface EditOrgUpdateDescription extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION,
-    description: string
+    type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION;
+    description: string;
 }
 
 export interface EditOrgUpdateDescriptionSuccess {
-    type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_SUCCESS,
-    description: string
+    type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_SUCCESS;
+    description: string;
 }
 
 export interface EditOrgUpdateDescriptionError extends Action {
-    type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_ERROR,
-    description: string,
-    error: ValidationState
+    type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_ERROR;
+    description: string;
+    error: ValidationState;
 }
 
 export interface UpdateIsPrivate extends Action<ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE> {
-    type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE
-    isPrivate: boolean
+    type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE;
+    isPrivate: boolean;
 }
 
 export interface UpdateIsPrivateSuccess extends Action<ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_SUCCESS> {
-    type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_SUCCESS,
-    isPrivate: boolean
+    type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_SUCCESS;
+    isPrivate: boolean;
 }
 
 export interface UpdateIsPrivateError extends Action<ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_ERROR> {
-    type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_ERROR,
-    error: ValidationState
+    type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_ERROR;
+    error: ValidationState;
 }
-
 
 // ACTION CREATORS
 
@@ -187,28 +190,31 @@ export interface UpdateIsPrivateError extends Action<ActionFlag.EDIT_ORG_UPDATE_
 export function loadStart(): LoadStart {
     return {
         type: ActionFlag.EDIT_ORG_LOAD_START
-    }
+    };
 }
 
-export function loadSuccess(editedOrganization: EditableOrganization, organization: orgModel.Organization): LoadSuccess {
+export function loadSuccess(
+    editedOrganization: EditableOrganization,
+    organization: orgModel.Organization
+): LoadSuccess {
     return {
         type: ActionFlag.EDIT_ORG_LOAD_SUCCESS,
         editedOrganization: editedOrganization,
         organization: organization
-    }
+    };
 }
 
 export function loadError(error: AppError): LoadError {
     return {
         type: ActionFlag.EDIT_ORG_LOAD_ERROR,
         error: error
-    }
+    };
 }
 
 export function unload(): Unload {
     return {
         type: ActionFlag.EDIT_ORG_UNLOAD
-    }
+    };
 }
 
 // Evaluate
@@ -216,13 +222,13 @@ export function unload(): Unload {
 export function editOrgEvaluateOk(): EditOrgEvaluateOK {
     return {
         type: ActionFlag.EDIT_ORG_EVALUATE_OK
-    }
+    };
 }
 
 export function editOrgEvaluateErrors(): EditOrgEvaluateErrors {
     return {
         type: ActionFlag.EDIT_ORG_EVALUATE_ERRORS
-    }
+    };
 }
 
 // Save
@@ -236,20 +242,20 @@ export function editOrgEvaluateErrors(): EditOrgEvaluateErrors {
 export function editOrgSaveStart(): EditOrgSaveStart {
     return {
         type: ActionFlag.EDIT_ORG_SAVE_START
-    }
+    };
 }
 
 export function editOrgSaveSuccess(): EditOrgSaveSuccess {
     return {
         type: ActionFlag.EDIT_ORG_SAVE_SUCCESS
-    }
+    };
 }
 
 export function editOrgSaveError(error: AppError): EditOrgSaveError {
     return {
         type: ActionFlag.EDIT_ORG_SAVE_ERROR,
         error: error
-    }
+    };
 }
 
 // Update Name
@@ -258,7 +264,7 @@ export function editOrgUpdateNameSuccess(name: string): EditOrgUpdateNameSuccess
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_NAME_SUCCESS,
         name: name
-    }
+    };
 }
 
 export function editOrgUpdateNameError(name: string, error: ValidationState): EditOrgUpdateNameError {
@@ -266,7 +272,7 @@ export function editOrgUpdateNameError(name: string, error: ValidationState): Ed
         type: ActionFlag.EDIT_ORG_UPDATE_NAME_ERROR,
         name: name,
         error: error
-    }
+    };
 }
 
 // export function editOrgUpdateIdSuccess(id: string): EditOrgUpdateIdSuccess {
@@ -282,7 +288,7 @@ export function updateLogoUrlSuccess(logoUrl: string | null): UpdateLogoUrlSucce
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_SUCCESS,
         logoUrl: logoUrl
-    }
+    };
 }
 
 export function updateLogoUrlError(logoUrl: string | null, error: ValidationState): UpdateLogoUrlError {
@@ -290,9 +296,8 @@ export function updateLogoUrlError(logoUrl: string | null, error: ValidationStat
         type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_ERROR,
         logoUrl: logoUrl,
         error: error
-    }
+    };
 }
-
 
 // Update Id
 
@@ -308,27 +313,32 @@ export function editOrgUpdateDescriptionSuccess(description: string): EditOrgUpd
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_SUCCESS,
         description: description
-    }
+    };
 }
 
-export function editOrgUpdateDescriptionError(description: string, error: ValidationState): EditOrgUpdateDescriptionError {
+export function editOrgUpdateDescriptionError(
+    description: string,
+    error: ValidationState
+): EditOrgUpdateDescriptionError {
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_ERROR,
         description: description,
         error: error
-    }
+    };
 }
 
 // ACTION THUNKS
 
 export function load(organizationId: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(loadStart())
+        dispatch(loadStart());
 
         const {
-            auth: { authorization: { token, username } },
+            auth: {
+                authorization: { token, username }
+            },
             app: { config }
-        } = getState()
+        } = getState();
 
         // const model = new Model({
         //     token, username,
@@ -339,15 +349,17 @@ export function load(organizationId: string) {
         // })
 
         const orgClient = new orgModel.OrganizationModel({
-            token, username,
+            token,
+            username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url
-        })
+        });
 
-        return orgClient.getOrg(organizationId)
+        return orgClient
+            .getOrg(organizationId)
             .then((org) => {
                 if (org.kind !== orgModel.OrganizationKind.NORMAL) {
-                    throw new Error('May not edit an inaccessible private org!')
+                    throw new Error('May not edit an inaccessible private org!');
                 }
                 const editableOrg: EditableOrganization = {
                     id: {
@@ -395,48 +407,56 @@ export function load(organizationId: string) {
                             validatedAt: new Date()
                         }
                     }
-                }
-                dispatch(loadSuccess(editableOrg, org))
+                };
+                dispatch(loadSuccess(editableOrg, org));
             })
             .catch((err) => {
-                console.error('load org error', err)
-                dispatch(loadError({
-                    code: err.name,
-                    message: err.message
-                }))
-            })
-    }
+                console.error('load org error', err);
+                dispatch(
+                    loadError({
+                        code: err.name,
+                        message: err.message
+                    })
+                );
+            });
+    };
 }
 
 export function editOrgSave() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(editOrgSaveStart())
+        dispatch(editOrgSaveStart());
 
-        const state = getState()
+        const state = getState();
         if (!state.views.editOrgView.viewModel) {
-            throw new Error('Argh, no view model')
+            throw new Error('Argh, no view model');
         }
 
         const {
-            auth: { authorization: { token, username } },
+            auth: {
+                authorization: { token, username }
+            },
             views: {
                 editOrgView: {
                     viewModel: { organization, editedOrganization }
                 }
             },
-            app: { config } } = state
+            app: { config }
+        } = state;
 
         const orgClient = new orgModel.OrganizationModel({
-            token, username,
+            token,
+            username,
             groupsServiceURL: config.services.Groups.url,
             userProfileServiceURL: config.services.UserProfile.url
-        })
+        });
 
         if (!editedOrganization) {
-            dispatch(editOrgSaveError({
-                code: 'app',
-                message: 'The new organization data does not yet exist'
-            }))
+            dispatch(
+                editOrgSaveError({
+                    code: 'app',
+                    message: 'The new organization data does not yet exist'
+                })
+            );
             return;
         }
 
@@ -447,102 +467,117 @@ export function editOrgSave() {
             isPrivate: editedOrganization.isPrivate.value,
             homeUrl: editedOrganization.homeUrl.value,
             researchInterests: editedOrganization.researchInterests.value
-        }
+        };
 
-        orgClient.updateOrg(organization.id, update)
+        orgClient
+            .updateOrg(organization.id, update)
             .then(() => {
-                dispatch(editOrgSaveSuccess())
+                dispatch(editOrgSaveSuccess());
             })
             .catch((error) => {
-                console.error('error adding', editedOrganization, error)
-                dispatch(editOrgSaveError({
-                    code: 'invalid',
-                    message: error.message
-                }))
-            })
-    }
+                console.error('error adding', editedOrganization, error);
+                dispatch(
+                    editOrgSaveError({
+                        code: 'invalid',
+                        message: error.message
+                    })
+                );
+            });
+    };
 }
 
 export function editOrgEvaluate() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        const state = getState()
+        const state = getState();
         if (!state.views.editOrgView.viewModel) {
-            throw new Error('Argh, no view model')
+            throw new Error('Argh, no view model');
         }
 
         const {
             views: {
                 editOrgView: {
-                    viewModel: {
-                        editedOrganization
-                    }
+                    viewModel: { editedOrganization }
                 }
             }
-        } = state
+        } = state;
 
         if (!editedOrganization) {
-            dispatch(editOrgEvaluateErrors())
-            return
+            dispatch(editOrgEvaluateErrors());
+            return;
         }
 
         if (editedOrganization.name.validationState.type !== ValidationErrorType.OK) {
-            dispatch(editOrgEvaluateErrors())
-            return
+            dispatch(editOrgEvaluateErrors());
+            return;
         }
 
         if (editedOrganization.logoUrl.validationState.type !== ValidationErrorType.OK) {
-            dispatch(editOrgEvaluateErrors())
-            return
+            dispatch(editOrgEvaluateErrors());
+            return;
         }
 
         if (editedOrganization.homeUrl.validationState.type !== ValidationErrorType.OK) {
-            dispatch(editOrgEvaluateErrors())
-            return
+            dispatch(editOrgEvaluateErrors());
+            return;
         }
 
         if (editedOrganization.researchInterests.validationState.type !== ValidationErrorType.OK) {
-            dispatch(editOrgEvaluateErrors())
-            return
+            dispatch(editOrgEvaluateErrors());
+            return;
         }
 
         if (editedOrganization.description.validationState.type !== ValidationErrorType.OK) {
-            dispatch(editOrgEvaluateErrors())
-            return
+            dispatch(editOrgEvaluateErrors());
+            return;
         }
 
-        dispatch(editOrgEvaluateOk())
-    }
+        dispatch(editOrgEvaluateOk());
+    };
 }
 
 export function updateName(name: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
-        const [validatedName, error] = Validation.validateOrgName(name)
+        const [validatedName, error] = Validation.validateOrgName(name);
 
         if (error.type !== ValidationErrorType.OK) {
-            dispatch(editOrgUpdateNameError(validatedName, error))
+            dispatch(editOrgUpdateNameError(validatedName, error));
         } else {
-            dispatch(editOrgUpdateNameSuccess(validatedName))
+            dispatch(editOrgUpdateNameSuccess(validatedName));
         }
-        dispatch(editOrgEvaluate())
-    }
+        dispatch(editOrgEvaluate());
+    };
 }
 
-let checkLogoUrlProcess: DebouncingProcess
+let checkLogoUrlProcess: DebouncingProcess;
 
 class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
-    dispatch: ThunkDispatch<StoreState, void, Action>
-    url: string
-    timeout: number
-    serviceWizardURL: string
-    token: string
-    constructor({ delay, dispatch, url, timeout, serviceWizardURL, token }: { delay: number, dispatch: ThunkDispatch<StoreState, void, Action>, url: string, timeout: number, serviceWizardURL: string, token: string }) {
-        super({ delay })
+    dispatch: ThunkDispatch<StoreState, void, Action>;
+    url: string;
+    timeout: number;
+    serviceWizardURL: string;
+    token: string;
+    constructor({
+        delay,
+        dispatch,
+        url,
+        timeout,
+        serviceWizardURL,
+        token
+    }: {
+        delay: number;
+        dispatch: ThunkDispatch<StoreState, void, Action>;
+        url: string;
+        timeout: number;
+        serviceWizardURL: string;
+        token: string;
+    }) {
+        super({ delay });
 
-        this.dispatch = dispatch
-        this.url = url
-        this.serviceWizardURL = serviceWizardURL
-        this.token = token
-        this.timeout = timeout
+        this.dispatch = dispatch;
+        this.url = url;
+        this.serviceWizardURL = serviceWizardURL;
+        this.token = token;
+        this.timeout = timeout;
     }
 
     async task(): Promise<void> {
@@ -550,114 +585,150 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
             const client = new UIServiceClient({
                 url: this.serviceWizardURL,
                 token: this.token
-            })
-            const result = await client.checkImageURL({ url: this.url, timeout: this.timeout })
+            });
+            const result = await client.checkImageURL({ url: this.url, timeout: this.timeout });
 
             if (this.canceled) {
-                return
+                return;
             }
 
             if (result.is_valid) {
-                this.dispatch(updateLogoUrlSuccess(this.url))
+                this.dispatch(updateLogoUrlSuccess(this.url));
             } else {
                 switch (result.error.code) {
                     case 'not-found':
-                        this.dispatch(updateLogoUrlError(this.url, {
-                            type: ValidationErrorType.ERROR,
-                            validatedAt: new Date(),
-                            message: 'This logo url does not exist'
-                        }))
-                        break
+                        this.dispatch(
+                            updateLogoUrlError(this.url, {
+                                type: ValidationErrorType.ERROR,
+                                validatedAt: new Date(),
+                                message: 'This logo url does not exist'
+                            })
+                        );
+                        break;
                     case 'invalid-content-type':
-                        this.dispatch(updateLogoUrlError(this.url, {
-                            type: ValidationErrorType.ERROR,
-                            validatedAt: new Date(),
-                            message: 'Invalid content type: ' + result.error.info['content-type']
-                        }))
-                        break
+                        this.dispatch(
+                            updateLogoUrlError(this.url, {
+                                type: ValidationErrorType.ERROR,
+                                validatedAt: new Date(),
+                                message: 'Invalid content type: ' + result.error.info['content_type']
+                            })
+                        );
+                        break;
                     case 'missing-content-type':
-                        this.dispatch(updateLogoUrlError(this.url, {
-                            type: ValidationErrorType.ERROR,
-                            validatedAt: new Date(),
-                            message: 'Missing content type'
-                        }))
-                        break
+                        this.dispatch(
+                            updateLogoUrlError(this.url, {
+                                type: ValidationErrorType.ERROR,
+                                validatedAt: new Date(),
+                                message: 'Missing content type'
+                            })
+                        );
+                        break;
                     default:
-                        this.dispatch(updateLogoUrlError(this.url, {
-                            type: ValidationErrorType.ERROR,
-                            validatedAt: new Date(),
-                            message: 'unknown error'
-                        }))
-                        break
+                        this.dispatch(
+                            updateLogoUrlError(this.url, {
+                                type: ValidationErrorType.ERROR,
+                                validatedAt: new Date(),
+                                message: 'unknown error'
+                            })
+                        );
+                        break;
                 }
             }
         } catch (ex) {
+            console.error('ERROR checking logo url', ex);
             if (this.canceled) {
-                return
+                return;
             }
-            this.dispatch(updateLogoUrlError(this.url, {
-                type: ValidationErrorType.ERROR,
-                validatedAt: new Date(),
-                message: 'Error checking logo url: ' + ex.message
-            }))
+
+            this.dispatch(
+                updateLogoUrlError(this.url, {
+                    type: ValidationErrorType.ERROR,
+                    validatedAt: new Date(),
+                    message: 'Error checking logo url: ' + ex.message
+                })
+            );
         }
-        this.dispatch(editOrgEvaluate())
+        this.dispatch(editOrgEvaluate());
     }
 }
 
 export function updateLogoUrl(logoUrl: string | null) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         if (checkLogoUrlProcess) {
-            checkLogoUrlProcess.cancel()
+            checkLogoUrlProcess.cancel();
         }
-        const [validatedLogoUrl, error] = Validation.validateOrgLogoUrl(logoUrl)
+        const [validatedLogoUrl, error] = Validation.validateOrgLogoUrl(logoUrl);
 
         if (error.type !== ValidationErrorType.OK) {
-            dispatch(updateLogoUrlError(validatedLogoUrl, error))
-            dispatch(editOrgEvaluate())
-            return
+            dispatch(updateLogoUrlError(validatedLogoUrl, error));
+            dispatch(editOrgEvaluate());
+            return;
         }
 
-        dispatch(updateLogoUrlSuccess(validatedLogoUrl))
+        dispatch(updateLogoUrlSuccess(validatedLogoUrl));
 
-        dispatch(editOrgEvaluate())
+        dispatch(editOrgEvaluate());
 
         if (validatedLogoUrl !== null && validatedLogoUrl.length > 0) {
             const {
-                auth: { authorization: { token } },
-                app: { config: { services: { ServiceWizard: { url: serviceWizardURL } } } }
-            } = getState()
+                auth: {
+                    authorization: { token }
+                },
+                app: {
+                    config: {
+                        services: {
+                            ServiceWizard: { url: serviceWizardURL }
+                        }
+                    }
+                }
+            } = getState();
 
             checkLogoUrlProcess = new CheckIfLogoUrlExistsProcess({
                 delay: 100,
                 url: validatedLogoUrl,
                 timeout: 1000,
-                dispatch, serviceWizardURL, token
-            })
+                dispatch,
+                serviceWizardURL,
+                token
+            });
 
-            checkLogoUrlProcess.start()
+            checkLogoUrlProcess.start();
         }
-    }
+    };
 }
 
 // Home Url
 
-let checkHomeUrlProcess: DebouncingProcess
+let checkHomeUrlProcess: DebouncingProcess;
 
 class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
-    dispatch: ThunkDispatch<StoreState, void, Action>
-    url: string
-    timeout: number
-    serviceWizardURL: string
-    token: string
-    constructor({ delay, dispatch, url, timeout, serviceWizardURL, token }: { delay: number, dispatch: ThunkDispatch<StoreState, void, Action>, url: string, timeout: number, serviceWizardURL: string, token: string }) {
-        super({ delay })
+    dispatch: ThunkDispatch<StoreState, void, Action>;
+    url: string;
+    timeout: number;
+    serviceWizardURL: string;
+    token: string;
+    constructor({
+        delay,
+        dispatch,
+        url,
+        timeout,
+        serviceWizardURL,
+        token
+    }: {
+        delay: number;
+        dispatch: ThunkDispatch<StoreState, void, Action>;
+        url: string;
+        timeout: number;
+        serviceWizardURL: string;
+        token: string;
+    }) {
+        super({ delay });
 
-        this.dispatch = dispatch
-        this.url = url
-        this.serviceWizardURL = serviceWizardURL
-        this.token = token
-        this.timeout = timeout
+        this.dispatch = dispatch;
+        this.url = url;
+        this.serviceWizardURL = serviceWizardURL;
+        this.token = token;
+        this.timeout = timeout;
     }
 
     async task(): Promise<void> {
@@ -665,58 +736,68 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
             const client = new UIServiceClient({
                 url: this.serviceWizardURL,
                 token: this.token
-            })
-            const result = await client.checkHTMLURL({ url: this.url, timeout: this.timeout })
+            });
+            const result = await client.checkHTMLURL({ url: this.url, timeout: this.timeout });
 
             if (this.canceled) {
-                return
+                return;
             }
 
             if (result.is_valid) {
-                this.dispatch(updateHomeUrlSuccess(this.url))
+                this.dispatch(updateHomeUrlSuccess(this.url));
             } else {
                 switch (result.error.code) {
                     case 'not-found':
-                        this.dispatch(updateHomeUrlError(this.url, {
-                            type: ValidationErrorType.ERROR,
-                            validatedAt: new Date(),
-                            message: 'This home url does not exist'
-                        }))
-                        break
+                        this.dispatch(
+                            updateHomeUrlError(this.url, {
+                                type: ValidationErrorType.ERROR,
+                                validatedAt: new Date(),
+                                message: 'This home url does not exist'
+                            })
+                        );
+                        break;
                     case 'invalid-content-type':
-                        this.dispatch(updateHomeUrlError(this.url, {
-                            type: ValidationErrorType.ERROR,
-                            validatedAt: new Date(),
-                            message: 'Invalid content type: ' + result.error.info['content-type']
-                        }))
-                        break
+                        this.dispatch(
+                            updateHomeUrlError(this.url, {
+                                type: ValidationErrorType.ERROR,
+                                validatedAt: new Date(),
+                                message: 'Invalid content type: ' + result.error.info['content_type']
+                            })
+                        );
+                        break;
                     case 'missing-content-type':
-                        this.dispatch(updateHomeUrlError(this.url, {
-                            type: ValidationErrorType.ERROR,
-                            validatedAt: new Date(),
-                            message: 'Missing content type'
-                        }))
-                        break
+                        this.dispatch(
+                            updateHomeUrlError(this.url, {
+                                type: ValidationErrorType.ERROR,
+                                validatedAt: new Date(),
+                                message: 'Missing content type'
+                            })
+                        );
+                        break;
                     default:
-                        this.dispatch(updateHomeUrlError(this.url, {
-                            type: ValidationErrorType.ERROR,
-                            validatedAt: new Date(),
-                            message: 'unknown error'
-                        }))
-                        break
+                        this.dispatch(
+                            updateHomeUrlError(this.url, {
+                                type: ValidationErrorType.ERROR,
+                                validatedAt: new Date(),
+                                message: 'unknown error'
+                            })
+                        );
+                        break;
                 }
             }
         } catch (ex) {
             if (this.canceled) {
-                return
+                return;
             }
-            this.dispatch(updateHomeUrlError(this.url, {
-                type: ValidationErrorType.ERROR,
-                validatedAt: new Date(),
-                message: 'Error checking home url: ' + ex.message
-            }))
+            this.dispatch(
+                updateHomeUrlError(this.url, {
+                    type: ValidationErrorType.ERROR,
+                    validatedAt: new Date(),
+                    message: 'Error checking home url: ' + ex.message
+                })
+            );
         }
-        this.dispatch(editOrgEvaluate())
+        this.dispatch(editOrgEvaluate());
     }
 }
 
@@ -724,95 +805,107 @@ function updateHomeUrlSuccess(homeUrl: string): UpdateHomeUrlSuccess {
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_SUCCESS,
         homeUrl
-    }
+    };
 }
 
 function updateHomeUrlError(homeUrl: string, error: ValidationState): UpdateHomeUrlError {
     return {
         type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_ERROR,
-        homeUrl, error
-    }
+        homeUrl,
+        error
+    };
 }
 
 export function updateHomeUrl(homeUrl: string | null) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         if (checkHomeUrlProcess) {
-            checkHomeUrlProcess.cancel()
+            checkHomeUrlProcess.cancel();
         }
 
-        const [validatedHomeUrl, error] = Validation.validateOrgHomeUrl(homeUrl)
+        const [validatedHomeUrl, error] = Validation.validateOrgHomeUrl(homeUrl);
 
         if (error.type !== ValidationErrorType.OK) {
             dispatch({
                 type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_ERROR,
                 homeUrl: validatedHomeUrl,
                 error: error
-            } as UpdateHomeUrlError)
-            dispatch(editOrgEvaluate())
-            return
+            } as UpdateHomeUrlError);
+            dispatch(editOrgEvaluate());
+            return;
         }
         dispatch({
             type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_SUCCESS,
             homeUrl: validatedHomeUrl
-        } as UpdateHomeUrlSuccess)
+        } as UpdateHomeUrlSuccess);
 
-        dispatch(editOrgEvaluate())
+        dispatch(editOrgEvaluate());
 
         if (validatedHomeUrl !== null && validatedHomeUrl.length > 0) {
             const {
-                auth: { authorization: { token } },
-                app: { config: { services: { ServiceWizard: { url: serviceWizardURL } } } }
-            } = getState()
+                auth: {
+                    authorization: { token }
+                },
+                app: {
+                    config: {
+                        services: {
+                            ServiceWizard: { url: serviceWizardURL }
+                        }
+                    }
+                }
+            } = getState();
 
             checkHomeUrlProcess = new CheckIfHomeUrlExistsProcess({
                 delay: 100,
                 url: validatedHomeUrl,
                 timeout: 1000,
-                dispatch, serviceWizardURL, token
-            })
+                dispatch,
+                serviceWizardURL,
+                token
+            });
 
-            checkHomeUrlProcess.start()
+            checkHomeUrlProcess.start();
         }
-    }
+    };
 }
 
 export function updateResearchInterests(researchInterests: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
-        const [validatedResearchInterests, error] = Validation.validateOrgResearchInterests(researchInterests)
+        const [validatedResearchInterests, error] = Validation.validateOrgResearchInterests(researchInterests);
 
         if (error.type !== ValidationErrorType.OK) {
             dispatch({
                 type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_ERROR,
                 researchInterests: validatedResearchInterests,
                 error: error
-            } as UpdateResearchInterestsError)
+            } as UpdateResearchInterestsError);
         } else {
             dispatch({
                 type: ActionFlag.EDIT_ORG_UPDATE_RESEARCH_INTERESTS_SUCCESS,
                 researchInterests: validatedResearchInterests
-            } as UpdateResearchInterestsSuccess)
+            } as UpdateResearchInterestsSuccess);
         }
-        dispatch(editOrgEvaluate())
-    }
+        dispatch(editOrgEvaluate());
+    };
 }
 
 export function updateDescription(description: string) {
-    return (dispatch: ThunkDispatch<StoreState, void, Action>,
-        getState: () => StoreState) => {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const {
-            auth: { authorization: { token, username } },
+            auth: {
+                authorization: { token, username }
+            },
             app: { config }
-        } = getState()
+        } = getState();
 
-        const [validatedDescription, error] = Validation.validateOrgDescription(description)
+        const [validatedDescription, error] = Validation.validateOrgDescription(description);
 
         if (error.type !== ValidationErrorType.OK) {
-            dispatch(editOrgUpdateDescriptionError(validatedDescription, error))
+            dispatch(editOrgUpdateDescriptionError(validatedDescription, error));
         } else {
-            dispatch(editOrgUpdateDescriptionSuccess(validatedDescription))
+            dispatch(editOrgUpdateDescriptionSuccess(validatedDescription));
         }
-        dispatch(editOrgEvaluate())
-    }
+        dispatch(editOrgEvaluate());
+    };
 }
 
 export function updateIsPrivate(isPrivate: boolean) {
@@ -821,7 +914,7 @@ export function updateIsPrivate(isPrivate: boolean) {
         dispatch({
             type: ActionFlag.EDIT_ORG_UPDATE_IS_PRIVATE_SUCCESS,
             isPrivate: isPrivate
-        })
-        dispatch(editOrgEvaluate())
-    }
-} 
+        });
+        dispatch(editOrgEvaluate());
+    };
+}

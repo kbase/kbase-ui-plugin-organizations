@@ -741,7 +741,6 @@ export class OrganizationModel {
         const group = await this.groupsClient.getGroupById(id);
 
         // get users from user model (profile)
-        console.log('group to get org?', group);
         if (group.role === 'None' && group.private) {
             return groupToPrivateOrganization(group as groupsApi.InaccessiblePrivateGroup, this.params.username);
         } else {
