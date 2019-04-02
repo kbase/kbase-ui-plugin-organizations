@@ -1,11 +1,10 @@
-import { Action } from 'redux'
-import { ThunkDispatch } from 'redux-thunk'
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import { ActionFlag } from './index'
-import * as types from '../../types'
-import IFrameSimulator from '../../lib/IFrameSimulator'
-import { IFrameIntegration } from '../../lib/IFrameIntegration'
-
+import { ActionFlag } from './index';
+import * as types from '../../types';
+import IFrameSimulator from '../../lib/IFrameSimulator';
+import { IFrameIntegration } from '../../lib/IFrameIntegration';
 
 // Action Definitions
 
@@ -15,13 +14,13 @@ import { IFrameIntegration } from '../../lib/IFrameIntegration'
 // }
 
 export interface AppSuccess extends Action {
-    type: ActionFlag.APP_SUCCESS,
-    config: types.AppConfig
+    type: ActionFlag.APP_SUCCESS;
+    config: types.AppConfig;
 }
 
 export interface AppError extends Action {
-    type: ActionFlag.APP_ERROR,
-    error: AppError
+    type: ActionFlag.APP_ERROR;
+    error: AppError;
 }
 
 // Action Creators
@@ -30,14 +29,14 @@ export function appSuccess(config: types.AppConfig): AppSuccess {
     return {
         type: ActionFlag.APP_SUCCESS,
         config: config
-    }
+    };
 }
 
 export function appError(error: AppError): AppError {
     return {
         type: ActionFlag.APP_ERROR,
         error: error
-    }
+    };
 }
 
 export function appStart() {
@@ -46,9 +45,8 @@ export function appStart() {
         let integration = new IFrameIntegration();
         let iframeParams = integration.getParamsFromIFrame();
 
-
         if (iframeParams) {
-            let defaultPath
+            let defaultPath;
 
             // set up the message bus.
             let channelId = iframeParams.channelId;
@@ -56,69 +54,72 @@ export function appStart() {
             // route from paths passed in from kbase-ui
             switch (iframeParams.params.view) {
                 case 'org':
-                    defaultPath = '/viewOrganization/' + iframeParams.params.viewParams.id
-                    window.history.pushState(null, 'test', defaultPath)
-                    break
+                    defaultPath = '/viewOrganization/' + iframeParams.params.viewParams.id;
+                    window.history.replaceState(null, 'test', defaultPath);
+                    break;
                 default:
-                    defaultPath = '/organizations'
-                    window.history.pushState(null, 'organizations', '/organizations')
-                    break
+                    defaultPath = '/organizations';
+                    window.history.replaceState(null, 'organizations', '/organizations');
+                    break;
             }
 
             // suck up all the params into our state.
-            dispatch(appSuccess({
-                baseUrl: '',
-                services: {
-                    Groups: {
-                        url: iframeParams.params.groupsServiceURL
+            dispatch(
+                appSuccess({
+                    baseUrl: '',
+                    services: {
+                        Groups: {
+                            url: iframeParams.params.groupsServiceURL
+                        },
+                        UserProfile: {
+                            url: iframeParams.params.userProfileServiceURL
+                        },
+                        Workspace: {
+                            url: iframeParams.params.workspaceServiceURL
+                        },
+                        ServiceWizard: {
+                            url: iframeParams.params.serviceWizardURL
+                        },
+                        Auth: {
+                            url: iframeParams.params.authServiceURL
+                        },
+                        NarrativeMethodStore: {
+                            url: iframeParams.params.narrativeMethodStoreURL
+                        }
                     },
-                    UserProfile: {
-                        url: iframeParams.params.userProfileServiceURL
-                    },
-                    Workspace: {
-                        url: iframeParams.params.workspaceServiceURL
-                    },
-                    ServiceWizard: {
-                        url: iframeParams.params.serviceWizardURL
-                    },
-                    Auth: {
-                        url: iframeParams.params.authServiceURL
-                    },
-                    NarrativeMethodStore: {
-                        url: iframeParams.params.narrativeMethodStoreURL
-                    }
-                },
-                defaultPath,
-                channelId
-            }))
-
+                    defaultPath,
+                    channelId
+                })
+            );
         } else {
-            iframeParams = new IFrameSimulator().getParamsFromIFrame()
-            dispatch(appSuccess({
-                baseUrl: '',
-                services: {
-                    Groups: {
-                        url: iframeParams.params.groupsServiceURL
+            iframeParams = new IFrameSimulator().getParamsFromIFrame();
+            dispatch(
+                appSuccess({
+                    baseUrl: '',
+                    services: {
+                        Groups: {
+                            url: iframeParams.params.groupsServiceURL
+                        },
+                        UserProfile: {
+                            url: iframeParams.params.userProfileServiceURL
+                        },
+                        Workspace: {
+                            url: iframeParams.params.workspaceServiceURL
+                        },
+                        ServiceWizard: {
+                            url: iframeParams.params.serviceWizardURL
+                        },
+                        Auth: {
+                            url: iframeParams.params.authServiceURL
+                        },
+                        NarrativeMethodStore: {
+                            url: iframeParams.params.narrativeMethodStoreURL
+                        }
                     },
-                    UserProfile: {
-                        url: iframeParams.params.userProfileServiceURL
-                    },
-                    Workspace: {
-                        url: iframeParams.params.workspaceServiceURL
-                    },
-                    ServiceWizard: {
-                        url: iframeParams.params.serviceWizardURL
-                    },
-                    Auth: {
-                        url: iframeParams.params.authServiceURL
-                    },
-                    NarrativeMethodStore: {
-                        url: iframeParams.params.narrativeMethodStoreURL
-                    }
-                },
-                defaultPath: '/organizations',
-                channelId: null
-            }))
+                    defaultPath: '/organizations',
+                    channelId: null
+                })
+            );
         }
-    }
+    };
 }
