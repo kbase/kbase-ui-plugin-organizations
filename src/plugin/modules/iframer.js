@@ -74,7 +74,6 @@ define(['kb_lib/html', 'kb_lib/windowChannel', 'kb_lib/httpUtils'], function (ht
 
         start() {
             // this.iframe.contentWindow.location.replace(this.url);
-            console.log('URL', this.url);
             this.iframe.src = this.url;
         }
     }
