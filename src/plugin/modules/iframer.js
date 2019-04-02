@@ -32,7 +32,7 @@ define(['kb_lib/html', 'kb_lib/windowChannel', 'kb_lib/httpUtils'], function (ht
             const indexPath = this.pathRoot + '/iframe_root/index.html';
 
             // Make an absolute url to this.
-            this.url = this.origin + '/' + indexPath;
+            this.url = this.origin + '/' + indexPath + '?__cb__=' + html.genId();
 
             // The iframe framework, designed to give a full height and width responsive
             // window with the content area of the ui.
@@ -74,6 +74,7 @@ define(['kb_lib/html', 'kb_lib/windowChannel', 'kb_lib/httpUtils'], function (ht
 
         start() {
             // this.iframe.contentWindow.location.replace(this.url);
+            console.log('URL', this.url);
             this.iframe.src = this.url;
         }
     }
