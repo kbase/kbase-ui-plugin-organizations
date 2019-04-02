@@ -1,82 +1,72 @@
-import * as React from 'react'
-import './KBaseIntegration.css'
+import * as React from 'react';
+import './KBaseIntegration.css';
 
-import { AppState } from '../types'
+import { AppState } from '../types';
 import { Channel } from '../lib/windowChannel';
 import { IFrameIntegration } from '../lib/IFrameIntegration';
 
 export interface KBaseIntegrationProps {
-    status: AppState
-    channelId: string | null
-    onAppStart: () => void
+    status: AppState;
+    channelId: string | null;
+    onAppStart: () => void;
 }
 class KBaseIntegration extends React.Component<KBaseIntegrationProps, object> {
-
-    channel: Channel | null
+    channel: Channel | null;
 
     constructor(props: KBaseIntegrationProps) {
-        super(props)
+        super(props);
 
         // const params = this.getParamsFromIFrame()
 
         // this.props.onAppStart()
 
-        this.channel = null
+        this.channel = null;
     }
 
     setupChannel() {
         if (this.props.channelId) {
-
             this.channel = new Channel({
-                channelId: this.props.channelId,
-            })
+                channelId: this.props.channelId
+            });
 
-            this.channel.on('navigate', ({ to, params }) => {
+            this.channel.on(
+                'navigate',
+                ({ to, params }) => {},
+                (err) => {
+                    console.error('Error processing "navigate" message');
+                }
+            );
 
-            }, (err) => {
-                console.error('Error processing "navigate" message')
-            })
-
-            this.channel.start()
+            this.channel.start();
 
             this.channel.send('ready', {
                 channelId: this.props.channelId,
                 greeting: 'heloooo'
-            })
+            });
         }
     }
 
-    teardownChannel() {
-
-    }
+    teardownChannel() {}
 
     componentDidMount() {
-        this.props.onAppStart()
+        this.props.onAppStart();
     }
 
     componentDidUpdate() {
-        this.setupChannel()
+        this.setupChannel();
     }
 
     componentWillUnmount() {
-        this.teardownChannel()
+        this.teardownChannel();
     }
 
     render() {
         if (this.props.status === AppState.NONE) {
-            return (
-                <div className="KBaseIntegration">
-                    Loading...
-                </div>
-            )
+            return <div className="KBaseIntegration">Loading...</div>;
         }
 
-        return (
-            <div className="KBaseIntegration scrollable-flex-column">
-                {this.props.children}
-            </div>
-        )
+        return <div className="KBaseIntegration scrollable-flex-column">{this.props.children}</div>;
     }
 }
 
-export default KBaseIntegration
+export default KBaseIntegration;

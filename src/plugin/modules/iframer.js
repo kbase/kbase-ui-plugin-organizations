@@ -1,12 +1,4 @@
-define([
-    'kb_lib/html',
-    'kb_lib/windowChannel',
-    'kb_lib/httpUtils'
-], function (
-    html,
-    WindowChannel,
-    httpUtils
-) {
+define(['kb_lib/html', 'kb_lib/windowChannel', 'kb_lib/httpUtils'], function (html, WindowChannel, httpUtils) {
     'use strict';
 
     var t = html.tag,
@@ -44,28 +36,31 @@ define([
 
             // The iframe framework, designed to give a full height and width responsive
             // window with the content area of the ui.
-            this.content = div({
-                style: {
-                    flex: '1 1 0px',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }
-            }, [
-                iframe({
-                    id: this.id,
-                    name: this.id,
-                    dataParams: encodeURIComponent(JSON.stringify(params)),
+            this.content = div(
+                {
                     style: {
-                        width: '100%',
                         flex: '1 1 0px',
                         display: 'flex',
                         flexDirection: 'column'
-                    },
-                    frameborder: '0',
-                    scrolling: 'no',
-                    // src: url
-                })
-            ]);
+                    }
+                },
+                [
+                    iframe({
+                        id: this.id,
+                        name: this.id,
+                        dataParams: encodeURIComponent(JSON.stringify(params)),
+                        style: {
+                            width: '100%',
+                            flex: '1 1 0px',
+                            display: 'flex',
+                            flexDirection: 'column'
+                        },
+                        frameborder: '0',
+                        scrolling: 'no'
+                        // src: url
+                    })
+                ]
+            );
 
             this.node = null;
         }
@@ -78,6 +73,7 @@ define([
         }
 
         start() {
+            // this.iframe.contentWindow.location.replace(this.url);
             this.iframe.src = this.url;
         }
     }
@@ -112,11 +108,9 @@ define([
                 // channelId: this.id,
                 hostId: this.id,
                 params: this.params
-
             });
 
             this.iframe.attach(this.container);
-
 
             // this.iframeMessages = new WindowMessages({
             //     // window: window,
@@ -129,21 +123,21 @@ define([
         // Lifecycle
 
         /*
-                                    iframe messages lifecycle.
+        iframe messages lifecycle.
 
-                                    create iframe, don't set source yet
-                                    set up postmessage listener on the iframe content window
-                                    listem for 'ready' message
-                                    load content for iframe
-                                    content will set up listening on window's postmessage too
-                                    content sends 'ready' message
-                                    host receives ready message and finishes setting up postmessage listener for the
-                                        iframe client
-                                    host sets up all listeners to support client
-                                    life goes on
-                                    when client is being removed e.g. for navigation it is sent the 'stop' message given
-                                        some interval in which to finish this work before it is just axed.
-                                    */
+        create iframe, don't set source yet
+        set up postmessage listener on the iframe content window
+        listem for 'ready' message
+        load content for iframe
+        content will set up listening on window's postmessage too
+        content sends 'ready' message
+        host receives ready message and finishes setting up postmessage listener for the
+            iframe client
+        host sets up all listeners to support client
+        life goes on
+        when client is being removed e.g. for navigation it is sent the 'stop' message given
+            some interval in which to finish this work before it is just axed.
+        */
 
         setupChannel() {
             this.channel = new WindowChannel.Channel({
@@ -224,7 +218,7 @@ define([
                         token: this.runtime.service('session').getAuthToken(),
                         username: this.runtime.service('session').getUsername(),
                         realname: this.runtime.service('session').getRealname(),
-                        email: this.runtime.service('session').getEmail(),
+                        email: this.runtime.service('session').getEmail()
                     });
                 });
                 this.runtime.receive('session', 'loggedout', () => {
@@ -241,12 +235,16 @@ define([
 
                 if (this.useChannel) {
                     try {
-                        this.iframe.iframe.addEventListener('load', () => {
-                            this.setupChannel();
-                            resolve();
-                        }, {
-                            once: true
-                        });
+                        this.iframe.iframe.addEventListener(
+                            'load',
+                            () => {
+                                this.setupChannel();
+                                resolve();
+                            },
+                            {
+                                once: true
+                            }
+                        );
                     } catch (ex) {
                         reject(ex);
                     }
