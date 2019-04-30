@@ -1,16 +1,12 @@
-define([
-    'module',
-    './iframer',
-    'css!./panel.css'
-], function (
-    module,
-    Iframer
-) {
+define(['module', './iframer', 'css!./panel.css'], function (module, Iframer) {
     'use strict';
 
     // The module url includes the initial / and, so we start after that,
     // and we also remove this file and the modules directory.
-    const pluginPath = module.uri.split('/').slice(1, -2).join('/');
+    const pluginPath = module.uri
+        .split('/')
+        .slice(1, -2)
+        .join('/');
 
     class Panel {
         constructor(config) {
@@ -39,7 +35,7 @@ define([
             if (params.orgId) {
                 params.view = 'org';
                 params.viewParams = {
-                    'id': params.orgId
+                    id: params.orgId
                 };
             }
 

@@ -74,6 +74,7 @@ define(['kb_lib/html', 'kb_lib/windowChannel', 'kb_lib/httpUtils'], function (ht
 
         start() {
             // this.iframe.contentWindow.location.replace(this.url);
+
             this.iframe.src = this.url;
         }
     }
@@ -248,6 +249,8 @@ define(['kb_lib/html', 'kb_lib/windowChannel', 'kb_lib/httpUtils'], function (ht
                     } catch (ex) {
                         reject(ex);
                     }
+                } else {
+                    resolve();
                 }
             });
         }
