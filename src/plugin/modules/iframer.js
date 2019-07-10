@@ -48,6 +48,7 @@ define(['kb_lib/html', 'kb_lib/windowChannel', 'kb_lib/httpUtils'], function (ht
                     iframe({
                         id: this.id,
                         name: this.id,
+                        dataKBTesthookIframe: 'plugin-iframe',
                         dataParams: encodeURIComponent(JSON.stringify(params)),
                         style: {
                             width: '100%',
