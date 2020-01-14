@@ -1,0 +1,47 @@
+.Request {
+    /* flex: 1 1 0px;
+    display: flex;
+    flex-direction: column; */
+}
+
+.Request .requestType {
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.Request .groupRequest {
+    margin-bottom: 20px;
+    padding: 4px;
+    border: 1px rgba(150, 150, 150, 0.5) solid;
+    box-shadow: 4px 4px 4px gray;
+}
+
+.Request .requester {
+    font-weight: bold;
+    display: inline-block;
+}
+
+.Request .createdAt {
+    font-weight: bold;
+}
+
+.Request .expiresAt {
+    font-weight: bold;
+}
+
+.Request table.pendingRequestsTable {
+    width: 100%;
+}
+
+.Request table.pendingRequestsTable th {
+    width: 7em;
+    text-align: right;
+    font-weight: bold;
+    color: rgba(150, 150, 150, 1);
+    padding-right: 4px;
+}
+
+.Request table.pendingRequestsTable th,
+.Request table.pendingRequestsTable td {
+    vertical-align: top;
+}

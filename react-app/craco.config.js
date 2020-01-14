@@ -1,0 +1,49 @@
+const path = require('path');
+const CracoAntDesignPlugin = require('craco-antd');
+
+const esModules = ['kbase-ui-lib'].join('|');
+
+module.exports = {
+    jest: {
+        babel: {
+            addPresets: true,
+            addPlugins: true,
+            configure: (jestConfig, { env, paths, resolve, rootDir }) => {
+                // jestConfig.transformIgnorePatterns = [`<rootDir>/node_modules/(?!${esModules})`];
+                jestConfig.transformIgnorePatterns = ['[/\\\\]node_modules[/\\\\](?!kbase-ui-lib|kbase-ui-components|antd/).+\\.js$'];
+                jestConfig.rootDir = './src';
+                jestConfig.moduleFileExtensions = ['ts', 'tsx', 'json', 'js'];
+
+                return jestConfig;
+            }
+        }
+    },
+    plugins: [
+        {
+            plugin: CracoAntDesignPlugin,
+            options: {
+                // customizeThemeLessPath: path.join(__dirname, 'test-theme.less'),
+                customizeThemeLessPath: path.join(__dirname, 'node_modules/@kbase/ui-components/lib/custom/antd/theme.less'),
+                // Ugly, but ensures that the generated stylesheets are added to the browser after the
+                // original ant design ones. At the moment, I'm finding that ant design is loaded after they
+                // are.
+                styleLoaderOptions: {
+                    insert: 'body'
+                }
+                // customizeThemeLessPath: path.join(__dirname, 'node_modules/@kbase/ui-components/lib/custom/antd/theme.less')
+            }
+        }
+    ],
+    webpack: {
+        alias: {
+            react: path.resolve('./node_modules/react'),
+            redux: path.resolve('./node_modules/redux'),
+            'react-redux': path.resolve('./node_modules/react-redux')
+        }
+    },
+    devServer: {
+        watchOptions: {
+            poll: 1000
+        }
+    }
+};

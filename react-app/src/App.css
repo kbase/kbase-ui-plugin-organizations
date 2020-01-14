@@ -1,0 +1,18 @@
+.App {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.App-header {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.App-body {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}

@@ -1,0 +1,88 @@
+.Requests {
+    overflow-y: auto;
+}
+
+.Requests-tabPaneHeader {
+    font-weight: bold;
+    color: rgba(150, 150, 150, 1);
+    border-bottom: 2px rgba(150, 150, 150, 0.5) solid;
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+
+.Requests-tabPaneHeader:nth-child(1) {
+    margin-top: 0;
+}
+
+.Requests-pendingRequestsTable {
+    width: 100%;
+}
+
+.Requests-pendingRequestsTable th {
+    width: 7em;
+    text-align: right;
+    font-weight: bold;
+    color: rgba(150, 150, 150, 1);
+    padding-right: 4px;
+}
+
+.Requests-pendingRequestsTable th,
+.Requests-pendingRequestsTable td {
+    vertical-align: top;
+}
+
+/* ==== */
+
+.ManageGroupRequests {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ManageGroupRequests .requestType {
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.ManageGroupRequests .groupRequest {
+    margin-bottom: 20px;
+    padding: 4px;
+    border: 1px rgba(150, 150, 150, 0.5) solid;
+    box-shadow: 4px 4px 4px gray;
+}
+
+.ManageGroupRequests .createdAt {
+    font-weight: bold;
+}
+
+.ManageGroupRequests .expiresAt {
+    font-weight: bold;
+}
+
+.ManageGroupRequests .row {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.ManageGroupRequests .row .pendingCol {
+    flex: 1 1 0px;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ManageGroupRequests .row .historyCol {
+    flex: 1 1 0px;
+    margin-left: 10px;
+}
+
+.ManageGroupRequests .pendingCol .pendingRequests {
+    flex: 1 1 0px;
+    overflow-y: auto;
+}
+
+.ManageGroupRequests h2 {
+    text-align: center;
+    margin-top: 20px;
+}

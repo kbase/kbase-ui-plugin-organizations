@@ -1,0 +1,232 @@
+.NewOrganization {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.NewOrganization h3 {
+    padding: 8px;
+    /* border-bottom: 2px rgba(200, 200, 200, 0.8) solid; */
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.NewOrganization .mainRow {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    overflow-y: auto;
+}
+
+.NewOrganization .footerRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    border-top: 1px silver solid;
+}
+
+.NewOrganization .footerRow .col2 {
+    align-items: center;
+}
+
+.NewOrganization .editorColumn {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+}
+
+.NewOrganization .previewColumn {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.NewOrganization .editor,
+.NewOrganization .preview {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.NewOrganization .row {
+    flex: 0 0 auto;
+    min-height: 30px;
+    display: flex;
+    flex-direction: row;
+    margin: 4px 0;
+}
+
+.NewOrganization .col1 {
+    flex: 0 0 7em;
+    font-weight: bold;
+    text-align: left;
+}
+
+.NewOrganization .col2 {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.NewOrganization .editor input {
+    box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+}
+
+.NewOrganization .editor textarea {
+    flex: 1 1 0px;
+    box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+}
+
+.NewOrganization .editor .footer {
+    flex: 0 0 30px;
+    text-align: center;
+    padding: 6px;
+}
+
+.NewOrganization .editor .gravatarHash {
+    height: 64px;
+}
+
+.NewOrganization .preview .id {
+    font-family: monospace;
+}
+
+.NewOrganization .preview .description {
+    padding: 8px;
+    border: 1px rgba(200, 200, 200, 0.5) solid;
+    flex: 1 1 0px;
+    overflow-y: auto;
+    box-shadow: 4px 4px 4px rgba(200, 200, 200, 0.5);
+}
+
+.NewOrganization .preview .gravatarHash {
+    height: 64px;
+}
+
+.NewOrganization .validation-error {
+    /* border-bottom: 1px transparent solid; */
+}
+
+.NewOrganization input.validation-error,
+.NewOrganization textarea.validation-error {
+    border-bottom: 1px red solid;
+}
+
+.NewOrganization input.sync-dirty,
+.NewOrganization textarea.sync-dirty {
+    border-bottom: 1px orange solid;
+}
+
+/* New editor layout */
+
+.NewOrganization-editor {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top level grid */
+
+.NewOrganization-editorArea {}
+
+.NewOrganization-body {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.NewOrganization-row {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+}
+
+.NewOrganization-col1 {
+    flex: 0 0 10em;
+    margin-right: 5px;
+}
+
+.NewOrganization-col2 {
+    flex: 1 1 0px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.NewOrganization-col3 {
+    flex: 1 1 0px;
+    margin-left: 5px;
+}
+
+/* Form rows */
+
+.NewOrganization-formLabel {
+    flex: 0 0 10em;
+    font-weight: bold;
+    text-align: left;
+}
+
+.NewOrganization-formField {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.NewOrganization-formControl {
+    flex: 1 1 0px;
+}
+
+.NewOrganization-formFieldPreview {
+    flex: 0 0 auto;
+    margin-left: 4px;
+}
+
+/* individual fields */
+
+.NewOrganization-preview-name {}
+
+.NewOrganization-preview-researchInterests {
+    overflow-y: scroll;
+}
+
+.NewOrganization-control-researchInterests {
+    min-height: 5em;
+    max-height: 5em;
+}
+
+.NewOrganization-control-description {
+    min-height: 5em;
+    max-height: 15em;
+}
+
+.NewOrganization-preview-description {
+    overflow-y: scroll;
+}
+
+.NewOrganization-previewBox {
+    width: 30px;
+    height: 30px;
+    background-color: rgba(200, 200, 200, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* minWidth: '50em', maxWidth: '100em', margin: '0 auto' */
+
+.NewOrganization-main {
+    flex: 1 1 0px;
+    min-width: 50em;
+    max-width: 100em;
+    margin: 0 auto;
+}
+
+/* new editor layout ends */

@@ -7,17 +7,22 @@
         "doc": "docs"
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build-plugin": "bash scripts/build-plugin.bash",
+        "install-plugin": "node scripts/install-plugin.js"
     },
     "repository": {
         "type": "git",
         "url": "git+ssh://git@github.com/eapearson/kbase-ui-plugin-organizations.git"
     },
     "author": "",
-    "license": "ISC",
+    "license": "SEE LICENSE IN LICENSE",
     "bugs": {
         "url": "https://github.com/eapearson/kbase-ui-plugin-organizations/issues"
     },
     "homepage": "https://github.com/eapearson/kbase-ui-plugin-organizations#readme",
-    "devDependencies": {}
+    "devDependencies": {
+        "bluebird": "3.7.2",
+        "tar": "5.0.5",
+        "fs-extra": "8.1.0"
+    }
 }
