@@ -1,0 +1,10 @@
+.ViewInaccessiblePrivateOrganization {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewInaccessiblePrivateOrganization-message {
+    width: 50em;
+    margin: 20px auto important !;
+}

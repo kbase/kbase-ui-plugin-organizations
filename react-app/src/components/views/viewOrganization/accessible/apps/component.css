@@ -1,0 +1,46 @@
+.Apps {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.Apps-buttonRow {
+    flex: 0 0 auto;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.Apps-searchRow {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.Apps-browseRow {
+    flex: 1 1 0px;
+    overflow-y: auto;
+}
+
+.Apps-searchInput {
+    flex: 1 1 0px;
+}
+
+.Apps-searchControls {
+    flex: 0 0 auto;
+    margin-left: 5px;
+}
+
+.Apps-appRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.Apps-appColumn {
+    flex: 1 1 0px;
+}
+
+.Apps-menuColumn {
+    flex: 0 0 1.5em;
+}

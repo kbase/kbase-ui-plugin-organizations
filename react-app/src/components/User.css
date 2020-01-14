@@ -1,0 +1,23 @@
+.User {
+    display: flex;
+    flex-direction: row;
+}
+
+.User .avatarCol {
+    flex: 0 0 auto;
+    margin-right: 4px;
+    padding-top: 4px;
+}
+
+.User .infoCol {
+    flex: 1 1 0px;
+}
+
+.User .infoCol .name {
+    font-size: 100%;
+    font-weight: bold;
+}
+
+.User .infoCol .location {}
+
+.User .infoCol .organization {}

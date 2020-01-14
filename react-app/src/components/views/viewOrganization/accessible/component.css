@@ -1,0 +1,248 @@
+.ViewOrganization {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization-mainRow {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.ViewOrganization-mainRow>.mainColumn {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+}
+
+.ViewOrganization-orgRow {
+    /* flex: 0 0 auto; */
+    display: flex;
+    flex-direction: column;
+    border: 1px rgba(200, 200, 200, 0.3) solid;
+    padding: 4px;
+}
+
+.ViewOrganization-infoColumn {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    min-height: 0;
+    width: 30em;
+}
+
+.ViewOrganization-infoTable {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.ViewOrganization-infoTable>.row {
+    flex: 0 0 auto;
+    min-height: 20px;
+    display: flex;
+    flex-direction: row;
+    /* height: 30px; */
+    margin-bottom: 8px;
+}
+
+.ViewOrganization-infoTable>.row>.col0 {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization-ownerTable {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 4px;
+}
+
+.ViewOrganization-ownerTable>.avatarCol {
+    flex: 0 0 60px;
+}
+
+.ViewOrganization-ownerTable>.proprietorCol {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    padding-left: 4px;
+}
+
+.ViewOrganization-ownerTable .owner {
+    font-weight: bold;
+}
+
+.ViewOrganization-infoTable>.row>.col1 {
+    flex: 0 0 8em;
+    font-weight: bold;
+    text-align: left;
+    color: rgba(100, 100, 100, 1);
+}
+
+.ViewOrganization-infoTable>.row>.col2 {}
+
+.ViewOrganization-adminTasksBox {
+    margin-bottom: 20px;
+}
+
+.ViewOrganization-infoBox {
+    margin-bottom: 20px;
+}
+
+.ViewOrganization .ant-card .ant-card-head {
+    padding: 0 6px;
+}
+
+.ViewOrganization .ant-card .ant-card-head .anticon {
+    margin-right: 4px;
+}
+
+.membersCard.ant-card .ant-card-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/*
+    To make the narratives card scrollable when stretched to bottom of viewport
+    For some browsers - FF specifically - but actually makes this usage compliant
+    to css.
+*/
+
+.ViewOrganization-titleCount {
+    color: rgba(200, 200, 200, 1);
+    margin-left: 4px;
+}
+
+.ViewOrganization-tabs.ant-tabs {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.ViewOrganization-tabs .ant-tabs-content {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* WTF yuck! ant design sets the flex direction within tab content to row, for some reason. 
+   No direct method to override?
+*/
+
+.ViewOrganization-tabs.ant-tabs .ant-tabs-top-content.ant-tabs-content-animated {
+    flex-direction: column;
+}
+
+.ViewOrganization-tabs .ant-tabs-tabpane.ant-tabs-tabpane-active {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.ViewOrganization-tabs.ant-tabs .ant-tabs-nav .ant-tabs-tab-active {
+    font-weight: normal;
+}
+
+.ViewOrganization-tabCount {
+    color: rgba(200, 200, 200, 1);
+}
+
+.ViewOrganization-tabPaneHeader {
+    font-weight: bold;
+    color: rgba(150, 150, 150, 1);
+    border-bottom: 2px rgba(150, 150, 150, 0.5) solid;
+}
+
+.ViewOrganization-tabs.ant-tabs .ant-tabs-small-bar .ant-tabs-tab {
+    padding: 4px;
+    margin-right: 10px;
+}
+
+.ViewOrganization-tabPaneToolbar {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.ViewOrganization-org {}
+
+.ViewOrganization-org-description {
+    overflow-y: auto;
+}
+
+/* ACCORDION */
+
+.ViewOrganization-accordionOpen {
+    flex: 4 1 0px;
+}
+
+.ViewOrganization-accordionClosed {
+    flex: 1 1 0px;
+}
+
+.ViewOrganization-accordion {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+}
+
+.ViewOrganization-accordionCol1,
+.ViewOrganization-accordionCol3 {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization-accordionRow1,
+.ViewOrganization-accordionRow3 {
+    flex: 0 0 10px;
+}
+
+.ViewOrganization-accordionRow2 {
+    flex: 0 0 1em;
+    background-color: rgba(200, 200, 200, 0.3);
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization-accordion:hover .ViewOrganization-accordionRow2 {
+    background-color: rgba(200, 200, 200, 0.8);
+}
+
+.ViewOrganization-accordionCol2 {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization-accordionIcon {
+    flex: 1 1 0px;
+}
+
+.ViewOrganization-membersCol {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ViewOrganization-invitationPendingCard {
+    background-color: rgba(166, 255, 170, 0.3);
+    /* border: 1px blue solid; */
+    padding: 4px;
+}
+
+.ViewOrganization-organizationBox {
+    border: 1px rgba(200, 200, 200, 0.5) solid;
+    background-color: rgba(200, 200, 200, 0.3);
+    border-radius: 4px;
+    padding: 4px;
+}

@@ -1,0 +1,56 @@
+.ManageRelatedOrganizations {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ManageRelatedOrganizations-toolbar {
+    flex: 0 0 auto;
+    padding: 4px;
+    text-align: right;
+}
+
+.ManageRelatedOrganizations-main {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.ManageRelatedOrganizations-availableOrgs {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    margin-right: 5px;
+}
+
+.ManageRelatedOrganizations-organizations {
+    flex: 1 1 0px;
+    overflow-y: auto;
+}
+
+.ManageRelatedOrganizations-relatedOrgs {
+    flex: 1 1 0px;
+    margin-left: 5px;
+}
+
+.ManageRelatedOrganizations-availableOrganization {
+    cursor: pointer;
+}
+
+.ManageRelatedOrganizations-selectedOrganization {
+    border: 1px silver solid;
+    padding: 4px;
+    margin-bottom: 10px;
+}
+
+.ManageRelatedOrganizations-available-toolbar {
+    margin-bottom: 10px;
+}
+
+.ManageRelatedOrganizations-buttonBar {
+    text-align: center;
+}
+
+.ManageRelatedOrganizations-selected {
+    background-color: rgba(200, 200, 200, 0.5)
+}

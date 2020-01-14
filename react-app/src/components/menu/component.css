@@ -1,0 +1,47 @@
+.MainMenu {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 4px;
+    margin-top: 4px;
+}
+
+.MainMenu-menu {
+    flex: 0 0 auto;
+}
+
+.MainMenu-contextual {
+    flex: 0 0 40px;
+    font-weight: bold;
+    font-size: 100%;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+}
+
+.MainMenu-defaultCrumbs {
+    flex: 0 0 auto
+}
+
+.MainMenu-userColumn {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.MainMenu-breadcrumbs {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.MainMenu-buttons {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}

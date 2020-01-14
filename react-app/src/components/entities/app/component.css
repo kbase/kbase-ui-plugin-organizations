@@ -1,0 +1,35 @@
+.App {
+    /* border: 1px silver solid; */
+    padding: 4px;
+    margin: 4px 0;
+    display: flex;
+    flex-direction: row;
+}
+
+.App-name {
+    font-weight: bold;
+}
+
+.App-subtitle {
+    font-style: italic;
+}
+
+.App-moduleName {
+    font-style: normal;
+}
+
+.App-controlCol {
+    flex: 0 0 auto;
+}
+
+.App-iconCol {
+    flex: 0 0 40px;
+}
+
+.App-appCol {
+    flex: 1 1 0px;
+}
+
+.App-icon {
+    width: '30px'
+}

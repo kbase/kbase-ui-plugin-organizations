@@ -1,0 +1,38 @@
+.Owner {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.Owner-avatarCol {
+    flex: 0 0 auto;
+    margin-right: 4px;
+}
+
+.Owner-infoCol {
+    flex: 1 1 0px;
+}
+
+.Owner-name {
+    font-size: 100%;
+    /* font-weight: bold; */
+}
+
+.Owner-controlCol {
+    flex: 0 0 auto;
+}
+
+.Owner-location {}
+
+.Owner-organization {}
+
+.Owner-username {
+    font-style: italic;
+}
+
+.Owner-owner {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
