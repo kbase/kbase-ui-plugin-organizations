@@ -2,9 +2,13 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from '../index';
 import { AnError } from '../../../lib/error';
-import { StoreState, ViewOrgViewModelKind, SelectableRelatableOrganization } from '../../../types';
+import { StoreState } from '../../../types';
 import * as orgModel from '../../../data/models/organization/model';
 import { makeError } from '../../../combo/error/api';
+import { SelectableRelatableOrganization } from '../../../types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import { SubViewKind } from '../../../types/views/Main/views/ViewOrg';
+import { extractViewOrgSubView, extractViewOrgModelPlus } from '../../../lib/stateExtraction';
+import { AsyncModelState } from '../../../types/common';
 
 export interface Load extends Action<ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_LOAD> {
     type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_LOAD;
@@ -28,32 +32,29 @@ export interface Unload extends Action<ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANI
     type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_UNLOAD;
 }
 
+function ensureViewModel(state: StoreState) {
+    const subView = extractViewOrgSubView(state);
+
+    if (subView.kind !== SubViewKind.MANAGE_RELATED_ORGS) {
+        throw new Error('Wrong subview');
+    }
+
+    if (subView.model.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Wrong async state');
+    }
+
+    return subView.model.value;
+}
+
 export function load() {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch({
             type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_LOAD_START
         } as LoadStart);
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: { viewModel }
-            }
-        } = getState();
+        const { viewModel: { organization }, username, token, config } = extractViewOrgModelPlus(getState());
+        // const { organization } = ensureViewModel(getState());
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            throw new Error('view is not normal');
-        }
-        const { organization } = viewModel;
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
@@ -131,22 +132,9 @@ export function addOrganization(organizationId: orgModel.OrganizationID, related
             type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_ADD_ORGANIZATION_START
         } as AddOrganizationStart);
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: { viewModel }
-            }
-        } = getState();
+        const { username, token, config } = extractViewOrgModelPlus(getState());
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
 
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
@@ -197,22 +185,8 @@ export function removeOrganization(organizationId: orgModel.OrganizationID, rela
             type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_START
         } as RemoveOrganizationStart);
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: { viewModel }
-            }
-        } = getState();
+        const { username, token, config } = extractViewOrgModelPlus(getState());
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
@@ -281,25 +255,10 @@ export function search(query: string) {
             type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_START
         } as SearchStart);
 
-        const {
-            views: {
-                viewOrgView: { viewModel }
-            }
-        } = getState();
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            throw new Error('view is not normal');
-        }
-
-        const vm = viewModel.subViews.manageRelatedOrganizationsView.viewModel;
-        if (vm === null) {
-            throw new Error('vm is null');
-        }
+        const { availableOrganizations } = ensureViewModel(getState());
 
         try {
-            const availableOrgs = applyQuery(vm.availableOrganizations.organizations, query);
+            const availableOrgs = applyQuery(availableOrganizations.organizations, query);
 
             dispatch({
                 type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_SEARCH_SUCCESS,

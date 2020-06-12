@@ -2,14 +2,18 @@ import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
 
 import {
-    StoreState, EditState, SaveState, ValidationState, EditableOrganization
+    StoreState
 } from '../../../types';
 import {
-    addOrg, updateName, updateLogoUrl, updateId, updateDescription, updateIsPrivate, updateHomeUrl, updateResearchInterests
+    addOrg, updateName, updateLogoUrl, updateId, updateDescription,
+    updateIsPrivate, updateHomeUrl, updateResearchInterests
 } from '../../../redux/actions/addOrg';
 
 import Component from './component';
 import { AppError } from '@kbase/ui-components';
+import {
+    EditState, SaveState, ValidationState, EditableOrganization, AsyncModelState
+} from '../../../types/common';
 
 interface OwnProps {
 }
@@ -34,16 +38,36 @@ export interface DispatchProps {
 }
 
 export function mapStateToProps(state: StoreState): StateProps {
-    if (!state.views.addOrgView.viewModel) {
-        throw new Error('View model missing in state');
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Async model not loaded!');
     }
+
+    // if (state.view.value.kind !== ViewKind.ADD_ORG) {
+    //     throw new Error('Not in browse orgs view');
+    // }
+
+    if (state.view.value.views.addOrg.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Async model not loaded!');
+    }
+
+    // if (!state.views.addOrgView.viewModel) {
+    //     throw new Error('View model missing in state');
+    // }
+
     const {
-        views: {
-            addOrgView: {
-                viewModel: { editState, saveState, validationState, newOrganization, error }
+        view: {
+            value: {
+                views: {
+                    addOrg: {
+                        value: {
+                            editState, saveState, validationState, newOrganization, error
+                        }
+                    }
+                }
             }
         }
     } = state;
+
 
     return {
         editState,

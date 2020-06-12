@@ -2,8 +2,9 @@ import * as React from 'react';
 import './Owner.css';
 
 import Avatar from './Avatar';
-import { Icon, Tooltip, Button } from 'antd';
+import { Tooltip, Button } from 'antd';
 import * as userModel from '../../data/models/user';
+import { CrownOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
 
 enum View {
     COMPACT = 0,
@@ -47,8 +48,8 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
     renderRole() {
         return (
             <span>
-                <Icon type="crown" /> owner
-        </span>
+                <CrownOutlined /> owner
+            </span>
         );
     }
 
@@ -77,13 +78,7 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
         );
         return (
             <div className="Owner-owner" >
-                {/* <div className="Owner-controlCol">
-                    <a onClick={this.onToggleView.bind(this)}
-                        className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
-                    >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
-                    </a>
-                </div> */}
+
                 {this.renderAvatar()}
 
                 <div className="Owner-infoCol">
@@ -114,7 +109,7 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                         size="small"
                         onClick={this.onToggleView.bind(this)}
                     >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                        {this.state.view === View.NORMAL ? <UpOutlined /> : <DownOutlined />}
                     </Button>
                 </div>
                 <div className="Owner-avatarCol">
@@ -127,16 +122,6 @@ export default class Owner extends React.Component<OwnerProps, OwnerState> {
                     <div className="Owner-username">
                         {this.props.user.username}
                     </div>
-                    {/* <div className="role">
-                        {this.renderRole()}
-                    </div> */}
-                    {/* <div className="joinedAt">
-                        <span className="field-label">joined</span>{' '}{Intl.DateTimeFormat('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                        }).format(this.props.member.joinedAt)}
-                    </div> */}
                     <div className="Owner-title">
                         {this.props.user.title || <i>no title in user profile</i>}
                     </div>

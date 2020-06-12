@@ -1,16 +1,18 @@
 import * as React from 'react';
 
-import { AddOrgView, ComponentLoadingState, StoreState } from '../../../types';
+import { StoreState } from '../../../types';
 import Container from './container';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import * as actions from '../../../redux/actions/addOrg';
 import { AppError } from '@kbase/ui-components';
+import { AsyncModelState } from '../../../types/common';
+import { AddOrgViewModel } from '../../../types/views/Main/views/AddOrg';
 
 
 interface LoaderProps {
-    view: AddOrgView;
+    viewModel: AddOrgViewModel;
     onLoad: () => void;
     onUnload: () => void;
 }
@@ -20,8 +22,6 @@ interface LoaderState {
 }
 
 class Loader extends React.Component<LoaderProps, LoaderState> {
-
-
     renderLoading() {
         return (
             <div>
@@ -42,21 +42,21 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
     }
 
     render() {
-        switch (this.props.view.loadingState) {
-            case ComponentLoadingState.NONE:
+        switch (this.props.viewModel.loadingState) {
+            case AsyncModelState.NONE:
                 return this.renderLoading();
-            case ComponentLoadingState.LOADING:
+            case AsyncModelState.LOADING:
                 return this.renderLoading();
-            case ComponentLoadingState.ERROR:
-                if (this.props.view.error) {
-                    return this.renderError(this.props.view.error);
+            case AsyncModelState.ERROR:
+                if (this.props.viewModel.error) {
+                    return this.renderError(this.props.viewModel.error);
                 } else {
                     return this.renderError({
                         code: 'Missing Error',
                         message: 'The error appears to be missing'
                     });
                 }
-            case ComponentLoadingState.SUCCESS:
+            case AsyncModelState.SUCCESS:
             default:
                 return (
                     <Container />
@@ -65,8 +65,8 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
     }
 
     componentDidMount() {
-        switch (this.props.view.loadingState) {
-            case ComponentLoadingState.NONE:
+        switch (this.props.viewModel.loadingState) {
+            case AsyncModelState.NONE:
                 // should only appear briefly as the LOAD event is processed.
                 this.props.onLoad();
         }
@@ -86,7 +86,7 @@ export interface OwnProps {
 }
 
 interface StateProps {
-
+    viewModel: AddOrgViewModel;
 }
 
 interface DispatchProps {
@@ -95,8 +95,30 @@ interface DispatchProps {
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Async model not loaded!');
+    }
+
+    // if (state.view.value.kind !== ViewKind.ADD_ORG) {
+    //     throw new Error('Not in browse orgs view');
+    // }
+
+    // if (state.view.value.model.loadingState !== AsyncModelState.SUCCESS) {
+    //     throw new Error('Async model not loaded!');
+    // }
+
+    const {
+        view: {
+            value: {
+                views: {
+                    addOrg
+                }
+            }
+        }
+    } = state;
+
     return {
-        view: state.views.addOrgView
+        viewModel: addOrg
     };
 }
 

@@ -4,14 +4,17 @@ import { ActionFlag } from '../index';
 import * as orgModel from '../../../data/models/organization/model';
 import * as appsModel from '../../../data/models/apps';
 import {
-    StoreState, ViewOrgViewModelKind, SelectableApp,
-    ResourceRelationToOrg, ViewOrgViewModel, AddAppsViewModel
+    StoreState
 } from '../../../types';
 import { AnError } from '../../../combo/error/api';
 import { makeError } from '../../../lib/error';
 import { NarrativeMethodStoreClient } from '../../../data/apis/narrativeMethodStore';
 import { RequestResourceType, RequestType } from '../../../data/models/requests';
 import * as viewOrgActions from '../viewOrg';
+import { extractViewOrgModelPlus, extractViewOrgModel, extractViewOrgSubView } from '../../../lib/stateExtraction';
+import { ResourceRelationToOrg, SelectableApp } from '../../../types/views/Main/views/ViewOrg/views/AddApp';
+import { SubViewKind } from '../../../types/views/Main/views/ViewOrg';
+import { AsyncModelState } from '../../../types/common';
 
 export interface AddAppsAction extends Action {
 
@@ -77,62 +80,19 @@ export function load() {
     return async (dispatch: ThunkDispatch<StoreState, void, AddAppsAction>, getState: () => StoreState) => {
         dispatch(loadStart());
 
-        const state = getState();
-
-        // get the org, with the usual funny business.
-        const {
-            views: {
-                viewOrgView: {
-                    viewModel
+        const { viewModel, username, token, config: {
+            services: {
+                NarrativeMethodStore: {
+                    url: narrativeMethodStoreURL
                 }
             }
-        } = state;
-
-        if (!viewModel) {
-            dispatch(loadError(makeError({
-                code: 'load-error',
-                message: 'Error loading: no org view model'
-            })));
-            return;
-        }
-
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            dispatch(loadError(makeError({
-                code: 'load-error',
-                message: 'Error loading: no org view model'
-            })));
-            return;
-        }
-
-        const { organization } = viewModel;
-
-        if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
-            dispatch(loadError(makeError({
-                code: 'load-error',
-                message: 'Error loading: not normal org'
-            })));
-            return;
-        }
+        } } = extractViewOrgModelPlus(getState());
 
         // get all apps. we can do this because there 
         // are not very many. 
         // TODO: switch to search, not filter, model; this
         // implies paging, sorting, etc. on the back end.
-        const {
-            auth: { userAuthorization },
-            app: {
-                config: {
-                    services: {
-                        NarrativeMethodStore: {
-                            url: narrativeMethodStoreURL
-                        }
-                    }
-                } } } = state;
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
 
         const nmsClient = new NarrativeMethodStoreClient({
             url: narrativeMethodStoreURL,
@@ -170,7 +130,7 @@ export function load() {
         try {
             const methods = await nmsClient.list_methods({ tag: 'release' });
 
-            const appResources = organization.apps;
+            const appResources = viewModel.organization.apps;
 
             const apps = methods
                 .filter((method) => {
@@ -234,44 +194,24 @@ export function selectSuccess(selectedApp: SelectableApp): SelectSuccess {
     };
 }
 
-function ensureViewModel(state: StoreState): [ViewOrgViewModel, AddAppsViewModel] {
-    const {
-        views: {
-            viewOrgView: {
-                viewModel
-            }
-        }
-    } = state;
+function ensureViewModel(state: StoreState) {
+    const subView = extractViewOrgSubView(state);
 
-    if (!viewModel) {
-        throw new Error('Error loading: no org view model');
+    if (subView.kind !== SubViewKind.ADD_APP) {
+        throw new Error('Wrong subview');
     }
 
-    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        throw new Error('View model not NORMAL kind');
+    if (subView.model.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Wrong async state');
     }
 
-    const {
-        subViews: {
-            addAppsView: {
-                viewModel: addAppsViewModel
-            }
-        }
-    } = viewModel;
-
-    if (addAppsViewModel === null) {
-        throw new Error('Error loading: no org subview model');
-    }
-
-    return [viewModel, addAppsViewModel];
+    return subView.model.value;
 }
 
 export function select(selectedAppId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, AddAppsAction>, getState: () => StoreState) => {
-        const state = getState();
-
         try {
-            const [, viewModel] = ensureViewModel(state);
+            const viewModel = ensureViewModel(getState());
 
             // now to the actual work...
             // get the apps;
@@ -341,7 +281,7 @@ export function RequestAssociationError(error: AnError): RequestAssociationError
 export function requestAssociation(appId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, AddAppsAction>, getState: () => StoreState) => {
         try {
-            const [orgViewModel,] = ensureViewModel(getState());
+            const orgViewModel = extractViewOrgModel(getState());
 
             // do the association request
 
@@ -510,7 +450,7 @@ export function search(searchBy: string) {
                 return new RegExp(term, 'i');
             });
 
-            const [, viewModel] = ensureViewModel(getState());
+            const viewModel = ensureViewModel(getState());
 
             const {
                 rawApps
@@ -541,6 +481,7 @@ export interface SortStart {
 
 export interface SortSuccess {
     type: ActionFlag.VIEW_ORG_ADD_APPS_SORT_SUCCESS;
+    sortBy: string;
     apps: Array<SelectableApp>;
 }
 
@@ -555,9 +496,10 @@ function sortStart(): SortStart {
     };
 }
 
-function sortSuccess(apps: Array<SelectableApp>): SortSuccess {
+function sortSuccess(sortBy: string, apps: Array<SelectableApp>): SortSuccess {
     return {
         type: ActionFlag.VIEW_ORG_ADD_APPS_SORT_SUCCESS,
+        sortBy,
         apps
     };
 }
@@ -570,6 +512,7 @@ function sortError(error: AnError): SortError {
 }
 
 function applySort(apps: Array<SelectableApp>, sortBy: string) {
+    console.log('applying sort...', sortBy);
     switch (sortBy) {
         case 'name':
             return apps.sort((a, b) => {
@@ -593,16 +536,17 @@ export function sort(sortBy: string) {
         try {
             dispatch(sortStart());
 
-            const [, viewModel] = ensureViewModel(getState());
+            const viewModel = ensureViewModel(getState());
 
             const {
                 apps
             } = viewModel;
 
             // TODO: better parser
+            console.log('about to apply sort...');
             const sortedApps = applySort(apps.slice(0), sortBy);
 
-            dispatch(sortSuccess(sortedApps));
+            dispatch(sortSuccess(sortBy, sortedApps));
         } catch (ex) {
             dispatch(sortError(makeError({
                 code: 'error',

@@ -6,7 +6,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../types';
 import * as actions from '../../../redux/actions/entities';
-import { Icon } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface LoaderProps {
     appId: appModel.AppID;
@@ -30,7 +30,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
         } else {
             return (
                 <div>
-                    <Icon type="loading" /> Loading App...
+                    <LoadingOutlined /> Loading App...
                 </div>
             );
         }

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as orgModel from '../../../../../data/models/organization/model';
-import { Alert, Menu, Icon, Dropdown, Modal, Input, Select } from 'antd';
+import { Alert, Menu, Dropdown, Modal, Input, Select } from 'antd';
 import Member from '../../../../entities/MemberContainer';
 import './component.css';
+import { UnlockOutlined, DeleteOutlined, UserOutlined, EllipsisOutlined } from '@ant-design/icons';
 
 export interface MembersProps {
     organization: orgModel.Organization;
@@ -111,17 +112,17 @@ export default class Members extends React.Component<MembersProps, MembersState>
         const menu = (
             <Menu onClick={({ key }) => { this.onMemberMenu.call(this, key, member); }}>
                 <Menu.Item key="promoteToAdmin" >
-                    <Icon type="unlock" />Promote to Admin
+                    <UnlockOutlined />Promote to Admin
                 </Menu.Item>
                 <Menu.Item key="removeMember" >
-                    <Icon type="delete" />Remove Member
+                    <DeleteOutlined />Remove Member
                 </Menu.Item>
             </Menu>
         );
         return (
             <div>
                 <Dropdown overlay={menu} trigger={['click']}>
-                    <Icon type="ellipsis" className="IconButton-hover" />
+                    <EllipsisOutlined className="IconButton-hover" />
                 </Dropdown>
             </div>
         );
@@ -131,14 +132,14 @@ export default class Members extends React.Component<MembersProps, MembersState>
         const menu = (
             <Menu onClick={({ key }) => { this.onAdminMenu.call(this, key, member); }}>
                 <Menu.Item key="demoteToMember">
-                    <Icon type="user" />Demote to Member
+                    <UserOutlined />Demote to Member
                     </Menu.Item>
             </Menu>
         );
         return (
             <div>
                 <Dropdown overlay={menu} trigger={['click']}>
-                    <Icon type="ellipsis" className="IconButton-hover" />
+                    <EllipsisOutlined className="IconButton-hover" />
                 </Dropdown>
             </div>
         );

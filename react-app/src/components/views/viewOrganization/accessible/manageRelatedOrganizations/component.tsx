@@ -2,10 +2,11 @@ import React from 'react';
 
 import * as orgModel from '../../../../../data/models/organization/model';
 import './component.css';
-import { Button, Icon, Input, Alert } from 'antd';
+import { Button, Input, Alert } from 'antd';
 import AvailableOrganization from './AvailableOrganization';
 import BriefOrganization from '../../../../BriefOrganization';
-import { SelectableRelatableOrganization } from '../../../../../types';
+import { SelectableRelatableOrganization } from '../../../../../types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import { RollbackOutlined } from '@ant-design/icons';
 
 export interface ManageRelatedOrganizationsProps {
     organization: orgModel.Organization;
@@ -21,12 +22,9 @@ export interface ManageRelatedOrganizationsProps {
 }
 
 interface ManageRelatedOrganizationsState {
-
 }
 
 export default class ManageRelatedOrganizations extends React.Component<ManageRelatedOrganizationsProps, ManageRelatedOrganizationsState> {
-
-
     onAddSelectedOrganization() {
         if (!this.props.selectedOrganization) {
             return;
@@ -109,7 +107,7 @@ export default class ManageRelatedOrganizations extends React.Component<ManageRe
                 );
                 button = (
                     <Button
-                        type="danger"
+                        danger
                         disabled={this.props.selectedOrganization === null}
                         onClick={this.onRemoveSelectedOrganization.bind(this)}>
                         Remove Organization
@@ -142,8 +140,8 @@ export default class ManageRelatedOrganizations extends React.Component<ManageRe
         return (
             <div className="ManageRelatedOrganizations scrollable-flex-column">
                 <div className="ManageRelatedOrganizations-toolbar">
-                    <Button onClick={() => this.props.onFinish()} type="danger">
-                        <Icon type="rollback" />
+                    <Button onClick={() => this.props.onFinish()} danger>
+                        <RollbackOutlined />
                         {' '}
                         Done
                     </Button>

@@ -1,10 +1,10 @@
 
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid';
 
 interface ListenerParams {
     name: string,
     onSuccess: (payload: Payload) => void,
-    onError: (error: Error) => void
+    onError: (error: Error) => void;
 }
 
 class Listener {
@@ -22,7 +22,7 @@ class Listener {
 type Payload = any;
 
 interface WaitingListenerParams extends ListenerParams {
-    timeout?: number
+    timeout?: number;
 }
 
 class WaitingListener extends Listener {
@@ -37,8 +37,8 @@ class WaitingListener extends Listener {
 }
 
 interface Envelope {
-    channelId: string
-    id: string
+    channelId: string;
+    id: string;
 }
 
 class Message {
@@ -46,15 +46,15 @@ class Message {
     payload: any;
     id: string;
     created: Date;
-    channelId: string
-    envelope: Envelope | null
+    channelId: string;
+    envelope: Envelope | null;
 
-    constructor({ name, payload, channelId }: { name: string, payload: any, channelId: any }) {
-        this.name = name
-        this.payload = payload
-        this.id = uuidv4()
-        this.created = new Date()
-        this.channelId = channelId
+    constructor({ name, payload, channelId }: { name: string, payload: any, channelId: any; }) {
+        this.name = name;
+        this.payload = payload;
+        this.id = uuidv4();
+        this.created = new Date();
+        this.channelId = channelId;
         this.envelope = null;
     }
 
@@ -73,61 +73,61 @@ class Message {
 
 interface Handler {
     started: Date,
-    handler: (response: any) => any
+    handler: (response: any) => any;
 }
 
 interface ChannelParams {
     window?: Window,
     host?: string,
-    channelId?: string
+    channelId?: string;
 }
 
 export class Channel {
-    window: Window
-    host: string
-    id: string
-    awaitingResponse: Map<string, Handler>
-    waitingListeners: Map<string, Array<Listener>>
-    listeners: Map<string, Array<Listener>>
-    lastId: number
-    sentCount: number
-    receivedCount: number
-    unwelcomeReceivedCount: number
-    unwelcomeReceivedCountThreshhold: number
-    unwelcomeReceiptWarning: boolean
-    unwelcomeReceiptWarningCount: number
-    currentListener: ((message: MessageEvent) => void) | null
+    window: Window;
+    host: string;
+    id: string;
+    awaitingResponse: Map<string, Handler>;
+    waitingListeners: Map<string, Array<Listener>>;
+    listeners: Map<string, Array<Listener>>;
+    lastId: number;
+    sentCount: number;
+    receivedCount: number;
+    unwelcomeReceivedCount: number;
+    unwelcomeReceivedCountThreshhold: number;
+    unwelcomeReceiptWarning: boolean;
+    unwelcomeReceiptWarningCount: number;
+    currentListener: ((message: MessageEvent) => void) | null;
 
     constructor(params: ChannelParams) {
         // The given window upon which we will listen for messages.
-        this.window = params.window || window
+        this.window = params.window || window;
 
         // The host for the window; required for postmessage
         if (this.window.document === null) {
-            throw new Error('No document')
+            throw new Error('No document');
         }
         if (this.window.document.location === null) {
-            throw new Error('No location')
+            throw new Error('No location');
         }
         this.host = params.host || this.window.document.location.origin;
 
         // The channel id. Used to filter all messages received to
         // this channel.
-        this.id = params.channelId || uuidv4()
+        this.id = params.channelId || uuidv4();
 
-        this.awaitingResponse = new Map<string, Handler>()
-        this.waitingListeners = new Map<string, Array<Listener>>()
-        this.listeners = new Map<string, Array<Listener>>()
+        this.awaitingResponse = new Map<string, Handler>();
+        this.waitingListeners = new Map<string, Array<Listener>>();
+        this.listeners = new Map<string, Array<Listener>>();
 
-        this.lastId = 0
-        this.sentCount = 0
-        this.receivedCount = 0
+        this.lastId = 0;
+        this.sentCount = 0;
+        this.receivedCount = 0;
 
-        this.unwelcomeReceivedCount = 0
-        this.unwelcomeReceivedCountThreshhold = 100
-        this.unwelcomeReceiptWarning = true
-        this.unwelcomeReceiptWarningCount = 0
-        this.currentListener = null
+        this.unwelcomeReceivedCount = 0;
+        this.unwelcomeReceivedCountThreshhold = 100;
+        this.unwelcomeReceiptWarning = true;
+        this.unwelcomeReceiptWarningCount = 0;
+        this.currentListener = null;
     }
 
     genId() {
@@ -176,10 +176,10 @@ export class Channel {
         // within some window...
         if (message.envelope.id && this.awaitingResponse.has(message.envelope.id)) {
             try {
-                const response = this.awaitingResponse.get(message.envelope.id)
-                this.awaitingResponse.delete(message.envelope.id)
+                const response = this.awaitingResponse.get(message.envelope.id);
+                this.awaitingResponse.delete(message.envelope.id);
                 if (response) {
-                    response.handler(message.payload)
+                    response.handler(message.payload);
                 }
             } catch (ex) {
                 console.error('Error handling response for message ', message, ex);
@@ -190,8 +190,8 @@ export class Channel {
         // once.
 
         if (this.waitingListeners.has(message.name)) {
-            const awaiting = this.waitingListeners.get(message.name)!
-            this.waitingListeners.delete(message.name)
+            const awaiting = this.waitingListeners.get(message.name)!;
+            this.waitingListeners.delete(message.name);
             awaiting.forEach((listener) => {
                 try {
                     listener.onSuccess(message.payload);
@@ -224,9 +224,9 @@ export class Channel {
 
     listen(listener: Listener) {
         if (!this.listeners.has(listener.name)) {
-            this.listeners.set(listener.name, [])
+            this.listeners.set(listener.name, []);
         }
-        this.listeners.get(listener.name)!.push(listener)
+        this.listeners.get(listener.name)!.push(listener);
     }
 
     on(messageId: string, success: (payload: any) => any, error: (error: Error) => void) {
@@ -238,7 +238,7 @@ export class Channel {
     }
 
     sendMessage(message: Message) {
-        this.window.postMessage(message.getMessage(), this.host)
+        this.window.postMessage(message.getMessage(), this.host);
     }
 
     send(name: string, payload: Payload) {
@@ -250,7 +250,7 @@ export class Channel {
         this.awaitingResponse.set('message.id', {
             started: new Date(),
             handler: handler
-        })
+        });
 
         this.sendMessage(message);
     }
@@ -293,19 +293,19 @@ export class Channel {
                     }
                 });
                 if (newListeners.length === 0) {
-                    this.waitingListeners.delete(id)
+                    this.waitingListeners.delete(id);
                 }
             }
 
             if (this.waitingListeners.size > 0) {
-                this.startMonitor()
+                this.startMonitor();
             }
         }, 100);
     }
 
     listenOnce(listener: WaitingListener) {
         if (!this.waitingListeners.has(listener.name)) {
-            this.waitingListeners.set(listener.name, [])
+            this.waitingListeners.set(listener.name, []);
         }
         this.waitingListeners.get(listener.name)!.push(listener);
         if (listener.timeout) {

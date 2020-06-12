@@ -3,12 +3,15 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import * as orgModel from '../../../data/models/organization/model';
 import {
-    StoreState, SyncState, ValidationErrorType, ViewOrgViewModelKind, View, ManageMembershipViewModel
+    StoreState
 } from '../../../types';
 import { AnError, makeError } from '../../../lib/error';
 import Validation from '../../../data/models/organization/validation';
 import { ActionFlag } from '..';
 import * as viewOrgActions from '../viewOrg';
+import { extractViewOrgModelPlus, extractViewOrgSubView } from '../../../lib/stateExtraction';
+import { SyncState, ValidationErrorType, AsyncModelState } from '../../../types/common';
+import { SubViewKind } from '../../../types/views/Main/views/ViewOrg';
 
 // Loading
 
@@ -66,15 +69,7 @@ export function load(organizationId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(loadStart());
 
-        const {
-            auth: { userAuthorization },
-            app: { config }
-        } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { username, token, config } = extractViewOrgModelPlus(getState());
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
@@ -275,31 +270,18 @@ export interface EvaluateError extends Action<ActionFlag.VIEW_ORG_MANAGE_MEMBERS
     type: ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_EVALUATE_ERROR;
 }
 
-function ensureView(state: StoreState): View<ManageMembershipViewModel> {
-    const {
-        views: {
-            viewOrgView: { viewModel }
-        }
-    } = state;
-    if (viewModel === null) {
-        throw new Error('invalid state -- no view value');
-    }
-    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        throw new Error('invalid state -- no view value');
-    }
-    const { manageMembershipView } = viewModel.subViews;
-    if (manageMembershipView === null) {
-        throw new Error('invalid state -- no view value');
-    }
-    return manageMembershipView;
-}
+function ensureViewModel(state: StoreState) {
+    const subView = extractViewOrgSubView(state);
 
-function ensureViewModel(state: StoreState): ManageMembershipViewModel {
-    const view = ensureView(state);
-    if (view.viewModel === null) {
-        throw new Error('invalid state -- no view model');
+    if (subView.kind !== SubViewKind.MANAGE_MEMBERSHIP) {
+        throw new Error('Wrong subview');
     }
-    return view.viewModel;
+
+    if (subView.model.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Wrong async state');
+    }
+
+    return subView.model.value;
 }
 
 export function evaluate() {
@@ -431,23 +413,25 @@ export function demoteSelfToMemberError(error: AnError): DemoteSelfToMemberError
 export function demoteSelfToMember(organizationId: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(demoteToMemberStart());
+        const { username, token, config } = extractViewOrgModelPlus(getState());
+        const viewModel = ensureViewModel(getState());
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: { viewModel }
-            }
-        } = getState();
+        // const {
+        //     auth: { userAuthorization },
+        //     app: { config },
+        //     views: {
+        //         viewOrgView: { viewModel }
+        //     }
+        // } = getState();
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        // if (userAuthorization === null) {
+        //     throw new Error('Unauthorized');
+        // }
+        // const { token, username } = userAuthorization;
 
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
+        // if (viewModel === null) {
+        //     throw new Error('view is not populated');
+        // }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,

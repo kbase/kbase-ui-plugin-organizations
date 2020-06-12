@@ -5,6 +5,7 @@ import { AnError } from '../../../lib/error';
 import { StoreState } from '../../../types';
 import * as orgModel from '../../../data/models/organization/model';
 import { makeError } from '../../../combo/error/api';
+import { extractViewOrgModelPlus } from '../../../lib/stateExtraction';
 
 
 // Add Org
@@ -94,22 +95,8 @@ export function removeOrganization(organizationId: orgModel.OrganizationID, rela
             type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_START
         } as RemoveOrganizationStart);
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: { viewModel }
-            }
-        } = getState();
+        const { username, token, config } = extractViewOrgModelPlus(getState());
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,

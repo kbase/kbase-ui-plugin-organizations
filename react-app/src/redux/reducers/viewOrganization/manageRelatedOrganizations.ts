@@ -1,41 +1,79 @@
 import { Action } from 'redux';
 import * as actions from '../../actions/viewOrganization/manageRelatedOrganizations';
-import { StoreState, ViewOrgViewModelKind, ViewOrgSubViewKind, ViewState, SelectableRelatableOrganization } from '../../../types';
+import { StoreState } from '../../../types';
 import { ActionFlag } from '../../actions';
+import { SelectableRelatableOrganization } from '../../../types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import { AsyncModelState } from '../../../types/common';
+import { SubViewKind, ViewOrgViewModelKind } from '../../../types/views/Main/views/ViewOrg';
 
 export function loadSuccess(state: StoreState, action: actions.LoadSuccess): StoreState {
-    if (!state.views.viewOrgView.viewModel) {
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.kind !== SubViewKind.MANAGE_RELATED_ORGS) {
+        return state;
+    }
+
+    const {
+        view: {
+            value: {
+                views: {
+                    viewOrg: {
+                        value: {
+                            organization
+                        }
+                    }
+                }
+            }
+        }
+    } = state;
+
+
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    subViews: {
-                        ...state.views.viewOrgView.viewModel.subViews,
-                        manageRelatedOrganizationsView: {
-                            state: ViewState.OK,
-                            error: null,
-                            viewModel: {
-                                kind: ViewOrgSubViewKind.MANAGE_RELATED_ORGS,
-                                relatedOrganizations: state.views.viewOrgView.viewModel.organization.relatedOrganizations,
-                                organization: state.views.viewOrgView.viewModel.organization,
-                                availableOrganizations: {
-                                    organizations: action.organizations,
-                                    queried: action.organizations,
-                                    searchBy: ''
-                                },
-                                selectedOrganization: null
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            organization: {
+                                ...state.view.value.views.viewOrg.value.organization,
+                            },
+                            subView: {
+                                ...state.view.value.views.viewOrg.value.subView,
+                                model: {
+                                    loadingState: AsyncModelState.SUCCESS,
+                                    value: {
+                                        relatedOrganizations: organization.relatedOrganizations,
+                                        organization: organization,
+                                        availableOrganizations: {
+                                            organizations: action.organizations,
+                                            queried: action.organizations,
+                                            searchBy: ''
+                                        },
+                                        selectedOrganization: null
+                                    }
+                                }
                             }
                         }
-
                     }
                 }
             }
@@ -44,26 +82,47 @@ export function loadSuccess(state: StoreState, action: actions.LoadSuccess): Sto
 }
 
 export function unload(state: StoreState, action: actions.Unload): StoreState {
-    if (!state.views.viewOrgView.viewModel) {
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.kind !== SubViewKind.MANAGE_RELATED_ORGS) {
+        return state;
+    }
+
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    subViews: {
-                        ...state.views.viewOrgView.viewModel.subViews,
-                        manageRelatedOrganizationsView: {
-                            state: ViewState.NONE,
-                            error: null,
-                            viewModel: null
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            organization: {
+                                ...state.view.value.views.viewOrg.value.organization,
+                            },
+                            subView: {
+                                ...state.view.value.views.viewOrg.value.subView,
+                                model: {
+                                    loadingState: AsyncModelState.NONE
+                                }
+                            }
                         }
                     }
                 }
@@ -73,45 +132,89 @@ export function unload(state: StoreState, action: actions.Unload): StoreState {
 }
 
 export function selectOrganization(state: StoreState, action: actions.SelectOrganization): StoreState {
-    if (!state.views.viewOrgView.viewModel) {
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        return state;
-    }
-    if (state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel === null) {
-        return state;
-    }
-    const availableOrgs = state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.availableOrganizations;
 
-    const organizations = availableOrgs.organizations.map((relatedOrg: SelectableRelatableOrganization) => {
-        if (relatedOrg.organization.id === action.selectedOrganization.organization.id) {
-            relatedOrg.isSelected = true;
-        } else {
-            relatedOrg.isSelected = false;
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.kind !== SubViewKind.MANAGE_RELATED_ORGS) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.model.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
+    }
+
+    const {
+        view: {
+            value: {
+                views: {
+                    viewOrg: {
+                        value: {
+                            subView: {
+                                model: {
+                                    value: {
+                                        availableOrganizations
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-        return relatedOrg;
-    });
+    } = state;
+
+    const newAvailableOrgs = availableOrganizations.organizations
+        .map((relatedOrg: SelectableRelatableOrganization) => {
+            if (relatedOrg.organization.id === action.selectedOrganization.organization.id) {
+                relatedOrg.isSelected = true;
+            } else {
+                relatedOrg.isSelected = false;
+            }
+            return relatedOrg;
+        });
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    subViews: {
-                        ...state.views.viewOrgView.viewModel.subViews,
-                        manageRelatedOrganizationsView: {
-                            ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView,
-                            viewModel: {
-                                ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel,
-                                selectedOrganization: action.selectedOrganization,
-                                availableOrganizations: {
-                                    organizations: organizations,
-                                    queried: actions.applyQuery(organizations, availableOrgs.searchBy),
-                                    searchBy: availableOrgs.searchBy
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            organization: {
+                                ...state.view.value.views.viewOrg.value.organization,
+                            },
+                            subView: {
+                                ...state.view.value.views.viewOrg.value.subView,
+                                model: {
+                                    ...state.view.value.views.viewOrg.value.subView.model,
+                                    value: {
+                                        ...state.view.value.views.viewOrg.value.subView.model.value,
+                                        selectedOrganization: action.selectedOrganization,
+                                        availableOrganizations: {
+                                            ...state.view.value.views.viewOrg.value.subView.model.value.availableOrganizations,
+                                            organizations: newAvailableOrgs,
+                                            queried: actions.applyQuery(newAvailableOrgs, availableOrganizations.searchBy),
+                                            searchBy: availableOrganizations.searchBy
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -123,49 +226,93 @@ export function selectOrganization(state: StoreState, action: actions.SelectOrga
 }
 
 export function addOrganization(state: StoreState, action: actions.AddOrganizationSuccess): StoreState {
-    if (!state.views.viewOrgView.viewModel) {
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        return state;
-    }
-    if (state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel === null) {
-        return state;
-    }
-    const availableOrgs = state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.availableOrganizations;
-    const newRelatedOrgs = state.views.viewOrgView.viewModel.organization.relatedOrganizations.concat([action.organizationId]);
 
-    const newAvailableOrgs = availableOrgs.organizations.map((relatedOrg: SelectableRelatableOrganization) => {
-        if (newRelatedOrgs.includes(relatedOrg.organization.id)) {
-            relatedOrg.isRelated = true;
-        } else {
-            relatedOrg.isRelated = false;
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.kind !== SubViewKind.MANAGE_RELATED_ORGS) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.model.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
+    }
+
+    const {
+        view: {
+            value: {
+                views: {
+                    viewOrg: {
+                        value: {
+                            organization: { relatedOrganizations },
+                            subView: {
+                                model: {
+                                    value: {
+                                        availableOrganizations
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-        return relatedOrg;
-    });
+    } = state;
+
+    // const availableOrgs = state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.availableOrganizations;
+    const newRelatedOrgs = relatedOrganizations.concat([action.organizationId]);
+
+    const newAvailableOrgs = availableOrganizations.organizations
+        .map((relatedOrg: SelectableRelatableOrganization) => {
+            if (newRelatedOrgs.includes(relatedOrg.organization.id)) {
+                relatedOrg.isRelated = true;
+            } else {
+                relatedOrg.isRelated = false;
+            }
+            return relatedOrg;
+        });
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    organization: {
-                        ...state.views.viewOrgView.viewModel.organization,
-                        relatedOrganizations: newRelatedOrgs
-                    },
-                    subViews: {
-                        ...state.views.viewOrgView.viewModel.subViews,
-                        manageRelatedOrganizationsView: {
-                            ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView,
-                            viewModel: {
-                                ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel,
-                                availableOrganizations: {
-                                    organizations: newAvailableOrgs,
-                                    queried: actions.applyQuery(newAvailableOrgs, availableOrgs.searchBy),
-                                    searchBy: availableOrgs.searchBy
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            organization: {
+                                ...state.view.value.views.viewOrg.value.organization,
+                                relatedOrganizations: newRelatedOrgs
+                            },
+                            subView: {
+                                ...state.view.value.views.viewOrg.value.subView,
+                                model: {
+                                    ...state.view.value.views.viewOrg.value.subView.model,
+                                    value: {
+                                        ...state.view.value.views.viewOrg.value.subView.model.value,
+                                        availableOrganizations: {
+                                            ...state.view.value.views.viewOrg.value.subView.model.value.availableOrganizations,
+                                            organizations: newAvailableOrgs,
+                                            queried: actions.applyQuery(newAvailableOrgs, availableOrganizations.searchBy),
+                                            searchBy: availableOrganizations.searchBy
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -177,56 +324,94 @@ export function addOrganization(state: StoreState, action: actions.AddOrganizati
 }
 
 export function removeOrganization(state: StoreState, action: actions.RemoveOrganizationSuccess): StoreState {
-
-    if (!state.views.viewOrgView.viewModel) {
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
 
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
 
-    if (state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel === null) {
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
         return state;
     }
+
+    if (state.view.value.views.viewOrg.value.subView.kind !== SubViewKind.MANAGE_RELATED_ORGS) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.model.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
+    }
+
+    const {
+        view: {
+            value: {
+                views: {
+                    viewOrg: {
+                        value: {
+                            organization: { relatedOrganizations },
+                            subView: {
+                                model: {
+                                    value: {
+                                        availableOrganizations
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } = state;
 
     // Remove from the related orgs
-    const relatedOrgs = state.views.viewOrgView.viewModel.organization.relatedOrganizations.filter((organizationId: string) => {
+    const newRelatedOrgs = relatedOrganizations.filter((organizationId: string) => {
         return (organizationId !== action.organizationId);
     });
 
-    const availableOrgs = state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.availableOrganizations;
-
     // Update the related status of the org in the management interface.
-    const newAvailableOrgs = availableOrgs.organizations.filter((relatedOrg: SelectableRelatableOrganization) => {
-        if (relatedOrg.organization.id === action.organizationId) {
-            relatedOrg.isRelated = false;
-        }
-        return relatedOrg;
-    });
+    const newAvailableOrgs = availableOrganizations.organizations
+        .filter((relatedOrg: SelectableRelatableOrganization) => {
+            if (relatedOrg.organization.id === action.organizationId) {
+                relatedOrg.isRelated = false;
+            }
+            return relatedOrg;
+        });
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    organization: {
-                        ...state.views.viewOrgView.viewModel.organization,
-                        relatedOrganizations: relatedOrgs
-                    },
-                    subViews: {
-                        ...state.views.viewOrgView.viewModel.subViews,
-                        manageRelatedOrganizationsView: {
-                            ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView,
-                            viewModel: {
-                                ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel,
-                                availableOrganizations: {
-                                    organizations: newAvailableOrgs,
-                                    queried: actions.applyQuery(newAvailableOrgs, availableOrgs.searchBy),
-                                    searchBy: availableOrgs.searchBy
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            organization: {
+                                ...state.view.value.views.viewOrg.value.organization,
+                                relatedOrganizations: newRelatedOrgs
+                            },
+                            subView: {
+                                ...state.view.value.views.viewOrg.value.subView,
+                                model: {
+                                    ...state.view.value.views.viewOrg.value.subView.model,
+                                    value: {
+                                        ...state.view.value.views.viewOrg.value.subView.model.value,
+                                        availableOrganizations: {
+                                            ...state.view.value.views.viewOrg.value.subView.model.value.availableOrganizations,
+                                            organizations: newAvailableOrgs,
+                                            queried: actions.applyQuery(newAvailableOrgs, availableOrganizations.searchBy),
+                                            searchBy: availableOrganizations.searchBy
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -237,39 +422,55 @@ export function removeOrganization(state: StoreState, action: actions.RemoveOrga
     };
 }
 
-
 export function searchSuccess(state: StoreState, action: actions.SearchSuccess): StoreState {
-
-    if (!state.views.viewOrgView.viewModel) {
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
 
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
 
-    if (state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel === null) {
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.kind !== SubViewKind.MANAGE_RELATED_ORGS) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.model.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    subViews: {
-                        ...state.views.viewOrgView.viewModel.subViews,
-                        manageRelatedOrganizationsView: {
-                            ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView,
-                            viewModel: {
-                                ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel,
-                                availableOrganizations: {
-                                    ...state.views.viewOrgView.viewModel.subViews.manageRelatedOrganizationsView.viewModel.availableOrganizations,
-                                    queried: action.organizations,
-                                    searchBy: action.searchBy
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            subView: {
+                                ...state.view.value.views.viewOrg.value.subView,
+                                model: {
+                                    ...state.view.value.views.viewOrg.value.subView.model,
+                                    value: {
+                                        ...state.view.value.views.viewOrg.value.subView.model.value,
+                                        availableOrganizations: {
+                                            ...state.view.value.views.viewOrg.value.subView.model.value.availableOrganizations,
+                                            queried: action.organizations,
+                                            searchBy: action.searchBy
+                                        }
+                                    }
                                 }
                             }
                         }

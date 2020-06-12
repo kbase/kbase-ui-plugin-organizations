@@ -1,8 +1,11 @@
 import * as React from 'react';
-import { Alert, Button, Icon, Menu, Dropdown, Input, Select, Modal } from 'antd';
+import {
+    Alert, Button, Menu, Dropdown, Input, Select, Modal
+} from 'antd';
 import OrganizationNarrative from '../../../../OrganizationNarrative';
 import * as orgModel from '../../../../../data/models/organization/model';
 import './component.css';
+import { DeleteOutlined, EllipsisOutlined, PlusOutlined, FolderOpenOutlined } from '@ant-design/icons';
 
 export interface NarrativesProps {
     organization: orgModel.Organization;
@@ -79,7 +82,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
                         }}
                     >
                         <Menu.Item key="removeNarrative">
-                            <Icon type="delete" style={{ color: '#f5222d' }} /> Remove Narrative from Organization
+                            <DeleteOutlined style={{ color: '#f5222d' }} /> Remove Narrative from Organization
                         </Menu.Item>
                     </Menu>
                 );
@@ -89,7 +92,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
         }
         return (
             <Dropdown overlay={menu} trigger={['click']}>
-                <Icon type="ellipsis" className="IconButton-hover" />
+                <EllipsisOutlined className="IconButton-hover" />
             </Dropdown>
         );
     }
@@ -105,9 +108,6 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
                     placeholder="Filter narratives by title"
                     onChange={doChange}
                 />
-                {/* <Button>
-                    <Icon type="search" />
-                </Button> */}
             </div>
         );
     }
@@ -183,7 +183,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
                 className="Button-important"
                 onClick={this.onRequestAddNarrative.bind(this)}
             >
-                <Icon type="plus" /> Associate Narratives
+                <PlusOutlined /> Associate Narratives
             </Button>
         ];
 
@@ -295,7 +295,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
         // const narrativeCount = this.props.narratives.length
         const title = (
             <span className="ViewOrganization-Narratives-title">
-                <Icon type="folder-open" style={{ marginRight: '8px' }} />
+                <FolderOpenOutlined style={{ marginRight: '8px' }} />
                 Narratives{' '}
                 <span className="ViewOrganization-Narratives-titleCount">
                     ({this.props.organization.narrativeCount})

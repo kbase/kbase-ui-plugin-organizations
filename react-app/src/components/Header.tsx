@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './Header.css';
-import { Icon } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
+import { RightOutlined } from '@ant-design/icons';
 
 export interface HeaderProps {
     breadcrumbs: JSX.Element;
@@ -31,7 +31,7 @@ class Header extends React.Component<HeaderProps, HeaderState> {
     buildSeparator() {
         if (this.props.breadcrumbs) {
             return (
-                <Icon type="right" style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
+                <RightOutlined style={{ verticalAlign: 'middle', marginLeft: '4px', marginRight: '4px' }} />
             );
         }
     }

@@ -2,11 +2,11 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from '../index';
 import {
-    StoreState,
-    ViewOrgViewModelKind
+    StoreState
 } from '../../../types';
 import * as requestModel from '../../../data/models/requests';
 import { AnError, makeError } from '../../../lib/error';
+import { extractViewOrgModelPlus } from '../../../lib/stateExtraction';
 
 export interface CancelJoinRequest extends Action {
     type: ActionFlag.VIEW_ORG_CANCEL_JOIN_REQUEST;
@@ -32,42 +32,7 @@ export function cancelRequest(requestId: requestModel.RequestID) {
             type: ActionFlag.VIEW_ORG_CANCEL_JOIN_REQUEST_START
         });
 
-        const state = getState();
-
-        const viewModel = state.views.viewOrgView.viewModel;
-
-        if (viewModel === null) {
-            dispatch({
-                type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR,
-                error: {
-                    code: 'error',
-                    message: 'No view model'
-                }
-            });
-            return;
-        }
-
-        // argh
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            dispatch({
-                type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR,
-                error: {
-                    code: 'invalid state',
-                    message: 'Not the right kind of view model'
-                }
-            });
-            return;
-        }
-
-        const {
-            auth: { userAuthorization },
-            app: { config }
-        } = state;
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { viewModel, username, token, config } = extractViewOrgModelPlus(getState());
 
         const requestClient = new requestModel.RequestsModel({
             token, username,

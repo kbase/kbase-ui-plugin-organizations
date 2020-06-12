@@ -3,10 +3,11 @@ import * as React from 'react';
 import * as orgModel from '../data/models/organization/model';
 import * as requestModel from '../data/models/requests';
 import { NavLink } from 'react-router-dom';
-import { Tooltip, Icon } from 'antd';
+import { Tooltip } from 'antd';
 
 import './OrganizationBlock.css';
 import OrgLogo from './OrgLogo';
+import { StopOutlined, UserOutlined, UnlockOutlined, CrownOutlined, ExclamationCircleTwoTone } from '@ant-design/icons';
 
 export interface OrganizationBlockProps {
     organization: orgModel.Organization;
@@ -31,7 +32,7 @@ export default class OrganizationBlock extends React.Component<OrganizationBlock
         switch (relation.type) {
             case (orgModel.UserRelationToOrganization.NONE):
                 return (
-                    <span><Icon type="stop" />None</span>
+                    <span><StopOutlined />None</span>
                 );
             case (orgModel.UserRelationToOrganization.VIEW):
                 return (
@@ -40,17 +41,17 @@ export default class OrganizationBlock extends React.Component<OrganizationBlock
                         mouseEnterDelay={0.5}
                         title="You are not a member of this org, but you may access it; you may request membership"
                     >
-                        <span><Icon type="stop" /> You are not a member - view organization to join</span>
+                        <span><StopOutlined /> You are not a member - view organization to join</span>
                     </Tooltip>
                 );
             case (orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
-                return (<span><Icon type="user" style={{ color: 'orange' }} /> Your membership <b>request</b> is pending</span>);
+                return (<span><UserOutlined style={{ color: 'orange' }} /> Your membership <b>request</b> is pending</span>);
             case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
-                return (<span><Icon type="user" style={{ color: 'blue' }} /> You have been <b>invited</b> to join</span>);
+                return (<span><UserOutlined style={{ color: 'blue' }} /> You have been <b>invited</b> to join</span>);
             case (orgModel.UserRelationToOrganization.MEMBER):
-                return (<span><Icon type="user" /> You are a <b>member</b> of this organization</span>);
+                return (<span><UserOutlined /> You are a <b>member</b> of this organization</span>);
             case (orgModel.UserRelationToOrganization.ADMIN):
-                return (<span><Icon type="unlock" />Admin</span>);
+                return (<span><UnlockOutlined />Admin</span>);
             case (orgModel.UserRelationToOrganization.OWNER):
                 return (
                     <Tooltip
@@ -58,7 +59,7 @@ export default class OrganizationBlock extends React.Component<OrganizationBlock
                         mouseEnterDelay={0.5}
                         title="You own this org"
                     >
-                        <span><Icon type="crown" /> You are the <b>owner</b> of this Organization</span>
+                        <span><CrownOutlined /> You are the <b>owner</b> of this Organization</span>
                     </Tooltip>
                 );
         }
@@ -139,7 +140,7 @@ export default class OrganizationBlock extends React.Component<OrganizationBlock
         if (this.props.adminRequests.length > 0) {
             requestsPending = (
                 <div>
-                    <Icon type="exclamation-circle" theme="twoTone" twoToneColor="orange" />
+                    <ExclamationCircleTwoTone twoToneColor="orange" />
                     {' '}
                     there
                     {' '}
@@ -162,13 +163,13 @@ export default class OrganizationBlock extends React.Component<OrganizationBlock
         return (
             <div className="OrganizationBlock" key={org.id}>
                 <div className="avatarCol">
-                    <NavLink to={`/viewOrganization/${org.id}`}>
+                    <NavLink to={`/orgs/${org.id}`}>
                         {this.renderLogo(org)}
                     </NavLink>
                 </div>
                 <div className="bodyCol">
                     <div className="orgName">
-                        <NavLink to={`/viewOrganization/${org.id}`}>
+                        <NavLink to={`/orgs/${org.id}`}>
                             {org.name}
                         </NavLink>
                     </div>

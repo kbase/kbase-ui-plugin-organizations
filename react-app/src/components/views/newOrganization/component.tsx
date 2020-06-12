@@ -1,18 +1,19 @@
 import * as React from 'react';
 import { Redirect } from 'react-router-dom';
 import { Marked } from 'marked-ts';
-import { Button, Icon, Modal, Input, Checkbox, Tooltip, Collapse, Tabs } from 'antd';
+import { Button, Modal, Input, Checkbox, Tooltip, Collapse, Tabs } from 'antd';
 import md5 from 'md5';
-import {
-    EditableOrganization, SaveState, ValidationState, EditState,
-    Editable, ValidationErrorType, SyncState, EditableString,
-    EditableNullableString, EditableBoolean
-} from '../../../types';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import OrgLogo from '../../OrgLogo';
 import TextArea from 'antd/lib/input/TextArea';
 import './component.css';
 import { AppError } from '@kbase/ui-components';
+import {
+    EditState, SaveState, ValidationState, EditableOrganization,
+    ValidationErrorType, Editable, SyncState, EditableString,
+    EditableNullableString, EditableBoolean
+} from '../../../types/common';
+import { ExclamationCircleOutlined, LinkOutlined, LockOutlined, GlobalOutlined, QuestionOutlined, CloseOutlined, ExclamationOutlined, RollbackOutlined, SaveOutlined } from "@ant-design/icons";
 
 export interface NewOrganizationProps {
     editState: EditState,
@@ -201,7 +202,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="NewOrganization-col1">
                     <div className="NewOrganization-formLabel field-label">
                         <Tooltip title={tooltip}>
-                            Name
+                            <span>Name</span>
                         </Tooltip>
                     </div>
                 </div>
@@ -261,7 +262,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="NewOrganization-col1">
                     <div className="NewOrganization-formLabel field-label">
                         <Tooltip title={tooltip}>
-                            ID
+                            <span>ID</span>
                         </Tooltip>
                     </div>
                 </div>
@@ -328,7 +329,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="NewOrganization-col1">
                     <div className="NewOrganization-formLabel field-label">
                         <Tooltip title={tooltip}>
-                            Logo URL
+                            <span>Logo URL</span>
                         </Tooltip>
                     </div>
                 </div>
@@ -354,7 +355,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         const tooltipTitle = 'The Home URL is broken; either correct it or leave it empty';
         return (
             <Tooltip title={tooltipTitle}>
-                <Icon type="exclamation-circle" style={{ color: 'gray' }} />
+                <ExclamationCircleOutlined style={{ color: 'gray' }} />
             </Tooltip>
         );
     }
@@ -365,7 +366,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             return (
                 <div className="NewOrganization-previewBox">
                     <Tooltip title={tooltipTitle}>
-                        <Icon type="link" style={{ color: 'gray' }} />
+                        <LinkOutlined style={{ color: 'gray' }} />
                     </Tooltip>
                 </div>
             );
@@ -384,7 +385,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             <div className="NewOrganization-previewBox">
                 <Tooltip title={tooltipTitle} >
                     <a href={homeUrlField.value} target="_blank" rel="noopener noreferrer">
-                        <Icon type="link" />
+                        <LinkOutlined />
                     </a>
                 </Tooltip>
             </div>
@@ -423,7 +424,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                             </th>
                             <td>
                                 a full url. E.g. http://my.org/myimage.png<br />
-                                note that both <i>http></i> and <i>https</i> urls are accepted.
+                                note that both <i>http</i> and <i>https</i> urls are accepted.
                             </td>
                         </tr>
                     </tbody>
@@ -436,7 +437,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="NewOrganization-col1">
                     <div className="NewOrganization-formLabel field-label">
                         <Tooltip title={tooltip}>
-                            Home Page URL
+                            <span>Home Page URL</span>
                         </Tooltip>
                     </div>
                 </div>
@@ -524,7 +525,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="NewOrganization-col1">
                     <div className="NewOrganization-formLabel field-label">
                         <Tooltip title={tooltip}>
-                            Hidden?
+                            <span>Hidden?</span>
                         </Tooltip>
                     </div>
                 </div>
@@ -591,7 +592,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="NewOrganization-col1">
                     <div className="NewOrganization-formLabel field-label">
                         <Tooltip title={tooltip}>
-                            Research Interests
+                            <span>Research Interests</span>
                         </Tooltip>
                     </div>
                 </div>
@@ -600,7 +601,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
                         <TextArea value={researchInterestsField.value || ''}
                             className={this.calcFieldClass(researchInterestsField) + ' NewOrganization-control-researchInterests'}
-                            autosize={{ minRows: 2, maxRows: 2 }}
+                            autoSize={{ minRows: 2, maxRows: 2 }}
                             placeholder={placeholder}
                             onChange={onChange} />
                         {this.renderFieldError(researchInterestsField)}
@@ -660,7 +661,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                 <div className="NewOrganization-col1">
                     <div className="NewOrganization-formLabel field-label">
                         <Tooltip title={tooltip}>
-                            Description
+                            <span>Description</span>
                         </Tooltip>
                     </div>
                 </div>
@@ -670,7 +671,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                             <Tabs.TabPane tab="Editor" key="editor">
                                 <TextArea value={descriptionField.value || ''}
                                     className={this.calcFieldClass(descriptionField) + ' NewOrganization-control-description'}
-                                    autosize={{ minRows: 5, maxRows: 15 }}
+                                    autoSize={{ minRows: 5, maxRows: 15 }}
                                     placeholder={placeholder}
                                     onChange={onChange} />
                                 {this.renderFieldError(descriptionField)}
@@ -753,13 +754,13 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         if (isPrivate) {
             return (
                 <span>
-                    <Icon type="lock" />{' '}Hidden - will be visible <b>only</b> for members of this organization
+                    <LockOutlined />{' '}Hidden - will be visible <b>only</b> for members of this organization
                 </span>
             );
         }
         return (
             <span>
-                <Icon type="global" />{' '}Visible - will be visible to all KBase users.
+                <GlobalOutlined />{' '}Visible - will be visible to all KBase users.
             </span>
         );
     }
@@ -769,8 +770,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             const tooltipTitle = 'Add a logo url or complete the name and id fields for a Default logo';
             return (
                 <Tooltip title={tooltipTitle}>
-                    <Icon type="question" style={{ color: 'gray' }} />
-                    {/* <div style={{ height: '30px', width: '30px' }}></div> */}
+                    <QuestionOutlined style={{ color: 'gray' }} />
                 </Tooltip>
             );
         }
@@ -789,7 +789,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         const tooltipTitle = 'The Logo URL is broken; either correct it or empty the field for the default logo';
         return (
             <Tooltip title={tooltipTitle}>
-                <Icon type="exclamation-circle" style={{ color: 'gray' }} />
+                <ExclamationCircleOutlined style={{ color: 'gray' }} />
             </Tooltip>
         );
     }
@@ -880,7 +880,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
     renderSaveButton() {
         return (
-            <Button icon="save"
+            <Button icon={<SaveOutlined />}
                 type="primary"
                 form="newOrganizationForm"
                 key="submit"
@@ -893,8 +893,8 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
     renderCancelButton() {
         return (
-            <Button type="danger" onClick={this.onClickCancelToBrowser.bind(this)} >
-                <Icon type="close" />{' '}Close
+            <Button danger onClick={this.onClickCancelToBrowser.bind(this)} >
+                <CloseOutlined />{' '}Close
             </Button>
         );
     }
@@ -904,7 +904,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
         if (this.props.error) {
             errorButton = (
                 <span className="ButtonSet-button">
-                    <Button shape="circle" icon="exclamation" type="danger" onClick={this.toggleError.bind(this)}></Button>
+                    <Button shape="circle" icon={<ExclamationOutlined />} danger onClick={this.toggleError.bind(this)}></Button>
                 </span>
             );
         }
@@ -912,7 +912,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
             <div className="ButtonSet">
                 <span className="ButtonSet-button">
                     <Button type="default" onClick={this.onClickCancelToBrowser.bind(this)} >
-                        <Icon type="rollback" />{' '}Back
+                        <RollbackOutlined />{' '}Back
                     </Button>
                 </span>
                 <span className="ButtonSet-button">
@@ -925,12 +925,12 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
     render() {
         if (this.state.cancelToBrowser) {
-            return <Redirect push to="/organizations" />;
+            return <Redirect push to="/orgs" />;
         }
 
         // TODO: this is just a prop for today.
         if (this.props.saveState === SaveState.SAVED) {
-            return <Redirect push to={"/viewOrganization/" + this.props.newOrganization.id.value} />;
+            return <Redirect push to={"/orgs/" + this.props.newOrganization.id.value} />;
         }
 
         return (

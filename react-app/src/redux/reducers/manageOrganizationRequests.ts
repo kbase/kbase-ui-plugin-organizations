@@ -1,73 +1,56 @@
 import { Action } from 'redux';
 import * as actions from '../actions/manageOrganizationRequests';
-import { StoreState, ComponentLoadingState } from '../../types';
+import { StoreState } from '../../types';
 import { ActionFlag } from '../actions';
+import { AsyncModelState } from '../../types/common';
+import { ManageOrganizationRequestsViewModel } from '../../types/views/Main/views/ManageOrganizationRequests';
 
 export function loadStart(
-    state: StoreState,
-    action: actions.LoadStart): StoreState {
-    return state;
+    state: ManageOrganizationRequestsViewModel,
+    action: actions.LoadStart): ManageOrganizationRequestsViewModel {
+    return {
+        loadingState: AsyncModelState.LOADING
+    };
 }
 
 export function loadSuccess(
-    state: StoreState,
-    action: actions.LoadSuccess): StoreState {
+    state: ManageOrganizationRequestsViewModel,
+    action: actions.LoadSuccess): ManageOrganizationRequestsViewModel {
     return {
-        ...state,
-        views: {
-            ...state.views,
-            manageOrganizationRequestsView: {
-                loadingState: ComponentLoadingState.SUCCESS,
-                error: null,
-                viewModel: {
-                    organization: action.organization,
-                    requests: action.requests,
-                    invitations: action.invitations
-                },
-            }
+        loadingState: AsyncModelState.SUCCESS,
+        value: {
+            organization: action.organization,
+            requests: action.requests,
+            invitations: action.invitations
         }
     };
+
 }
 
 export function loadError(
-    state: StoreState,
-    action: actions.LoadError): StoreState {
+    state: ManageOrganizationRequestsViewModel,
+    action: actions.LoadError): ManageOrganizationRequestsViewModel {
     return {
-        ...state,
-        views: {
-            ...state.views,
-            manageOrganizationRequestsView: {
-                loadingState: ComponentLoadingState.ERROR,
-                error: action.error,
-                viewModel: null
-            }
-        }
-
+        loadingState: AsyncModelState.ERROR,
+        error: action.error
     };
 }
 
-export function unload(state: StoreState, action: actions.Unload): StoreState {
+export function unload(state: ManageOrganizationRequestsViewModel, action: actions.Unload): ManageOrganizationRequestsViewModel {
     return {
-        ...state,
-        views: {
-            ...state.views,
-            manageOrganizationRequestsView: {
-                loadingState: ComponentLoadingState.NONE,
-                error: null,
-                viewModel: null
-            }
-        }
+        loadingState: AsyncModelState.NONE,
     };
 }
 
-export function getViewAccessSuccess(state: StoreState, action: actions.GetViewAccessSuccess): StoreState {
+export function getViewAccessSuccess(state: ManageOrganizationRequestsViewModel, action: actions.GetViewAccessSuccess): ManageOrganizationRequestsViewModel {
     // Note: we use the state object rather than peeling off the viewModel because
     // TS can't trace the assertion (not falsy) of the variable back to the object 
     // property it was taken from.
-    if (!state.views.manageOrganizationRequestsView.viewModel) {
+    if (state.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
-    const requests = state.views.manageOrganizationRequestsView.viewModel.requests;
+
+    const requests = state.value.requests;
     const newRequests = requests.map((request) => {
         if (request.id === action.request.id) {
             return action.request;
@@ -77,22 +60,15 @@ export function getViewAccessSuccess(state: StoreState, action: actions.GetViewA
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            manageOrganizationRequestsView: {
-                ...state.views.manageOrganizationRequestsView,
-                viewModel: {
-                    // TODO: below, 
-                    ...state.views.manageOrganizationRequestsView.viewModel,
-                    requests: newRequests
-                }
-            }
+        value: {
+            ...state.value,
+            requests: newRequests
         }
     };
 }
 
 
-function reducer(state: StoreState, action: Action): StoreState | null {
+function localReducer(state: ManageOrganizationRequestsViewModel, action: Action): ManageOrganizationRequestsViewModel | null {
     switch (action.type) {
         case ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD_START:
             return loadStart(state, action as actions.LoadStart);
@@ -109,4 +85,38 @@ function reducer(state: StoreState, action: Action): StoreState | null {
     }
 }
 
-export default reducer;
+export default function reducer(state: StoreState, action: Action<any>): StoreState | null {
+    if (state.auth.userAuthorization === null) {
+        return null;
+    }
+
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        return null;
+    }
+
+    // if (state.view.value.kind !== ViewKind.MANAGE_ORGANIZATION_REQUESTS) {
+    //     return null;
+    // }
+
+    // if (state.view.value.model.loadingState !== AsyncModelState.SUCCESS) {
+    //     return state;
+    // }
+
+    const model = localReducer(state.view.value.views.manageRequests, action);
+    if (model) {
+        return {
+            ...state,
+            view: {
+                ...state.view,
+                value: {
+                    ...state.view.value,
+                    views: {
+                        ...state.view.value.views,
+                        manageRequests: model
+                    }
+                }
+            }
+        };
+    }
+    return null;
+}

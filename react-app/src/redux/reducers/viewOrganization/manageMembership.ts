@@ -1,26 +1,26 @@
 import { Action } from 'redux';
 import * as actions from '../../actions/viewOrganization/manageMembership';
 import {
-    StoreState, SyncState, ValidationStateOk, ValidationState, ValidationErrorType,
-    SaveState, EditState, ManageMembershipViewModel, ViewOrgViewModelKind, View, ViewState
+    StoreState
 } from '../../../types';
 import { ActionFlag } from '../../actions';
+import {
+    AsyncModelState, EditState, SaveState, ValidationStateOk, ValidationState, ValidationErrorType, SyncState, AsyncModel
+} from '../../../types/common';
+import { SubViewKind, ViewOrgViewModelKind } from '../../../types/views/Main/views/ViewOrg';
+import { ManageMembershipViewModel } from '../../../types/views/Main/views/ViewOrg/views/ManageMembership';
+import { EditableMemberProfile } from '../../../data/models/organization/model';
 
-export function loadStart(state: View<ManageMembershipViewModel>, action: actions.LoadStart): View<ManageMembershipViewModel> {
+export function loadStart(state: AsyncModel<ManageMembershipViewModel>, action: actions.LoadStart): AsyncModel<ManageMembershipViewModel> {
     return {
-        ...state,
-        state: ViewState.LOADING,
-        error: null,
-        viewModel: null
+        loadingState: AsyncModelState.LOADING
     };
 }
 
-export function loadSuccess(state: View<ManageMembershipViewModel>, action: actions.LoadSuccess): View<ManageMembershipViewModel> {
+export function loadSuccess(state: AsyncModel<ManageMembershipViewModel>, action: actions.LoadSuccess): AsyncModel<ManageMembershipViewModel> {
     return {
-        ...state,
-        state: ViewState.OK,
-        error: null,
-        viewModel: {
+        loadingState: AsyncModelState.SUCCESS,
+        value: {
             organization: action.organization,
             editableMemberProfile: action.editableMemberProfile,
             editState: EditState.UNEDITED,
@@ -30,24 +30,16 @@ export function loadSuccess(state: View<ManageMembershipViewModel>, action: acti
     };
 }
 
-export function loadError(state: View<ManageMembershipViewModel>, action: actions.LoadError): View<ManageMembershipViewModel> {
+export function loadError(state: AsyncModel<ManageMembershipViewModel>, action: actions.LoadError): AsyncModel<ManageMembershipViewModel> {
     return {
-        state: ViewState.ERROR,
-        error: action.error,
-        viewModel: null
+        loadingState: AsyncModelState.ERROR,
+        error: action.error
     };
 }
 
-export function unload(state: View<ManageMembershipViewModel>, action: actions.Unload): View<ManageMembershipViewModel> {
-    if (state.viewModel === null) {
-        return state;
-    }
-
+export function unload(state: AsyncModel<ManageMembershipViewModel>, action: actions.Unload): AsyncModel<ManageMembershipViewModel> {
     return {
-        ...state,
-        state: ViewState.NONE,
-        error: null,
-        viewModel: null
+        loadingState: AsyncModelState.NONE
     };
 }
 
@@ -59,24 +51,26 @@ function validationStateOk(): ValidationStateOk {
     return x;
 }
 
-export function updateTitleSuccess(state: View<ManageMembershipViewModel>, action: actions.UpdateTitleSuccess): View<ManageMembershipViewModel> {
-    if (state.viewModel === null) {
+export function updateTitleSuccess(state: AsyncModel<ManageMembershipViewModel>, action: actions.UpdateTitleSuccess): AsyncModel<ManageMembershipViewModel> {
+    if (state.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
 
-    const editedMember = state.viewModel.editableMemberProfile;
+    const editedMember = state.value.editableMemberProfile;
     let syncState;
     if (action.title !== editedMember.title.remoteValue) {
         syncState = SyncState.DIRTY;
     } else {
         syncState = SyncState.CLEAN;
     }
-    const newState = {
+    const editState = evaluateEditorState(state.value.editableMemberProfile);
+    return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
+        value: {
+            ...state.value,
+            editState: editState,
             editableMemberProfile: {
-                ...state.viewModel.editableMemberProfile,
+                ...state.value.editableMemberProfile,
                 title: {
                     value: action.title,
                     remoteValue: action.title,
@@ -86,36 +80,26 @@ export function updateTitleSuccess(state: View<ManageMembershipViewModel>, actio
             }
         }
     };
-
-    const editState = evaluateEditorState(newState.viewModel);
-
-    return {
-        ...newState,
-        viewModel: {
-            ...newState.viewModel,
-            editState: editState
-        }
-    };
 }
-function evaluateEditorState(viewModel: ManageMembershipViewModel): EditState {
-    if (viewModel.editableMemberProfile.title.syncState === SyncState.DIRTY) {
+function evaluateEditorState(viewModel: EditableMemberProfile): EditState {
+    if (viewModel.title.syncState === SyncState.DIRTY) {
         return EditState.EDITED;
     }
 
     return EditState.UNEDITED;
 }
 
-function evaluateSuccess(state: View<ManageMembershipViewModel>, action: actions.EvaluateSuccess): View<ManageMembershipViewModel> {
-    if (state.viewModel === null) {
+function evaluateSuccess(state: AsyncModel<ManageMembershipViewModel>, action: actions.EvaluateSuccess): AsyncModel<ManageMembershipViewModel> {
+    if (state.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
 
-    const editState = evaluateEditorState(state.viewModel);
+    const editState = evaluateEditorState(state.value.editableMemberProfile);
 
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
+        value: {
+            ...state.value,
             editState: editState,
             validationState: {
                 type: ValidationErrorType.OK,
@@ -125,14 +109,14 @@ function evaluateSuccess(state: View<ManageMembershipViewModel>, action: actions
     };
 }
 
-function evaluateError(state: View<ManageMembershipViewModel>, action: actions.EvaluateError): View<ManageMembershipViewModel> {
-    if (state.viewModel === null) {
+function evaluateError(state: AsyncModel<ManageMembershipViewModel>, action: actions.EvaluateError): AsyncModel<ManageMembershipViewModel> {
+    if (state.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
+        value: {
+            ...state.value,
             validationState: {
                 type: ValidationErrorType.ERROR,
                 message: 'Validation error(s)',
@@ -142,20 +126,20 @@ function evaluateError(state: View<ManageMembershipViewModel>, action: actions.E
     };
 }
 
-export function saveSuccess(state: View<ManageMembershipViewModel>, action: actions.SaveSuccess): View<ManageMembershipViewModel> {
-    if (state.viewModel === null) {
+export function saveSuccess(state: AsyncModel<ManageMembershipViewModel>, action: actions.SaveSuccess): AsyncModel<ManageMembershipViewModel> {
+    if (state.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
+        value: {
+            ...state.value,
             editState: EditState.UNEDITED,
             saveState: SaveState.SAVED,
             editableMemberProfile: {
-                ...state.viewModel.editableMemberProfile,
+                ...state.value.editableMemberProfile,
                 title: {
-                    ...state.viewModel.editableMemberProfile.title,
+                    ...state.value.editableMemberProfile.title,
                     syncState: SyncState.CLEAN
                 }
             }
@@ -164,7 +148,7 @@ export function saveSuccess(state: View<ManageMembershipViewModel>, action: acti
 }
 
 
-// export function demoteSelfToMemberSuccess(state: View<ManageMembershipViewModel>, action: actions.DemoteSelfToMemberSuccess): View<ManageMembershipViewModel> {
+// export function demoteSelfToMemberSuccess(state: AsyncModel<ManageMembershipViewModel>, action: actions.DemoteSelfToMemberSuccess): AsyncModel<ManageMembershipViewModel> {
 //     if (!state.views.manageMembershipView.viewModel) {
 //         return state
 //     }
@@ -250,7 +234,7 @@ export function saveSuccess(state: View<ManageMembershipViewModel>, action: acti
 //     }
 // }
 
-function localReducer(state: View<ManageMembershipViewModel>, action: Action): View<ManageMembershipViewModel> | null {
+function localReducer(state: AsyncModel<ManageMembershipViewModel>, action: Action): AsyncModel<ManageMembershipViewModel> | null {
     switch (action.type) {
         case ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_LOAD_START:
             return loadStart(state, action as actions.LoadStart);
@@ -292,32 +276,94 @@ function haveReducer(action: Action): boolean {
     }
 }
 
+// export default function reducer(state: StoreState, action: Action): StoreState | null {
+//     if (!haveReducer(action)) {
+//         return null;
+//     }
+//     if (!state.views.viewOrgView.viewModel) {
+//         return state;
+//     }
+//     if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+//         return state;
+//     }
+//     const viewState: ManageMembershipViewModel = state.views.viewOrgView.viewModel.subViews.manageMembershipView;
+//     const newViewState = localReducer(viewState, action);
+//     if (newViewState === null) {
+//         return null;
+//     }
+//     return {
+//         ...state,
+//         views: {
+//             ...state.views,
+//             viewOrgView: {
+//                 ...state.views.viewOrgView,
+//                 viewModel: {
+//                     ...state.views.viewOrgView.viewModel,
+//                     subViews: {
+//                         ...state.views.viewOrgView.viewModel.subViews,
+//                         manageMembershipView: newViewState
+//                     }
+//                 }
+//             }
+//         }
+//     };
+// }
+
 export default function reducer(state: StoreState, action: Action): StoreState | null {
     if (!haveReducer(action)) {
         return null;
     }
-    if (!state.views.viewOrgView.viewModel) {
+
+    if (state.auth.userAuthorization === null) {
         return state;
     }
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
-    const viewState: View<ManageMembershipViewModel> = state.views.viewOrgView.viewModel.subViews.manageMembershipView;
+
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.kind !== SubViewKind.MANAGE_MEMBERSHIP) {
+        return state;
+    }
+
+    // if (state.view.value.views.viewOrg.value.subView.model.loadingState !== AsyncModelState.SUCCESS) {
+    //     return state;
+    // }
+
+    const viewState = state.view.value.views.viewOrg.value.subView.model;
     const newViewState = localReducer(viewState, action);
     if (newViewState === null) {
         return null;
     }
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    subViews: {
-                        ...state.views.viewOrgView.viewModel.subViews,
-                        manageMembershipView: newViewState
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            subView: {
+                                ...state.view.value.views.viewOrg.value.subView,
+                                model: newViewState
+                            }
+                        }
                     }
                 }
             }

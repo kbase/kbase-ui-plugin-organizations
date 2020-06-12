@@ -2,7 +2,8 @@ import * as React from 'react';
 import './User.css';
 import Avatar from './Avatar';
 import * as userModel from '../../data/models/user';
-import { Icon, Button } from 'antd';
+import { Button } from 'antd';
+import { UpOutlined, DownOutlined } from '@ant-design/icons';
 
 export interface UserProps {
     user: userModel.User;
@@ -60,7 +61,7 @@ class User extends React.Component<UserProps, UserState> {
                         size="small"
                         onClick={this.onToggleView.bind(this)}
                     >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                        {this.state.view === View.NORMAL ? <UpOutlined /> : <DownOutlined />}
                     </Button>
                 </div>
                 <div className="avatarCol">
@@ -87,7 +88,7 @@ class User extends React.Component<UserProps, UserState> {
                         size="small"
                         onClick={this.onToggleView.bind(this)}
                     >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                        {this.state.view === View.NORMAL ? <UpOutlined /> : <DownOutlined />}
                     </Button>
                 </div>
                 <div className="avatarCol">

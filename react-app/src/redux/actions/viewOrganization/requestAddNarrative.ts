@@ -2,8 +2,7 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from '../index';
 import {
-    StoreState, Narrative, View, ViewOrgViewModelKind,
-    RequestNarrativeViewModel
+    StoreState, Narrative
 } from '../../../types';
 import * as orgModel from '../../../data/models/organization/model';
 import * as narrativeModel from '../../../data/models/narrative';
@@ -12,6 +11,9 @@ import { AnError } from '../../../lib/error';
 import { makeError } from '../../../combo/error/api';
 import { OrganizationNarrative } from '../../../data/models/narrative';
 import * as viewOrgActions from '../viewOrg';
+import { extractViewOrgModelPlus, extractViewOrgSubView } from '../../../lib/stateExtraction';
+import { SubViewKind } from '../../../types/views/Main/views/ViewOrg';
+import { AsyncModelState } from '../../../types/common';
 
 export interface Load extends Action {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD;
@@ -55,16 +57,11 @@ export function loadError(error: AnError): LoadError {
 
 export function load(organizationId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        console.log('hmm');
         dispatch(loadStart());
+        console.log('mm');
 
-        const {
-            auth: { userAuthorization },
-            app: { config } } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { username, token, config } = extractViewOrgModelPlus(getState());
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
@@ -83,7 +80,10 @@ export function load(organizationId: string) {
             groupsServiceURL: config.services.Groups.url
         });
 
+        console.log('ok');
+
         try {
+            console.log('well...');
             const [org, narratives, request, invitation] = await Promise.all<orgModel.Organization, narrativeModel.OrganizationNarrative[], requestModel.UserRequest | null, requestModel.UserInvitation | null>([
                 orgClient.getOrganization(organizationId),
                 narrativeClient.getOwnNarratives(organizationId),
@@ -92,8 +92,10 @@ export function load(organizationId: string) {
             ]);
 
             const relation = orgModel.determineRelation(org, username, request, invitation);
+
             dispatch(loadSuccess(org, narratives, relation));
         } catch (ex) {
+            console.log('...but...');
             console.error('loading error', ex);
             dispatch(loadError(makeError({
                 code: ex.name,
@@ -257,23 +259,19 @@ export interface SortError {
     error: AnError;
 }
 
-function ensureView(state: StoreState): View<RequestNarrativeViewModel> {
-    const {
-        views: {
-            viewOrgView: { viewModel }
-        }
-    } = state;
-    if (viewModel === null) {
-        throw new Error('select user invalid state -- no view value');
+
+function ensureViewModel(state: StoreState) {
+    const subView = extractViewOrgSubView(state);
+
+    if (subView.kind !== SubViewKind.ADD_NARRATIVE) {
+        throw new Error('Wrong subview');
     }
-    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        throw new Error('select user invalid state -- no view value');
+
+    if (subView.model.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Wrong async state');
     }
-    const { requestNarrativeView } = viewModel.subViews;
-    if (requestNarrativeView === null) {
-        throw new Error('select user invalid state -- no view value');
-    }
-    return requestNarrativeView;
+
+    return subView.model.value;
 }
 
 export function sort(sort: narrativeModel.Sort) {
@@ -282,42 +280,8 @@ export function sort(sort: narrativeModel.Sort) {
             type: ActionFlag.REQUEST_ADD_NARRATIVE_SORT_START
         } as SortStart);
 
-        const state = getState();
-
-        let view: View<RequestNarrativeViewModel>;
-        try {
-            view = ensureView(state);
-        } catch (ex) {
-            dispatch({
-                type: ActionFlag.REQUEST_ADD_NARRATIVE_SORT_ERROR,
-                error: makeError({
-                    code: 'error',
-                    message: ex.message
-                })
-            });
-            return;
-        }
-
-        if (view.viewModel === null) {
-            dispatch({
-                type: ActionFlag.REQUEST_ADD_NARRATIVE_SORT_ERROR,
-                error: makeError({
-                    code: 'error',
-                    message: 'missing view model'
-                })
-            });
-            return;
-        }
-
-        const {
-            auth: { userAuthorization },
-            app: { config }
-        } = state;
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { username, token, config } = extractViewOrgModelPlus(getState());
+        const viewModel = ensureViewModel(getState());
 
         const narrativeClient = new narrativeModel.NarrativeModel({
             token, username,
@@ -328,7 +292,7 @@ export function sort(sort: narrativeModel.Sort) {
         });
 
         try {
-            const sorted = narrativeClient.sortOrganizationNarratives(view.viewModel.narratives, sort);
+            const sorted = narrativeClient.sortOrganizationNarratives(viewModel.narratives, sort);
             dispatch({
                 type: ActionFlag.REQUEST_ADD_NARRATIVE_SORT_SUCCESS,
                 narratives: sorted

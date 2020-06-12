@@ -1,0 +1,26 @@
+import { View } from "../../../../../common";
+import { ManageMembershipViewModel } from "./ManageMembership";
+import { ManageRelatedOrgsViewModel } from "./ManageRelatedOrgs";
+import { RequestNarrativeViewModel } from "./RequestNarrative";
+import { AddAppViewModel } from "./AddApp";
+import { InviteUserViewModel } from "./InviteUser";
+
+export enum ViewOrgSubViewKind {
+    NONE = 0,
+    MANAGE_RELATED_ORGS
+}
+
+export enum ViewKind {
+    ADD_APPS,
+    INVITE_USER,
+    MANAGE_MEMBERSHIP,
+    MANAGE_RELATED_ORGS,
+    REQUEST_NARRATIVE
+}
+
+export type ViewOrgView =
+    View<ViewKind.ADD_APPS, AddAppsViewModel> |
+    View<ViewKind.INVITE_USER, InviteUserViewModel> |
+    View<ViewKind.MANAGE_MEMBERSHIP, ManageMembershipViewModel> |
+    View<ViewKind.MANAGE_RELATED_ORGS, ManageRelatedOrgsViewModel> |
+    View<ViewKind.REQUEST_NARRATIVE, RequestNarrativeViewModel>;

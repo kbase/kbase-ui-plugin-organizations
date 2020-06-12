@@ -1,28 +1,24 @@
 import { Action } from 'redux';
 import * as actions from '../../actions/viewOrganization/requestAddNarrative';
 import {
-    StoreState, SaveState, NarrativeState, View,
-    RequestNarrativeViewModel, ViewOrgViewModelKind,
-    ViewState,
-    SelectionState
+    StoreState, NarrativeState
 } from '../../../types';
 import { ActionFlag } from '../../actions';
+import { SelectionState, SaveState, AsyncModelState, AsyncModel } from '../../../types/common';
+import { RequestNarrativeViewModel } from '../../../types/views/Main/views/ViewOrg/views/RequestNarrative';
+import { ViewOrgViewModelKind, SubViewKind } from '../../../types/views/Main/views/ViewOrg';
 
-export function loadStart(state: View<RequestNarrativeViewModel>, action: actions.LoadStart): View<RequestNarrativeViewModel> {
+export function loadStart(state: AsyncModel<RequestNarrativeViewModel>, action: actions.LoadStart): AsyncModel<RequestNarrativeViewModel> {
     return {
-
-        state: ViewState.LOADING,
-        error: null,
-        viewModel: null
+        loadingState: AsyncModelState.LOADING
     };
 
 }
 
-export function loadSuccess(state: View<RequestNarrativeViewModel>, action: actions.LoadSuccess): View<RequestNarrativeViewModel> {
+export function loadSuccess(state: AsyncModel<RequestNarrativeViewModel>, action: actions.LoadSuccess): AsyncModel<RequestNarrativeViewModel> {
     return {
-        state: ViewState.OK,
-        error: null,
-        viewModel: {
+        loadingState: AsyncModelState.SUCCESS,
+        value: {
             organization: action.organization,
             narratives: action.narratives,
             selectedNarrative: null,
@@ -34,48 +30,27 @@ export function loadSuccess(state: View<RequestNarrativeViewModel>, action: acti
     };
 }
 
-export function loadError(state: View<RequestNarrativeViewModel>, action: actions.LoadError): View<RequestNarrativeViewModel> {
+export function loadError(state: AsyncModel<RequestNarrativeViewModel>, action: actions.LoadError): AsyncModel<RequestNarrativeViewModel> {
     return {
-        state: ViewState.ERROR,
-        error: action.error,
-        viewModel: null
+        loadingState: AsyncModelState.ERROR,
+        error: action.error
     };
 }
 
-export function sendRequestStart(state: View<RequestNarrativeViewModel>, action: actions.SendRequestStart): View<RequestNarrativeViewModel> {
-    if (state.viewModel === null) {
-        return state;
-    }
-
+export function sendRequestStart(state: RequestNarrativeViewModel, action: actions.SendRequestStart): RequestNarrativeViewModel {
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
-            saveState: SaveState.SAVING
-        }
+        saveState: SaveState.SAVING
     };
 }
 
-export function sendRequestSuccess(state: View<RequestNarrativeViewModel>, action: actions.SendRequestSuccess): View<RequestNarrativeViewModel> {
-    if (state.viewModel === null) {
-        return state;
-    }
-
-    const newState: View<RequestNarrativeViewModel> = {
+export function sendRequestSuccess(state: RequestNarrativeViewModel, action: actions.SendRequestSuccess): RequestNarrativeViewModel {
+    const newState: RequestNarrativeViewModel = {
         ...state,
-        viewModel: {
-            ...state.viewModel,
-            saveState: SaveState.SAVED
-        }
+        saveState: SaveState.SAVED
     };
 
-    const viewModel = newState.viewModel;
-
-    // hmm, TS can't trace this fact from the original state (which we proved
-    // at the top of this function.)
-    if (!viewModel) {
-        throw new Error('view model missing');
-    }
+    const viewModel = newState;
 
     const selectedNarrative = viewModel.selectedNarrative;
 
@@ -100,70 +75,47 @@ export function sendRequestSuccess(state: View<RequestNarrativeViewModel>, actio
     return newState;
 }
 
-export function sendRequestError(state: View<RequestNarrativeViewModel>, action: actions.SendRequestError): View<RequestNarrativeViewModel> {
-    if (state.viewModel === null) {
-        return state;
-    }
+export function sendRequestError(state: RequestNarrativeViewModel, action: actions.SendRequestError): RequestNarrativeViewModel {
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
-            saveState: SaveState.SAVE_ERROR,
-            error: action.error
-        }
+        saveState: SaveState.SAVE_ERROR,
+        error: action.error
     };
 }
 
-export function selectNarrativeStart(state: View<RequestNarrativeViewModel>, action: actions.SelectNarrativeStart): View<RequestNarrativeViewModel> {
-    if (state.viewModel === null) {
-        return state;
-    }
+export function selectNarrativeStart(state: RequestNarrativeViewModel, action: actions.SelectNarrativeStart): RequestNarrativeViewModel {
+    // TODO: hmm, is this really async???
+    // return {
+    //     ...state,
+    //     value: {
+    //         ...state.value
+    //     }
+    // };
+    // TODO: implement
+    return state;
+}
+
+export function selectNarrativeSuccess(state: RequestNarrativeViewModel, action: actions.SelectNarrativeSuccess): RequestNarrativeViewModel {
     return {
         ...state,
-        error: null,
-        viewModel: {
-            ...state.viewModel
-        }
+        selectedNarrative: action.narrative
     };
 }
 
-export function selectNarrativeSuccess(state: View<RequestNarrativeViewModel>, action: actions.SelectNarrativeSuccess): View<RequestNarrativeViewModel> {
-    if (state.viewModel === null) {
-        return state;
-    }
-    const newState = {
-        ...state,
-        error: null,
-        viewModel: {
-            ...state.viewModel,
-            selectedNarrative: action.narrative
-        }
-    };
-    return newState;
-}
-
-export function unload(state: View<RequestNarrativeViewModel>, action: actions.Unload): View<RequestNarrativeViewModel> {
+export function unload(state: AsyncModel<RequestNarrativeViewModel>, action: actions.Unload): AsyncModel<RequestNarrativeViewModel> {
     return {
-        state: ViewState.NONE,
-        error: null,
-        viewModel: null
+        loadingState: AsyncModelState.NONE
     };
 }
 
-function sortSuccess(state: View<RequestNarrativeViewModel>, action: actions.SortSuccess): View<RequestNarrativeViewModel> {
-    if (state.viewModel === null) {
-        return state;
-    }
+function sortSuccess(state: RequestNarrativeViewModel, action: actions.SortSuccess): RequestNarrativeViewModel {
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
-            narratives: action.narratives
-        }
+        narratives: action.narratives
     };
 }
 
-function localReducer(state: View<RequestNarrativeViewModel>, action: Action): View<RequestNarrativeViewModel> | null {
+function localReducerAsync(state: AsyncModel<RequestNarrativeViewModel>, action: Action): AsyncModel<RequestNarrativeViewModel> | null {
     switch (action.type) {
         case ActionFlag.REQUEST_ADD_NARRATIVE_LOAD_START:
             return loadStart(state, action as actions.LoadStart);
@@ -171,18 +123,30 @@ function localReducer(state: View<RequestNarrativeViewModel>, action: Action): V
             return loadSuccess(state, action as actions.LoadSuccess);
         case ActionFlag.REQUEST_ADD_NARRATIVE_LOAD_ERROR:
             return loadError(state, action as actions.LoadError);
-        case ActionFlag.REQUEST_ADD_NARRATIVE_SEND_START:
-            return sendRequestStart(state, action as actions.SendRequestStart);
-        case ActionFlag.REQUEST_ADD_NARRATIVE_SEND_SUCCESS:
-            return sendRequestSuccess(state, action as actions.SendRequestSuccess);
-        case ActionFlag.REQUEST_ADD_NARRATIVE_SELECT_NARRATIVE_START:
-            return selectNarrativeStart(state, action as actions.SelectNarrativeStart);
-        case ActionFlag.REQUEST_ADD_NARRATIVE_SELECT_NARRATIVE_SUCCESS:
-            return selectNarrativeSuccess(state, action as actions.SelectNarrativeSuccess);
         case ActionFlag.REQUEST_ADD_NARRATIVE_UNLOAD:
             return unload(state, action as actions.Unload);
+        default:
+            return null;
+    }
+}
+
+function localReducer(state: RequestNarrativeViewModel, action: Action): RequestNarrativeViewModel | null {
+    switch (action.type) {
+        case ActionFlag.REQUEST_ADD_NARRATIVE_SEND_START:
+            return sendRequestStart(state, action as actions.SendRequestStart);
+
+        case ActionFlag.REQUEST_ADD_NARRATIVE_SEND_SUCCESS:
+            return sendRequestSuccess(state, action as actions.SendRequestSuccess);
+
+        case ActionFlag.REQUEST_ADD_NARRATIVE_SELECT_NARRATIVE_START:
+            return selectNarrativeStart(state, action as actions.SelectNarrativeStart);
+
+        case ActionFlag.REQUEST_ADD_NARRATIVE_SELECT_NARRATIVE_SUCCESS:
+            return selectNarrativeSuccess(state, action as actions.SelectNarrativeSuccess);
+
         case ActionFlag.REQUEST_ADD_NARRATIVE_SORT_SUCCESS:
             return sortSuccess(state, action as actions.SortSuccess);
+
         default:
             return null;
     }
@@ -204,32 +168,124 @@ function haveReducer(action: Action): boolean {
     }
 }
 
+// export default function reducer(state: StoreState, action: Action): StoreState | null {
+//     if (!haveReducer(action)) {
+//         return null;
+//     }
+//     if (!state.views.viewOrgView.viewModel) {
+//         return state;
+//     }
+//     if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+//         return state;
+//     }
+//     const viewState: RequestNarrativeViewModel = state.views.viewOrgView.viewModel.subViews.requestNarrativeView;
+//     const newViewState = localReducer(viewState, action);
+//     if (newViewState === null) {
+//         return null;
+//     }
+//     return {
+//         ...state,
+//         views: {
+//             ...state.views,
+//             viewOrgView: {
+//                 ...state.views.viewOrgView,
+//                 viewModel: {
+//                     ...state.views.viewOrgView.viewModel,
+//                     subViews: {
+//                         ...state.views.viewOrgView.viewModel.subViews,
+//                         requestNarrativeView: newViewState
+//                     }
+//                 }
+//             }
+//         }
+//     };
+// }
+
 export default function reducer(state: StoreState, action: Action): StoreState | null {
     if (!haveReducer(action)) {
         return null;
     }
-    if (!state.views.viewOrgView.viewModel) {
+
+    if (state.auth.userAuthorization === null) {
         return state;
     }
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
         return state;
     }
-    const viewState: View<RequestNarrativeViewModel> = state.views.viewOrgView.viewModel.subViews.requestNarrativeView;
+
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.kind !== SubViewKind.ADD_NARRATIVE) {
+        return state;
+    }
+
+    const newAsyncState = localReducerAsync(state.view.value.views.viewOrg.value.subView.model, action);
+
+    if (newAsyncState) {
+        return {
+            ...state,
+            view: {
+                ...state.view,
+                value: {
+                    ...state.view.value,
+                    views: {
+                        ...state.view.value.views,
+                        viewOrg: {
+                            ...state.view.value.views.viewOrg,
+                            value: {
+                                ...state.view.value.views.viewOrg.value,
+                                subView: {
+                                    ...state.view.value.views.viewOrg.value.subView,
+                                    model: newAsyncState
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.model.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
+    }
+
+    const viewState = state.view.value.views.viewOrg.value.subView.model.value;
     const newViewState = localReducer(viewState, action);
     if (newViewState === null) {
         return null;
     }
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    subViews: {
-                        ...state.views.viewOrgView.viewModel.subViews,
-                        requestNarrativeView: newViewState
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            subView: {
+                                ...state.view.value.views.viewOrg.value.subView,
+                                model: {
+                                    ...state.view.value.views.viewOrg.value.subView.model,
+                                    value: newViewState
+                                }
+                            }
+                        }
                     }
                 }
             }

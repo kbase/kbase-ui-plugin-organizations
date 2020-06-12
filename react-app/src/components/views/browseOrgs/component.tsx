@@ -1,13 +1,17 @@
 import * as React from 'react';
-import Organizations from './organizations/container';
-import { SortDirection } from '../../../types';
-import { Button, Icon, Radio, Select, Alert, Checkbox } from 'antd';
+import Organizations from './organizations/component';
+import { Button, Radio, Select, Alert, Checkbox, Input } from 'antd';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { Filter } from '../../../data/models/organization/model';
+import { Filter, BriefOrganization, OrganizationID, RequestStatus } from '../../../data/models/organization/model';
 import { NavLink } from 'react-router-dom';
 import './component.css';
 import { AppError } from '@kbase/ui-components';
+import { SortDirection } from '../../../types/common';
+import {
+    LoadingOutlined, SearchOutlined, EllipsisOutlined, PlusCircleOutlined
+} from '@ant-design/icons';
+import Search from 'antd/lib/input/Search';
 
 export interface OrganizationsBrowserProps {
     totalCount: number;
@@ -16,13 +20,15 @@ export interface OrganizationsBrowserProps {
     filter: Filter;
     searching: boolean;
     error: AppError | null;
+    organizations: Array<BriefOrganization>;
+    openRequests: Map<OrganizationID, RequestStatus>;
     onSearchOrgs: (searchTerms: Array<string>) => void;
     onSortOrgs: (sortField: string, sortDirection: SortDirection) => void;
     onFilterOrgs: (filter: Filter) => void;
 }
 
 export interface OrganizationsBrowserState {
-    searchInput: string;
+    // searchInput: string;
     filterByRoleType: string;
     filterByRole: Array<CheckboxValueType>;
     filterByPrivacy: string;
@@ -31,10 +37,10 @@ export interface OrganizationsBrowserState {
 }
 
 class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, OrganizationsBrowserState> {
-    searchInput: React.RefObject<HTMLInputElement>;
-    searchButton: React.RefObject<Button>;
+    searchInput: React.RefObject<Input>;
+    searchButton: React.RefObject<HTMLButtonElement>;
     filterByRoleValues: Array<any>;
-
+    searchText: string;
     constructor(props: OrganizationsBrowserProps) {
         super(props);
 
@@ -56,8 +62,9 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
             }
         ];
 
+        this.searchText = '';
         this.state = {
-            searchInput: '',
+            // searchInput: '',
             filterByRoleType: 'myorgs',
             filterByRole: [],
             filterByPrivacy: 'any',
@@ -71,29 +78,12 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
     }
 
     doSearch() {
-        if (this.searchInput.current === null) {
-            return;
-        }
-        const searchTerms = this.searchInput.current.value.split(/[\s+]/);
+        // if (this.state.searchInput === null) {
+        //     return;
+        // }
+        const searchTerms = this.searchText.split(/[\s+]/);
         // dispatch the search event
         this.props.onSearchOrgs(searchTerms);
-    }
-
-    haveSearchInput() {
-        if (this.state.searchInput && this.state.searchInput.length > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    onSearchInputChange() {
-        let currentSearchInputValue;
-        if (this.searchInput.current) {
-            currentSearchInputValue = this.searchInput.current.value;
-        } else {
-            currentSearchInputValue = '';
-        }
-        this.setState({ searchInput: currentSearchInputValue });
     }
 
     onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -179,12 +169,8 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         this.props.onFilterOrgs(newFilter);
     }
 
-    onClearSearch() {
-        if (this.searchInput.current === null) {
-            return;
-        }
-        this.searchInput.current.value = '';
-        this.onSearchInputChange();
+    onSearch(value: string) {
+        this.searchText = value;
         this.doSearch();
     }
 
@@ -231,36 +217,24 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
     renderSearchIcon() {
         if (this.props.searching) {
-            return (<Icon type="loading" />);
+            return (<LoadingOutlined />);
         }
-        return (<Icon type="search" />);
+        return (<SearchOutlined />);
     }
 
     renderSearchForm() {
         return (
-            <form id="searchForm" className="OrganizationsBrowser-searchBar" onSubmit={this.onSubmit.bind(this)}>
-                <input
-                    className="OrganizationsBrowser-searchInput"
+            <div id="searchForm"
+                className="OrganizationsBrowser-searchBar"
+            >
+                <Search
                     placeholder="Search Organizations"
-                    onChange={this.onSearchInputChange.bind(this)}
-                    autoFocus
-                    ref={this.searchInput}></input>
-                <Button
-                    disabled={!this.haveSearchInput()}
-                    ref={this.searchButton}
-                    form="searchForm"
-                    key="submit"
-                    htmlType="submit">
-                    {this.renderSearchIcon()}
-                </Button>
-                <Button
-                    onClick={this.onClearSearch.bind(this)}
-                    disabled={!this.haveSearchInput()}
-                    icon="close"
-                >
-                </Button>
+                    onSearch={this.onSearch.bind(this)}
+                    allowClear={true}
+                />
+
                 {this.renderSearchFeedback()}
-            </form>
+            </div>
         );
     }
 
@@ -271,7 +245,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     {this.renderSearchForm()}
                 </div>
                 <div className="OrganizationsBrowser-searchBarCol2">
-                    <NavLink to="/newOrganization"><Button type="primary" icon="plus-circle" style={{ marginRight: '10px' }}>Create Organization</Button></NavLink>
+                    <NavLink to="/orgs/new"><Button type="primary" icon={<PlusCircleOutlined />} style={{ marginRight: '10px' }}>Create Organization</Button></NavLink>
 
                 </div>
                 {/* <div className="OrganizationsBrowser-searchBarCol3">
@@ -320,15 +294,13 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
     renderAdvancedToggle() {
         if (this.state.showAdvancedControls) {
             return (
-                <Icon
-                    type="ellipsis"
+                <EllipsisOutlined
                     className="IconButton-hover-pressed"
                     onClick={this.onToggleAdvanced.bind(this)} />
             );
         } else {
             return (
-                <Icon
-                    type="ellipsis"
+                <EllipsisOutlined
                     className="IconButton-hover"
                     onClick={this.onToggleAdvanced.bind(this)} />
             );
@@ -416,15 +388,18 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                 this.props.filter.roles.length === 0 &&
                 this.props.filter.privacy === 'any' &&
                 // todo should be based on parsed search
-                (!this.searchInput.current ||
-                    this.searchInput.current.value.length === 0)) {
+                (this.searchText.length === 0)) {
                 myOrgsUnfiltered = true;
             } else {
                 myOrgsUnfiltered = false;
             }
 
             return (
-                <Organizations myOrgsUnfiltered={myOrgsUnfiltered} />
+                <Organizations
+                    myOrgsUnfiltered={myOrgsUnfiltered}
+                    organizations={this.props.organizations}
+                    openRequests={this.props.openRequests}
+                />
             );
         }
     }

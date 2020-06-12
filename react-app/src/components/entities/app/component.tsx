@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as appModel from '../../../data/models/apps';
 import './component.css';
-import { Icon, Tooltip, Button } from 'antd';
+import { Tooltip, Button } from 'antd';
+import { UpOutlined, DownOutlined, BorderOutlined } from '@ant-design/icons';
 
 enum View {
     COMPACT = 0,
@@ -43,11 +44,7 @@ export default class App extends React.Component<AppProps, AppState> {
     renderIcon() {
         if (!this.props.app.icon.url) {
             return (
-                // <div className="fa-layers fa-fw">
-                //     <FontAwesomeIcon icon="square" size="3x" style={{ color: 'rgb(103, 58, 103)' }} />
-                //     <FontAwesomeIcon icon="cube" size="3x" inverse transform="shrink-4 left-1" />
-                // </div>
-                <Icon type="border" style={{ fontSize: '30px', color: 'rgb(103, 58, 103)' }} />
+                <BorderOutlined style={{ fontSize: '30px', color: 'rgb(103, 58, 103)' }} />
             );
         }
         return (
@@ -84,7 +81,7 @@ export default class App extends React.Component<AppProps, AppState> {
                 size="small"
                 onClick={this.onToggleView.bind(this)}
             >
-                <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                {this.state.view === View.NORMAL ? <UpOutlined /> : <DownOutlined />}
             </Button>
         );
     }

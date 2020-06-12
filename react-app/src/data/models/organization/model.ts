@@ -1,14 +1,9 @@
 import * as groupsApi from '../../apis/groups';
-import {
-    SortDirection,
-    EditableOrganization,
-    ValidationState,
-    EditableString,
-    ValidationErrorType
-} from '../../../types';
+
 import * as requestModel from '../requests';
 import * as userModel from '../user';
 import Validation from './validation';
+import { EditableString, EditableOrganization, ValidationErrorType, ValidationState } from '../../../types/common';
 
 export interface OrganizationUpdate {
     name: string;
@@ -428,7 +423,7 @@ export interface Query {
     searchTerms: Array<string>;
     username: groupsApi.Username;
     sortField: string;
-    sortDirection: SortDirection;
+    sortDirection: groupsApi.SortDirection;
     filter: Filter;
 }
 
@@ -483,9 +478,9 @@ function applySortComparison(sortField: string, direction: number, a: BriefOrgan
 function applySort(
     organizations: Array<BriefOrganization>,
     sortField: string,
-    sortDirection: SortDirection
+    sortDirection: groupsApi.SortDirection
 ): Array<BriefOrganization> {
-    const direction = sortDirection === SortDirection.ASCENDING ? 1 : -1;
+    const direction = sortDirection === groupsApi.SortDirection.ASCENDING ? 1 : -1;
     return organizations.slice().sort((a, b) => {
         return applySortComparison(sortField, direction, a, b) || applySortComparison('name', 1, a, b);
     });

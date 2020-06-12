@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as narrativeModel from '../../data/models/narrative';
-import { Tooltip, Icon, Button } from 'antd';
+import { Tooltip, Button } from 'antd';
 import './Narrative.css';
 import UserSimple from './UserContainer';
+import { GlobalOutlined, LockOutlined, FileOutlined, UpOutlined, DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 export interface NarrativeProps {
     narrative: narrativeModel.Narrative;
@@ -46,7 +47,7 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
             return (
                 <Tooltip title="This narrative is viewable by all KBase users" placement="right">
                     <span style={{ cursor: 'help' }}>
-                        <Icon type="global" /> Public Narrative
+                        <GlobalOutlined /> Public Narrative
                     </span>
                 </Tooltip>
             );
@@ -54,7 +55,7 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
             return (
                 <Tooltip title="This narrative is only accessible to those with whom it is directly shared" placement="right">
                     <span style={{ cursor: 'help' }}>
-                        <Icon type="lock" /> Private Narrative
+                        <LockOutlined /> Private Narrative
                     </span>
                 </Tooltip>
             );
@@ -99,11 +100,11 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                         size="small"
                         onClick={this.onToggleView.bind(this)}
                     >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                        {this.state.view === View.NORMAL ? <UpOutlined /> : <DownOutlined />}
                     </Button>
                 </div>
                 <div className="iconCol">
-                    <Icon type="file" style={{ fontSize: '30px', width: '30px' }} />
+                    <FileOutlined style={{ fontSize: '30px', width: '30px' }} />
                 </div>
                 <div className="mainCol">
                     <div className="Narrative-title">
@@ -130,11 +131,11 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                         size="small"
                         onClick={this.onToggleView.bind(this)}
                     >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                        {this.state.view === View.NORMAL ? <UpOutlined /> : <DownOutlined />}
                     </Button>
                 </div>
                 <div className="iconCol">
-                    <Icon type="file" style={{ fontSize: '30px', width: '30px' }} />
+                    <FileOutlined style={{ fontSize: '30px', width: '30px' }} />
                 </div>
                 <div className="mainCol">
                     <div className="mainCol">
@@ -148,14 +149,6 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                             <UserSimple avatarSize={20} userId={narrative.owner} />
                         </div>
                     </div>
-                    {/* <div className="Narrative-attributes">
-                        <div className="Narrative-userPermission">
-                            <Icon type="crown" />
-                        </div>
-                        <div className="Narrative-global">
-                            <Icon type="global" />
-                        </div>
-                    </div> */}
                     <div>
                         {this.renderPublicPermission(narrative)}
                     </div>
@@ -163,10 +156,6 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                         <span className="field-label">your permission</span>
                         {this.renderUserPermission(narrative)}
                     </div>
-                    {/* <div>
-                        <span className="field-label">owner</span>
-                        <UserSimple avatarSize={20} userId={narrative.owner} />
-                    </div> */}
                     <div>
                         <span className="field-label">last saved</span>{Intl.DateTimeFormat('en-US', {
                             month: 'short',
@@ -188,7 +177,7 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
         if (narrative.access === narrativeModel.NarrativeAccess.NONE) {
             return (
                 <div>
-                    <Icon type="exclamation-circle" style={{ color: 'orange' }} />
+                    <ExclamationCircleOutlined style={{ color: 'orange' }} />
                     {' '}
                     You don't have access to this Narrative
                 </div>

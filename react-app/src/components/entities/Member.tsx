@@ -2,12 +2,13 @@ import * as React from 'react';
 
 import Avatar from './Avatar';
 import { } from '../../types';
-import { Icon, Tooltip, Button } from 'antd';
+import { Tooltip, Button } from 'antd';
 import * as orgModel from '../../data/models/organization/model';
 import * as userModel from '../../data/models/user';
 
 import './Member.css';
 import NiceElapsedTime from '../NiceElapsedTime';
+import { CrownOutlined, UnlockOutlined, UpOutlined, DownOutlined, UserOutlined } from '@ant-design/icons';
 
 enum View {
     COMPACT = 0,
@@ -53,20 +54,20 @@ class Member extends React.Component<MemberProps, MemberState> {
             case orgModel.MemberType.OWNER:
                 return (
                     <span>
-                        <Icon type="crown" /> owner
-                </span>
+                        <CrownOutlined /> owner
+                    </span>
                 );
             case orgModel.MemberType.ADMIN:
                 return (
                     <span>
-                        <Icon type="unlock" /> admin
-                </span>
+                        <UnlockOutlined /> admin
+                    </span>
                 );
             case orgModel.MemberType.MEMBER:
                 return (
                     <span>
-                        <Icon type="user" /> member
-                </span>
+                        <UserOutlined /> member
+                    </span>
                 );
         }
     }
@@ -86,7 +87,7 @@ class Member extends React.Component<MemberProps, MemberState> {
                         onClick={this.onToggleView.bind(this)}
                     // className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
                     >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                        {this.state.view === View.NORMAL ? <UpOutlined /> : <DownOutlined />}
                     </Button>
                 </div>
                 <div className="Member-avatarCol">
@@ -124,12 +125,8 @@ class Member extends React.Component<MemberProps, MemberState> {
                         type="link"
                         size="small"
                         onClick={this.onToggleView.bind(this)}
-                    // style={{
-                    //     width: '2em'
-                    // }}
-                    // className={`linkButton ${this.state.view === View.NORMAL ? "pressed" : ""}`}
                     >
-                        <Icon type={`${this.state.view === View.NORMAL ? "up" : "down"}`} />
+                        {this.state.view === View.NORMAL ? <UpOutlined /> : <DownOutlined />}
                     </Button>
                 </div>
                 <div className="Member-avatarCol">

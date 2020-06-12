@@ -3,14 +3,13 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { ActionFlag } from '../index';
 import {
-    StoreState,
-    ViewOrgViewModelKind
+    StoreState
 } from '../../../types';
 
 import * as requestModel from '../../../data/models/requests';
 import * as viewOrgActions from '../viewOrg';
 import { AppError } from '@kbase/ui-components';
-
+import { extractViewOrgModelPlus } from '../../../lib/stateExtraction';
 
 export interface AcceptRequestAction<T> extends Action<T> {
 }
@@ -36,46 +35,71 @@ interface AcceptRequestError extends AcceptRequestAction<ActionFlag.VIEW_ORG_ACC
 
 export function acceptRequest(requestId: requestModel.RequestID) {
     return async (dispatch: ThunkDispatch<StoreState, void, AcceptRequestAction<any>>, getState: () => StoreState) => {
-        const state = getState();
+        const { viewModel, username, token, config } = extractViewOrgModelPlus(getState());
+        // if (state.auth.userAuthorization === null) {
+        //     throw new Error('Not authorized.');
+        // }
 
-        const viewModel = state.views.viewOrgView.viewModel;
+        // if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        //     throw new Error('Async model not loaded!');
+        // }
 
-        if (viewModel === null) {
-            dispatch({
-                type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR,
-                error: {
-                    code: 'error',
-                    message: 'No view model'
-                }
-            });
-            return;
-        }
+        // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+        //     throw new Error('Not in view orgs view');
+        // }
 
-        // argh
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            dispatch({
-                type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR,
-                error: {
-                    code: 'invalid state',
-                    message: 'Not the right kind of view model'
-                }
-            });
-            return;
-        }
+        // if (state.view.value.model.loadingState !== AsyncModelState.SUCCESS) {
+        //     throw new Error('Async model not loaded!');
+        // }
+
+        // if (state.view.value.model.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        //     throw new Error('Wrong model');
+        // }
+
+        // const {
+        //     auth: { userAuthorization: { token, username } },
+        //     app: { config },
+        //     view: {
+        //         value: {
+        //             model: {
+        //                 value: viewModel
+        //             }
+        //         }
+        //     }
+        // } = state;
+
+        // dispatch({
+        //     type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR,
+        //     error: {
+        //         code: 'error',
+        //         message: 'No view model'
+        //     }
+        // });
+        // return;
+
+
+        // dispatch({
+        //     type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR,
+        //     error: {
+        //         code: 'invalid state',
+        //         message: 'Not the right kind of view model'
+        //     }
+        // });
+        // return;
 
         dispatch({
             type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_START
         });
 
-        const {
-            auth: { userAuthorization },
-            app: { config }
-        } = state;
+        // const {
+        //     auth: { userAuthorization },
+        //     app: { config }
+        // } = state;
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        // if (userAuthorization === null) {
+        //     throw new Error('Unauthorized');
+        // }
+        // const { token, username } = userAuthorization;
 
         // do the cancellation
         const requestClient = new requestModel.RequestsModel({

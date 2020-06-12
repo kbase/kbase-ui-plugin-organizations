@@ -1,164 +1,135 @@
-import { Action } from 'redux'
-import * as actions from '../../actions/viewOrganization/inviteUser'
+import { Action } from 'redux';
+import * as actions from '../../actions/viewOrganization/inviteUser';
 import {
-    StoreState, InviteUserViewModel, ViewState,
-    View, InviteUserViewState
-} from '../../../types'
-import { ActionFlag } from '../../actions'
-import * as orgModel from '../../../data/models/organization/model'
-import { ViewOrgViewModelKind } from '../../../types';
+    StoreState
+} from '../../../types';
+import { ActionFlag } from '../../actions';
+import * as orgModel from '../../../data/models/organization/model';
+import { InviteUserViewModel, InviteUserViewState } from '../../../types/views/Main/views/ViewOrg/views/InviteUser';
+import { AsyncModelState, AsyncModel } from '../../../types/common';
+import { ViewOrgViewModelKind, SubViewKind } from '../../../types/views/Main/views/ViewOrg';
 
-export function loadStart(state: View<InviteUserViewModel>, action: actions.LoadStart): View<InviteUserViewModel> {
+export function loadStart(state: AsyncModel<InviteUserViewModel>, action: actions.LoadStart): AsyncModel<InviteUserViewModel> {
     return {
-        state: ViewState.LOADING,
-        viewModel: null,
-        error: null
-    }
+        loadingState: AsyncModelState.LOADING
+    };
 }
 
-export function loadSuccess(state: View<InviteUserViewModel>, action: actions.LoadSuccess): View<InviteUserViewModel> {
+export function loadSuccess(state: AsyncModel<InviteUserViewModel>, action: actions.LoadSuccess): AsyncModel<InviteUserViewModel> {
     return {
-        state: ViewState.OK,
-        error: null,
-        viewModel: {
+        loadingState: AsyncModelState.SUCCESS,
+        value: {
             editState: InviteUserViewState.EDITING,
             users: action.users,
             organization: action.organization,
             selectedUser: null
         }
-    }
+    };
 }
 
-export function loadError(state: View<InviteUserViewModel>, action: actions.LoadError): View<InviteUserViewModel> {
+export function loadError(state: AsyncModel<InviteUserViewModel>, action: actions.LoadError): AsyncModel<InviteUserViewModel> {
     return {
-        state: ViewState.ERROR,
-        error: action.error,
-        viewModel: null
-    }
+        loadingState: AsyncModelState.ERROR,
+        error: action.error
+    };
 }
 
-export function unload(state: View<InviteUserViewModel>, action: actions.Unload): View<InviteUserViewModel> {
+export function unload(state: AsyncModel<InviteUserViewModel>, action: actions.Unload): AsyncModel<InviteUserViewModel> {
     return {
-
-        state: ViewState.NONE,
-        error: null,
-        viewModel: null
-    }
+        loadingState: AsyncModelState.NONE
+    };
 }
 
-export function searchUsersSuccess(state: View<InviteUserViewModel>, action: actions.SearchUsersSuccess): View<InviteUserViewModel> {
-    // TODO: better guards!
-    if (state.viewModel === null) {
-        return state
-    }
+// Just view model
+
+export function searchUsersSuccess(state: InviteUserViewModel, action: actions.SearchUsersSuccess): InviteUserViewModel {
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
-            users: action.users
-        }
-    }
+        users: action.users
+    };
 }
 
-export function selectUserSuccess(state: View<InviteUserViewModel>, action: actions.SelectUserSuccess): View<InviteUserViewModel> {
-    if (state.viewModel === null) {
-        return state
-    }
+export function selectUserSuccess(state: InviteUserViewModel, action: actions.SelectUserSuccess): InviteUserViewModel {
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
-            selectedUser: {
-                user: action.user,
-                relation: action.relation
-            }
+        selectedUser: {
+            user: action.user,
+            relation: action.relation
         }
-    }
+    };
 }
 
-export function sendInvitationStart(state: View<InviteUserViewModel>, action: actions.SendInvitationStart): View<InviteUserViewModel> {
-    if (state.viewModel === null) {
-        return state
-    }
+export function sendInvitationStart(state: InviteUserViewModel, action: actions.SendInvitationStart): InviteUserViewModel {
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
-            editState: InviteUserViewState.SENDING
-        }
-    }
+        editState: InviteUserViewState.SENDING
+    };
 }
 
-export function sendInvitationSuccess(state: View<InviteUserViewModel>, action: actions.SendInvitationSuccess): View<InviteUserViewModel> {
-    if (state.viewModel === null) {
-        return state
-    }
-
-    const { viewModel: { selectedUser, users } } = state
+export function sendInvitationSuccess(state: InviteUserViewModel, action: actions.SendInvitationSuccess): InviteUserViewModel {
+    const { selectedUser, users } = state;
 
     // const selectedUser = state.inviteUserView.value.selectedUser
     if (!selectedUser) {
-        throw new Error('selected user is null')
+        throw new Error('selected user is null');
     }
-    selectedUser.relation = orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING
+    selectedUser.relation = orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING;
 
     if (!users) {
-        throw new Error('users is null')
+        throw new Error('users is null');
     }
     const newUsers = users.map((user) => {
         if (user.username === selectedUser.user.username) {
-            user.relation = orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING
+            user.relation = orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING;
         }
-        return user
-    })
+        return user;
+    });
 
     return {
         ...state,
-
-        viewModel: {
-            ...state.viewModel,
-            editState: InviteUserViewState.SUCCESS,
-            selectedUser: selectedUser,
-            users: newUsers
-        }
-    }
+        editState: InviteUserViewState.SUCCESS,
+        selectedUser: selectedUser,
+        users: newUsers
+    };
 }
 
-export function sendInvitationError(state: View<InviteUserViewModel>, action: actions.SendInvitationError): View<InviteUserViewModel> {
-    if (state.viewModel === null) {
-        return state
-    }
-    return {
-        ...state,
-        viewModel: {
-            ...state.viewModel,
-            editState: InviteUserViewState.ERROR
-        }
-    }
-}
+// TODO: revive
+// export function sendInvitationError(state: InviteUserViewModel, action: actions.SendInvitationError): InviteUserViewModel {
+//     return {
+//         ...state,
+//         error: action.error
+//     };
+// }
 
-function localReducer(state: View<InviteUserViewModel>, action: Action): View<InviteUserViewModel> | null {
+function localReducerAsync(state: AsyncModel<InviteUserViewModel>, action: Action): AsyncModel<InviteUserViewModel> | null {
     switch (action.type) {
         case ActionFlag.INVITE_USER_LOAD_START:
-            return loadStart(state, action as actions.LoadStart)
+            return loadStart(state, action as actions.LoadStart);
         case ActionFlag.INVITE_USER_LOAD_SUCCESS:
-            return loadSuccess(state, action as actions.LoadSuccess)
+            return loadSuccess(state, action as actions.LoadSuccess);
         case ActionFlag.INVITE_USER_LOAD_ERROR:
-            return loadError(state, action as actions.LoadError)
+            return loadError(state, action as actions.LoadError);
         case ActionFlag.INVITE_USER_UNLOAD:
-            return unload(state, action as actions.Unload)
-        case ActionFlag.INVITE_USER_SEARCH_USERS_SUCCESS:
-            return searchUsersSuccess(state, action as actions.SearchUsersSuccess)
-        case ActionFlag.INVITE_USER_SELECT_USER_SUCCESS:
-            return selectUserSuccess(state, action as actions.SelectUserSuccess)
-        case ActionFlag.INVITE_USER_SEND_INVITATION_START:
-            return sendInvitationStart(state, action as actions.SendInvitationStart)
-        case ActionFlag.INVITE_USER_SEND_INVITATION_SUCCESS:
-            return sendInvitationSuccess(state, action as actions.SendInvitationSuccess)
-        case ActionFlag.INVITE_USER_SEND_INVITATION_ERROR:
-            return sendInvitationError(state, action as actions.SendInvitationError)
+            return unload(state, action as actions.Unload);
         default:
-            return null
+            return null;
+    }
+}
+
+function localReducer(state: InviteUserViewModel, action: Action): InviteUserViewModel | null {
+    switch (action.type) {
+        case ActionFlag.INVITE_USER_SEARCH_USERS_SUCCESS:
+            return searchUsersSuccess(state, action as actions.SearchUsersSuccess);
+        case ActionFlag.INVITE_USER_SELECT_USER_SUCCESS:
+            return selectUserSuccess(state, action as actions.SelectUserSuccess);
+        case ActionFlag.INVITE_USER_SEND_INVITATION_START:
+            return sendInvitationStart(state, action as actions.SendInvitationStart);
+        case ActionFlag.INVITE_USER_SEND_INVITATION_SUCCESS:
+            return sendInvitationSuccess(state, action as actions.SendInvitationSuccess);
+        // case ActionFlag.INVITE_USER_SEND_INVITATION_ERROR:
+        //     return sendInvitationError(state, action as actions.SendInvitationError);
+        default:
+            return null;
     }
 }
 
@@ -173,43 +144,138 @@ function haveReducer(action: Action): boolean {
         case ActionFlag.INVITE_USER_SEND_INVITATION_START:
         case ActionFlag.INVITE_USER_SEND_INVITATION_SUCCESS:
         case ActionFlag.INVITE_USER_SEND_INVITATION_ERROR:
-            return true
+            return true;
         default:
-            return false
+            return false;
     }
 }
 
-function reducer(state: StoreState, action: Action): StoreState | null {
+// function reducerx(state: StoreState, action: Action): StoreState | null {
+//     if (!haveReducer(action)) {
+//         return null
+//     }
+//     if (!state.views.viewOrgView.viewModel) {
+//         return state
+//     }
+//     if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
+//         return state
+//     }
+//     const viewState: InviteUserViewModel = state.views.viewOrgView.viewModel.subViews.inviteUserView
+//     const newViewState = localReducer(viewState, action)
+//     if (newViewState === null) {
+//         return null
+//     }
+//     return {
+//         ...state,
+//         views: {
+//             ...state.views,
+//             viewOrgView: {
+//                 ...state.views.viewOrgView,
+//                 viewModel: {
+//                     ...state.views.viewOrgView.viewModel,
+//                     subViews: {
+//                         ...state.views.viewOrgView.viewModel.subViews,
+//                         inviteUserView: newViewState
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+
+export default function reducer(state: StoreState, action: Action): StoreState | null {
     if (!haveReducer(action)) {
-        return null
+        return null;
     }
-    if (!state.views.viewOrgView.viewModel) {
-        return state
+
+    if (state.auth.userAuthorization === null) {
+        return state;
     }
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        return state
+
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
-    const viewState: View<InviteUserViewModel> = state.views.viewOrgView.viewModel.subViews.inviteUserView
-    const newViewState = localReducer(viewState, action)
+
+
+
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+
+
+    if (state.view.value.views.viewOrg.value.subView.kind !== SubViewKind.INVITE_USER) {
+        return state;
+    }
+
+    const newAsyncState = localReducerAsync(state.view.value.views.viewOrg.value.subView.model, action);
+
+    if (newAsyncState) {
+        return {
+            ...state,
+            view: {
+                ...state.view,
+                value: {
+                    ...state.view.value,
+                    views: {
+                        ...state.view.value.views,
+                        viewOrg: {
+                            ...state.view.value.views.viewOrg,
+                            value: {
+                                ...state.view.value.views.viewOrg.value,
+                                subView: {
+                                    ...state.view.value.views.viewOrg.value.subView,
+                                    model: newAsyncState
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.model.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
+    }
+
+    const viewState = state.view.value.views.viewOrg.value.subView.model.value;
+    const newViewState = localReducer(viewState, action);
     if (newViewState === null) {
-        return null
+        return null;
     }
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    subViews: {
-                        ...state.views.viewOrgView.viewModel.subViews,
-                        inviteUserView: newViewState
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            subView: {
+                                ...state.view.value.views.viewOrg.value.subView,
+                                model: {
+                                    ...state.view.value.views.viewOrg.value.subView.model,
+                                    value: newViewState
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-    }
+    };
 }
 
-export default reducer

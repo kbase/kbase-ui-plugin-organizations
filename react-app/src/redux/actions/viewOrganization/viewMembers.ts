@@ -3,12 +3,13 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { ActionFlag } from '../index';
 
-import { StoreState, ViewOrgViewModelKind } from '../../../types';
+import { StoreState } from '../../../types';
 import * as orgModel from '../../../data/models/organization/model';
 import * as uberModel from '../../../data/models/uber';
-import { AnError, makeError } from '../../../lib/error';
+import { AnError } from '../../../lib/error';
 import { reload as reloadOrg } from '../viewOrg';
 import { AppError } from '@kbase/ui-components';
+import { extractViewOrgModelPlus } from '../../../lib/stateExtraction';
 
 // LOADING
 
@@ -68,14 +69,7 @@ export function load(organizationId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(loadStart());
 
-        const {
-            auth: { userAuthorization },
-            app: { config } } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { username, token, config } = extractViewOrgModelPlus(getState());
 
         const uberClient = new uberModel.UberModel({
             token, username,
@@ -151,22 +145,8 @@ export function promoteToAdmin(memberUsername: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(promoteToAdminStart());
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: { viewModel }
-            }
-        } = getState();
+        const { viewModel, username, token, config } = extractViewOrgModelPlus(getState());
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
@@ -232,22 +212,8 @@ export function demoteToMember(memberUsername: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(demoteToMemberStart());
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: { viewModel }
-            }
-        } = getState();
+        const { viewModel, username, token, config } = extractViewOrgModelPlus(getState());
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
@@ -313,22 +279,7 @@ export function removeMember(memberUsername: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(removeMemberStart());
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: { viewModel }
-            }
-        } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
+        const { viewModel, username, token, config } = extractViewOrgModelPlus(getState());
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
@@ -381,38 +332,17 @@ export function sortMembers(sortBy: string) {
             type: ActionFlag.VIEW_ORG_SORT_MEMBERS_START
         });
 
-        const state = getState();
-
-        const viewModel = state.views.viewOrgView.viewModel;
-
-        if (viewModel === null) {
-            dispatch({
-                type: ActionFlag.VIEW_ORG_SORT_MEMBERS_ERROR,
-                error: makeError({
-                    code: 'error',
-                    message: 'No view model'
-                })
-            });
-            return;
-        }
-
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            dispatch({
-                type: ActionFlag.VIEW_ORG_SORT_MEMBERS_ERROR,
-                error: makeError({
-                    code: 'error',
-                    message: 'Wrong org view model kind!'
-                })
-            });
-            return;
-        }
-
-        const { members } = viewModel.organization as orgModel.Organization;
-        const searchBy = viewModel.searchMembersBy;
+        const {
+            viewModel: {
+                searchMembersBy: searchBy,
+                organization: {
+                    members
+                }
+            } } = extractViewOrgModelPlus(getState());
 
         const sorted = orgModel.queryMembers(members, {
-            sortBy: sortBy,
-            searchBy: searchBy
+            sortBy,
+            searchBy
         });
 
         dispatch({
@@ -452,33 +382,15 @@ export function searchMembers(searchBy: string) {
             type: ActionFlag.VIEW_ORG_SORT_MEMBERS_START
         });
 
-        const state = getState();
-        const viewModel = state.views.viewOrgView.viewModel;
+        const {
+            viewModel: {
+                searchMembersBy: searchBy,
+                sortMembersBy: sortBy,
+                organization: {
+                    members
+                }
+            } } = extractViewOrgModelPlus(getState());
 
-        if (!viewModel) {
-            dispatch({
-                type: ActionFlag.VIEW_ORG_SORT_MEMBERS_ERROR,
-                error: makeError({
-                    code: 'error',
-                    message: 'No view model'
-                })
-            });
-            return;
-        }
-
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            dispatch({
-                type: ActionFlag.VIEW_ORG_SORT_MEMBERS_ERROR,
-                error: makeError({
-                    code: 'error',
-                    message: 'Wrong org view model kind!'
-                })
-            });
-            return;
-        }
-
-        const { members } = viewModel.organization as orgModel.Organization;
-        const sortBy = viewModel.sortMembersBy;
 
         const sorted = orgModel.queryMembers(members, {
             sortBy: sortBy,

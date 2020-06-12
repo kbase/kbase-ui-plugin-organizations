@@ -4,7 +4,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from './index';
 import {
     StoreState,
-    UIError, UIErrorType, ViewOrgViewModelKind, ViewOrgViewModel
+    UIError, UIErrorType
 } from '../../types';
 
 import * as orgModel from '../../data/models/organization/model';
@@ -15,6 +15,9 @@ import * as dataServices from './dataServices';
 import { AnError, makeError } from '../../lib/error';
 import * as narrativeModel from '../../data/models/narrative';
 import { AppError } from '@kbase/ui-components';
+import { extractViewOrgModelPlus, extractAppInfo } from '../../lib/stateExtraction';
+import { ViewOrgViewModelKind, SubViewKind } from '../../types/views/Main/views/ViewOrg';
+import { AsyncModelState } from '../../types/common';
 
 // Action Types
 
@@ -78,6 +81,18 @@ export interface LoadError extends Action {
 
 export interface Unload extends Action {
     type: ActionFlag.VIEW_ORG_UNLOAD;
+}
+
+// Loading subviews
+export interface LoadSubview extends Action {
+    type: ActionFlag.VIEW_ORG_LOAD_SUBVIEW,
+    subView: SubViewKind;
+}
+export function loadSubview(subView: SubViewKind): LoadSubview {
+    return {
+        type: ActionFlag.VIEW_ORG_LOAD_SUBVIEW,
+        subView
+    };
 }
 
 // Join Requests
@@ -206,49 +221,7 @@ export function removeNarrative(narrative: orgModel.NarrativeResource) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(removeNarrativeStart());
 
-        // TODO: need to restructure this view -- this is crazy
-
-        const state = getState();
-        if (!state.views.viewOrgView.viewModel) {
-            dispatch(removeNarrativeError({
-                code: 'bad state',
-                message: 'View orgs does not have an org'
-            }));
-            return;
-        }
-
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: {
-                    viewModel
-                }
-            }
-        }: StoreState = state;
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            dispatch(removeNarrativeError({
-                code: 'bad state',
-                message: 'View orgs does not have an org'
-            }));
-            return;
-        }
-
-        const { organization } = viewModel;
-
-        if (!organization) {
-            dispatch(removeNarrativeError({
-                code: 'bad state',
-                message: 'View orgs does not have an org'
-            }));
-            return;
-        }
+        const { viewModel: { organization }, username, token, config } = extractViewOrgModelPlus(getState());
 
         const groupId = organization.id;
 
@@ -321,35 +294,10 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(accessNarrativeStart());
 
-        const state = getState();
-        if (!state.views.viewOrgView.viewModel) {
-            dispatch(accessNarrativeError({
-                code: 'error',
-                message: 'No view model'
-            }));
-            return;
-        }
-
-        const viewModel = state.views.viewOrgView.viewModel;
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            dispatch(accessNarrativeError({
-                code: 'error',
-                message: 'Not NORMAL org'
-            }));
-            return;
-        }
-
-        const { organization, narratives: { sortBy, searchBy } } = viewModel;
-
-        const {
-            auth: { userAuthorization },
-            app: { config },
-        } = state;
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { viewModel: {
+            organization,
+            narratives: { sortBy, searchBy }
+        }, username, token, config } = extractViewOrgModelPlus(getState());
 
         const organizationId = organization.id;
         const resourceId = String(narrative.workspaceId);
@@ -565,21 +513,39 @@ export function rejectJoinInvitationError(error: AppError): RejectJoinInvitation
 
 export function unload() {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        const state = getState();
+        if (state.auth.userAuthorization === null) {
+            return;
+        }
+
+        if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+            return;
+        }
+
+        if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+            dispatch({
+                type: ActionFlag.VIEW_ORG_UNLOAD
+            });
+            return;
+        }
 
         const {
-            auth: { userAuthorization },
-            app: { config },
-            views: { viewOrgView: { viewModel } }
-        } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
+            view: {
+                value: {
+                    views: {
+                        viewOrg: {
+                            value: viewModel
+                        }
+                    }
+                }
+            }
+        } = state;
+        // const viewModel = extractViewOrgModel2(getState());
+        if (viewModel.kind === ViewOrgViewModelKind.PRIVATE_INACCESSIBLE) {
+            return;
         }
-        const { token, username } = userAuthorization;
 
-        if (!viewModel) {
-            throw new Error('view model not defined!?!');
-        }
+        const { username, token, config } = extractAppInfo(getState());
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
@@ -692,15 +658,7 @@ export function load(organizationId: string) {
 
 export function reload(organizationId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        const {
-            auth: { userAuthorization },
-            app: { config }
-        } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { viewModel, username, token, config } = extractViewOrgModelPlus(getState());
 
         const uberClient = new uberModel.UberModel({
             token, username,
@@ -722,26 +680,6 @@ export function reload(organizationId: string) {
         });
 
         try {
-            // existing org view.
-            const state = getState();
-            const viewModel = state.views.viewOrgView.viewModel;
-
-            if (!viewModel) {
-                dispatch(loadError({
-                    code: 'error',
-                    message: 'No view model'
-                }));
-                return;
-            }
-
-            if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-                dispatch(loadError({
-                    code: 'error',
-                    message: 'Wrong org view model kind!'
-                }));
-                return;
-            }
-
             const { organization, relation } = await uberClient.getOrganizationForUser(organizationId);
             if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
                 const requestInbox = await requestClient.getRequestInboxForOrg(organizationId);
@@ -796,27 +734,9 @@ export function reload(organizationId: string) {
 export function viewOrgJoinRequest() {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         //TODO: could do a start here...
-        const state = getState();
-        if (!state.views.viewOrgView.viewModel) {
-            dispatch(viewOrgJoinRequestError({
-                type: UIErrorType.ERROR,
-                message: 'Now view model!'
-            }));
-            return;
-        }
-
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: { viewModel: { organization } }
-            }
-        } = state;
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { viewModel: {
+            organization
+        }, username, token, config } = extractViewOrgModelPlus(getState());
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
@@ -841,24 +761,7 @@ export function viewOrgCancelJoinRequest(requestId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(viewOrgJoinRequestStart());
 
-        const state = getState();
-        if (!state.views.viewOrgView.viewModel) {
-            dispatch(viewOrgJoinRequestError({
-                type: UIErrorType.ERROR,
-                message: 'Now view model!'
-            }));
-            return;
-        }
-
-        const {
-            auth: { userAuthorization },
-            app: { config },
-        } = state;
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { username, token, config } = extractViewOrgModelPlus(getState());
 
         const requestClient = new requestModel.RequestsModel({
             token, username,
@@ -882,24 +785,7 @@ export function acceptJoinInvitation(requestId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(acceptJoinInvitationStart());
 
-        const state = getState();
-        if (!state.views.viewOrgView.viewModel) {
-            dispatch(viewOrgJoinRequestError({
-                type: UIErrorType.ERROR,
-                message: 'Now view model!'
-            }));
-            return;
-        }
-
-        const {
-            auth: { userAuthorization },
-            app: { config },
-        } = state;
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { username, token, config } = extractViewOrgModelPlus(getState());
 
         const requestClient = new requestModel.RequestsModel({
             token, username,
@@ -925,24 +811,7 @@ export function rejectJoinInvitation(requestId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(acceptJoinInvitationStart());
 
-        const state = getState();
-        if (!state.views.viewOrgView.viewModel) {
-            dispatch(viewOrgJoinRequestError({
-                type: UIErrorType.ERROR,
-                message: 'Now view model!'
-            }));
-            return;
-        }
-
-        const {
-            auth: { userAuthorization },
-            app: { config },
-        } = state;
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { username, token, config } = extractViewOrgModelPlus(getState());
 
         const requestClient = new requestModel.RequestsModel({
             token, username,
@@ -992,36 +861,14 @@ export function sortNarratives(sortBy: string) {
             type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_START
         });
 
-        const state = getState();
-
-        const viewModel = state.views.viewOrgView.viewModel;
-
-        if (!viewModel) {
-            dispatch(viewOrgJoinRequestError({
-                type: UIErrorType.ERROR,
-                message: 'Now view model!'
-            }));
-            return;
-        }
-
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            dispatch(viewOrgJoinRequestError({
-                type: UIErrorType.ERROR,
-                message: 'Wrong org view model kind!'
-            }));
-            return;
-        }
-
-        const { narratives } = viewModel.organization as orgModel.Organization;
-        const searchBy = viewModel.narratives.searchBy;
+        const { viewModel: {
+            narratives: { narratives, sortBy, searchBy }
+        } } = extractViewOrgModelPlus(getState());
 
         const sorted = orgModel.queryNarratives(narratives, {
             sortBy: sortBy,
             searchBy: searchBy
         });
-
-        // const sorted = orgModel.sortNarratives(narratives.slice(), sortBy)
-        // const sorted = narratives.slice().sort(sortByToComparator(sortBy))
 
         dispatch({
             type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_SUCCESS,
@@ -1063,28 +910,9 @@ export function searchNarratives(searchBy: string) {
             type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_START
         });
 
-        const state = getState();
-
-        const viewModel = state.views.viewOrgView.viewModel;
-
-        if (!viewModel) {
-            dispatch(viewOrgJoinRequestError({
-                type: UIErrorType.ERROR,
-                message: 'Now view model!'
-            }));
-            return;
-        }
-
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            dispatch(viewOrgJoinRequestError({
-                type: UIErrorType.ERROR,
-                message: 'Wrong org view model kind!'
-            }));
-            return;
-        }
-
-        const { narratives } = viewModel.organization as orgModel.Organization;
-        const sortBy = viewModel.narratives.sortBy;
+        const { viewModel: {
+            narratives: { narratives, sortBy, searchBy }
+        } } = extractViewOrgModelPlus(getState());
 
         const sorted = orgModel.queryNarratives(narratives, {
             sortBy: sortBy,
@@ -1141,35 +969,6 @@ function removeAppError(error: AnError) {
     };
 }
 
-function ensureViewModel(state: StoreState): ViewOrgViewModel {
-    if (!state.views.viewOrgView.viewModel) {
-        throw new Error('View orgs does not have an org');
-    }
-
-    const {
-        views: {
-            viewOrgView: {
-                viewModel
-            }
-        }
-    }: StoreState = state;
-
-    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        throw new Error('View orgs does not have an org');
-    }
-
-    // const { organization } = viewModel
-
-    // if (!organization) {
-    //     dispatch(removeNarrativeError({
-    //         code: 'bad state',
-    //         message: 'View orgs does not have an org'
-    //     }))
-    //     return
-    // }
-    return viewModel;
-}
-
 function orgClientFromState(state: StoreState): orgModel.OrganizationModel {
     const {
         auth: { userAuthorization },
@@ -1192,7 +991,7 @@ export function removeApp(appId: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(removeAppStart());
 
-        const viewModel = ensureViewModel(getState());
+        const { viewModel } = extractViewOrgModelPlus(getState());
         const orgClient = orgClientFromState(getState());
 
         try {

@@ -9,6 +9,7 @@ import { StoreState } from '../../types';
 import * as appModel from '../../data/models/apps';
 import { AnError, makeError } from '../../lib/error';
 import { AppError } from '@kbase/ui-components';
+import { extractViewOrgModelPlus } from '../../lib/stateExtraction';
 
 
 export interface EntityAction extends Action {
@@ -268,35 +269,7 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(accessNarrativeStart());
 
-        const state = getState();
-        if (!state.views.viewOrgView.viewModel) {
-            dispatch(accessNarrativeError({
-                code: 'error',
-                message: 'No view model'
-            }));
-            return;
-        }
-
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: {
-                    viewModel: {
-                        organization
-                    }
-                }
-            }
-        } = state;
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (!organization) {
-            return;
-        }
+        const { viewModel: { organization }, username, token, config } = extractViewOrgModelPlus(getState());
 
         const groupId = organization.id;
         const resourceId = String(narrative.workspaceId);
