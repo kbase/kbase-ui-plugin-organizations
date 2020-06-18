@@ -2,11 +2,12 @@ import * as React from 'react';
 import * as orgModel from '../../../../data/models/organization/model';
 import { NavLink } from 'react-router-dom';
 import OrgLogo from '../../../OrgLogo';
-import { Icon, Tooltip, Menu, Dropdown, Modal, Button } from 'antd';
+import { Tooltip, Menu, Dropdown, Modal, Button } from 'antd';
 import Owner from '../../../entities/OwnerContainer';
 import { ComponentView } from '../../../../types';
 import NiceElapsedTime from '../../../NiceElapsedTime';
 import './BriefOrganizationHeader.css';
+import { HomeOutlined, StopOutlined, UserOutlined, RobotOutlined, CrownOutlined, GlobalOutlined, BellFilled, UnlockOutlined, BulbOutlined, MailFilled, LinkOutlined, TeamOutlined, SaveOutlined, FileOutlined } from '@ant-design/icons';
 
 export interface BriefOrganizationProps {
     organization: orgModel.BriefOrganization;
@@ -55,7 +56,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     placement="bottomRight"
                     title="This organization has not set a home page url"
                 >
-                    <Icon type="home" style={{ color: 'rgba(200, 200, 200, 0.3)' }} />
+                    <HomeOutlined style={{ color: 'rgba(200, 200, 200, 0.3)' }} />
                 </Tooltip>
             );
         }
@@ -74,7 +75,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     title={tooltip}
                 >
                     <a href={org.homeUrl} target="_blank" rel="noopener noreferrer">
-                        <Icon type="home" />
+                        <HomeOutlined />
                     </a>
                 </Tooltip>
             </div >
@@ -121,7 +122,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         title="You are not a member of this org; you may request membership"
                     >
                         <span>
-                            <Icon type="stop" />
+                            <StopOutlined />
                         </span>
                     </Tooltip>
                 );
@@ -132,7 +133,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         mouseEnterDelay={0.5}
                         title="You are not a member of this org; you may request membership"
                     >
-                        <Icon type="stop" />
+                        <StopOutlined />
                     </Tooltip>
                 );
             case (orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
@@ -142,8 +143,8 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         mouseEnterDelay={0.5}
                         title="Your membership request is pending"
                     >
-                        <Icon type="user" style={{ color: 'orange' }} /> Your membership <b>request</b> is pending
-                </Tooltip>
+                        <span><UserOutlined style={{ color: 'orange' }} /> Your membership <b>request</b> is pending</span>
+                    </Tooltip>
                 );
 
             case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
@@ -153,7 +154,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         mouseEnterDelay={0.5}
                         title="You have been invited to join this organization"
                     >
-                        <Icon type="user" style={{ color: 'blue' }} />
+                        <UserOutlined style={{ color: 'blue' }} />
                     </Tooltip>
                 );
             case (orgModel.UserRelationToOrganization.MEMBER):
@@ -163,7 +164,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         mouseEnterDelay={0.5}
                         title="You are a member of this organization"
                     >
-                        <Icon type="user" />
+                        <UserOutlined />
                     </Tooltip>
                 );
             case (orgModel.UserRelationToOrganization.ADMIN):
@@ -173,7 +174,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         mouseEnterDelay={0.5}
                         title="You are an administrator of this organization"
                     >
-                        <Icon type="robot" />
+                        <RobotOutlined />
                     </Tooltip>
                 );
             case (orgModel.UserRelationToOrganization.OWNER):
@@ -183,7 +184,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         mouseEnterDelay={0.5}
                         title="You are the owner of this organization"
                     >
-                        <Icon type="crown" />
+                        <CrownOutlined />
                     </Tooltip>
                 );
         }
@@ -198,7 +199,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     mouseEnterDelay={0.5}
                     title="This organization is private - may only be viewed by members">
                     <span>
-                        <Icon type="unlock" />
+                        <UnlockOutlined />
                     </span>
                 </Tooltip>
             );
@@ -209,7 +210,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     mouseEnterDelay={0.5}
                     title="This organization is public - may be viewed by any KBase user">
                     <span>
-                        <Icon type="global" />
+                        <GlobalOutlined />
                     </span>
                 </Tooltip>
             );
@@ -226,7 +227,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                     <Tooltip placement="topRight" title={title}>
                         <span style={{ color: 'red', fontSize: '120%' }}>
                             {/* ● */}
-                            <Icon type="bell" theme="filled" />
+                            <BellFilled />
                         </span>
                     </Tooltip>
                 </div>
@@ -235,7 +236,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             newAlert = (
                 <div>
                     <span style={{ color: 'transparent', fontSize: '120%' }}>
-                        <Icon type="bell" theme="filled" />
+                        <BellFilled />
                     </span>
                 </div>
             );
@@ -247,7 +248,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         if (hasRequests) {
             requestsAlert = (
                 <div>
-                    <Icon type="bulb" style={{ color: "blue" }} />
+                    <BulbOutlined style={{ color: "blue" }} />
                 </div>
             );
         } else {
@@ -299,7 +300,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                 placement="topRight"
                 title={title}>
                 <span style={{ color: iconColor, fontSize: '80%' }}>
-                    <Icon type="mail" theme="filled" />
+                    <MailFilled />
                 </span>
             </Tooltip>
         );
@@ -337,7 +338,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                 overlay={menu}
                 trigger={['click', 'contextMenu']}>
                 <a href={"/#orgs/" + this.props.organization.id}>
-                    <Icon type="link" />
+                    <LinkOutlined />
                 </a>
             </Dropdown>
         );
@@ -347,7 +348,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         return (
             <React.Fragment>
                 <div className="BriefOrganizationHeader-logoRow">
-                    <NavLink to={`/viewOrganization/${org.id}`}>
+                    <NavLink to={`/orgs/${org.id}`}>
                         {this.renderLogo(org)}
                     </NavLink>
                 </div>
@@ -401,7 +402,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         return (
             <React.Fragment>
                 <div className="BriefOrganizationHeader-orgName BriefOrganizationHeader-infoTableRow">
-                    <NavLink to={`/viewOrganization/${org.id}`}>
+                    <NavLink to={`/orgs/${org.id}`}>
                         {org.name}
                     </NavLink>
                 </div>
@@ -480,7 +481,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             <Tooltip placement="bottomRight" title={memberCountTooltip}>
                 <div className="BriefOrganizationHeader-orgCreated BriefOrganizationHeader-infoTableRow">
                     <div className="BriefOrganizationHeader-infoTableCol1">
-                        <span className="field-label"><Icon type="team" /></span>
+                        <span className="field-label"><TeamOutlined /></span>
                     </div>
                     <div className="BriefOrganizationHeader-infoTableCol2">
                         {this.renderMemberCount(org)}
@@ -518,7 +519,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             <Tooltip placement="bottomRight" title={tooltip}>
                 <div className="BriefOrganizationHeader-orgCreated BriefOrganizationHeader-infoTableRow">
                     <div className="BriefOrganizationHeader-infoTableCol1">
-                        <span className="field-label"><Icon type="file" /></span>
+                        <span className="field-label"><FileOutlined /></span>
                     </div>
                     <div className="BriefOrganizationHeader-infoTableCol2">
                         {this.renderNarrativeCount(org)}
@@ -540,7 +541,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             <Tooltip placement="bottomRight" title={tooltip}>
                 <div className="BriefOrganizationHeader-orgCreated BriefOrganizationHeader-infoTableRow">
                     <div className="BriefOrganizationHeader-infoTableCol1">
-                        <span className="field-label"><Icon type="save" /></span>
+                        <span className="field-label"><SaveOutlined /></span>
                     </div>
                     <div className="BriefOrganizationHeader-infoTableCol2">
                         <NiceElapsedTime time={org.modifiedAt} showTooltip={false} />
@@ -571,7 +572,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
 
         return (
             <Button
-                type="danger"
+                danger
                 ghost={true}
                 onClick={this.props.onNavigateToBrowser}>
                 back

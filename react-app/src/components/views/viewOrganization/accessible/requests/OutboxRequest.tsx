@@ -4,8 +4,9 @@ import * as requestModel from '../../../../../data/models/requests';
 import { niceElapsed } from '../../../../../lib/time';
 import Narrative from '../../../../entities/NarrativeContainer';
 import User from '../../../../entities/UserContainer';
-import { Button, Icon } from 'antd';
+import { Button } from 'antd';
 import './OutboxRequest.css';
+import { CloseOutlined } from '@ant-design/icons';
 
 export interface RequestProps {
     request: requestModel.Request;
@@ -201,13 +202,10 @@ export default class Request extends React.Component<RequestProps, RequestState>
             <div style={{ textAlign: 'center' }}>
                 <Button.Group style={{ marginTop: '4px' }}>
                     <Button
-                        type="danger"
+                        danger
                         onClick={this.onCancelRequest.bind(this)}>
-                        <Icon type="close" />Cancel Request
+                        <CloseOutlined />Cancel Request
                         </Button>
-                    {/* <Button onClick={this.onVisitOrg.bind(this)}>
-                            <Icon type="eye" />Visit 
-                        </Button> */}
                 </Button.Group>
             </div>
         );

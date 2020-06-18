@@ -4,12 +4,8 @@ import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from '../index';
 
 import {
-    StoreState, User, InviteUserViewModel,
-    RequestResourceType, MemberType,
-    OrganizationUser,
-    ViewOrgViewModelKind,
-    View,
-    ViewOrgViewModel
+    StoreState,
+    RequestResourceType
 } from '../../../types';
 import { UserQuery } from '../../../data/model';
 import * as orgModel from '../../../data/models/organization/model';
@@ -18,6 +14,9 @@ import * as requestModel from '../../../data/models/requests';
 import { AnError } from '../../../combo/error/api';
 import { makeError } from '../../../lib/error';
 import * as viewOrgActions from '../viewOrg';
+import { OrganizationUser, AsyncModelState } from '../../../types/common';
+import { SubViewKind, ViewAccessibleOrgViewModel } from '../../../types/views/Main/views/ViewOrg';
+import { extractViewOrgModelPlus, extractViewOrgSubView } from '../../../lib/stateExtraction';
 // View Loading
 
 export interface Load extends Action {
@@ -75,15 +74,7 @@ export function load(organizationId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(loadStart());
 
-        const {
-            auth: { userAuthorization },
-            app: { config }
-        } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { username, token, config } = extractViewOrgModelPlus(getState());
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
@@ -162,56 +153,14 @@ export function inviteUserSearchUsers(query: UserQuery) {
             return;
         }
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewOrgView: { viewModel }
-            }
-        } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token } = userAuthorization;
-
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
-        if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-            throw new Error('view is not normal');
-        }
-        // const { organization } = viewModel
-        // const orgClient = new orgModel.OrganizationModel({
-        //     token, username,
-        //     groupsServiceURL: config.services.Groups.url
-        // })
-
-
-
-        // const {
-        //     views: {
-        //         inviteUserView: { viewModel }
-        //     },
-        //     auth: { authorization: { token, username } },
-        //     app: { config } } = getState()
-
-        // // TODO: better form of type narrowing? 
-        // if (viewModel === null) {
-        //     return
-        // }
+        const { viewModel, token, config } = extractViewOrgModelPlus(getState());
 
         const org = viewModel.organization;
-
 
         const userClient = new userModel.UserModel({
             token,
             userProfileServiceURL: config.services.UserProfile.url
         });
-
-        // let excludedUsers: Array<string> = []
-
-        // excludedUsers.push(org.owner.user.username)
 
         let owner: string = org.owner.username;
         let adminUsers: Array<string> = [];
@@ -221,33 +170,13 @@ export function inviteUserSearchUsers(query: UserQuery) {
 
         org.members.forEach((member) => {
             switch (member.type) {
-                case MemberType.MEMBER:
+                case orgModel.MemberType.MEMBER:
                     members.push(member.username);
                     break;
-                case MemberType.ADMIN:
+                case orgModel.MemberType.ADMIN:
                     adminUsers.push(member.username);
             }
         });
-
-        // excludedUsers = excludedUsers.concat(org.members.map((member) => {
-        //     return member.
-        // }))
-
-        // TODO revive
-
-        // org.adminRequests.forEach((request) => {
-        //     if (request.resourceType === RequestResourceType.USER) {
-        //         switch (request.type) {
-        //             case RequestType.INVITATION:
-        //                 invited.push((<UserInvitation>request).user.username)
-        //                 // excludedUsers.push((<UserInvitation>request).user.username)
-        //                 break
-        //             case RequestType.REQUEST:
-        //                 requested.push((<UserRequest>request).requester.username)
-        //             // excludedUsers.push((<UserRequest>request).requester.username)
-        //         }
-        //     }
-        // })
 
         const inboxRequests = viewModel.requestInbox;
         const outboxRequests = viewModel.requestOutbox;
@@ -267,10 +196,6 @@ export function inviteUserSearchUsers(query: UserQuery) {
         try {
             const users = await userClient.searchUsers(query);
 
-
-            // const filteredUsers = users.filter((user) => {
-            //     return (excludedUsers.indexOf(user.username) === -1)
-            // })
             const orgUsers: Array<OrganizationUser> = users.map(({ username, realname }) => {
                 let relation: orgModel.UserRelationToOrganization;
                 if (username === owner) {
@@ -315,7 +240,7 @@ export interface SelectUserStart extends Action {
 
 export interface SelectUserSuccess extends Action {
     type: ActionFlag.INVITE_USER_SELECT_USER_SUCCESS,
-    user: User,
+    user: userModel.User,
     relation: orgModel.UserRelationToOrganization;
 }
 
@@ -331,7 +256,7 @@ function selectUserStart(): SelectUserStart {
     };
 }
 
-function selectUserSuccess(user: User, relation: orgModel.UserRelationToOrganization): SelectUserSuccess {
+function selectUserSuccess(user: userModel.User, relation: orgModel.UserRelationToOrganization): SelectUserSuccess {
     return {
         type: ActionFlag.INVITE_USER_SELECT_USER_SUCCESS,
         user: user,
@@ -367,7 +292,7 @@ function selectUserError(error: AnError): SelectUserError {
 //     return false;
 // }
 
-function getUserRelation(user: User, viewModel: ViewOrgViewModel): orgModel.UserRelationToOrganization {
+function getUserRelation(user: userModel.User, viewModel: ViewAccessibleOrgViewModel): orgModel.UserRelationToOrganization {
 
     const organization = viewModel.organization;
     if (user.username === organization.owner.username) {
@@ -378,11 +303,11 @@ function getUserRelation(user: User, viewModel: ViewOrgViewModel): orgModel.User
     });
     if (member) {
         switch (member.type) {
-            case MemberType.ADMIN:
+            case orgModel.MemberType.ADMIN:
                 return orgModel.UserRelationToOrganization.ADMIN;
-            case MemberType.OWNER:
+            case orgModel.MemberType.OWNER:
                 return orgModel.UserRelationToOrganization.OWNER;
-            case MemberType.MEMBER:
+            case orgModel.MemberType.MEMBER:
                 return orgModel.UserRelationToOrganization.MEMBER;
         }
     }
@@ -423,65 +348,28 @@ function getUserRelation(user: User, viewModel: ViewOrgViewModel): orgModel.User
     return orgModel.UserRelationToOrganization.VIEW;
 }
 
-function ensureView(state: StoreState): [ViewOrgViewModel, View<InviteUserViewModel>] {
-    const {
-        views: {
-            viewOrgView: { viewModel }
-        }
-    } = state;
-    if (viewModel === null) {
-        throw new Error('select user invalid state -- no view value');
-    }
-    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        throw new Error('select user invalid state -- no view value');
-    }
-    const { inviteUserView } = viewModel.subViews;
-    if (inviteUserView === null) {
-        throw new Error('select user invalid state -- no view value');
-    }
-    return [viewModel, inviteUserView];
-}
+function ensureViewModel(state: StoreState) {
+    const subView = extractViewOrgSubView(state);
 
-// function ensureViewModel(state: StoreState): InviteUserViewModel {
-//     const view = ensureView(state)
-//     if (view.viewModel)
-// }
+    if (subView.kind !== SubViewKind.INVITE_USER) {
+        throw new Error('Wrong subview');
+    }
+
+    if (subView.model.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Wrong async state');
+    }
+
+    return subView.model.value;
+}
 
 export function selectUser(selectedUsername: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(selectUserStart());
 
-        const state = getState();
+        const { viewModel: viewOrgViewModel, token, config } = extractViewOrgModelPlus(getState());
 
-        let orgViewModel: ViewOrgViewModel;
-        let view: View<InviteUserViewModel>;
-        try {
-            [orgViewModel, view] = ensureView(state);
-        } catch (ex) {
-            dispatch(selectUserError(makeError({
-                code: 'invalid state',
-                message: ex.message
-            })));
-            return;
-        }
-
-        if (view.viewModel === null) {
-            dispatch(selectUserError(makeError({
-                code: 'error',
-                message: 'missing view model'
-            })));
-            return;
-        }
-
-        const {
-            auth: { userAuthorization },
-            app: { config }
-        } = state;
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token } = userAuthorization;
+        // let orgViewModel: ViewOrgViewModel;
+        // let view: InviteUserViewModel;
 
         const userClient = new userModel.UserModel({
             token,
@@ -490,7 +378,7 @@ export function selectUser(selectedUsername: string) {
 
         try {
             const user = await userClient.getUser(selectedUsername);
-            const relation = getUserRelation(user, orgViewModel);
+            const relation = getUserRelation(user, viewOrgViewModel);
             dispatch(selectUserSuccess(user, relation));
         } catch (ex) {
             dispatch(selectUserError(makeError({
@@ -543,38 +431,10 @@ export function sendInvitation() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(sendInvitationStart());
 
-        const state = getState();
+        const { username, token, config } = extractViewOrgModelPlus(getState());
+        const { selectedUser, organization: { id } } = ensureViewModel(getState());
 
-        let view: View<InviteUserViewModel>;
-        try {
-            [, view] = ensureView(state);
-        } catch (ex) {
-            dispatch(selectUserError(makeError({
-                code: 'invalid state',
-                message: ex.message
-            })));
-            return;
-        }
-
-        const {
-            auth: { userAuthorization },
-            app: { config }
-        } = state;
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (view.viewModel === null) {
-            dispatch(sendInvitationError(makeError({
-                code: 'error',
-                message: 'null view model'
-            })));
-            return;
-        }
-
-        const { selectedUser, organization: { id } } = view.viewModel;
+        // const { selectedUser, organization: { id } } = view.viewModel;
 
         if (!selectedUser) {
             return;

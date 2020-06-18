@@ -43,7 +43,7 @@ export default class Organization extends React.Component<OrganizationProps, Org
                 </div>
                 <div className="OrganizationEntity-Accessible-mainCol">
                     <div className="OrganizationEntity-Accessible-name">
-                        <NavLink to={`/viewOrganization/${org.id}`}>
+                        <NavLink to={`/orgs/${org.id}`}>
                             {org.name}
                         </NavLink>
                     </div>

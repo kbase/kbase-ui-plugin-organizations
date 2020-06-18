@@ -1,10 +1,11 @@
 import OrganizationsBrowser from './component';
-import { StoreState, SortDirection } from '../../../types';
+import { StoreState } from '../../../types';
 import * as actions from '../../../redux/actions/browseOrgs';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as orgModel from '../../../data/models/organization/model';
 import { AppError } from '@kbase/ui-components';
+import { SortDirection, AsyncModelState } from '../../../types/common';
 //
 // Typing for the mapState and mapDispatch
 //
@@ -29,20 +30,34 @@ export interface LinkDispatchProps {
 }
 
 // note second arg is the component props, but we don't have any component props to merge in.
-export function mapStateToProps(storeState: StoreState): LinkStateProps {
-    if (!storeState.views.browseOrgsView.viewModel) {
-        throw new Error('No view model!');
+export function mapStateToProps(state: StoreState): LinkStateProps {
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Async model not loaded!');
+    }
+
+    // if (state.view.value.kind !== ViewKind.BROWSE_ORGS) {
+    //     throw new Error('Not in browse orgs view');
+    // }
+
+    if (state.view.value.views.browseOrgs.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Async model not loaded!');
     }
 
     const {
-        views: {
-            browseOrgsView: {
-                viewModel: {
-                    organizations, openRequests, error,
-                    totalCount, filteredCount, filter, searching }
+        view: {
+            value: {
+                views: {
+                    browseOrgs: {
+                        value: {
+                            organizations, openRequests, error,
+                            totalCount, filteredCount, filter,
+                            searching
+                        }
+                    }
+                }
             }
         }
-    } = storeState;
+    } = state;
 
     return {
         organizations,

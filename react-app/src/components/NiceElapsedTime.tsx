@@ -115,7 +115,7 @@ export default class NiceElapsedTime extends React.Component<NiceElapsedTimeProp
         }
         return (
             <Tooltip placement="bottomRight" title={tooltip}>
-                {niceElapsed(this.props.time, { absoluteAfter: 30, now: this.state.now })}
+                <span>{niceElapsed(this.props.time, { absoluteAfter: 30, now: this.state.now })}</span>
             </Tooltip>
         );
     }

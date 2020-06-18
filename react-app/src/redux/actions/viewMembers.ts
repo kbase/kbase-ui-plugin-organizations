@@ -7,6 +7,7 @@ import { StoreState } from '../../types';
 import * as orgModel from '../../data/models/organization/model';
 import * as uberModel from '../../data/models/uber';
 import { AppError } from '@kbase/ui-components';
+import { extractViewOrgModelPlus } from '../../lib/stateExtraction';
 
 // LOADING
 
@@ -148,22 +149,8 @@ export function promoteToAdmin(memberUsername: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(promoteToAdminStart());
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewMembersView: { viewModel }
-            }
-        } = getState();
+        const { viewModel, username, token, config } = extractViewOrgModelPlus(getState());
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
@@ -173,20 +160,6 @@ export function promoteToAdmin(memberUsername: string) {
         orgClient.memberToAdmin(viewModel.organization.id, memberUsername)
             .then((org) => {
                 dispatch(promoteToAdminSuccess(memberUsername));
-
-                // Brute force, update the in-store organization
-                // const { viewMembersView: { view } } = getState()
-
-                // if (!view) {
-                //     dispatch(viewMembersPromoteToAdminError({
-                //         code: 'NoView',
-                //         message: 'No view for viewMembers'
-                //     }))
-                //     return
-                // }
-
-
-                // dispatch(viewMembersLoad(view.organization.id))
             })
             .catch((err: Error) => {
                 dispatch(promoteToAdminError({
@@ -243,22 +216,8 @@ export function demoteToMember(memberUsername: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(demoteToMemberStart());
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewMembersView: { viewModel }
-            }
-        } = getState();
+        const { viewModel, username, token, config } = extractViewOrgModelPlus(getState());
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
@@ -322,22 +281,7 @@ export function removeMember(memberUsername: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(removeMemberStart());
 
-        const {
-            auth: { userAuthorization },
-            app: { config },
-            views: {
-                viewMembersView: { viewModel }
-            }
-        } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (viewModel === null) {
-            throw new Error('view is not populated');
-        }
+        const { viewModel, username, token, config } = extractViewOrgModelPlus(getState());
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,

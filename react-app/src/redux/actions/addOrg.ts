@@ -3,11 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { ActionFlag } from './index';
 import {
-    StoreState,
-    EditableOrganization,
-    ValidationState,
-    SyncState,
-    ValidationErrorType
+    StoreState
 } from '../../types';
 
 import * as orgModel from '../../data/models/organization/model';
@@ -15,6 +11,8 @@ import Validation from '../../data/models/organization/validation';
 import DebouncingProcess from '../../lib/DebouncingProcess';
 import { UIServiceClient } from '../../data/apis/uiService';
 import { AppError } from '@kbase/ui-components';
+import { EditableOrganization, ValidationState, SyncState, ValidationErrorType } from '../../types/common';
+import { extractAddOrgModel, extractAppInfo } from '../../lib/stateExtraction';
 
 // ACTIONS
 
@@ -414,45 +412,70 @@ export function load() {
     };
 }
 
+
+// function ensureViewModel(state: StoreState) {
+//     const subView = extractAddOrgModel(state);
+
+//     if (subView.kind !== SubViewKind.REQUEST_NARRATIVE) {
+//         throw new Error('Wrong subview');
+//     }
+
+//     if (subView.model.loadingState !== AsyncModelState.SUCCESS) {
+//         throw new Error('Wrong async state');
+//     }
+
+//     return subView.model.value;
+// }
+
 export function addOrg() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const state = getState();
 
-        // This check is to satisfy TS. Since viewModel is nullable, it has no way
-        // of knowing that our app flow ensures that it is populated.
-        // In terms of generalized usage of the redux store, though, there is no
-        // way to ensure this! So we really should perform our state checks before
-        // handling any event
-        if (!state.views.addOrgView.viewModel) {
-            dispatch(
-                saveError({
-                    code: 'invalid',
-                    message: 'Unexpected condition: no view model'
-                })
-            );
-            return;
-        }
+        // // This check is to satisfy TS. Since viewModel is nullable, it has no way
+        // // of knowing that our app flow ensures that it is populated.
+        // // In terms of generalized usage of the redux store, though, there is no
+        // // way to ensure this! So we really should perform our state checks before
+        // // handling any event
+        // if (!state.views.addOrgView.viewModel) {
+        //     dispatch(
+        //         saveError({
+        //             code: 'invalid',
+        //             message: 'Unexpected condition: no view model'
+        //         })
+        //     );
+        //     return;
+        // }
 
-        // TODO: other validations!!!
+        // // TODO: other validations!!!
 
-        dispatch(saveStart());
+        // dispatch(saveStart());
 
-        const {
-            auth: {
-                userAuthorization
-            },
-            views: {
-                addOrgView: {
-                    viewModel: { newOrganization }
-                }
-            },
-            app: { config }
-        } = state;
+        // const {
+        //     auth: {
+        //         userAuthorization
+        //     },
+        //     views: {
+        //         addOrgView: {
+        //             viewModel: { newOrganization }
+        //         }
+        //     },
+        //     app: { config }
+        // } = state;
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        // if (userAuthorization === null) {
+        //     throw new Error('Unauthorized');
+        // }
+        // const { token, username } = userAuthorization;
+
+        const { newOrganization } = extractAddOrgModel(state);
+        const { username, token, config } = extractAppInfo(getState());
+
+        // const orgClient = new orgModel.OrganizationModel({
+        //     token,
+        //     username,
+        //     groupsServiceURL: config.services.Groups.url,
+        //     userProfileServiceURL: config.services.UserProfile.url
+        // });
 
         const orgClient = new orgModel.OrganizationModel({
             token,
@@ -494,28 +517,8 @@ export function addOrg() {
 export function addOrgEvaluate() {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         const state = getState();
-        if (!state.views.addOrgView.viewModel) {
-            dispatch(
-                saveError({
-                    code: 'invalid',
-                    message: 'Unexpected condition: no view model'
-                })
-            );
-            return;
-        }
 
-        const {
-            views: {
-                addOrgView: {
-                    viewModel: { newOrganization }
-                }
-            }
-        } = state;
-
-        if (!newOrganization) {
-            dispatch(AddOrgEvaluateErrors());
-            return;
-        }
+        const { newOrganization } = extractAddOrgModel(state);
 
         if (newOrganization.name.validationState.type !== ValidationErrorType.OK) {
             dispatch(AddOrgEvaluateErrors());
@@ -1037,16 +1040,19 @@ export function updateId(id: string) {
         // back to the form, but the eventual success occurs later.
         dispatch(updateIdPass(id));
 
-        const {
-            views: {
-                addOrgView: { viewModel }
-            }
-        } = getState();
+        // const {newOrganization} = extractAddOrgModel(state);
+        // const { viewModel: viewOrgViewModel, username, token, config } = extractViewOrgModelPlus(getState());
 
-        if (!viewModel) {
-            // do nothing
-            return;
-        }
+        // const {
+        //     views: {
+        //         addOrgView: { viewModel }
+        //     }
+        // } = getState();
+
+        // if (!viewModel) {
+        //     // do nothing
+        //     return;
+        // }
 
         // For the id existence check, we want to ensure that we don't trip up the
         // user experience.

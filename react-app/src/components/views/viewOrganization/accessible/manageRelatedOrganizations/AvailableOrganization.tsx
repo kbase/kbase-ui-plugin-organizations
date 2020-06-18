@@ -2,8 +2,8 @@ import React from 'react';
 import './AvailableOrganization.css';
 import OrgLogo from '../../../../OrgLogo';
 import Owner from '../../../../entities/OwnerContainer';
-import { SelectableRelatableOrganization } from '../../../../../types';
-import { Icon } from 'antd';
+import { SelectableRelatableOrganization } from '../../../../../types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import { CheckOutlined } from '@ant-design/icons';
 
 export interface AvailableOrganizationProps {
     selectableOrganization: SelectableRelatableOrganization;
@@ -20,7 +20,7 @@ export default class AvailableOrganization extends React.Component<AvailableOrga
     renderRelated() {
         if (this.props.selectableOrganization.isRelated) {
             return (
-                <Icon type="check" style={{ color: "green" }} />
+                <CheckOutlined style={{ color: "green" }} />
             );
         }
     }

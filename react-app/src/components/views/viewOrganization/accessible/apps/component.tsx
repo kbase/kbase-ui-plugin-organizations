@@ -1,8 +1,11 @@
 import * as React from 'react';
 import * as orgModel from '../../../../../data/models/organization/model';
 import './component.css';
-import { Button, Icon, Alert, Select, Input, Dropdown, Menu, Modal } from 'antd';
+import {
+    Button, Alert, Select, Input, Dropdown, Menu, Modal
+} from 'antd';
 import App from '../../../../entities/app/loader';
+import { AppstoreOutlined, DeleteOutlined, EllipsisOutlined } from '@ant-design/icons';
 
 export interface AppsProps {
     organization: orgModel.Organization;
@@ -40,7 +43,7 @@ export default class Apps extends React.Component<AppsProps, AppsState> {
     renderButtonRow() {
         return (
             <Button size="small" className="Button-important" onClick={this.props.onAssociateApp}>
-                <Icon type="appstore" />
+                <AppstoreOutlined type="appstore" />
                 Associate Apps
             </Button>
         );
@@ -76,7 +79,7 @@ export default class Apps extends React.Component<AppsProps, AppsState> {
             const menu = (
                 <Menu>
                     <Menu.Item key="removeApp" onClick={() => this.doRemoveApp(app.appId)}>
-                        <Icon type="delete" style={{ color: 'red' }} />
+                        <DeleteOutlined style={{ color: 'red' }} />
                         Remove App from Organization
                     </Menu.Item>
                 </Menu>
@@ -88,7 +91,7 @@ export default class Apps extends React.Component<AppsProps, AppsState> {
                     </div>
                     <div className="Apps-menuColumn">
                         <Dropdown overlay={menu} trigger={['click']}>
-                            <Icon type="ellipsis" />
+                            <EllipsisOutlined />
                         </Dropdown>
                     </div>
                 </div>

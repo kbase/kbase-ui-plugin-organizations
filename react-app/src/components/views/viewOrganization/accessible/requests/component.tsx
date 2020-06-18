@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import './component.css';
 import Header from '../../../../Header';
-import { Icon, Button, Modal, Card, Alert } from 'antd';
+import { Button, Modal, Card, Alert } from 'antd';
 import User from '../../../../entities/UserContainer';
 import Narrative from '../../../../entities/NarrativeContainer';
 import * as requestModel from '../../../../../data/models/requests';
@@ -10,6 +10,7 @@ import * as orgModel from '../../../../../data/models/organization/model';
 import { niceElapsed } from '../../../../../lib/time';
 import InboxRequest from './InboxRequestContainer';
 import OutboxRequest from './OutboxRequestContainer';
+import { UserOutlined, ArrowRightOutlined, TeamOutlined, MailOutlined, FileOutlined, AppstoreOutlined } from '@ant-design/icons';
 
 export interface RequestsProps {
     inbox: Array<requestModel.Request>;
@@ -103,9 +104,9 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
     renderRequestJoinRequest(request: requestModel.UserRequest) {
         const title = (
             <span>
-                <Icon type="user" />
-                <Icon type="arrow-right" />
-                <Icon type="team" />
+                <UserOutlined />
+                <ArrowRightOutlined />
+                <TeamOutlined />
                 {' '}
                 Request to Join Group
             </span>
@@ -118,7 +119,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                 Approve
             </Button>,
             <Button
-                type="danger"
+                danger
                 style={{ margin: '0 5px' }}
                 onClick={() => this.onDenyJoinRequest.call(this, request)}>
                 Deny
@@ -165,10 +166,10 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
     renderRequestJoinInvitation(request: requestModel.UserInvitation) {
         const title = (
             <span>
-                <Icon type="team" />
-                <Icon type="mail" />
-                <Icon type="arrow-right" />
-                <Icon type="user" />
+                <TeamOutlined />
+                <MailOutlined />
+                <ArrowRightOutlined />
+                <UserOutlined type="user" />
 
                 {' '}
                 Invitation to Join Group
@@ -176,7 +177,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
         );
         const actions = [
             <Button
-                type="danger"
+                danger
                 style={{ margin: '0 5px' }}
                 onClick={() => this.onCancelJoinInvitation.call(this, request)}>
                 Cancel
@@ -242,9 +243,9 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
     renderRequestNarrativeRequest(request: requestModel.WorkspaceRequest) {
         const title = (
             <span>
-                <Icon type="file" />
-                <Icon type="arrow-right" />
-                <Icon type="team" />
+                <FileOutlined />
+                <ArrowRightOutlined />
+                <TeamOutlined />
                 {' '}
                 Request to Associate Narrative
             </span>
@@ -258,7 +259,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                 Approve
             </Button>,
             <Button
-                type="danger"
+                danger
                 style={{ margin: '0 5px' }}
                 onClick={() => this.onDenyJoinRequest.call(this, request)}>
                 Deny
@@ -347,9 +348,9 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
     renderRequestAppRequest(request: requestModel.AppRequest) {
         const title = (
             <span>
-                <Icon type="appstore" />
-                <Icon type="arrow-right" />
-                <Icon type="team" />
+                <AppstoreOutlined />
+                <ArrowRightOutlined />
+                <TeamOutlined />
                 {' '}
                 Request to Add App
             </span>
@@ -362,7 +363,7 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
                 Approve
             </Button>,
             <Button
-                type="danger"
+                danger
                 style={{ margin: '0 5px' }}
                 onClick={() => this.onDenyJoinRequest.call(this, request)}>
                 Deny

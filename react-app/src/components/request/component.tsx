@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { RequestResourceType } from '../../types';
-import { Card, Icon } from 'antd';
+import { Card } from 'antd';
 import User from '../entities/UserContainer';
 import './component.css';
 import { niceElapsed } from '../../lib/time';
 import * as requestModel from '../../data/models/requests';
+import { UserOutlined, ArrowRightOutlined, TeamOutlined, MailOutlined, FileOutlined, AppstoreOutlined } from '@ant-design/icons';
 
 export interface RequestProps {
     request: requestModel.Request;
@@ -20,9 +21,9 @@ export class Request extends React.Component<RequestProps, RequestState> {
     renderRequestJoinRequest(request: requestModel.UserRequest) {
         const title = (
             <span>
-                <Icon type="user" />
-                <Icon type="arrow-right" />
-                <Icon type="team" />
+                <UserOutlined />
+                <ArrowRightOutlined />
+                <TeamOutlined />
                 {' '}
                 Request to Join Group
             </span>
@@ -82,12 +83,10 @@ export class Request extends React.Component<RequestProps, RequestState> {
     renderRequestJoinInvitation(request: requestModel.UserInvitation) {
         const title = (
             <span>
-                <Icon type="team" />
-                <Icon type="mail" />
-                <Icon type="arrow-right" />
-                <Icon type="user" />
-
-
+                <TeamOutlined />
+                <MailOutlined />
+                <ArrowRightOutlined />
+                <UserOutlined />
                 {' '}
                 Invitation to Join Group
             </span>
@@ -141,9 +140,9 @@ export class Request extends React.Component<RequestProps, RequestState> {
     renderRequestNarrativeRequest(request: requestModel.WorkspaceRequest) {
         const title = (
             <span>
-                <Icon type="file" />
-                <Icon type="arrow-right" />
-                <Icon type="team" />
+                <FileOutlined />
+                <ArrowRightOutlined />
+                <TeamOutlined />
                 {' '}
                 Request to Associate Narrative
             </span>
@@ -209,9 +208,9 @@ export class Request extends React.Component<RequestProps, RequestState> {
     renderRequestAppRequest(request: requestModel.AppRequest) {
         const title = (
             <span>
-                <Icon type="appstore" />
-                <Icon type="arrow-right" />
-                <Icon type="team" />
+                <AppstoreOutlined />
+                <ArrowRightOutlined />
+                <TeamOutlined />
                 {' '}
                 Request to Add App
             </span>

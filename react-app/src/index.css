@@ -280,3 +280,42 @@ textarea.Lite.ant-input {
 .IconButton.ant-dropdown-open:hover {
     background-color: rgba(200, 200, 200, 0.5)
 }
+
+.Col {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.Col-scrollable {}
+
+
+.ant-tabs.FullHeightTabs {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+
+.ant-tabs.FullHeightTabs>.ant-tabs-content-holder {
+    flex: 1 1 0px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0;
+}
+
+.ant-tabs.FullHeightTabs>.ant-tabs-content-holder>.ant-tabs-content {
+    flex: 1 1 0px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0;
+}
+
+.ant-tabs.FullHeightTabs>.ant-tabs-content>.ant-tabs-tabpane {
+    flex: 1 1 0px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0;
+}

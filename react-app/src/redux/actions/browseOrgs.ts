@@ -3,12 +3,14 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { ActionFlag } from './index';
 import {
-    StoreState,
-    SortDirection, BrowseOrgsViewModel
+    StoreState
 } from '../../types';
 
 import * as orgModel from '../../data/models/organization/model';
 import { AppError } from '@kbase/ui-components';
+import { BrowseOrgsModel } from '../../types/views/Main/views/BrowseOrgs';
+import { SortDirection } from '../../data/apis/groups';
+import { extractBrowseOrgsModel, extractAppInfo } from '../../lib/stateExtraction';
 
 export interface Load extends Action<ActionFlag.BROWSE_ORGS_LOAD> {
     type: ActionFlag.BROWSE_ORGS_LOAD;
@@ -20,7 +22,7 @@ export interface LoadStart extends Action<ActionFlag.BROWSE_ORGS_LOAD_START> {
 
 export interface LoadSuccess extends Action<ActionFlag.BROWSE_ORGS_LOAD_SUCCESS> {
     type: ActionFlag.BROWSE_ORGS_LOAD_SUCCESS;
-    defaultViewModel: BrowseOrgsViewModel;
+    defaultViewModel: BrowseOrgsModel;
 }
 
 export interface LoadError extends Action<ActionFlag.BROWSE_ORGS_LOAD_ERROR> {
@@ -38,7 +40,7 @@ function loadStart(): LoadStart {
     };
 }
 
-function loadSuccess(defaultViewModel: BrowseOrgsViewModel): LoadSuccess {
+function loadSuccess(defaultViewModel: BrowseOrgsModel): LoadSuccess {
     return {
         type: ActionFlag.BROWSE_ORGS_LOAD_SUCCESS,
         defaultViewModel: defaultViewModel
@@ -171,15 +173,7 @@ export function load() {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(loadStart());
 
-        const {
-            auth: { userAuthorization },
-            app: { config }
-        } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { token, username, config } = extractAppInfo(getState());
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
@@ -223,7 +217,7 @@ export function load() {
 
             // dispatch(searchOrgsSuccess(organizations, total, openRequests))
             // populate default browse orgs props
-            const defaultViewModel: BrowseOrgsViewModel = {
+            const defaultViewModel: BrowseOrgsModel = {
                 rawOrganizations: organizations,
                 organizations: organizations,
                 openRequests: openRequests,
@@ -255,26 +249,9 @@ export function searchOrgs(searchTerms: Array<string>) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(searchOrgsStart(searchTerms));
 
-        const {
-            views: { browseOrgsView },
-            auth: { userAuthorization },
-            app: { config }
-        } = getState();
+        const { model, token, username, config } = extractBrowseOrgsModel(getState());
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (browseOrgsView.viewModel === null) {
-            dispatch(searchOrgsError({
-                code: 'invalid-state',
-                message: 'Search orgs may not be called without a defined view'
-            }));
-            return;
-        }
-
-        const { viewModel: { sortField, sortDirection, filter } } = browseOrgsView;
+        const { sortField, sortDirection, filter } = model;
         const orgClient = new orgModel.OrganizationModel({
             token, username,
             groupsServiceURL: config.services.Groups.url,
@@ -321,17 +298,7 @@ export function sortOrgs(sortField: string, sortDirection: SortDirection) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(sortOrgsStart(sortField, sortDirection));
 
-        const {
-            views: { browseOrgsView },
-            auth: { userAuthorization },
-            app: { config } } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-
+        const { model, token, username, config } = extractBrowseOrgsModel(getState());
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
@@ -339,15 +306,7 @@ export function sortOrgs(sortField: string, sortDirection: SortDirection) {
             userProfileServiceURL: config.services.UserProfile.url
         });
 
-        if (browseOrgsView.viewModel === null) {
-            dispatch(searchOrgsError({
-                code: 'invalid-state',
-                message: 'Search orgs may not be called without a defined view'
-            }));
-            return;
-        }
-
-        const { viewModel: { searchTerms, filter } } = browseOrgsView;
+        const { searchTerms, filter } = model;
 
         try {
             const { organizations, total } = await orgClient.queryOrgs({
@@ -385,19 +344,25 @@ export function sortOrgs(sortField: string, sortDirection: SortDirection) {
     };
 }
 
+// function ensureViewModel(state: StoreState) {
+//     const viewModel = extractBrowseOrgsViewModel(state);
+
+//     if (subView.kind !== SubViewKind.ADD_APP) {
+//         throw new Error('Wrong subview');
+//     }
+
+//     if (subView.model.loadingState !== AsyncModelState.SUCCESS) {
+//         throw new Error('Wrong async state');
+//     }
+
+//     return subView.model.value;
+// }
+
 export function filterOrgs(filter: orgModel.Filter) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(filterOrgsStart(filter));
 
-        const {
-            views: { browseOrgsView },
-            auth: { userAuthorization },
-            app: { config } } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { model, token, username, config } = extractBrowseOrgsModel(getState());
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
@@ -405,15 +370,9 @@ export function filterOrgs(filter: orgModel.Filter) {
             userProfileServiceURL: config.services.UserProfile.url
         });
 
-        if (browseOrgsView.viewModel === null) {
-            dispatch(searchOrgsError({
-                code: 'invalid-state',
-                message: 'Search orgs may not be called without a defined view'
-            }));
-            return;
-        }
 
-        const { viewModel: { searchTerms, sortField, sortDirection } } = browseOrgsView;
+
+        const { searchTerms, sortField, sortDirection } = model;
 
         try {
             const { organizations, total } = await orgClient.queryOrgs({

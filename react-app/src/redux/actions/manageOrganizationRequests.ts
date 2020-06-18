@@ -5,6 +5,7 @@ import { Action } from 'redux';
 import * as requestModel from '../../data/models/requests';
 import * as orgModel from '../../data/models/organization/model';
 import { AppError } from '@kbase/ui-components';
+import { extractViewOrgModelPlus, extractManageOrganizationRequestsModel } from '../../lib/stateExtraction';
 
 // Action types
 
@@ -318,24 +319,27 @@ export function load(organizationId: string) {
 
 export function acceptJoinRequest(requestId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        const {
-            auth: { userAuthorization },
-            views: { manageOrganizationRequestsView },
-            app: { config }
-        } = getState();
 
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
+        const { username, token, config } = extractViewOrgModelPlus(getState());
+
+        // const {
+        //     auth: { userAuthorization },
+        //     views: { manageOrganizationRequestsView },
+        //     app: { config }
+        // } = getState();
+
+        // if (userAuthorization === null) {
+        //     throw new Error('Unauthorized');
+        // }
+        // const { token, username } = userAuthorization;
 
         const requestClient = new requestModel.RequestsModel({
             token, username, groupsServiceURL: config.services.Groups.url
         });
 
-        if (!manageOrganizationRequestsView) {
-            return;
-        }
+        // if (!manageOrganizationRequestsView) {
+        //     return;
+        // }
 
         try {
             const request = await requestClient.acceptRequest(requestId);
@@ -351,20 +355,8 @@ export function acceptJoinRequest(requestId: string) {
 
 export function denyJoinRequest(requestId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        const {
-            auth: { userAuthorization },
-            views: { manageOrganizationRequestsView },
-            app: { config }
-        } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (!manageOrganizationRequestsView) {
-            return;
-        }
+        const { username, token, config } = extractViewOrgModelPlus(getState());
+        const viewModel = extractManageOrganizationRequestsModel(getState());
 
         const requestClient = new requestModel.RequestsModel({
             token, username, groupsServiceURL: config.services.Groups.url
@@ -373,9 +365,7 @@ export function denyJoinRequest(requestId: string) {
         try {
             const request = await requestClient.denyRequest(requestId);
             dispatch(denyJoinRequestSuccess(request));
-            if (manageOrganizationRequestsView.viewModel) {
-                dispatch(load(manageOrganizationRequestsView.viewModel.organization.id));
-            }
+            dispatch(load(viewModel.organization.id));
         } catch (ex) {
             dispatch(denyJoinRequestError({
                 code: ex.name,
@@ -387,20 +377,8 @@ export function denyJoinRequest(requestId: string) {
 
 export function cancelJoinInvitation(requestId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        const {
-            auth: { userAuthorization },
-            views: { manageOrganizationRequestsView },
-            app: { config }
-        } = getState();
-
-        if (userAuthorization === null) {
-            throw new Error('Unauthorized');
-        }
-        const { token, username } = userAuthorization;
-
-        if (!manageOrganizationRequestsView) {
-            return;
-        }
+        const { username, token, config } = extractViewOrgModelPlus(getState());
+        const viewModel = extractManageOrganizationRequestsModel(getState());
 
         const requestClient = new requestModel.RequestsModel({
             token, username, groupsServiceURL: config.services.Groups.url
@@ -408,9 +386,7 @@ export function cancelJoinInvitation(requestId: string) {
 
         try {
             const request = await requestClient.cancelRequest(requestId);
-            if (manageOrganizationRequestsView.viewModel) {
-                dispatch(load(manageOrganizationRequestsView.viewModel.organization.id));
-            }
+            dispatch(load(viewModel.organization.id));
         } catch (ex) {
             dispatch(cancelJoinInvitationError({
                 code: ex.name,

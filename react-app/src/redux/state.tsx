@@ -1,10 +1,8 @@
 import {
-    StoreState,
-    ComponentLoadingState
+    StoreState
 } from "../types";
 import { makeBaseStoreState } from "@kbase/ui-components";
-
-
+import { AsyncModelState } from "../types/common";
 
 export class StateInstances {
     static makeInitialState(): StoreState {
@@ -36,91 +34,12 @@ export class StateInstances {
             },
             db: {
             },
-            views: {
-                browseOrgsView: {
-                    loadingState: ComponentLoadingState.NONE,
-                    error: null,
-                    viewModel: null
-                },
-                addOrgView: {
-                    loadingState: ComponentLoadingState.NONE,
-                    error: null,
-                    viewModel: null
-                },
-                editOrgView: {
-                    loadingState: ComponentLoadingState.NONE,
-                    error: null,
-                    viewModel: null
-                },
-                manageOrganizationRequestsView: {
-                    loadingState: ComponentLoadingState.NONE,
-                    error: null,
-                    viewModel: null
-                },
-                viewMembersView: {
-                    loadingState: ComponentLoadingState.NONE,
-                    error: null,
-                    viewModel: null
-                },
-                // inviteUserView: {
-                //     loadingState: ComponentLoadingState.NONE,
-                //     error: null,
-                //     viewModel: null
-                // },
-                // manageMembershipView: {
-                //     loadingState: ComponentLoadingState.NONE,
-                //     error: null,
-                //     viewModel: null
-                // },
-                // requestNarrativeView: {
-                //     loadingState: ComponentLoadingState.NONE,
-                //     error: null,
-                //     viewModel: null
-                // },
-                viewOrgView: {
-                    loadingState: ComponentLoadingState.NONE,
-                    error: null,
-                    viewModel: null
-                }
+            view: {
+                loadingState: AsyncModelState.NONE,
             },
-            // auth: {
-            //     status: AuthState.NONE,
-            //     message: '',
-            //     authorization: {
-            //         token: '',
-            //         username: '',
-            //         realname: '',
-            //         roles: []
-            //     }
-            // },
             error: null,
             orgsApp: {
-                // status: AppState.NONE,
-                // config: {
-                //     baseUrl: '',
-                //     services: {
-                //         Groups: {
-                //             url: ''
-                //         },
-                //         UserProfile: {
-                //             url: ''
-                //         },
-                //         Workspace: {
-                //             url: ''
-                //         },
-                //         ServiceWizard: {
-                //             url: ''
-                //         },
-                //         Auth: {
-                //             url: ''
-                //         },
-                //         NarrativeMethodStore: {
-                //             url: ''
-                //         }
-                //     },
-                //     defaultPath: '',
-                //     channelId: null
-                // }
+
             },
 
             updateOrg: {

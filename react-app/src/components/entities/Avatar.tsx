@@ -1,8 +1,7 @@
 import * as React from 'react';
 import './Avatar.css';
 import noUserPic from './nouserpic.png';
-
-import { User } from '../../types';
+import { User } from '../../types/common';
 
 export interface AvatarProps {
     user: User,

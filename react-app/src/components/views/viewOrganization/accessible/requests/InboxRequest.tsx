@@ -3,9 +3,10 @@ import * as requestModel from '../../../../../data/models/requests';
 import { niceElapsed } from '../../../../../lib/time';
 import Narrative from '../../../../entities/NarrativeContainer';
 import User from '../../../../entities/UserContainer';
-import { Button, Icon } from 'antd';
+import { Button } from 'antd';
 import './InboxRequest.css';
 import App from '../../../../entities/app/loader';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
 export interface RequestProps {
     request: requestModel.Request;
@@ -180,17 +181,13 @@ export default class Request extends React.Component<RequestProps, RequestState>
             <div style={{ textAlign: 'center' }}>
                 <Button.Group style={{ marginTop: '4px' }}>
                     <Button type="default" onClick={this.onAcceptRequest.bind(this)}>
-                        <Icon type="check" />
+                        <CheckOutlined />
                         Accept
                         </Button>
-                    <Button type="danger" onClick={this.onRejectRequest.bind(this)}>
-                        <Icon type="close" />
+                    <Button danger onClick={this.onRejectRequest.bind(this)}>
+                        <CloseOutlined />
                         Reject
                         </Button>
-                    {/* <Button>
-                            <Icon type="eye" />
-                            Visit
-                        </Button> */}
                 </Button.Group>
             </div>
         );

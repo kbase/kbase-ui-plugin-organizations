@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { StoreState } from '../../types';
 import * as actions from '../../redux/actions/entities';
 import * as orgModel from '../../data/models/organization/model';
-import { Icon } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface LoaderProps {
     username: orgModel.Username;
@@ -35,7 +35,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
         } else {
             return (
                 <div>
-                    <Icon type="loading" />{' '}Loading owner...
+                    <LoadingOutlined />{' '}Loading owner...
                 </div>
             );
         }
@@ -48,8 +48,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
     }
 }
 
-
-
+// Redux Interface
 
 export interface OwnProps {
     username: orgModel.Username;

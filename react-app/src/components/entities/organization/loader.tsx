@@ -9,7 +9,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../types';
 import * as actions from '../../../redux/actions/entities/organization';
-import { Icon } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface LoaderProps {
     organizationId: orgModel.OrganizationID;
@@ -43,7 +43,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
         } else {
             return (
                 <div>
-                    <Icon type="loading" />
+                    <LoadingOutlined />
                 </div>
             );
         }

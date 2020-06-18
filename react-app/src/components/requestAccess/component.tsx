@@ -1,14 +1,14 @@
-import * as React from 'react'
+import * as React from 'react';
 import { Drawer, Radio } from 'antd';
-import { Member } from '../../types';
-import './component.css'
-import * as orgModel from '../../data/models/organization/model'
+import './component.css';
+import * as orgModel from '../../data/models/organization/model';
+import { Member } from '../../types/common';
 
 export interface RequestAccessProps {
-    narrative: orgModel.NarrativeResource
-    member: Member
-    organization: orgModel.Organization
-    onClose: () => void
+    narrative: orgModel.NarrativeResource;
+    member: Member;
+    organization: orgModel.Organization;
+    onClose: () => void;
 }
 
 export interface RequestAccessState {
@@ -21,22 +21,22 @@ export class RequestAccess extends React.Component<RequestAccessProps, RequestAc
     renderNarrativePermission() {
         switch (this.props.narrative.permission) {
             case orgModel.UserWorkspacePermission.NONE:
-                return 'None'
+                return 'None';
             case orgModel.UserWorkspacePermission.VIEW:
-                return 'View and Copy'
+                return 'View and Copy';
             case orgModel.UserWorkspacePermission.EDIT:
-                return 'View, Copy, Save, Run'
+                return 'View, Copy, Save, Run';
             case orgModel.UserWorkspacePermission.ADMIN:
-                return 'View, Copy, Save, Run, Manage Sharing'
+                return 'View, Copy, Save, Run, Manage Sharing';
             case orgModel.UserWorkspacePermission.OWNER:
-                return 'View, Copy, Save, Run, Manage Sharing, Own'
+                return 'View, Copy, Save, Run, Manage Sharing, Own';
         }
     }
 
     render() {
         const radioStyle = {
             display: 'block'
-        }
+        };
         return (
             <Drawer
                 className="RequestAccess"
@@ -45,7 +45,7 @@ export class RequestAccess extends React.Component<RequestAccessProps, RequestAc
                 width={500}
                 closable={true}
                 visible={true}
-                onClose={() => { this.props.onClose.call(this) }}
+                onClose={() => { this.props.onClose.call(this); }}
             >
                 <p>
                     You are requesting additional share access to narrative <b>{this.props.narrative.title}</b>
@@ -71,6 +71,6 @@ export class RequestAccess extends React.Component<RequestAccessProps, RequestAc
                 </p>
 
             </Drawer>
-        )
+        );
     }
 }

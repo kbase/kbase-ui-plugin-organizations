@@ -1,53 +1,52 @@
 import {
-    User,
     RequestStatus,
     RequestResourceType,
 } from '../types';
-import * as userProfile from './apis/userProfile'
-import { GroupsClient, Group } from './apis/groups'
-import * as groups from './apis/groups'
-import * as requestModel from './models/requests'
-import * as orgModel from './models/organization/model'
+import * as userProfile from './apis/userProfile';
+import { GroupsClient, } from './apis/groups';
+import * as groups from './apis/groups';
+import * as requestModel from './models/requests';
+import { User } from '../types/common';
 
 function stringToRequestType(type: string): requestModel.RequestType {
     switch (type) {
         case 'Invite':
-            return requestModel.RequestType.INVITATION
+            return requestModel.RequestType.INVITATION;
         case 'Request':
-            return requestModel.RequestType.REQUEST
+            return requestModel.RequestType.REQUEST;
         default:
-            throw new Error('unknown request type: ' + type)
+            throw new Error('unknown request type: ' + type);
     }
 }
 
 function stringToResourceType(type: string) {
     switch (type) {
         case 'user':
-            return RequestResourceType.USER
+            return RequestResourceType.USER;
         case 'workspace':
-            return RequestResourceType.WORKSPACE
+            return RequestResourceType.WORKSPACE;
         case 'catalogmethod':
-            return RequestResourceType.APP
+            return RequestResourceType.APP;
         default:
-            throw new Error('unknown resource type: ' + type)
+            throw new Error('unknown resource type: ' + type);
     }
 }
 
 function stringToRequestStatus(status: string): RequestStatus {
-    return RequestStatus.OPEN
+    return RequestStatus.OPEN;
 }
 
 export interface UserQuery {
-    query: string
-    excludedUsers: Array<string>
+    query: string;
+    excludedUsers: Array<string>;
 }
 
 function wait(timeout: number) {
     return new Promise((resolve) => {
         window.setTimeout(() => {
-            resolve(true)
-        }, timeout)
-    })
+            resolve(true);
+        }, timeout);
+    });
 }
 
 // export function newOrg(state: StoreState, action: actions.AddOrg): StoreState {
@@ -63,22 +62,22 @@ function wait(timeout: number) {
 // }
 
 interface ModelParams {
-    token: string
-    username: string
-    groupsServiceURL: string
-    userProfileServiceURL: string
-    workspaceServiceURL: string
-    serviceWizardURL: string
+    token: string;
+    username: string;
+    groupsServiceURL: string;
+    userProfileServiceURL: string;
+    workspaceServiceURL: string;
+    serviceWizardURL: string;
 }
 
 function promiseTry<T>(fun: () => Promise<T>) {
     return new Promise<T>((resolve, reject) => {
         try {
-            return resolve(fun())
+            return resolve(fun());
         } catch (ex) {
-            reject(ex)
+            reject(ex);
         }
-    })
+    });
 }
 
 export class Model {
@@ -87,18 +86,18 @@ export class Model {
     // groupsServiceURL: string
     // userProfileServiceURL: string
     // workspaceServiceURL: string
-    params: ModelParams
+    params: ModelParams;
 
     constructor(params: ModelParams) {
         // this.organizations = organizations;
-        this.params = params
+        this.params = params;
     }
 
-    getPendingRequests(): Promise<{ requests: Array<groups.Request>, invitations: Array<groups.Request> }> {
+    getPendingRequests(): Promise<{ requests: Array<groups.Request>, invitations: Array<groups.Request>; }> {
         const groupsClient = new GroupsClient({
             url: this.params.groupsServiceURL,
             token: this.params.token
-        })
+        });
 
         return Promise.all([
             groupsClient.getCreatedRequests({
@@ -106,14 +105,14 @@ export class Model {
                 sortDirection: groups.SortDirection.DESCENDING
             })
                 .then((requests) => {
-                    return requests
+                    return requests;
                 }),
             groupsClient.getTargetedRequests({
                 includeClosed: false,
                 sortDirection: groups.SortDirection.DESCENDING
             })
                 .then((requests) => {
-                    return requests
+                    return requests;
                 })
         ])
             .then(([createdRequests, targetedRequests]) => {
@@ -122,8 +121,8 @@ export class Model {
                 return {
                     requests: createdRequests,
                     invitations: targetedRequests
-                }
-            })
+                };
+            });
     }
 
 
@@ -200,7 +199,7 @@ export class Model {
         const requestClient = new requestModel.RequestsModel({
             token: this.params.token, username: this.params.username,
             groupsServiceURL: this.params.groupsServiceURL
-        })
+        });
 
         return Promise.all(groupIds.map((id) => {
             return requestClient.getPendingOrganizationRequestsForOrg(id)
@@ -208,20 +207,20 @@ export class Model {
                     return {
                         groupId: id,
                         requests: requests
-                    }
-                })
+                    };
+                });
         }))
             .then((allRequests) => {
-                const pendingRequests = new Map<string, Array<requestModel.Request>>()
+                const pendingRequests = new Map<string, Array<requestModel.Request>>();
                 allRequests.forEach(({ groupId, requests }) => {
-                    pendingRequests.set(groupId, requests)
-                })
-                return pendingRequests
-            })
+                    pendingRequests.set(groupId, requests);
+                });
+                return pendingRequests;
+            });
     }
 
     profileToUser(profile: userProfile.UserProfile): User {
-        let jobTitle
+        let jobTitle;
         if (!profile.profile.userdata) {
             return {
                 username: profile.user.username,
@@ -234,12 +233,12 @@ export class Model {
                 avatarOption: null,
                 gravatarHash: null,
                 gravatarDefault: null
-            }
+            };
         }
         if (profile.profile.userdata.jobTitle === 'Other') {
-            jobTitle = profile.profile.userdata.jobTitleOther
+            jobTitle = profile.profile.userdata.jobTitleOther;
         } else {
-            jobTitle = profile.profile.userdata.jobTitle
+            jobTitle = profile.profile.userdata.jobTitle;
         }
 
         return {
@@ -253,7 +252,7 @@ export class Model {
             avatarOption: profile.profile.userdata.avatarOption,
             gravatarHash: profile.profile.synced.gravatarHash,
             gravatarDefault: profile.profile.userdata.gravatarDefault
-        }
+        };
     }
 }
 

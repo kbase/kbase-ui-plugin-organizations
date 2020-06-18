@@ -1,151 +1,146 @@
-import { Action } from 'redux'
-import * as actions from '../../actions/viewOrganization/addApps'
-import { AddAppsViewModel, View, ViewState, StoreState, ViewOrgViewModelKind, ResourceRelationToOrg } from '../../../types'
+import { Action } from 'redux';
+import * as actions from '../../actions/viewOrganization/addApps';
+import { StoreState } from '../../../types';
 import { ActionFlag } from '../../actions';
+import { AddAppViewModel, ResourceRelationToOrg } from '../../../types/views/Main/views/ViewOrg/views/AddApp';
+import { AsyncModelState, AsyncModel } from '../../../types/common';
+import { ViewOrgViewModelKind, SubViewKind } from '../../../types/views/Main/views/ViewOrg';
 
-export function loadStart(state: View<AddAppsViewModel>, action: actions.LoadStart): View<AddAppsViewModel> {
+export function loadStart(state: AsyncModel<AddAppViewModel>, action: actions.LoadStart): AsyncModel<AddAppViewModel> {
     return {
-        state: ViewState.LOADING,
-        viewModel: null,
-        error: null
-    }
+        loadingState: AsyncModelState.LOADING
+    };
 }
 
-export function loadSuccess(state: View<AddAppsViewModel>, action: actions.LoadSuccess): View<AddAppsViewModel> {
+export function loadSuccess(state: AsyncModel<AddAppViewModel>, action: actions.LoadSuccess): AsyncModel<AddAppViewModel> {
     return {
-        state: ViewState.OK,
-        error: null,
-        viewModel: {
+        loadingState: AsyncModelState.SUCCESS,
+        value: {
             rawApps: action.rawApps,
             sortBy: action.sortBy,
             searchBy: action.searchBy,
             apps: action.apps,
             selectedApp: action.selectedApp
         }
-    }
+    };
 }
 
-export function loadError(state: View<AddAppsViewModel>, action: actions.LoadError): View<AddAppsViewModel> {
+export function loadError(state: AsyncModel<AddAppViewModel>, action: actions.LoadError): AsyncModel<AddAppViewModel> {
     return {
-        state: ViewState.ERROR,
-        error: action.error,
-        viewModel: null
-    }
+        loadingState: AsyncModelState.ERROR,
+        error: action.error
+    };
 }
 
-export function unload(state: View<AddAppsViewModel>, action: actions.Unload): View<AddAppsViewModel> {
+export function unload(state: AsyncModel<AddAppViewModel>, action: actions.Unload): AsyncModel<AddAppViewModel> {
     return {
-        state: ViewState.NONE,
-        error: null,
-        viewModel: null
-    }
+        loadingState: AsyncModelState.NONE
+    };
 }
 
-export function selectSuccess(state: View<AddAppsViewModel>, action: actions.SelectSuccess): View<AddAppsViewModel> {
-    if (state.viewModel === null) {
-        return state
+export function selectSuccess(state: AsyncModel<AddAppViewModel>, action: actions.SelectSuccess): AsyncModel<AddAppViewModel> {
+    if (state.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
 
-    const newRawApps = state.viewModel.rawApps.slice(0)
+    const newRawApps = state.value.rawApps.slice(0);
     // TODO might need more item setting here
     newRawApps.forEach((app) => {
-        if (app === action.selectedApp) {
-            app.selected = true
+        if (app.appId === action.selectedApp.appId) {
+            app.selected = true;
         } else {
-            app.selected = false
+            app.selected = false;
         }
-    })
+    });
 
     // TODO: reapply sort and search??
-    const newApps = state.viewModel.apps.slice(0)
+    const newApps = state.value.apps.slice(0);
     newApps.forEach((app) => {
-        if (app === action.selectedApp) {
-            app.selected = true
+        if (app.appId === action.selectedApp.appId) {
+            app.selected = true;
         } else {
-            app.selected = false
+            app.selected = false;
         }
-    })
-
+    });
 
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
+        value: {
+            ...state.value,
             apps: newApps,
             rawApps: newRawApps,
             selectedApp: action.selectedApp
-        } as AddAppsViewModel
-    }
+        }
+    };
 }
 
-export function requestAssociationSuccess(state: View<AddAppsViewModel>, action: actions.RequestAssociationSuccess): View<AddAppsViewModel> {
-    if (state.viewModel === null) {
-        return state
+export function requestAssociationSuccess(state: AsyncModel<AddAppViewModel>, action: actions.RequestAssociationSuccess): AsyncModel<AddAppViewModel> {
+    if (state.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
 
-    const newRawApps = state.viewModel.rawApps.slice(0)
+    const newRawApps = state.value.rawApps.slice(0);
     // TODO might need more item setting here
     newRawApps.forEach((app) => {
         if (app.app.id === action.appId) {
             if (action.pending) {
-                app.relation = ResourceRelationToOrg.ASSOCIATION_PENDING
+                app.relation = ResourceRelationToOrg.ASSOCIATION_PENDING;
             } else {
-                app.relation = ResourceRelationToOrg.ASSOCIATED
+                app.relation = ResourceRelationToOrg.ASSOCIATED;
             }
         }
-    })
+    });
 
     // TODO: reapply sort and search??
-    const newApps = state.viewModel.apps.slice(0)
+    const newApps = state.value.apps.slice(0);
     newApps.forEach((app) => {
         if (app.app.id === action.appId) {
             if (action.pending) {
-                app.relation = ResourceRelationToOrg.ASSOCIATION_PENDING
+                app.relation = ResourceRelationToOrg.ASSOCIATION_PENDING;
             } else {
-                app.relation = ResourceRelationToOrg.ASSOCIATED
+                app.relation = ResourceRelationToOrg.ASSOCIATED;
             }
         }
-    })
-
+    });
 
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
+        value: {
+            ...state.value,
             apps: newApps,
             rawApps: newRawApps
             // selectedApp: action.selectedApp
-        } as AddAppsViewModel
-    }
+        }
+    };
 }
 
 // TODO: route the search and/or search expression here too???
-function searchSuccess(state: View<AddAppsViewModel>, action: actions.SearchSuccess): View<AddAppsViewModel> {
-    if (state.viewModel === null) {
-        return state
+function searchSuccess(state: AsyncModel<AddAppViewModel>, action: actions.SearchSuccess): AsyncModel<AddAppViewModel> {
+    if (state.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
 
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
+        value: {
+            ...state.value,
             apps: action.apps
         }
-    }
+    };
 }
 
-function sortSuccess(state: View<AddAppsViewModel>, action: actions.SortSuccess): View<AddAppsViewModel> {
-    if (state.viewModel === null) {
-        return state
+function sortSuccess(state: AsyncModel<AddAppViewModel>, action: actions.SortSuccess): AsyncModel<AddAppViewModel> {
+    if (state.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
-
     return {
         ...state,
-        viewModel: {
-            ...state.viewModel,
+        value: {
+            ...state.value,
+            sortBy: action.sortBy,
             apps: action.apps
         }
-    }
+    };
 }
 
 function haveReducer(action: Action): boolean {
@@ -158,63 +153,102 @@ function haveReducer(action: Action): boolean {
         case ActionFlag.VIEW_ORG_ADD_APPS_REQUEST_ASSOCIATE_APP_SUCCESS:
         case ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_SUCCESS:
         case ActionFlag.VIEW_ORG_ADD_APPS_SORT_SUCCESS:
-            return true
-        default: return false
+            return true;
+        default: return false;
     }
 }
 
-function localReducer(state: View<AddAppsViewModel>, action: actions.AddAppsAction): View<AddAppsViewModel> | null {
+function localReducer(state: AsyncModel<AddAppViewModel>, action: actions.AddAppsAction): AsyncModel<AddAppViewModel> | null {
     switch (action.type) {
         case ActionFlag.VIEW_ORG_ADD_APPS_LOAD_START:
-            return loadStart(state, action as actions.LoadStart)
+            return loadStart(state, action as actions.LoadStart);
         case ActionFlag.VIEW_ORG_ADD_APPS_LOAD_SUCCESS:
-            return loadSuccess(state, action as actions.LoadSuccess)
+            return loadSuccess(state, action as actions.LoadSuccess);
         case ActionFlag.VIEW_ORG_ADD_APPS_LOAD_ERROR:
-            return loadError(state, action as actions.LoadError)
+            return loadError(state, action as actions.LoadError);
         case ActionFlag.VIEW_ORG_ADD_APPS_UNLOAD:
-            return unload(state, action as actions.Unload)
+            return unload(state, action as actions.Unload);
         case ActionFlag.VIEW_ORG_ADD_APPS_SELECT_SUCCESS:
-            return selectSuccess(state, action as actions.SelectSuccess)
+            return selectSuccess(state, action as actions.SelectSuccess);
         case ActionFlag.VIEW_ORG_ADD_APPS_REQUEST_ASSOCIATE_APP_SUCCESS:
-            return requestAssociationSuccess(state, action as actions.RequestAssociationSuccess)
+            return requestAssociationSuccess(state, action as actions.RequestAssociationSuccess);
         case ActionFlag.VIEW_ORG_ADD_APPS_SEARCH_SUCCESS:
-            return searchSuccess(state, action as actions.SearchSuccess)
+            return searchSuccess(state, action as actions.SearchSuccess);
         case ActionFlag.VIEW_ORG_ADD_APPS_SORT_SUCCESS:
-            return sortSuccess(state, action as actions.SortSuccess)
+            return sortSuccess(state, action as actions.SortSuccess);
         default:
-            return null
+            return null;
     }
 }
 
 export default function reducer(state: StoreState, action: Action): StoreState | null {
     if (!haveReducer(action)) {
-        return null
+        return null;
     }
-    if (!state.views.viewOrgView.viewModel) {
-        return state
+
+    if (state.auth.userAuthorization === null) {
+        return state;
     }
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        return state
+
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
-    const viewState: View<AddAppsViewModel> = state.views.viewOrgView.viewModel.subViews.addAppsView
-    const newViewState = localReducer(viewState, action)
+
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+    if (state.view.value.views.viewOrg.value.subView.kind !== SubViewKind.ADD_APP) {
+        return state;
+    }
+
+    // if (state.view.value.views.viewOrg.value.subView.model.loadingState !== AsyncModelState.SUCCESS) {
+    //     return state;
+    // }
+
+    const viewState = state.view.value.views.viewOrg.value.subView.model;
+    const newViewState = localReducer(viewState, action);
     if (newViewState === null) {
-        return null
+        return null;
     }
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    subViews: {
-                        ...state.views.viewOrgView.viewModel.subViews,
-                        addAppsView: newViewState
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            subView: {
+                                ...state.view.value.views.viewOrg.value.subView,
+                                model: newViewState
+                            }
+                        }
                     }
                 }
             }
+            // viewOrgView: {
+            //     ...state.views.viewOrgView,
+            //     viewModel: {
+            //         ...state.views.viewOrgView.viewModel,
+            //         subViews: {
+            //             ...state.views.viewOrgView.viewModel.subViews,
+            //             addAppsView: newViewState
+            //         }
+            //     }
+            // }
         }
-    }
+    };
 }

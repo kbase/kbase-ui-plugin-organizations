@@ -1,11 +1,12 @@
-import * as React from 'react'
+import * as React from 'react';
 
-import './component.css'
+import './component.css';
 
-import { Button, Modal, Icon, Alert } from 'antd'
-import Header from '../../../Header'
-import * as orgModel from '../../../../data/models/organization/model'
-import * as requestModel from '../../../../data/models/requests'
+import { Button, Modal, Alert } from 'antd';
+import Header from '../../../Header';
+import * as orgModel from '../../../../data/models/organization/model';
+import * as requestModel from '../../../../data/models/requests';
+import { DeleteOutlined, LockOutlined, StopOutlined, CheckOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 enum NavigateTo {
     NONE = 0,
@@ -13,26 +14,26 @@ enum NavigateTo {
 }
 
 export interface ViewOrganizationState {
-    showInfo: boolean
-    navigateTo: NavigateTo
+    showInfo: boolean;
+    navigateTo: NavigateTo;
     requestAccess: {
-        narrative: orgModel.NarrativeResource | null
-    }
+        narrative: orgModel.NarrativeResource | null;
+    };
 }
 
 export interface ViewOrganizationProps {
-    organization: orgModel.InaccessiblePrivateOrganization
-    relation: orgModel.Relation
-    requestOutbox: Array<requestModel.Request>
-    onJoinOrg: () => void
-    onCancelJoinRequest: (requestId: string) => void
-    onAcceptInvitation: (requestId: string) => void
-    onRejectInvitation: (requestId: string) => void
+    organization: orgModel.InaccessiblePrivateOrganization;
+    relation: orgModel.Relation;
+    requestOutbox: Array<requestModel.Request>;
+    onJoinOrg: () => void;
+    onCancelJoinRequest: (requestId: string) => void;
+    onAcceptInvitation: (requestId: string) => void;
+    onRejectInvitation: (requestId: string) => void;
 }
 
 class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrganizationState> {
     constructor(props: ViewOrganizationProps) {
-        super(props)
+        super(props);
 
         this.state = {
             showInfo: false,
@@ -40,7 +41,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             requestAccess: {
                 narrative: null
             }
-        }
+        };
     }
 
     onShowInfo() {
@@ -56,32 +57,32 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     <p>When your request is either accepted or denied, you will received a notification in your KBase Feed.</p>
                 </div>
             )
-        })
+        });
     }
 
     onJoinClick() {
-        this.props.onJoinOrg()
+        this.props.onJoinOrg();
     }
 
     onCancelJoinRequest() {
-        const relation = this.props.relation as orgModel.MembershipRequestPendingRelation
-        this.props.onCancelJoinRequest(relation.requestId)
+        const relation = this.props.relation as orgModel.MembershipRequestPendingRelation;
+        this.props.onCancelJoinRequest(relation.requestId);
     }
 
     onAcceptInvitation() {
         if (!this.props.organization) {
-            return
+            return;
         }
-        const relation = this.props.relation as orgModel.MembershipRequestPendingRelation
-        this.props.onAcceptInvitation(relation.requestId)
+        const relation = this.props.relation as orgModel.MembershipRequestPendingRelation;
+        this.props.onAcceptInvitation(relation.requestId);
     }
 
     onRejectInvitation() {
         if (!this.props.organization) {
-            return
+            return;
         }
-        const relation = this.props.relation as orgModel.MembershipRequestPendingRelation
-        this.props.onRejectInvitation(relation.requestId)
+        const relation = this.props.relation as orgModel.MembershipRequestPendingRelation;
+        this.props.onRejectInvitation(relation.requestId);
     }
 
     renderMessage() {
@@ -94,25 +95,25 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         <p>Upon requesting membership, the organization administrators will be notified.</p>
                         <p>When your request is either accepted or denied, you will received a notification in your KBase Feed.</p>
                     </React.Fragment>
-                )
+                );
             case (orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
                 return (
                     <React.Fragment>
                         <p>Your membership request to this private organization is pending.</p>
                     </React.Fragment>
-                )
+                );
             case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
                 return (
                     <React.Fragment>
                         <p>You have been invited to this private organization.</p>
                     </React.Fragment>
-                )
+                );
             default:
                 return (
                     <div>
                         Weird, {this.props.relation.type}.
                     </div>
-                )
+                );
         }
     }
 
@@ -121,7 +122,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             <span>
                 Private Organization
             </span>
-        )
+        );
         const description = (
             <React.Fragment>
                 {this.renderMessage()}
@@ -129,35 +130,35 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     {this.renderJoinButton()}
                 </div>
             </React.Fragment>
-        )
+        );
         return (
             <Alert
                 message={message}
                 description={description}
                 type="info"
                 showIcon={true}
-                icon={(<Icon type="lock" />)}
+                icon={(<LockOutlined />)}
                 style={{ width: '50em', margin: '20px auto' }}
                 className="ViewInaccessiblePrivateOrganization-message" />
-        )
+        );
     }
 
     renderRelationClass(relation: orgModel.Relation) {
         switch (relation.type) {
             case (orgModel.UserRelationToOrganization.NONE):
-                return 'infoBox'
+                return 'infoBox';
             case (orgModel.UserRelationToOrganization.VIEW):
-                return 'infoBox'
+                return 'infoBox';
             case (orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
-                return 'infoBox relationRequestPending'
+                return 'infoBox relationRequestPending';
             case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
-                return 'infoBox relationInvitationPending'
+                return 'infoBox relationInvitationPending';
             case (orgModel.UserRelationToOrganization.MEMBER):
-                return 'infoBox'
+                return 'infoBox';
             case (orgModel.UserRelationToOrganization.ADMIN):
-                return 'infoBox'
+                return 'infoBox';
             case (orgModel.UserRelationToOrganization.OWNER):
-                return 'infoBox'
+                return 'infoBox';
         }
     }
 
@@ -170,31 +171,31 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                     >
                         Join this Organization
                     </Button>
-                )
+                );
             case (orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
                 return (
                     <div>
                         <div><Button
-                            icon="delete"
-                            type="danger"
+                            icon={<DeleteOutlined />}
+                            danger
                             onClick={this.onCancelJoinRequest.bind(this)}>Cancel Request</Button>
                         </div>
                     </div>
-                )
+                );
             case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
                 return (
                     <div>
-                        <Button icon="check" type="default" onClick={this.onAcceptInvitation.bind(this)}>Accept Invitation</Button>
+                        <Button icon={<CheckOutlined />} type="default" onClick={this.onAcceptInvitation.bind(this)}>Accept Invitation</Button>
                         {' '}
-                        <Button icon="stop" type="danger" onClick={this.onRejectInvitation.bind(this)}>Reject Invitation</Button>
+                        <Button icon={<StopOutlined />} danger onClick={this.onRejectInvitation.bind(this)}>Reject Invitation</Button>
                     </div>
-                )
+                );
             default:
                 return (
                     <div>
                         Weird, {this.props.relation.type}.
                     </div>
-                )
+                );
         }
     }
 
@@ -202,16 +203,17 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         const breadcrumbs = (
             <div style={{ flex: '0 0 auto' }}>
             </div>
-        )
+        );
         const buttons = (
             <React.Fragment>
-
-                <Button shape="circle" icon="info" onClick={this.onShowInfo.bind(this)}></Button>
+                <Button
+                    icon={<InfoCircleOutlined />}
+                    onClick={this.onShowInfo.bind(this)} />
             </React.Fragment>
-        )
+        );
         return (
             <Header breadcrumbs={breadcrumbs} buttons={buttons} />
-        )
+        );
     }
 
     render() {
@@ -220,8 +222,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 {this.renderHeader()}
                 {this.renderOrg()}
             </div>
-        )
+        );
     }
 }
 
-export default ViewOrganization
+export default ViewOrganization;

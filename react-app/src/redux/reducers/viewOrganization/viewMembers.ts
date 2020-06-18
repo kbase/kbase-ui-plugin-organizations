@@ -1,7 +1,9 @@
-import { Action } from 'redux'
-import * as actions from '../../actions/viewOrganization/viewMembers'
-import { StoreState, MemberType, ViewOrgViewModelKind } from '../../../types'
-import { ActionFlag } from '../../actions'
+import { Action } from 'redux';
+import * as actions from '../../actions/viewOrganization/viewMembers';
+import { StoreState } from '../../../types';
+import { ActionFlag } from '../../actions';
+import { AsyncModelState, MemberType } from '../../../types/common';
+import { ViewOrgViewModelKind } from '../../../types/views/Main/views/ViewOrg';
 
 // export function loadStart(state: StoreState, action: actions.LoadStart) {
 //     return {
@@ -67,19 +69,23 @@ import { ActionFlag } from '../../actions'
 // }
 
 export function promoteToAdminSuccess(state: StoreState, action: actions.PromoteToAdminSuccess): StoreState {
-
-    const {
-        views: { viewOrgView: { viewModel } }
-    } = state
-
-    if (viewModel === null) {
-        return state
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
 
-    // TODO: ugh, cut this off before getting here.
-    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        return state
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+    const viewModel = state.view.value.views.viewOrg.value;
 
     // TODO: probably better is to have to have the action handler do a call to get the members
     // and to populate the orgs membership struct from that...
@@ -88,55 +94,67 @@ export function promoteToAdminSuccess(state: StoreState, action: actions.Promote
             return {
                 ...member,
                 type: MemberType.ADMIN
-            }
+            };
         } else {
-            return member
+            return member;
         }
-    })
+    });
 
     const sortedMembers = viewModel.members.map((member) => {
         if (member.username === action.memberUsername) {
             return {
                 ...member,
                 type: MemberType.ADMIN
-            }
+            };
         } else {
-            return member
+            return member;
         }
-    })
+    });
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...viewModel,
-                    organization: {
-                        ...viewModel.organization,
-                        members: members
-                    },
-                    members: sortedMembers
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            organization: {
+                                ...state.view.value.views.viewOrg.value.organization,
+                                members: members
+                            },
+                            members: sortedMembers
+                        }
+
+                    }
                 }
             }
         }
-    }
+    };
 }
 
 export function demoteToMemberSuccess(state: StoreState, action: actions.DemoteToMemberSuccess): StoreState {
-    const {
-        views: { viewOrgView: { viewModel } }
-    } = state
-
-    if (viewModel === null) {
-        return state
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
 
-    // TODO: ugh, cut this off before getting here.
-    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        return state
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+    const viewModel = state.view.value.views.viewOrg.value;
 
     // TODO: probably better is to have to have the action handler do a call to get the members
     // and to populate the orgs membership struct from that...
@@ -145,133 +163,184 @@ export function demoteToMemberSuccess(state: StoreState, action: actions.DemoteT
             return {
                 ...member,
                 type: MemberType.MEMBER
-            }
+            };
         } else {
-            return member
+            return member;
         }
-    })
+    });
 
     const sortedMembers = viewModel.members.map((member) => {
         if (member.username === action.memberUsername) {
             return {
                 ...member,
                 type: MemberType.MEMBER
-            }
+            };
         } else {
-            return member
+            return member;
         }
-    })
+    });
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...viewModel,
-                    organization: {
-                        ...viewModel.organization,
-                        members: members
-                    },
-                    members: sortedMembers
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            organization: {
+                                ...state.view.value.views.viewOrg.value.organization,
+                                members: members
+                            },
+                            members: sortedMembers
+                        }
+
+                    }
                 }
             }
         }
-    }
+    };
 }
 
 
 export function removeMemberSuccess(state: StoreState, action: actions.RemoveMemberSuccess): StoreState {
-    const {
-        views: { viewOrgView: { viewModel } }
-    } = state
-
-    if (viewModel === null) {
-        return state
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
 
-    // TODO: ugh, cut this off before getting here.
-    if (viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        return state
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
+    const viewModel = state.view.value.views.viewOrg.value;
 
     // TODO: probably better is to have to have the action handler do a call to get the members
     // and to populate the orgs membership struct from that...
     const members = viewModel.organization.members.filter((member) => {
-        return (member.username !== action.memberUsername)
-    })
+        return (member.username !== action.memberUsername);
+    });
 
     const sortedMembers = viewModel.members.filter((member) => {
-        return (member.username !== action.memberUsername)
-    })
+        return (member.username !== action.memberUsername);
+    });
 
     return {
         ...state,
-        views: {
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...viewModel,
-                    organization: {
-                        ...viewModel.organization,
-                        members: members
-                    },
-                    members: sortedMembers
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            organization: {
+                                ...state.view.value.views.viewOrg.value.organization,
+                                members: members
+                            },
+                            members: sortedMembers
+                        }
+
+                    }
                 }
             }
         }
-    }
+    };
 }
 
 
 export function sortMembersSuccess(state: StoreState, action: actions.SortMembersSuccess): StoreState {
-    if (!state.views.viewOrgView.viewModel) {
-        return state
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        return state
+
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
     return {
         ...state,
-        views: {
-            ...state.views,
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    sortMembersBy: action.sortBy,
-                    members: action.members
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            sortMembersBy: action.sortBy,
+                            members: action.members
+                        }
+
+                    }
                 }
             }
         }
-    }
-}
+    };
+};
 
 export function searchMembersSuccess(state: StoreState, action: actions.SearchMembersSuccess): StoreState {
-    if (!state.views.viewOrgView.viewModel) {
-        return state
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
-    if (state.views.viewOrgView.viewModel.kind !== ViewOrgViewModelKind.NORMAL) {
-        return state
+
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     return state;
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        return state;
     }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+        return state;
+    }
+
     return {
         ...state,
-        views: {
-            ...state.views,
-            ...state.views,
-            viewOrgView: {
-                ...state.views.viewOrgView,
-                viewModel: {
-                    ...state.views.viewOrgView.viewModel,
-                    searchMembersBy: action.searchBy,
-                    members: action.members
+        view: {
+            ...state.view,
+            value: {
+                ...state.view.value,
+                views: {
+                    ...state.view.value.views,
+                    viewOrg: {
+                        ...state.view.value.views.viewOrg,
+                        value: {
+                            ...state.view.value.views.viewOrg.value,
+                            searchMembersBy: action.searchBy,
+                            members: action.members
+                        }
+                    }
+
                 }
             }
         }
-    }
+    };
 }
 
 function reducer(state: StoreState, action: Action): StoreState | null {
@@ -288,18 +357,18 @@ function reducer(state: StoreState, action: Action): StoreState | null {
         // case ActionFlag.VIEW_MEMBERS_UNLOAD:
         //     return unload(state, action as actions.Unload)
         case ActionFlag.VIEW_ORG_VIEW_MEMBERS_PROMOTE_TO_ADMIN_SUCCESS:
-            return promoteToAdminSuccess(state, action as actions.PromoteToAdminSuccess)
+            return promoteToAdminSuccess(state, action as actions.PromoteToAdminSuccess);
         case ActionFlag.VIEW_ORG_VIEW_MEMBERS_DEMOTE_TO_MEMBER_SUCCESS:
-            return demoteToMemberSuccess(state, action as actions.DemoteToMemberSuccess)
+            return demoteToMemberSuccess(state, action as actions.DemoteToMemberSuccess);
         case ActionFlag.VIEW_ORG_VIEW_MEMBERS_REMOVE_MEMBER_SUCCESS:
-            return removeMemberSuccess(state, action as actions.RemoveMemberSuccess)
+            return removeMemberSuccess(state, action as actions.RemoveMemberSuccess);
         case ActionFlag.VIEW_ORG_SORT_MEMBERS_SUCCESS:
-            return sortMembersSuccess(state, action as actions.SortMembersSuccess)
+            return sortMembersSuccess(state, action as actions.SortMembersSuccess);
         case ActionFlag.VIEW_ORG_SEARCH_MEMBERS_SUCCESS:
-            return searchMembersSuccess(state, action as actions.SearchMembersSuccess)
+            return searchMembersSuccess(state, action as actions.SearchMembersSuccess);
         default:
-            return null
+            return null;
     }
 }
 
-export default reducer
+export default reducer;

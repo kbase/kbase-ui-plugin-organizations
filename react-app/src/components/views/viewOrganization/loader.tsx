@@ -13,20 +13,22 @@ import * as types from '../../../types';
 import * as actions from '../../../redux/actions/viewOrg';
 import { OrganizationKind } from '../../../data/models/organization/model';
 import { AppError } from '@kbase/ui-components';
+import { AsyncModelState, AsyncModel } from '../../../types/common';
+import { ViewOrgViewModel } from '../../../types/views/Main/views/ViewOrg';
 
-export interface Props {
+export interface ViewOrganizationProps {
     organizationId: string;
-    view: types.ViewOrgView;
+    viewModel: AsyncModel<ViewOrgViewModel>;
     onLoad: (organizationId: string) => void;
     onUnload: () => void;
 }
 
 interface State { }
 
-class Loader extends React.Component<Props, State> {
+class Loader extends React.Component<ViewOrganizationProps, State> {
     previousOrganizationId: string | null;
 
-    constructor(props: Props) {
+    constructor(props: ViewOrganizationProps) {
         super(props);
 
         this.previousOrganizationId = null;
@@ -62,49 +64,44 @@ class Loader extends React.Component<Props, State> {
     }
 
     render() {
-        switch (this.props.view.loadingState) {
-            case types.ComponentLoadingState.NONE:
+        switch (this.props.viewModel.loadingState) {
+            case AsyncModelState.NONE:
                 return this.renderLoading();
-            case types.ComponentLoadingState.LOADING:
+            case AsyncModelState.LOADING:
                 return this.renderLoading();
-            case types.ComponentLoadingState.ERROR:
-                if (this.props.view.error) {
-                    return this.renderError(this.props.view.error);
+            case AsyncModelState.ERROR:
+                if (this.props.viewModel.error) {
+                    return this.renderError(this.props.viewModel.error);
                 } else {
                     return this.renderError({
                         code: 'Missing Error',
                         message: 'The error appears to be missing'
                     });
                 }
-            case types.ComponentLoadingState.SUCCESS:
+            case AsyncModelState.SUCCESS:
             default:
-                if (this.props.view.viewModel === null) {
-                    return this.renderError({
-                        code: 'Null Error',
-                        message: 'The view model is missing, but should be available'
-                    });
-                }
-                if (this.props.view.viewModel.organization.kind === OrganizationKind.INACCESSIBLE_PRIVATE) {
+                // return <div>well, ok</div>;
+                if (this.props.viewModel.value.organization.kind === OrganizationKind.INACCESSIBLE_PRIVATE) {
                     return <InaccessibleContainer />;
                 }
                 return <AccessibleContainer />;
         }
     }
 
-    componentDidUpdate(previousProps: Props) {
+    componentDidUpdate(previousProps: ViewOrganizationProps) {
         if (previousProps.organizationId !== this.props.organizationId) {
             this.props.onLoad(this.props.organizationId);
         }
     }
 
     componentDidMount() {
-        if (this.props.view.loadingState === types.ComponentLoadingState.NONE) {
+        if (this.props.viewModel.loadingState === AsyncModelState.NONE) {
             this.props.onLoad(this.props.organizationId);
         }
     }
 
     componentWillUnmount() {
-        this.props.onUnload();
+        // this.props.onUnload();
     }
 }
 
@@ -113,7 +110,7 @@ export interface OwnProps {
 }
 
 interface StateProps {
-    view: types.ViewOrgView;
+    viewModel: AsyncModel<ViewOrgViewModel>;
 }
 
 interface DispatchProps {
@@ -122,8 +119,30 @@ interface DispatchProps {
 }
 
 function mapStateToProps(state: types.StoreState, props: OwnProps): StateProps {
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Main Async model not loaded!');
+    }
+
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     throw new Error(`Not in view orgs view: ${state.view.value.kind}`);
+    // }
+
+    // if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+    //     throw new Error('Async model not loaded!');
+    // }
+
+    const {
+        view: {
+            value: {
+                views: {
+                    viewOrg
+                }
+            }
+        }
+    } = state;
+
     return {
-        view: state.views.viewOrgView
+        viewModel: viewOrg
     };
 }
 

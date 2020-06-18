@@ -1,16 +1,16 @@
-import uuid from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid';
 
 export interface AnError {
-    code: string
-    message: string
-    id: string
-    at: Date
+    code: string;
+    message: string;
+    id: string;
+    at: Date;
 
 
-    detail?: string
-    history?: Array<AnError>
-    trace?: Array<string>
-    info?: any
+    detail?: string;
+    history?: Array<AnError>;
+    trace?: Array<string>;
+    info?: any;
 }
 
 export function makeError(
@@ -18,13 +18,13 @@ export function makeError(
         {
             code: string, message: string,
             detail?: string,
-            history?: Array<AnError>, trace?: Array<string>, info?: any
+            history?: Array<AnError>, trace?: Array<string>, info?: any;
         }
 ) {
     return {
         code, message, detail,
-        id: uuid(),
+        id: uuidv4(),
         at: new Date(),
         history, trace, info
-    }
+    };
 }
