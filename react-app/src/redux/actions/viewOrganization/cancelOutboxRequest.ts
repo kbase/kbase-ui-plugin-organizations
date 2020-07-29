@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from '../index';
 import {
     StoreState
-} from '../../../types';
+} from '../../store/types';
 import * as requestModel from '../../../data/models/requests';
 import { AnError, makeError } from '../../../lib/error';
 import { extractViewOrgModelPlus } from '../../../lib/stateExtraction';

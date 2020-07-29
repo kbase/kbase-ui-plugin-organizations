@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './Avatar.css';
 import noUserPic from './nouserpic.png';
-import { User } from '../../types/common';
+import { User } from '../../redux/store/types/common';
 
 export interface AvatarProps {
     user: User,

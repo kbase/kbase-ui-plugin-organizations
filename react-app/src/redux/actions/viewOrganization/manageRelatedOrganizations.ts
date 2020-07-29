@@ -2,13 +2,13 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from '../index';
 import { AnError } from '../../../lib/error';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../store/types';
 import * as orgModel from '../../../data/models/organization/model';
 import { makeError } from '../../../combo/error/api';
-import { SelectableRelatableOrganization } from '../../../types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
-import { SubViewKind } from '../../../types/views/Main/views/ViewOrg';
+import { SelectableRelatableOrganization } from '../../store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import { SubViewKind } from '../../store/types/views/Main/views/ViewOrg';
 import { extractViewOrgSubView, extractViewOrgModelPlus } from '../../../lib/stateExtraction';
-import { AsyncModelState } from '../../../types/common';
+import { AsyncModelState } from '../../store/types/common';
 
 export interface Load extends Action<ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_LOAD> {
     type: ActionFlag.VIEW_ORG_MANAGE_RELATED_ORGANIZATIONS_LOAD;

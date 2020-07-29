@@ -5,13 +5,13 @@ import Container from './reduxAdapter';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
-import * as types from '../../../../../types';
+import * as types from '../../../../../redux/store/types';
 import * as actions from '../../../../../redux/actions/viewOrganization/manageRelatedOrganizations';
 import { AppError } from '@kbase/ui-components';
-import { ManageRelatedOrgsViewModel } from '../../../../../types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
-import { AsyncModelState, AsyncModel } from '../../../../../types/common';
+import { ManageRelatedOrgsViewModel } from '../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import { AsyncModelState, AsyncModel } from '../../../../../redux/store/types/common';
 import { extractViewOrgSubView } from '../../../../../lib/stateExtraction';
-import { SubViewKind } from '../../../../../types/views/Main/views/ViewOrg';
+import { SubViewKind } from '../../../../../redux/store/types/views/Main/views/ViewOrg';
 
 
 export interface Props {

@@ -1,10 +1,10 @@
-import { StoreState } from "../types";
-import { AsyncModelState } from "../types/common";
+import { StoreState } from "../redux/store/types";
+import { AsyncModelState } from "../redux/store/types/common";
 import {
     ViewOrgViewModelKind, ViewOrgSubView, ViewAccessibleOrgViewModel, ViewInaccessiblePrivateOrgViewModel
-} from "../types/views/Main/views/ViewOrg";
+} from "../redux/store/types/views/Main/views/ViewOrg";
 import { AppConfig } from "@kbase/ui-components";
-import { BrowseOrgsViewModel } from "../types/views/Main/views/BrowseOrgs";
+import { BrowseOrgsViewModel } from "../redux/store/types/views/Main/views/BrowseOrgs";
 
 export function extractViewOrgSubView(state: StoreState): ViewOrgSubView {
     if (state.auth.userAuthorization === null) {

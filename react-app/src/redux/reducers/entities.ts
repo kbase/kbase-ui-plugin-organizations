@@ -1,6 +1,6 @@
 
 import * as actions from '../actions/entities';
-import { StoreState } from '../../types';
+import { StoreState } from '../store/types';
 import { ActionFlag } from '../actions';
 import organizationsReducer from './entities/organization';
 

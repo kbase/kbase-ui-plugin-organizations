@@ -2,7 +2,7 @@ import * as React from 'react';
 import './User.css';
 
 import Avatar from './entities/Avatar';
-import * as types from '../types/common';
+import * as types from '../redux/store/types/common';
 
 export interface UserProps {
     user: types.User;

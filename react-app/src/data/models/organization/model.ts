@@ -3,7 +3,7 @@ import * as groupsApi from '../../apis/groups';
 import * as requestModel from '../requests';
 import * as userModel from '../user';
 import Validation from './validation';
-import { EditableString, EditableOrganization, ValidationErrorType, ValidationState } from '../../../types/common';
+import { EditableString, EditableOrganization, ValidationErrorType, ValidationState } from '../../../redux/store/types/common';
 
 export interface OrganizationUpdate {
     name: string;

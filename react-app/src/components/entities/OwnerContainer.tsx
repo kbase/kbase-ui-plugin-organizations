@@ -3,7 +3,7 @@ import * as userModel from '../../data/models/user';
 import Owner from './Owner';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { StoreState } from '../../types';
+import { StoreState } from '../../redux/store/types';
 import * as actions from '../../redux/actions/entities';
 import * as orgModel from '../../data/models/organization/model';
 import { LoadingOutlined } from '@ant-design/icons';

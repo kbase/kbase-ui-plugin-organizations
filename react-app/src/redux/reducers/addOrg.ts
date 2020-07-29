@@ -1,7 +1,7 @@
 import { Action } from 'redux';
 import {
     StoreState
-} from '../../types';
+} from '../store/types';
 import { ActionFlag } from '../actions';
 import {
     LoadStart, Unload,
@@ -19,8 +19,8 @@ import {
     UpdateResearchInterestsSuccess,
     UpdateResearchInterestsError
 } from '../actions/addOrg';
-import { SaveState, EditState, ValidationErrorType, SyncState, AsyncModelState } from '../../types/common';
-import { AddOrgViewModel, AddOrgModel } from '../../types/views/Main/views/AddOrg';
+import { SaveState, EditState, ValidationErrorType, SyncState, AsyncModelState } from '../store/types/common';
+import { AddOrgViewModel, AddOrgModel } from '../store/types/views/Main/views/AddOrg';
 
 // ADD ORG
 

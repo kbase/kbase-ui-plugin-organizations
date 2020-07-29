@@ -2,7 +2,7 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { ActionFlag } from './index';
-import * as types from '../../types';
+import * as types from '../store/types';
 
 // Action Definitions
 

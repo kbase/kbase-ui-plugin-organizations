@@ -6,7 +6,7 @@ import App from '../../../../../entities/app/loader';
 import { ChangeEvent } from 'react';
 import {
     SelectableApp, ResourceRelationToOrg
-} from '../../../../../../types/views/Main/views/ViewOrg/views/AddApp';
+} from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/AddApp';
 import {
     RollbackOutlined, CheckOutlined, LoadingOutlined
 } from '@ant-design/icons';

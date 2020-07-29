@@ -4,11 +4,11 @@ import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from './index';
 import {
     StoreState
-} from '../../types';
+} from '../store/types';
 
 import * as orgModel from '../../data/models/organization/model';
 import { AppError } from '@kbase/ui-components';
-import { BrowseOrgsModel } from '../../types/views/Main/views/BrowseOrgs';
+import { BrowseOrgsModel } from '../store/types/views/Main/views/BrowseOrgs';
 import { SortDirection } from '../../data/apis/groups';
 import { extractBrowseOrgsModel, extractAppInfo } from '../../lib/stateExtraction';
 

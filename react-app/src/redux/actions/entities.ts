@@ -5,7 +5,7 @@ import { ActionFlag } from './index';
 import * as userModel from '../../data/models/user';
 import * as orgModel from '../../data/models/organization/model';
 import * as narrativeModel from '../../data/models/narrative';
-import { StoreState } from '../../types';
+import { StoreState } from '../store/types';
 import * as appModel from '../../data/models/apps';
 import { AnError, makeError } from '../../lib/error';
 import { AppError } from '@kbase/ui-components';

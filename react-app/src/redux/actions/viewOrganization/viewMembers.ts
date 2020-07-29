@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { ActionFlag } from '../index';
 
-import { StoreState } from '../../../types';
+import { StoreState } from '../../store/types';
 import * as orgModel from '../../../data/models/organization/model';
 import * as uberModel from '../../../data/models/uber';
 import { AnError } from '../../../lib/error';

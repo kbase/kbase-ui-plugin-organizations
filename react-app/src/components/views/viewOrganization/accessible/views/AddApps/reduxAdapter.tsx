@@ -1,11 +1,11 @@
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { StoreState } from '../../../../../../types';
+import { StoreState } from '../../../../../../redux/store/types';
 import * as actions from '../../../../../../redux/actions/viewOrganization/addApps';
 import Component from './component';
-import { SelectableApp } from '../../../../../../types/views/Main/views/ViewOrg/views/AddApp';
-import { AsyncModelState } from '../../../../../../types/common';
-import { SubViewKind } from '../../../../../../types/views/Main/views/ViewOrg';
+import { SelectableApp } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/AddApp';
+import { AsyncModelState } from '../../../../../../redux/store/types/common';
+import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
 import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
 
 export interface OwnProps {

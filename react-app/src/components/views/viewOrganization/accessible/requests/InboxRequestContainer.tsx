@@ -2,7 +2,7 @@ import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
 
 import * as requestModel from '../../../../../data/models/requests';
-import { StoreState } from '../../../../../types';
+import { StoreState } from '../../../../../redux/store/types';
 import * as acceptActions from '../../../../../redux/actions/viewOrganization/acceptInboxRequest';
 import * as rejectActions from '../../../../../redux/actions/viewOrganization/denyInboxRequest';
 import InboxRequest from './InboxRequest';

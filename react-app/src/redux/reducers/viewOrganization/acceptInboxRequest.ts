@@ -1,9 +1,9 @@
 import { Action } from 'redux';
 import * as actions from '../../actions/viewOrganization/acceptInboxRequest';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../store/types';
 import { ActionFlag } from '../../actions';
-import { ViewOrgViewModelKind } from '../../../types/views/Main/views/ViewOrg';
-import { AsyncModelState } from '../../../types/common';
+import { ViewOrgViewModelKind } from '../../store/types/views/Main/views/ViewOrg';
+import { AsyncModelState } from '../../store/types/common';
 
 export function acceptInboxRequestSuccess(state: StoreState, action: actions.AcceptRequestSuccess): StoreState {
     if (state.auth.userAuthorization === null) {

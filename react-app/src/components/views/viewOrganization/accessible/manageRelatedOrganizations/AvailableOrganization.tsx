@@ -2,7 +2,7 @@ import React from 'react';
 import './AvailableOrganization.css';
 import OrgLogo from '../../../../OrgLogo';
 import Owner from '../../../../entities/OwnerContainer';
-import { SelectableRelatableOrganization } from '../../../../../types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import { SelectableRelatableOrganization } from '../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
 import { CheckOutlined } from '@ant-design/icons';
 
 export interface AvailableOrganizationProps {

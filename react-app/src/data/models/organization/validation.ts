@@ -1,4 +1,4 @@
-import { ValidationState, ValidationErrorType } from "../../../types/common";
+import { ValidationState, ValidationErrorType } from "../../../redux/store/types/common";
 
 export default class Validation {
     static nonPrintableRe = /[\000-\031]/;

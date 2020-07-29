@@ -4,14 +4,14 @@ import { ThunkDispatch } from 'redux-thunk';
 import * as orgModel from '../../../data/models/organization/model';
 import {
     StoreState
-} from '../../../types';
+} from '../../store/types';
 import { AnError, makeError } from '../../../lib/error';
 import Validation from '../../../data/models/organization/validation';
 import { ActionFlag } from '..';
 import * as viewOrgActions from '../viewOrg';
 import { extractViewOrgModelPlus, extractViewOrgSubView } from '../../../lib/stateExtraction';
-import { SyncState, ValidationErrorType, AsyncModelState } from '../../../types/common';
-import { SubViewKind } from '../../../types/views/Main/views/ViewOrg';
+import { SyncState, ValidationErrorType, AsyncModelState } from '../../store/types/common';
+import { SubViewKind } from '../../store/types/views/Main/views/ViewOrg';
 
 // Loading
 

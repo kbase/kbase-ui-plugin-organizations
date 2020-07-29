@@ -5,16 +5,16 @@ import * as orgModel from '../../../data/models/organization/model';
 import * as appsModel from '../../../data/models/apps';
 import {
     StoreState
-} from '../../../types';
+} from '../../store/types';
 import { AnError } from '../../../combo/error/api';
 import { makeError } from '../../../lib/error';
 import { NarrativeMethodStoreClient } from '../../../data/apis/narrativeMethodStore';
 import { RequestResourceType, RequestType } from '../../../data/models/requests';
 import * as viewOrgActions from '../viewOrg';
 import { extractViewOrgModelPlus, extractViewOrgModel, extractViewOrgSubView } from '../../../lib/stateExtraction';
-import { ResourceRelationToOrg, SelectableApp } from '../../../types/views/Main/views/ViewOrg/views/AddApp';
-import { SubViewKind } from '../../../types/views/Main/views/ViewOrg';
-import { AsyncModelState } from '../../../types/common';
+import { ResourceRelationToOrg, SelectableApp } from '../../store/types/views/Main/views/ViewOrg/views/AddApp';
+import { SubViewKind } from '../../store/types/views/Main/views/ViewOrg';
+import { AsyncModelState } from '../../store/types/common';
 
 export interface AddAppsAction extends Action {
 
@@ -512,7 +512,6 @@ function sortError(error: AnError): SortError {
 }
 
 function applySort(apps: Array<SelectableApp>, sortBy: string) {
-    console.log('applying sort...', sortBy);
     switch (sortBy) {
         case 'name':
             return apps.sort((a, b) => {
@@ -543,7 +542,6 @@ export function sort(sortBy: string) {
             } = viewModel;
 
             // TODO: better parser
-            console.log('about to apply sort...');
             const sortedApps = applySort(apps.slice(0), sortBy);
 
             dispatch(sortSuccess(sortBy, sortedApps));

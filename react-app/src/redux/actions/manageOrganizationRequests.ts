@@ -1,5 +1,5 @@
 import { ActionFlag } from './index';
-import { StoreState } from '../../types';
+import { StoreState } from '../store/types';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 import * as requestModel from '../../data/models/requests';

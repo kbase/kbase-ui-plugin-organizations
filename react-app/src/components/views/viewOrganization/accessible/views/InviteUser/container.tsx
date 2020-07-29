@@ -1,14 +1,14 @@
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import * as types from '../../../../../../types';
+import * as types from '../../../../../../redux/store/types';
 import * as actions from '../../../../../../redux/actions/viewOrganization/inviteUser';
 import InviteUser from './component';
 import * as orgModel from '../../../../../../data/models/organization/model';
 import * as userModel from '../../../../../../data/models/user';
 import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
-import { SubViewKind } from '../../../../../../types/views/Main/views/ViewOrg';
-import { AsyncModelState, OrganizationUser, User } from '../../../../../../types/common';
-import { InviteUserViewState } from '../../../../../../types/views/Main/views/ViewOrg/views/InviteUser';
+import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
+import { AsyncModelState, OrganizationUser, User } from '../../../../../../redux/store/types/common';
+import { InviteUserViewState } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/InviteUser';
 
 export interface OwnProps {
     onFinish: () => void;

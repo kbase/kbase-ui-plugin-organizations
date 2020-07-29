@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NarrativeState } from '../../../../../../types';
+import { NarrativeState } from '../../../../../../redux/store/types';
 import { Button, Alert, Select, Tooltip } from 'antd';
 import './component.css';
 import * as orgModel from '../../../../../../data/models/organization/model';
@@ -499,6 +499,8 @@ export class RequestAddNarrative extends React.Component<Props, State> {
             }
         }
     }
+
+
 
     render() {
         return (

@@ -4,14 +4,14 @@ import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from './index';
 import {
     StoreState
-} from '../../types';
+} from '../store/types';
 
 import * as orgModel from '../../data/models/organization/model';
 import Validation from '../../data/models/organization/validation';
 import DebouncingProcess from '../../lib/DebouncingProcess';
 import { UIServiceClient } from '../../data/apis/uiService';
 import { AppError } from '@kbase/ui-components';
-import { EditableOrganization, ValidationState, SyncState, ValidationErrorType } from '../../types/common';
+import { EditableOrganization, ValidationState, SyncState, ValidationErrorType } from '../store/types/common';
 import { extractAddOrgModel, extractAppInfo } from '../../lib/stateExtraction';
 
 // ACTIONS

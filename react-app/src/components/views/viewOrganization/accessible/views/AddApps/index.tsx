@@ -3,16 +3,16 @@ import * as React from 'react';
 import Container from './reduxAdapter';
 import {
     StoreState
-} from '../../../../../../types';
+} from '../../../../../../redux/store/types';
 
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from '../../../../../../redux/actions/viewOrganization/addApps';
 import { Spin, Alert } from 'antd';
-import { AsyncModelState, AsyncModel } from '../../../../../../types/common';
+import { AsyncModelState, AsyncModel } from '../../../../../../redux/store/types/common';
 import { AppError } from '@kbase/ui-components';
-import { SubViewKind } from '../../../../../../types/views/Main/views/ViewOrg';
-import { AddAppViewModel } from '../../../../../../types/views/Main/views/ViewOrg/views/AddApp';
+import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
+import { AddAppViewModel } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/AddApp';
 import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
 
 export interface LoaderProps {

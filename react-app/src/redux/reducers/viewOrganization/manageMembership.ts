@@ -2,13 +2,13 @@ import { Action } from 'redux';
 import * as actions from '../../actions/viewOrganization/manageMembership';
 import {
     StoreState
-} from '../../../types';
+} from '../../store/types';
 import { ActionFlag } from '../../actions';
 import {
     AsyncModelState, EditState, SaveState, ValidationStateOk, ValidationState, ValidationErrorType, SyncState, AsyncModel
-} from '../../../types/common';
-import { SubViewKind, ViewOrgViewModelKind } from '../../../types/views/Main/views/ViewOrg';
-import { ManageMembershipViewModel } from '../../../types/views/Main/views/ViewOrg/views/ManageMembership';
+} from '../../store/types/common';
+import { SubViewKind, ViewOrgViewModelKind } from '../../store/types/views/Main/views/ViewOrg';
+import { ManageMembershipViewModel } from '../../store/types/views/Main/views/ViewOrg/views/ManageMembership';
 import { EditableMemberProfile } from '../../../data/models/organization/model';
 
 export function loadStart(state: AsyncModel<ManageMembershipViewModel>, action: actions.LoadStart): AsyncModel<ManageMembershipViewModel> {

@@ -1,16 +1,16 @@
 import * as React from 'react';
 import {
     StoreState
-} from '../../../../../../types';
+} from '../../../../../../redux/store/types';
 import Container from './container';
 
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from '../../../../../../redux/actions/viewOrganization/manageMembership';
 import { Alert } from 'antd';
-import { ManageMembershipViewModel } from '../../../../../../types/views/Main/views/ViewOrg/views/ManageMembership';
-import { AsyncModelState, AsyncModel } from '../../../../../../types/common';
-import { SubViewKind } from '../../../../../../types/views/Main/views/ViewOrg';
+import { ManageMembershipViewModel } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageMembership';
+import { AsyncModelState, AsyncModel } from '../../../../../../redux/store/types/common';
+import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
 import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
 import { AppError } from '@kbase/ui-components';
 import { LoadingOutlined } from '@ant-design/icons';

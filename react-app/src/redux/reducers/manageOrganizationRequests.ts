@@ -1,9 +1,9 @@
 import { Action } from 'redux';
 import * as actions from '../actions/manageOrganizationRequests';
-import { StoreState } from '../../types';
+import { StoreState } from '../store/types';
 import { ActionFlag } from '../actions';
-import { AsyncModelState } from '../../types/common';
-import { ManageOrganizationRequestsViewModel } from '../../types/views/Main/views/ManageOrganizationRequests';
+import { AsyncModelState } from '../store/types/common';
+import { ManageOrganizationRequestsViewModel } from '../store/types/views/Main/views/ManageOrganizationRequests';
 
 export function loadStart(
     state: ManageOrganizationRequestsViewModel,

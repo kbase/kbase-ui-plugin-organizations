@@ -2,7 +2,7 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from '../index';
 import { AnError } from '../../../lib/error';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../store/types';
 import * as orgModel from '../../../data/models/organization/model';
 import { makeError } from '../../../combo/error/api';
 import { extractViewOrgModelPlus } from '../../../lib/stateExtraction';

@@ -5,7 +5,7 @@ import './component.css';
 import { Button, Input, Alert } from 'antd';
 import AvailableOrganization from './AvailableOrganization';
 import BriefOrganization from '../../../../BriefOrganization';
-import { SelectableRelatableOrganization } from '../../../../../types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import { SelectableRelatableOrganization } from '../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
 import { RollbackOutlined } from '@ant-design/icons';
 
 export interface ManageRelatedOrganizationsProps {

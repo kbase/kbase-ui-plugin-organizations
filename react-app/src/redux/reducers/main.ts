@@ -2,8 +2,8 @@ import { MainLoadSuccess, Unload, MainLoadStart } from '../actions/main';
 import { Reducer } from 'react';
 import { Action } from 'redux';
 import { ActionFlag } from '../actions';
-import { StoreState } from '../../types';
-import { AsyncModelState } from '../../types/common';
+import { StoreState } from '../store/types';
+import { AsyncModelState } from '../store/types/common';
 
 function loadStart(state: StoreState, action: MainLoadStart): StoreState {
     return {
@@ -39,13 +39,6 @@ function loadSuccess(state: StoreState, action: MainLoadSuccess): StoreState {
                 }
             }
         }
-        // views: {
-        //     ...state.views,
-        //     mainView: {
-        //         ...state.views.mainView,
-        //         loadingState: ComponentLoadingState.SUCCESS
-        //     }
-        // }
     };
 }
 

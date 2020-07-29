@@ -1,9 +1,9 @@
 import { Action } from 'redux';
 import * as actions from '../../actions/viewOrganization/denyInboxRequest';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../store/types';
 import { ActionFlag } from '../../actions';
-import { AsyncModelState } from '../../../types/common';
-import { ViewOrgViewModelKind } from '../../../types/views/Main/views/ViewOrg';
+import { AsyncModelState } from '../../store/types/common';
+import { ViewOrgViewModelKind } from '../../store/types/views/Main/views/ViewOrg';
 
 
 export function rejectInboxRequestSuccess(state: StoreState, action: actions.RejectInboxRequestSuccess): StoreState {

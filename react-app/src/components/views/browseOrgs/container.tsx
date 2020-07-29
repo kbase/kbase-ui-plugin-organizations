@@ -1,11 +1,11 @@
 import OrganizationsBrowser from './component';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../../redux/store/types';
 import * as actions from '../../../redux/actions/browseOrgs';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as orgModel from '../../../data/models/organization/model';
 import { AppError } from '@kbase/ui-components';
-import { SortDirection, AsyncModelState } from '../../../types/common';
+import { SortDirection, AsyncModelState } from '../../../redux/store/types/common';
 //
 // Typing for the mapState and mapDispatch
 //

@@ -1,7 +1,7 @@
 import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
 
-import { StoreState } from '../../../../types';
+import { StoreState } from '../../../../redux/store/types';
 import * as actions from '../../../../redux/actions/viewOrg';
 import * as acceptInboxRequestActions from '../../../../redux/actions/viewOrganization/acceptInboxRequest';
 
@@ -9,8 +9,10 @@ import ViewOrganization from './component';
 
 import * as orgModel from '../../../../data/models/organization/model';
 import * as requestModel from '../../../../data/models/requests';
-import { AsyncModelState } from '../../../../types/common';
-import { ViewOrgViewModelKind, ViewAccessibleOrgViewModel, SubViewKind } from '../../../../types/views/Main/views/ViewOrg';
+import { AsyncModelState } from '../../../../redux/store/types/common';
+import {
+    ViewOrgViewModelKind, ViewAccessibleOrgViewModel, SubViewKind
+} from '../../../../redux/store/types/views/Main/views/ViewOrg';
 
 // Props for this component
 

@@ -1,4 +1,4 @@
-import { AppException } from '../../types';
+import { AppException } from '../../redux/store/types';
 
 export const MAX_GROUPS_PER_LIST_REQUEST = 100;
 

@@ -6,7 +6,7 @@ import { ActionFlag } from '../index';
 import {
     StoreState,
     RequestResourceType
-} from '../../../types';
+} from '../../store/types';
 import { UserQuery } from '../../../data/model';
 import * as orgModel from '../../../data/models/organization/model';
 import * as userModel from '../../../data/models/user';
@@ -14,8 +14,8 @@ import * as requestModel from '../../../data/models/requests';
 import { AnError } from '../../../combo/error/api';
 import { makeError } from '../../../lib/error';
 import * as viewOrgActions from '../viewOrg';
-import { OrganizationUser, AsyncModelState } from '../../../types/common';
-import { SubViewKind, ViewAccessibleOrgViewModel } from '../../../types/views/Main/views/ViewOrg';
+import { OrganizationUser, AsyncModelState } from '../../store/types/common';
+import { SubViewKind, ViewAccessibleOrgViewModel } from '../../store/types/views/Main/views/ViewOrg';
 import { extractViewOrgModelPlus, extractViewOrgSubView } from '../../../lib/stateExtraction';
 // View Loading
 

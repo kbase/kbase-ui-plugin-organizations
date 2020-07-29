@@ -5,7 +5,7 @@ import { ActionFlag } from './index';
 import {
     StoreState,
     UIError, UIErrorType
-} from '../../types';
+} from '../store/types';
 
 import * as orgModel from '../../data/models/organization/model';
 import * as requestModel from '../../data/models/requests';
@@ -16,8 +16,8 @@ import { AnError, makeError } from '../../lib/error';
 import * as narrativeModel from '../../data/models/narrative';
 import { AppError } from '@kbase/ui-components';
 import { extractViewOrgModelPlus, extractAppInfo } from '../../lib/stateExtraction';
-import { ViewOrgViewModelKind, SubViewKind } from '../../types/views/Main/views/ViewOrg';
-import { AsyncModelState } from '../../types/common';
+import { ViewOrgViewModelKind, SubViewKind } from '../store/types/views/Main/views/ViewOrg';
+import { AsyncModelState } from '../store/types/common';
 
 // Action Types
 

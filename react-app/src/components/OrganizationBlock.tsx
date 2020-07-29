@@ -2,12 +2,12 @@ import * as React from 'react';
 
 import * as orgModel from '../data/models/organization/model';
 import * as requestModel from '../data/models/requests';
-import { NavLink } from 'react-router-dom';
 import { Tooltip } from 'antd';
 
 import './OrganizationBlock.css';
 import OrgLogo from './OrgLogo';
 import { StopOutlined, UserOutlined, UnlockOutlined, CrownOutlined, ExclamationCircleTwoTone } from '@ant-design/icons';
+import Linker from './Linker';
 
 export interface OrganizationBlockProps {
     organization: orgModel.Organization;
@@ -163,15 +163,15 @@ export default class OrganizationBlock extends React.Component<OrganizationBlock
         return (
             <div className="OrganizationBlock" key={org.id}>
                 <div className="avatarCol">
-                    <NavLink to={`/orgs/${org.id}`}>
+                    <Linker to={`/orgs/${org.id}`}>
                         {this.renderLogo(org)}
-                    </NavLink>
+                    </Linker>
                 </div>
                 <div className="bodyCol">
                     <div className="orgName">
-                        <NavLink to={`/orgs/${org.id}`}>
+                        <Linker to={`/orgs/${org.id}`}>
                             {org.name}
-                        </NavLink>
+                        </Linker>
                     </div>
                     <div className="orgOwner">
                         <span className="field-label">owner</span>

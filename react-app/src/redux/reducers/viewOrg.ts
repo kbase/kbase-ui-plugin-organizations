@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import * as actions from '../actions/viewOrg';
-import * as types from '../../types';
+import * as types from '../store/types';
 import { ActionFlag } from '../actions';
 import acceptInboxRequest from './viewOrganization/acceptInboxRequest';
 import viewMembers from './viewOrganization/viewMembers';
@@ -12,9 +12,9 @@ import addApps from './viewOrganization/addApp';
 import {
     ViewOrgViewModel, ViewOrgViewModelKind, ViewAccessibleOrgViewModel,
     ViewInaccessiblePrivateOrgViewModel, SubViewKind
-} from '../../types/views/Main/views/ViewOrg';
-import { AsyncModelState, AsyncModel } from '../../types/common';
-import { StoreState } from '../../types';
+} from '../store/types/views/Main/views/ViewOrg';
+import { AsyncModelState, AsyncModel } from '../store/types/common';
+import { StoreState } from '../store/types';
 
 
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Drawer, Radio } from 'antd';
 import './component.css';
 import * as orgModel from '../../data/models/organization/model';
-import { Member } from '../../types/common';
+import { Member } from '../../redux/store/types/common';
 
 export interface RequestAccessProps {
     narrative: orgModel.NarrativeResource;

@@ -1,27 +1,47 @@
-# Organizations Plugin - MVP1
+# KBase UI Plugin: Organizations
 
-## Goals of this MVP
+> Browse, view, and manage Organizations.
 
-Support single user usage of organizations.8
+This is a plugin for [kbase-ui](https://github.com/kbase/kbase-ui), which allows a KBase user to browse, view, and manage Organizations.
 
-## User Stories
+The canonical home for it is https://narrative.kbase.us#organizations.
 
-This MVP aims to achieve:
+Currently the Ontology plugin supports [Gene Ontology (GO)](http://geneontology.org) and [Environment Ontology (ENVO)](http://www.environmentontology.org) ontologies.
 
-What user's can see about organizations
-- a user may list all organizations
-- a user may search all organizations by name or description
-- when viewing an organization, a user should see a clear description of each project, so they can understand it’s purpose.
-- when viewing an organization, a user may be able to see stats on a projects usage
+## Usage
 
-Creating and owning an organization
-- a user may create an organization
-- a user may list organizations they own 
-- a user may search search all organizations they own by name or description 
-- an organization owner may change certain attributes of an organization they own
+[ TODO]
 
-Things I think are missing:
-- an organization owner may remove an organization they own (have created)
-- an organization owner may be able to change the unique "friendly" identifier for an organization
-- an organization owner may be able to transfer ownership to another user.
-- and organization owner should be able to set whether an organization they own is publicly viewable (in lists, search, and org view page) or not.
+### Help
+
+### About
+
+## Install
+
+There is no need for a user to install the Organizations plugin -- it is provided as part of the KBase service.
+
+## Background
+
+HOW THIS FITS INTO KBASE
+
+## API
+
+IF IT IS A LIBRARY OR SERVICE
+
+## Development
+
+See [](docs/development.md)
+
+## Acknowledgments
+
+- NAME - COMMENT
+
+## See Also
+
+- [About KBase](https://www.kbase.us)
+
+## License
+
+SEE LICENSE IN LICENSE.md
+
+## Refs

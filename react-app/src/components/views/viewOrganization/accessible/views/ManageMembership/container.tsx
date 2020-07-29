@@ -2,13 +2,13 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from '../../../../../../redux/actions/viewOrganization/manageMembership';
 
-import { StoreState } from '../../../../../../types';
+import { StoreState } from '../../../../../../redux/store/types';
 import * as orgModel from '../../../../../../data/models/organization/model';
 import * as userModel from '../../../../../../data/models/user';
 
 import Component from './component';
-import { EditState, SaveState, ValidationState, AsyncModelState } from '../../../../../../types/common';
-import { ViewOrgViewModelKind, SubViewKind } from '../../../../../../types/views/Main/views/ViewOrg';
+import { EditState, SaveState, ValidationState, AsyncModelState } from '../../../../../../redux/store/types/common';
+import { ViewOrgViewModelKind, SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
 
 export interface OwnProps {
     onFinish: () => void;

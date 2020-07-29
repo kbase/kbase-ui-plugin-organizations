@@ -1,12 +1,12 @@
 import {
     RequestStatus,
     RequestResourceType,
-} from '../types';
+} from '../redux/store/types';
 import * as userProfile from './apis/userProfile';
 import { GroupsClient, } from './apis/groups';
 import * as groups from './apis/groups';
 import * as requestModel from './models/requests';
-import { User } from '../types/common';
+import { User } from '../redux/store/types/common';
 
 function stringToRequestType(type: string): requestModel.RequestType {
     switch (type) {

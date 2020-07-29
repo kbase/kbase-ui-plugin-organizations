@@ -4,28 +4,21 @@ package:
   name: organizations
   description: Organizations
   type: iframe
-source:
-  styles:
-install:
-  routes:
-    - path: [orgs]
-      exact: false
-      params:
-        view: main
-        plugin: organizations
-      #   queryParams:
-      #       view: {}
-      #       viewParams: {}
-      component: /pluginSupport/Plugin
-      authorization: true
-    - path: [orgs, {type: param, name: orgId}]
-      queryParams:
-      component: /pluginSupport/Plugin
-      authorization: true
-    - path: [org, {type: param, name: orgId}]
-      queryParams:
-      component: /pluginSupport/Plugin
-      authorization: true
+services:
+  route:
+    routes:
+      - path: orgs
+        view: browseOrgs
+        authorization: true
+      - path: orgs/new
+        view: newOrg
+        authorization: true
+      - path: orgs/:organizationId
+        view: viewOrg
+        authorization: true
+      - path: org/:organizationId
+        view: viewOrg
+        authorization: true
   menu:
     - name: organizations
       path: [orgs]

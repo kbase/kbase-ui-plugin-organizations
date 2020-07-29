@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { ActionFlag } from '../index';
 import * as orgModel from '../../../data/models/organization/model';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../store/types';
 import { AnError, makeError } from '../../../lib/error';
 
 export interface OrganizationEntityAction extends Action {
