@@ -73,7 +73,7 @@ export default class App<AppProps, AppState> extends React.Component {
                 <Provider store={store}>
                     <AppBase>
                         <AuthGate required={true}>
-                            <div className="App Col scrollable">
+                            <div className="App Col scrollable" data-k-b-testhook-plugin="organizations" >
                                 <Main>
                                     <Dispatcher />
                                 </Main>
