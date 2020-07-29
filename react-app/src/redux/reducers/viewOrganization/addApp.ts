@@ -1,10 +1,10 @@
 import { Action } from 'redux';
 import * as actions from '../../actions/viewOrganization/addApps';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../store/types';
 import { ActionFlag } from '../../actions';
-import { AddAppViewModel, ResourceRelationToOrg } from '../../../types/views/Main/views/ViewOrg/views/AddApp';
-import { AsyncModelState, AsyncModel } from '../../../types/common';
-import { ViewOrgViewModelKind, SubViewKind } from '../../../types/views/Main/views/ViewOrg';
+import { AddAppViewModel, ResourceRelationToOrg } from '../../store/types/views/Main/views/ViewOrg/views/AddApp';
+import { AsyncModelState, AsyncModel } from '../../store/types/common';
+import { ViewOrgViewModelKind, SubViewKind } from '../../store/types/views/Main/views/ViewOrg';
 
 export function loadStart(state: AsyncModel<AddAppViewModel>, action: actions.LoadStart): AsyncModel<AddAppViewModel> {
     return {

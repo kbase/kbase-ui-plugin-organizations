@@ -1,13 +1,13 @@
 import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
-import * as types from '../../../../../../types';
+import * as types from '../../../../../../redux/store/types';
 import Component from './component';
 import * as actions from '../../../../../../redux/actions/viewOrganization/requestAddNarrative';
 import * as orgModel from '../../../../../../data/models/organization/model';
 import * as narrativeModel from '../../../../../../data/models/narrative';
 import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
-import { SubViewKind } from '../../../../../../types/views/Main/views/ViewOrg';
-import { AsyncModelState } from '../../../../../../types/common';
+import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
+import { AsyncModelState } from '../../../../../../redux/store/types/common';
 
 export interface OwnProps {
     onFinish: () => void;

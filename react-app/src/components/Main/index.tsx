@@ -2,7 +2,7 @@
  * This is a "loader" component. It is solely responsible for
  */
 import * as React from 'react';
-import { StoreState } from '../../types';
+import { StoreState } from '../../redux/store/types';
 import Container from './state';
 
 // The redux connection
@@ -12,10 +12,8 @@ import { connect } from 'react-redux';
 
 import { Spin, Alert } from 'antd';
 import { load, unload } from '../../redux/actions/main';
-import { AsyncModelState, ModelError } from '../../types/common';
-import { MainViewModel } from '../../types/views/Main';
-// import { ViewError } from '../../types/common';
-// import { mainLoad, unload } from '../../redux/actions/app';
+import { AsyncModelState, ModelError } from '../../redux/store/types/common';
+import { MainViewModel } from '../../redux/store/types/views/Main';
 
 // First the loader component, which takes care of a loading view, error view, and the
 // container.

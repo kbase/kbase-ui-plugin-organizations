@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { NavLink, Redirect } from 'react-router-dom';
-// import { ViewOrgViewModel, SubViews } from '../../../../types';
 import { Button, Modal, Tooltip, Alert } from 'antd';
 import Members from './members/reduxAdapter';
 import BriefOrganizationHeader from './BriefOrganizationHeader';
@@ -14,9 +12,12 @@ import * as orgModel from '../../../../data/models/organization/model';
 import './component.css';
 import OrgMenu from './OrgMenu';
 import AddApps from './views/AddApps';
-import { ViewAccessibleOrgViewModel, SubViewKind } from '../../../../types/views/Main/views/ViewOrg';
+import { ViewAccessibleOrgViewModel, SubViewKind } from '../../../../redux/store/types/views/Main/views/ViewOrg';
 import OrganizationView from './views/OrganizationView/component';
 import { ExclamationCircleTwoTone, MailOutlined } from '@ant-design/icons';
+import Linker from '../../../Linker';
+import { redirect } from '../../../../ui/utils';
+// import { Redirect } from 'react-router-dom';
 
 enum NavigateTo {
     NONE = 0,
@@ -215,9 +216,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         {invitations.length > 1 ? 's' : ''}
                     </div>
                     <div>
-                        <NavLink to={'/manageOrganizationRequests/' + this.props.viewModel.organization.id}>
+                        <Linker to={'/manageOrganizationRequests/' + this.props.viewModel.organization.id}>
                             <Button>Manage Requests</Button>
-                        </NavLink>
+                        </Linker>
                     </div>
                 </div>
             );
@@ -249,9 +250,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                         {invitations.length > 1 ? 's' : ''}
                     </div>
                     <div>
-                        <NavLink to={'/manageOrganizationRequests/' + this.props.viewModel.organization!.id}>
+                        <Linker to={'/manageOrganizationRequests/' + this.props.viewModel.organization!.id}>
                             <Button>Manage Requests</Button>
-                        </NavLink>
+                        </Linker>
                     </div>
                 </div>
             );
@@ -293,41 +294,13 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     }
 
     navigateToBrowser() {
-        this.setState({ navigateTo: NavigateTo.BROWSER });
+        redirect('orgs');
+        // this.setState({ navigateTo: NavigateTo.BROWSER });
     }
 
     navigateTo(navigateTo: NavigateTo) {
         this.setState({ navigateTo });
     }
-
-    // onMenuClick({ key }: { key: string; }) {
-    //     switch (key) {
-    //         case 'manageMyMembership':
-    //             this.setState({ subView: SubViewKind.MANAGE_MEMBERSHIP });
-    //             break;
-    //         case 'viewMembers':
-    //             this.setState({ navigateTo: NavigateTo.VIEW_MEMBERS });
-    //             break;
-    //         case 'editOrg':
-    //             this.setState({ subView: SubViewKind.EDIT_ORGANIZATION });
-    //             break;
-    //         case 'inviteUser':
-    //             this.setState({ subView: SubViewKind.INVITE_USER });
-    //             break;
-    //         case 'manageRequests':
-    //             this.setState({ navigateTo: NavigateTo.MANAGE_REQUESTS });
-    //             break;
-    //         case 'addNarrative':
-    //             this.setState({ subView: SubViewKind.ADD_NARRATIVE });
-    //             break;
-    //         case 'addApp':
-    //             this.setState({ subView: SubViewKind.ADD_APP });
-    //             break;
-    //         case 'manageRelatedOrgs':
-    //             this.setState({ subView: SubViewKind.MANAGE_RELATED_ORGS });
-    //             break;
-    //     }
-    // }
 
     onFinishSubview() {
         this.props.subView(SubViewKind.NORMAL);
@@ -434,13 +407,13 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
     // }
 
     render() {
-        switch (this.state.navigateTo) {
-            case NavigateTo.BROWSER:
-                return <Redirect push to={'/orgs'} />;
-            case NavigateTo.NONE:
-            default:
-            // do nothing.
-        }
+        // switch (this.state.navigateTo) {
+        //     case NavigateTo.BROWSER:
+        //         return <Redirect push to={'/orgs'} />;
+        //     case NavigateTo.NONE:
+        //     default:
+        //     // do nothing.
+        // }
 
         const uorg = this.props.viewModel.organization as unknown;
         const borg = uorg as orgModel.BriefOrganization;

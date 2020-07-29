@@ -1,10 +1,10 @@
 import { Action } from 'redux';
 import * as actions from '../actions/browseOrgs';
-import { StoreState } from '../../types';
+import { StoreState } from '../store/types';
 import { ActionFlag } from '../actions';
 import * as orgModel from '../../data/models/organization/model';
-import { BrowseOrgsViewModel } from '../../types/views/Main/views/BrowseOrgs';
-import { AsyncModelState, SortDirection } from '../../types/common';
+import { BrowseOrgsViewModel } from '../store/types/views/Main/views/BrowseOrgs';
+import { AsyncModelState, SortDirection } from '../store/types/common';
 
 export function applyOrgSearch(orgs: Array<orgModel.Organization>, searchTerms: Array<string>) {
     const filteredOrgs = orgs.filter((org) => {

@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Marked } from 'marked-ts';
-import { NavLink } from 'react-router-dom';
-// import { ViewOrgViewModel, SubViews } from '../../../../types';
 import {
     Button, Modal, Tooltip, Card, Alert, Tabs
 } from 'antd';
@@ -15,12 +13,13 @@ import './component.css';
 import Apps from '../../apps/component';
 import {
     SubViewKind, ViewAccessibleOrgViewModel
-} from '../../../../../../types/views/Main/views/ViewOrg';
+} from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
 import RelatedOrganizations from './tabs/RelatedOrganizations';
 import {
     ExclamationCircleTwoTone, UnlockOutlined, MailOutlined, InboxOutlined,
     TeamOutlined, CloseOutlined, InfoCircleOutlined, FileOutlined, AppstoreOutlined
 } from '@ant-design/icons';
+import Linker from '../../../../../Linker';
 
 // enum NavigateTo {
 //     NONE = 0,
@@ -196,9 +195,9 @@ class OrganizationView extends React.Component<OrgViewProps, OrgViewState> {
                         {invitations.length > 1 ? 's' : ''}
                     </div>
                     <div>
-                        <NavLink to={'/manageOrganizationRequests/' + this.props.viewModel.organization.id}>
+                        <Linker to={'/manageOrganizationRequests/' + this.props.viewModel.organization.id}>
                             <Button>Manage Requests</Button>
-                        </NavLink>
+                        </Linker>
                     </div>
                 </div>
             );
@@ -230,9 +229,9 @@ class OrganizationView extends React.Component<OrgViewProps, OrgViewState> {
                         {invitations.length > 1 ? 's' : ''}
                     </div>
                     <div>
-                        <NavLink to={'/manageOrganizationRequests/' + this.props.viewModel.organization!.id}>
+                        <Linker to={'/manageOrganizationRequests/' + this.props.viewModel.organization!.id}>
                             <Button>Manage Requests</Button>
-                        </NavLink>
+                        </Linker>
                     </div>
                 </div>
             );

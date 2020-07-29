@@ -1,10 +1,10 @@
-import * as React from 'react'
-import { SomeError } from '../../types';
+import * as React from 'react';
+import { SomeError } from '../../redux/store/types';
 import { Alert, Collapse } from 'antd';
-import './component.css'
+import './component.css';
 
 export interface ErrorProps {
-    error: SomeError
+    error: SomeError;
 }
 
 interface ErrorState {
@@ -50,7 +50,7 @@ export default class Error extends React.Component<ErrorProps, ErrorState> {
                     </tr>
                 </tbody>
             </table>
-        )
+        );
     }
 
     renderInfo() {
@@ -59,13 +59,13 @@ export default class Error extends React.Component<ErrorProps, ErrorState> {
                 <div style={{ textAlign: 'left', fontStyle: 'italic' }}>
                     No additional information
                 </div>
-            )
+            );
         }
         return (
             <div>
                 additional info here ...
             </div>
-        )
+        );
     }
 
     render() {
@@ -85,7 +85,7 @@ export default class Error extends React.Component<ErrorProps, ErrorState> {
                     </Collapse.Panel>
                 </Collapse>
             </div>
-        )
+        );
 
         return (
             <Alert
@@ -95,6 +95,6 @@ export default class Error extends React.Component<ErrorProps, ErrorState> {
                 className="Error"
                 description={description}
             />
-        )
+        );
     }
 }

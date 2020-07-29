@@ -9,12 +9,12 @@ import { Spin, Alert } from 'antd';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
-import * as types from '../../../types';
+import * as types from '../../../redux/store/types';
 import * as actions from '../../../redux/actions/viewOrg';
 import { OrganizationKind } from '../../../data/models/organization/model';
 import { AppError } from '@kbase/ui-components';
-import { AsyncModelState, AsyncModel } from '../../../types/common';
-import { ViewOrgViewModel } from '../../../types/views/Main/views/ViewOrg';
+import { AsyncModelState, AsyncModel } from '../../../redux/store/types/common';
+import { ViewOrgViewModel } from '../../../redux/store/types/views/Main/views/ViewOrg';
 
 export interface ViewOrganizationProps {
     organizationId: string;
@@ -40,7 +40,7 @@ class Loader extends React.Component<ViewOrganizationProps, State> {
                 Loading Organization... <Spin />
             </div>
         );
-        return (
+        return <div style={{ margin: '0 auto' }}>
             <Alert
                 type="info"
                 message={message}
@@ -50,7 +50,7 @@ class Loader extends React.Component<ViewOrganizationProps, State> {
                     margin: '20px auto'
                 }}
             />
-        );
+        </div>;
     }
 
     renderError(error: AppError) {
@@ -101,7 +101,7 @@ class Loader extends React.Component<ViewOrganizationProps, State> {
     }
 
     componentWillUnmount() {
-        // this.props.onUnload();
+        this.props.onUnload();
     }
 }
 

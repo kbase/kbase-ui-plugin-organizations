@@ -3,7 +3,7 @@ import * as orgModel from '../../../../data/models/organization/model';
 import * as requestModel from '../../../../data/models/requests';
 import { Button, Tooltip, Menu, Dropdown } from 'antd';
 import './OrgMenu.css';
-import { SubViewKind, ViewAccessibleOrgViewModel } from '../../../../types/views/Main/views/ViewOrg';
+import { SubViewKind, ViewAccessibleOrgViewModel } from '../../../../redux/store/types/views/Main/views/ViewOrg';
 import {
     DeleteOutlined, StopOutlined, CheckOutlined, AppstoreOutlined,
     FileOutlined, UserOutlined, SettingFilled,

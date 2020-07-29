@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import * as actions from '../actions/dataServices';
-import { StoreState } from '../../types';
+import { StoreState } from '../store/types';
 import { ActionFlag } from '../actions';
 
 function loadSuccess(state: StoreState, action: actions.LoadSuccess): StoreState {

@@ -1,7 +1,7 @@
 import { Action } from 'redux';
 import {
     StoreState
-} from '../../../types';
+} from '../../store/types';
 import { ActionFlag } from '../../actions';
 import {
     LoadStart, LoadSuccess, LoadError,
@@ -16,9 +16,9 @@ import {
 import {
     AsyncModelState, SyncState, EditState, EditableOrganization, ValidationErrorType,
     SaveState, ValidationStateOk, AsyncModel
-} from '../../../types/common';
-import { SubViewKind, ViewOrgViewModelKind } from '../../../types/views/Main/views/ViewOrg';
-import { EditOrgViewModel } from '../../../types/views/Main/views/ViewOrg/views/EditOrg';
+} from '../../store/types/common';
+import { SubViewKind, ViewOrgViewModelKind } from '../../store/types/views/Main/views/ViewOrg';
+import { EditOrgViewModel } from '../../store/types/views/Main/views/ViewOrg/views/EditOrg';
 
 // EDIT ORG
 

@@ -2,7 +2,7 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from './index';
 import { AnError } from '../../lib/error';
-import { StoreState } from '../../types';
+import { StoreState } from '../store/types';
 
 export interface Load extends Action<ActionFlag.DATA_SERVICE_LOAD> {
     type: ActionFlag.DATA_SERVICE_LOAD;

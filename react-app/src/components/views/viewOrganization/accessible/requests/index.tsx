@@ -1,7 +1,7 @@
 import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
 
-import * as types from '../../../../../types';
+import * as types from '../../../../../redux/store/types';
 import * as acceptActions from '../../../../../redux/actions/viewOrganization/acceptInboxRequest';
 import * as rejectActions from '../../../../../redux/actions/viewOrganization/denyInboxRequest';
 import * as cancelRequestActions from '../../../../../redux/actions/viewOrganization/cancelOutboxRequest';

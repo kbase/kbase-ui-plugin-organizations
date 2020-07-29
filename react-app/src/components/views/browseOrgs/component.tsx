@@ -4,14 +4,14 @@ import { Button, Radio, Select, Alert, Checkbox, Input } from 'antd';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { Filter, BriefOrganization, OrganizationID, RequestStatus } from '../../../data/models/organization/model';
-import { NavLink } from 'react-router-dom';
 import './component.css';
 import { AppError } from '@kbase/ui-components';
-import { SortDirection } from '../../../types/common';
+import { SortDirection } from '../../../redux/store/types/common';
 import {
     LoadingOutlined, SearchOutlined, EllipsisOutlined, PlusCircleOutlined
 } from '@ant-design/icons';
 import Search from 'antd/lib/input/Search';
+import Linker from '../../Linker';
 
 export interface OrganizationsBrowserProps {
     totalCount: number;
@@ -245,7 +245,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     {this.renderSearchForm()}
                 </div>
                 <div className="OrganizationsBrowser-searchBarCol2">
-                    <NavLink to="/orgs/new"><Button type="primary" icon={<PlusCircleOutlined />} style={{ marginRight: '10px' }}>Create Organization</Button></NavLink>
+                    <Linker to="/orgs/new"><Button type="primary" icon={<PlusCircleOutlined />} style={{ marginRight: '10px' }}>Create Organization</Button></Linker>
 
                 </div>
                 {/* <div className="OrganizationsBrowser-searchBarCol3">

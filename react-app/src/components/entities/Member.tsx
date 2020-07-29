@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import Avatar from './Avatar';
-import { } from '../../types';
+import { } from '../../redux/store/types';
 import { Tooltip, Button } from 'antd';
 import * as orgModel from '../../data/models/organization/model';
 import * as userModel from '../../data/models/user';

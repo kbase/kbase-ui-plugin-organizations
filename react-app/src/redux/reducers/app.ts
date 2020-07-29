@@ -1,7 +1,7 @@
 import { Action } from 'redux';
 // import { ActionFlag } from '../actions';
 // import { AppSuccess } from '../actions/app';
-import { StoreState } from '../../types';
+import { StoreState } from '../store/types';
 
 // export function appSuccess(state: StoreState, action: AppSuccess): StoreState {
 //     return {

@@ -2,7 +2,7 @@ import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
 
 import * as requestModel from '../../../../../data/models/requests';
-import { StoreState } from '../../../../../types';
+import { StoreState } from '../../../../../redux/store/types';
 import * as cancelActions from '../../../../../redux/actions/viewOrganization/cancelOutboxRequest';
 import OutboxRequest from './OutboxRequest';
 

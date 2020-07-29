@@ -2,12 +2,12 @@ import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from '../../../../../redux/actions/viewOrganization/manageRelatedOrganizations';
 import ManageRelatedOrganizations from './component';
-import { StoreState } from '../../../../../types';
+import { StoreState } from '../../../../../redux/store/types';
 import * as orgModel from '../../../../../data/models/organization/model';
-import { SelectableRelatableOrganization } from '../../../../../types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
-import { SubViewKind } from '../../../../../types/views/Main/views/ViewOrg';
+import { SelectableRelatableOrganization } from '../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import { SubViewKind } from '../../../../../redux/store/types/views/Main/views/ViewOrg';
 import { extractViewOrgSubView } from '../../../../../lib/stateExtraction';
-import { AsyncModelState } from '../../../../../types/common';
+import { AsyncModelState } from '../../../../../redux/store/types/common';
 
 export interface OwnProps {
     onFinish: () => void;

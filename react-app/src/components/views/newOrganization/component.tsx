@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Redirect } from 'react-router-dom';
 import { Marked } from 'marked-ts';
 import { Button, Modal, Input, Checkbox, Tooltip, Collapse, Tabs } from 'antd';
 import md5 from 'md5';
@@ -12,8 +11,9 @@ import {
     EditState, SaveState, ValidationState, EditableOrganization,
     ValidationErrorType, Editable, SyncState, EditableString,
     EditableNullableString, EditableBoolean
-} from '../../../types/common';
+} from '../../../redux/store/types/common';
 import { ExclamationCircleOutlined, LinkOutlined, LockOutlined, GlobalOutlined, QuestionOutlined, CloseOutlined, ExclamationOutlined, RollbackOutlined, SaveOutlined } from "@ant-design/icons";
+import { redirect } from '../../../ui/utils';
 
 export interface NewOrganizationProps {
     editState: EditState,
@@ -925,12 +925,12 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
 
     render() {
         if (this.state.cancelToBrowser) {
-            return <Redirect push to="/orgs" />;
+            redirect('orgs');
         }
 
         // TODO: this is just a prop for today.
         if (this.props.saveState === SaveState.SAVED) {
-            return <Redirect push to={"/orgs/" + this.props.newOrganization.id.value} />;
+            redirect(`orgs/${this.props.newOrganization.id.value}`);
         }
 
         return (

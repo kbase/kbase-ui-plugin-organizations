@@ -2,12 +2,12 @@ import { Action } from 'redux';
 import * as actions from '../../actions/viewOrganization/inviteUser';
 import {
     StoreState
-} from '../../../types';
+} from '../../store/types';
 import { ActionFlag } from '../../actions';
 import * as orgModel from '../../../data/models/organization/model';
-import { InviteUserViewModel, InviteUserViewState } from '../../../types/views/Main/views/ViewOrg/views/InviteUser';
-import { AsyncModelState, AsyncModel } from '../../../types/common';
-import { ViewOrgViewModelKind, SubViewKind } from '../../../types/views/Main/views/ViewOrg';
+import { InviteUserViewModel, InviteUserViewState } from '../../store/types/views/Main/views/ViewOrg/views/InviteUser';
+import { AsyncModelState, AsyncModel } from '../../store/types/common';
+import { ViewOrgViewModelKind, SubViewKind } from '../../store/types/views/Main/views/ViewOrg';
 
 export function loadStart(state: AsyncModel<InviteUserViewModel>, action: actions.LoadStart): AsyncModel<InviteUserViewModel> {
     return {

@@ -4,7 +4,7 @@ import {
     Button, Menu, Dropdown, Alert
 } from 'antd';
 import OrganizationEntity from '../../../../../../../entities/organization/loader';
-import { withRouter } from 'react-router-dom';
+// import { withRouter } from 'react-router-dom';
 import './component.css';
 import { DeleteOutlined, EllipsisOutlined } from '@ant-design/icons';
 
@@ -74,14 +74,14 @@ export default class RelatedOrganizations extends React.Component<RelatedOrganiz
                 <Alert type="info" message={message} />
             );
         }
-        const Wrapped = withRouter<any, any>(OrganizationEntity);
+        // const Wrapped = withRouter<any, any>(OrganizationEntity);
         const relatedOrgs = this.props.relatedOrganizations.map((organizationId: string) => {
             return (
                 <div key={organizationId} className="RelatedOrganizations-orgRow SimpleCard">
                     {/* <RelatedOrganization organizationId={org} /> */}
 
                     <div className="RelatedOrganizations-orgCol">
-                        <Wrapped organizationId={organizationId} />
+                        <OrganizationEntity organizationId={organizationId} />
                     </div>
                     <div className="RelatedOrganizations-controlCol">
                         {this.renderControls(organizationId)}

@@ -8,11 +8,11 @@ import * as actions from '../../../../../../redux/actions/viewOrganization/reque
 import { Alert } from 'antd';
 import {
     StoreState
-} from '../../../../../../types';
+} from '../../../../../../redux/store/types';
 import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
-import { SubViewKind } from '../../../../../../types/views/Main/views/ViewOrg';
-import { RequestNarrativeViewModel } from '../../../../../../types/views/Main/views/ViewOrg/views/RequestNarrative';
-import { AsyncModelState, AsyncModel } from '../../../../../../types/common';
+import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
+import { RequestNarrativeViewModel } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/RequestNarrative';
+import { AsyncModelState, AsyncModel } from '../../../../../../redux/store/types/common';
 import { AppError } from '@kbase/ui-components';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -65,7 +65,6 @@ class Loader extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        console.log('mounting???');
         switch (this.props.view.loadingState) {
             case AsyncModelState.NONE:
                 this.props.onLoad(this.props.organizationId);
@@ -73,7 +72,6 @@ class Loader extends React.Component<Props, State> {
     }
 
     componentWillUnmount() {
-        console.log('unmounting???');
         // this.props.onUnload();
     }
 }

@@ -4,7 +4,7 @@ import * as orgModel from '../../../../../../data/models/organization/model';
 import * as userModel from '../../../../../../data/models/user';
 
 import './component.css';
-import { EditState, SaveState, ValidationState, ValidationErrorType, Editable, SyncState } from '../../../../../../types/common';
+import { EditState, SaveState, ValidationState, ValidationErrorType, Editable, SyncState } from '../../../../../../redux/store/types/common';
 import { DeleteOutlined, CloseOutlined, RollbackOutlined, StopOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
 
 export interface ManageMembershipProps {
@@ -98,11 +98,10 @@ class ManageMembership extends React.Component<ManageMembershipProps, MangeMembe
 
     onTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
         e.persist();
-        console.log('hmm', this.props.onUpdateTitle);
         try {
             this.props.onUpdateTitle(e.target.value);
         } catch (ex) {
-            console.log('oops', ex);
+            console.error('oops', ex);
         }
     }
 

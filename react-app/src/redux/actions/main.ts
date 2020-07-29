@@ -3,7 +3,7 @@ import { AppError } from '@kbase/ui-components';
 
 import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from '.';
-import { StoreState } from '../../types';
+import { StoreState } from '../store/types';
 
 // MAIN Loading
 
@@ -50,64 +50,7 @@ export function loadError(error: AppError): MainLoadError {
 export function load() {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(loadStart());
-        // const {
-        //     auth: { userAuthorization },
-        //     app: {
-        //         config: {
-        //             services: {
-        //                 Catalog: { url: catalogURL }
-        //             }
-        //         }
-        //     }
-        // } = getState();
-
-        // TODO: Load initial view, not NONE!
-        // const view: View<ViewKind.BROWSE_ORGS, BrowseOrgsViewModel> = {
-        //     kind: ViewKind.BROWSE_ORGS,
-        //     model: {
-        //         loadingState: AsyncModelState.NONE
-        //     }
-        // };
-        // const view: MainViewModel = {
-        //     value: {
-        //         views: {
-
-        //         }
-        //     }
-        // }
-
-        // console.log('about to call load success', view);
         dispatch(loadSuccess());
-
-        // if (!userAuthorization) {
-        //     dispatch(
-        //         mainLoadError({
-        //             message: 'Not authorized',
-        //             code: 'unauthorized'
-        //         })
-        //     );
-        //     return;
-        // }
-
-        // // determine auth
-        // // TODO: we need a model object for interacting with the outside world
-        // const catalogClient = new CatalogClient({
-        //     token: userAuthorization.token,
-        //     url: catalogURL,
-        //     module: 'Catalog'
-        // });
-
-        // try {
-        //     const isAdmin = await catalogClient.isAdmin();
-        //     dispatch(mainLoadSuccess(isAdmin ? true : false));
-        // } catch (ex) {
-        //     dispatch(
-        //         mainLoadError({
-        //             message: ex.message,
-        //             code: 'error-checking-admin-status'
-        //         })
-        //     );
-        // }
     };
 }
 

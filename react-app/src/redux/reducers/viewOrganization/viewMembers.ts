@@ -1,9 +1,9 @@
 import { Action } from 'redux';
 import * as actions from '../../actions/viewOrganization/viewMembers';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../store/types';
 import { ActionFlag } from '../../actions';
-import { AsyncModelState, MemberType } from '../../../types/common';
-import { ViewOrgViewModelKind } from '../../../types/views/Main/views/ViewOrg';
+import { AsyncModelState, MemberType } from '../../store/types/common';
+import { ViewOrgViewModelKind } from '../../store/types/views/Main/views/ViewOrg';
 
 // export function loadStart(state: StoreState, action: actions.LoadStart) {
 //     return {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RequestResourceType } from '../../types';
+import { RequestResourceType } from '../../redux/store/types';
 import { Card } from 'antd';
 import User from '../entities/UserContainer';
 import './component.css';

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import {
     StoreState
-} from '../../../types';
+} from '../../../redux/store/types';
 import {
     addOrg, updateName, updateLogoUrl, updateId, updateDescription,
     updateIsPrivate, updateHomeUrl, updateResearchInterests
@@ -13,7 +13,7 @@ import Component from './component';
 import { AppError } from '@kbase/ui-components';
 import {
     EditState, SaveState, ValidationState, EditableOrganization, AsyncModelState
-} from '../../../types/common';
+} from '../../../redux/store/types/common';
 
 interface OwnProps {
 }

@@ -1,9 +1,9 @@
 import * as actions from '../../actions/viewOrganization/relatedOrganizations';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../store/types';
 import { Action } from 'redux';
 import { ActionFlag } from '../../actions';
-import { AsyncModelState } from '../../../types/common';
-import { ViewOrgViewModelKind, SubViewKind } from '../../../types/views/Main/views/ViewOrg';
+import { AsyncModelState } from '../../store/types/common';
+import { ViewOrgViewModelKind, SubViewKind } from '../../store/types/views/Main/views/ViewOrg';
 
 export function removeOrganization(state: StoreState, action: actions.RemoveOrganization): StoreState {
     if (state.view.loadingState !== AsyncModelState.SUCCESS) {

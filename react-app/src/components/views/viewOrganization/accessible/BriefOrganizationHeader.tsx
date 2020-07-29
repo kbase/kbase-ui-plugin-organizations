@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as orgModel from '../../../../data/models/organization/model';
-import { NavLink } from 'react-router-dom';
 import OrgLogo from '../../../OrgLogo';
 import { Tooltip, Menu, Dropdown, Modal, Button } from 'antd';
 import Owner from '../../../entities/OwnerContainer';
-import { ComponentView } from '../../../../types';
+import { ComponentView } from '../../../../redux/store/types';
 import NiceElapsedTime from '../../../NiceElapsedTime';
 import './BriefOrganizationHeader.css';
 import { HomeOutlined, StopOutlined, UserOutlined, RobotOutlined, CrownOutlined, GlobalOutlined, BellFilled, UnlockOutlined, BulbOutlined, MailFilled, LinkOutlined, TeamOutlined, SaveOutlined, FileOutlined } from '@ant-design/icons';
+import Linker from '../../../Linker';
 
 export interface BriefOrganizationProps {
     organization: orgModel.BriefOrganization;
@@ -348,9 +348,9 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         return (
             <React.Fragment>
                 <div className="BriefOrganizationHeader-logoRow">
-                    <NavLink to={`/orgs/${org.id}`}>
+                    <Linker to={`/orgs/${org.id}`}>
                         {this.renderLogo(org)}
-                    </NavLink>
+                    </Linker>
                 </div>
                 <div className="BriefOrganizationHeader-statusRow">
                     <div className="BriefOrganizationHeader-relationCol">
@@ -402,9 +402,9 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         return (
             <React.Fragment>
                 <div className="BriefOrganizationHeader-orgName BriefOrganizationHeader-infoTableRow">
-                    <NavLink to={`/orgs/${org.id}`}>
+                    <Linker to={`/orgs/${org.id}`}>
                         {org.name}
-                    </NavLink>
+                    </Linker>
                 </div>
 
                 <div className="BriefOrganizationHeader-researchInterests BriefOrganizationHeader-infoTableRow">
@@ -562,14 +562,6 @@ export default class BriefOrganization extends React.Component<BriefOrganization
     }
 
     renderBackButton() {
-        // return (
-        //     <div className="IconButton"
-        //         onClick={this.props.onNavigateToBrowser}
-        //         style={{ color: 'rgba(145, 43, 43, 1)' }}>
-        //         back
-        //     </div>
-        // )
-
         return (
             <Button
                 danger

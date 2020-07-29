@@ -7,7 +7,7 @@ import InaccessibleOrganization from './Inaccessible';
 
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../../redux/store/types';
 import * as actions from '../../../redux/actions/entities/organization';
 import { LoadingOutlined } from '@ant-design/icons';
 

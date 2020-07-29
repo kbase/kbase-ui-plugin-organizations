@@ -3,7 +3,7 @@ import * as orgModel from '../../../data/models/organization/model';
 import './component.css';
 import OrgLogo from '../../OrgLogo';
 import Owner from '../OwnerContainer';
-import { NavLink } from 'react-router-dom';
+import Linker from '../../Linker';
 
 export interface OrganizationProps {
     organization: orgModel.Organization;
@@ -43,9 +43,9 @@ export default class Organization extends React.Component<OrganizationProps, Org
                 </div>
                 <div className="OrganizationEntity-Accessible-mainCol">
                     <div className="OrganizationEntity-Accessible-name">
-                        <NavLink to={`/orgs/${org.id}`}>
+                        <Linker to={`/orgs/${org.id}`}>
                             {org.name}
-                        </NavLink>
+                        </Linker>
                     </div>
                     <div className="OrganizationEntity-Accessible-researchInterests">
                         {org.researchInterests}

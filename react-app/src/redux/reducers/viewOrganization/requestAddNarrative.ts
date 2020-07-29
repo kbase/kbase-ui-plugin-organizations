@@ -2,11 +2,11 @@ import { Action } from 'redux';
 import * as actions from '../../actions/viewOrganization/requestAddNarrative';
 import {
     StoreState, NarrativeState
-} from '../../../types';
+} from '../../store/types';
 import { ActionFlag } from '../../actions';
-import { SelectionState, SaveState, AsyncModelState, AsyncModel } from '../../../types/common';
-import { RequestNarrativeViewModel } from '../../../types/views/Main/views/ViewOrg/views/RequestNarrative';
-import { ViewOrgViewModelKind, SubViewKind } from '../../../types/views/Main/views/ViewOrg';
+import { SelectionState, SaveState, AsyncModelState, AsyncModel } from '../../store/types/common';
+import { RequestNarrativeViewModel } from '../../store/types/views/Main/views/ViewOrg/views/RequestNarrative';
+import { ViewOrgViewModelKind, SubViewKind } from '../../store/types/views/Main/views/ViewOrg';
 
 export function loadStart(state: AsyncModel<RequestNarrativeViewModel>, action: actions.LoadStart): AsyncModel<RequestNarrativeViewModel> {
     return {

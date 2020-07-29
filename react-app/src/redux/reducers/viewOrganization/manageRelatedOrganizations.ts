@@ -1,10 +1,10 @@
 import { Action } from 'redux';
 import * as actions from '../../actions/viewOrganization/manageRelatedOrganizations';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../store/types';
 import { ActionFlag } from '../../actions';
-import { SelectableRelatableOrganization } from '../../../types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
-import { AsyncModelState } from '../../../types/common';
-import { SubViewKind, ViewOrgViewModelKind } from '../../../types/views/Main/views/ViewOrg';
+import { SelectableRelatableOrganization } from '../../store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import { AsyncModelState } from '../../store/types/common';
+import { SubViewKind, ViewOrgViewModelKind } from '../../store/types/views/Main/views/ViewOrg';
 
 export function loadSuccess(state: StoreState, action: actions.LoadSuccess): StoreState {
     if (state.view.loadingState !== AsyncModelState.SUCCESS) {

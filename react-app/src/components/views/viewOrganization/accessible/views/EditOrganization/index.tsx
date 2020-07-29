@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StoreState } from '../../../../../../types';
+import { StoreState } from '../../../../../../redux/store/types';
 import Container from './container';
 import * as orgModel from '../../../../../../data/models/organization/model';
 
@@ -8,10 +8,10 @@ import { connect } from 'react-redux';
 
 import * as actions from '../../../../../../redux/actions/viewOrganization/editOrg';
 import { Alert, Spin } from 'antd';
-import { SubViewKind } from '../../../../../../types/views/Main/views/ViewOrg';
+import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
 import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
-import { EditOrgViewModel } from '../../../../../../types/views/Main/views/ViewOrg/views/EditOrg';
-import { AsyncModelState, AsyncModel } from '../../../../../../types/common';
+import { EditOrgViewModel } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/EditOrg';
+import { AsyncModelState, AsyncModel } from '../../../../../../redux/store/types/common';
 import { AppError } from '@kbase/ui-components';
 
 // First the loader component, which takes care of a loading view, error view, and the 

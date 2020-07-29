@@ -7,8 +7,8 @@ import MainMenu from '../../../../../menu/component';
 import UserEntityComponent from '../../../../../entities/UserWrappedContainer';
 import './component.css';
 import Avatar from '../../../../../entities/Avatar';
-import { InviteUserViewState } from '../../../../../../types/views/Main/views/ViewOrg/views/InviteUser';
-import { OrganizationUser, User } from '../../../../../../types/common';
+import { InviteUserViewState } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/InviteUser';
+import { OrganizationUser, User } from '../../../../../../redux/store/types/common';
 import {
     UserOutlined, CrownOutlined, MailOutlined, InboxOutlined, LockOutlined,
     StopOutlined, UnlockOutlined, SearchOutlined, RollbackOutlined
@@ -378,7 +378,7 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
     render() {
         return (
             <div className="InviteUser scrollable-flex-column">
-                <MainMenu buttons={this.renderMenuButtons()} />
+            <MainMenu buttons={this.renderMenuButtons()} />
                 <div className="InviteUser-row scrollable-flex-column">
                     <div className="InviteUser-col1 -firstCol InviteUser-users scrollable-flex-column">
                         <h3>Select User to Invite</h3>

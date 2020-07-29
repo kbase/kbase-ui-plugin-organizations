@@ -2,7 +2,7 @@ import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
 import {
     StoreState
-} from '../../../../../../types';
+} from '../../../../../../redux/store/types';
 import {
     editOrgSave,
     updateName,
@@ -12,9 +12,9 @@ import EditOrganization from './component';
 import * as orgModel from '../../../../../../data/models/organization/model';
 import {
     EditState, SaveState, ValidationState, EditableOrganization, AsyncModelState
-} from '../../../../../../types/common';
+} from '../../../../../../redux/store/types/common';
 import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
-import { SubViewKind } from '../../../../../../types/views/Main/views/ViewOrg';
+import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
 
 interface OwnProps {
     onFinish: () => void;

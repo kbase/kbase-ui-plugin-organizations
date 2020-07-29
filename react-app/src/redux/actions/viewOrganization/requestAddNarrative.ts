@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { ActionFlag } from '../index';
 import {
     StoreState, Narrative
-} from '../../../types';
+} from '../../store/types';
 import * as orgModel from '../../../data/models/organization/model';
 import * as narrativeModel from '../../../data/models/narrative';
 import * as requestModel from '../../../data/models/requests';
@@ -12,8 +12,8 @@ import { makeError } from '../../../combo/error/api';
 import { OrganizationNarrative } from '../../../data/models/narrative';
 import * as viewOrgActions from '../viewOrg';
 import { extractViewOrgModelPlus, extractViewOrgSubView } from '../../../lib/stateExtraction';
-import { SubViewKind } from '../../../types/views/Main/views/ViewOrg';
-import { AsyncModelState } from '../../../types/common';
+import { SubViewKind } from '../../store/types/views/Main/views/ViewOrg';
+import { AsyncModelState } from '../../store/types/common';
 
 export interface Load extends Action {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD;
@@ -57,9 +57,7 @@ export function loadError(error: AnError): LoadError {
 
 export function load(organizationId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        console.log('hmm');
         dispatch(loadStart());
-        console.log('mm');
 
         const { username, token, config } = extractViewOrgModelPlus(getState());
 
@@ -80,10 +78,7 @@ export function load(organizationId: string) {
             groupsServiceURL: config.services.Groups.url
         });
 
-        console.log('ok');
-
         try {
-            console.log('well...');
             const [org, narratives, request, invitation] = await Promise.all<orgModel.Organization, narrativeModel.OrganizationNarrative[], requestModel.UserRequest | null, requestModel.UserInvitation | null>([
                 orgClient.getOrganization(organizationId),
                 narrativeClient.getOwnNarratives(organizationId),
@@ -95,7 +90,6 @@ export function load(organizationId: string) {
 
             dispatch(loadSuccess(org, narratives, relation));
         } catch (ex) {
-            console.log('...but...');
             console.error('loading error', ex);
             dispatch(loadError(makeError({
                 code: ex.name,

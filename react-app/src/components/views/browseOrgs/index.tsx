@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StoreState } from '../../../types';
+import { StoreState } from '../../../redux/store/types';
 import Container from './container';
 
 // THe redux connection
@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 
 import * as actions from '../../../redux/actions/browseOrgs';
 import { Spin, Alert } from 'antd';
-import { BrowseOrgsViewModel } from '../../../types/views/Main/views/BrowseOrgs';
-import { AsyncModelState, ModelError } from '../../../types/common';
+import { BrowseOrgsViewModel } from '../../../redux/store/types/views/Main/views/BrowseOrgs';
+import { AsyncModelState, ModelError } from '../../../redux/store/types/common';
 
 // First the loader component, which takes care of a loading view, error view, and the
 // container.
@@ -30,7 +30,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
                 Loading Organizations... <Spin />
             </div>
         );
-        return (
+        return <div style={{ margin: '0 auto' }}>
             <Alert
                 type="info"
                 message={message}
@@ -40,7 +40,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
                     margin: '20px auto'
                 }}
             />
-        );
+        </div>;
     }
 
     renderError(viewModel: ModelError) {

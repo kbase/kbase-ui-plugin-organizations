@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as orgModel from '../data/models/organization/model';
-import { NavLink, Link } from 'react-router-dom';
 import OrgLogo from './OrgLogo';
 import { Tooltip, Menu, Dropdown, Modal } from 'antd';
 import Owner from './entities/OwnerContainer';
-import { ComponentView } from '../types';
+import { ComponentView } from '../redux/store/types';
 import './BriefOrganization.css';
 import NiceElapsedTime from './NiceElapsedTime';
 import { UserOutlined, HomeOutlined, StopOutlined, CrownOutlined, UnlockOutlined, BellFilled, RobotOutlined, GlobalOutlined, MailFilled, LinkOutlined, TeamOutlined, FileOutlined, SaveOutlined, BulbOutlined } from '@ant-design/icons';
+import Linker from './Linker';
 
 export interface BriefOrganizationProps {
     organization: orgModel.BriefOrganization;
@@ -346,9 +346,9 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         return (
             <React.Fragment>
                 <div className="BriefOrganization-logoRow">
-                    <Link to={`/orgs/${org.id}`}>
+                    <Linker to={`/orgs/${org.id}`}>
                         {this.renderLogo(org)}
-                    </Link>
+                    </Linker>
                 </div>
                 <div className="BriefOrganization-statusRow">
                     <div className="BriefOrganization-relationCol">
@@ -552,9 +552,9 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         <div className="BriefOrganization-infoCol-row">
                             <div className="BriefOrganization-infoCol-col1">
                                 <div className="BriefOrganization-orgName BriefOrganization-infoTableRow">
-                                    <NavLink to={`/orgs/${org.id}`}>
+                                    <Linker to={`/orgs/${org.id}`}>
                                         {org.name}
-                                    </NavLink>
+                                    </Linker>
                                 </div>
                             </div>
                         </div>

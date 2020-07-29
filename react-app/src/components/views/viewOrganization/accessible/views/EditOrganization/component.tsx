@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Redirect } from 'react-router-dom';
+// import { Redirect } from 'react-router-dom';
 import { Marked } from 'marked-ts';
 import { Button, Modal, Checkbox, Input, Tooltip, Collapse, Tabs } from 'antd';
 import md5 from 'md5';
 import {
 
-} from '../../../../../../types';
+} from '../../../../../../redux/store/types';
 import './component.css';
 
 import * as orgModel from '../../../../../../data/models/organization/model';
@@ -14,8 +14,9 @@ import TextArea from 'antd/lib/input/TextArea';
 import {
     EditState, SaveState, ValidationState, EditableOrganization, ValidationErrorType,
     Editable, SyncState, EditableString, EditableNullableString, EditableBoolean
-} from '../../../../../../types/common';
+} from '../../../../../../redux/store/types/common';
 import { ExclamationCircleOutlined, LinkOutlined, CloseOutlined, LockOutlined, GlobalOutlined, QuestionOutlined, RollbackOutlined, SaveOutlined } from '@ant-design/icons';
+import { redirect } from '../../../../../../ui/utils';
 
 export interface EditOrganizationProps {
     editState: EditState;
@@ -108,12 +109,14 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
 
     onClickCancelToViewer() {
         if (!this.isModified()) {
-            this.setState({ cancelToViewer: true });
+            redirect(`viewOrganization/${this.props.organization.id}`);
+            // this.setState({ cancelToViewer: true });
             return;
         }
 
         const confirm = () => {
-            this.setState({ cancelToViewer: true });
+            // this.setState({ cancelToViewer: true });
+            redirect(`viewOrganization/${this.props.organization.id}`);
         };
         const cancel = () => {
         };
@@ -1060,9 +1063,9 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
     }
 
     render() {
-        if (this.state.cancelToViewer) {
-            return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />;
-        }
+        // if (this.state.cancelToViewer) {
+        //     return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />;
+        // }
         return (
             <div className="EditOrganization scrollable-flex-column">
                 <div className="EditOrganization-main scrollable-flex-column">
