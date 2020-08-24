@@ -8,7 +8,7 @@ import './component.css';
 import { AppError } from '@kbase/ui-components';
 import { SortDirection } from '../../../redux/store/types/common';
 import {
-    LoadingOutlined, SearchOutlined, EllipsisOutlined, PlusCircleOutlined
+    LoadingOutlined, SearchOutlined, PlusCircleOutlined
 } from '@ant-design/icons';
 import Search from 'antd/lib/input/Search';
 import Linker from '../../Linker';
@@ -299,7 +299,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                         style={{fontStyle: 'italic'}}
                         size="small" 
                         onClick={this.onToggleAdvanced.bind(this)}>
-                fewer filter options
+                show fewer options
             </Button>;
             // return <a onClick={this.onToggleAdvanced.bind(this)}>
             //     fewer filter options
@@ -314,7 +314,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                         style={{fontStyle: 'italic'}}
                         size="small" 
                         onClick={this.onToggleAdvanced.bind(this)}>
-                more filter options
+                show more options
             </Button>;
             // return <a type="link" onClick={this.onToggleAdvanced.bind(this)}>
             //     more filter options
@@ -336,7 +336,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         if (this.state.showAdvancedControls) {
             return (
                 <React.Fragment>
-                    
                     <Radio.Group
                         onChange={this.onFilterByRoleTypeChange.bind(this)}
                         value={this.state.filterByRoleType}>
@@ -353,14 +352,11 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                         value={this.state.filterByRole}
                         className="OrganizationsBrowser-checkboxGroup"
                         onChange={this.onFilterByRoleChange.bind(this)} />
-                    
-                    {this.renderAdvancedToggle()}
                 </React.Fragment>
             );
         } else {
             return (
                 <React.Fragment>
-                    
                     <Radio.Group
                         onChange={this.onFilterByRoleTypeChange.bind(this)}
                         value={this.state.filterByRoleType}>
@@ -368,8 +364,6 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                         <Radio value="myorgs" style={radioStyle}>My Orgs</Radio>
                         <Radio value="all" style={radioStyle}>All Orgs</Radio>
                     </Radio.Group>
-
-                    {this.renderAdvancedToggle()}
                 </React.Fragment>
             );
         }
@@ -443,6 +437,11 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                     <div className="field-label" style={{ marginTop: '10px' }}>visibility</div>
                 ) : (null)}
                 {this.renderFilterByPrivacy()}
+
+                <div style={{marginTop: '15px'}}>
+                {this.renderAdvancedToggle()}
+                </div>
+                
 
                 <div style={{ marginTop: '20px', textAlign: 'center' }}>
                     <hr style={{ border: 0, borderTop: '1px solid rgba(200, 200, 200, 0.4)', width: '80%' }} />
