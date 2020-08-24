@@ -271,6 +271,8 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
     }
 
     onToggleAdvanced() {
+        // event: React.MouseEvent<HTMLAnchorElement>
+        // event.preventDefault();
         // When switching back to basic filter mode, we need to ensure that advanced 
         // filtering is removed.
         if (this.state.showAdvancedControls) {
@@ -293,17 +295,35 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
     renderAdvancedToggle() {
         if (this.state.showAdvancedControls) {
-            return (
-                <EllipsisOutlined
-                    className="IconButton-hover-pressed"
-                    onClick={this.onToggleAdvanced.bind(this)} />
-            );
+            return <Button type="dashed" 
+                        style={{fontStyle: 'italic'}}
+                        size="small" 
+                        onClick={this.onToggleAdvanced.bind(this)}>
+                fewer filter options
+            </Button>;
+            // return <a onClick={this.onToggleAdvanced.bind(this)}>
+            //     fewer filter options
+            // </a>;
+            // return (
+            //     <EllipsisOutlined
+            //         className="IconButton-hover-pressed"
+            //         onClick={this.onToggleAdvanced.bind(this)} />
+            // );
         } else {
-            return (
-                <EllipsisOutlined
-                    className="IconButton-hover"
-                    onClick={this.onToggleAdvanced.bind(this)} />
-            );
+            return <Button type="dashed" 
+                        style={{fontStyle: 'italic'}}
+                        size="small" 
+                        onClick={this.onToggleAdvanced.bind(this)}>
+                more filter options
+            </Button>;
+            // return <a type="link" onClick={this.onToggleAdvanced.bind(this)}>
+            //     more filter options
+            // </a>;
+            // return (
+            //     <EllipsisOutlined
+            //         className="IconButton-hover"
+            //         onClick={this.onToggleAdvanced.bind(this)} />
+            // );
         }
     }
 
@@ -316,13 +336,14 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
         if (this.state.showAdvancedControls) {
             return (
                 <React.Fragment>
+                    
                     <Radio.Group
                         onChange={this.onFilterByRoleTypeChange.bind(this)}
                         value={this.state.filterByRoleType}>
 
                         <Radio value="myorgs" style={radioStyle}>My Orgs</Radio>
                         <Radio value="all" style={radioStyle}>All Orgs</Radio>
-                        {this.renderAdvancedToggle()}
+                        
                         <Radio value="notmyorgs" style={radioStyle}>Not My Orgs</Radio>
                         <Radio value="select" style={radioStyle}>Specific Role</Radio>
                     </Radio.Group>
@@ -332,19 +353,23 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
                         value={this.state.filterByRole}
                         className="OrganizationsBrowser-checkboxGroup"
                         onChange={this.onFilterByRoleChange.bind(this)} />
+                    
+                    {this.renderAdvancedToggle()}
                 </React.Fragment>
             );
         } else {
             return (
                 <React.Fragment>
+                    
                     <Radio.Group
                         onChange={this.onFilterByRoleTypeChange.bind(this)}
                         value={this.state.filterByRoleType}>
 
                         <Radio value="myorgs" style={radioStyle}>My Orgs</Radio>
                         <Radio value="all" style={radioStyle}>All Orgs</Radio>
-                        {this.renderAdvancedToggle()}
                     </Radio.Group>
+
+                    {this.renderAdvancedToggle()}
                 </React.Fragment>
             );
         }
@@ -421,7 +446,7 @@ class OrganizationsBrowser extends React.Component<OrganizationsBrowserProps, Or
 
                 <div style={{ marginTop: '20px', textAlign: 'center' }}>
                     <hr style={{ border: 0, borderTop: '1px solid rgba(200, 200, 200, 0.4)', width: '80%' }} />
-                    <a href="https://docs.google.com/document/d/1xRpFjD3pqPIrHBjNDGht3hX-3y6A0eQRr_v51A5j2hk" target="_blank" rel="noopener noreferrer">FAQ</a>
+                    <a href="https://docs.kbase.us/getting-started/narrative/orgs" target="_blank" rel="noopener noreferrer">FAQ</a>
                 </div>
             </React.Fragment>
         );

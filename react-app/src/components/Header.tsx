@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './Header.css';
-import { ClickParam } from 'antd/lib/menu';
+// import { ClickParam } from 'antd/lib/menu';
 import { RightOutlined } from '@ant-design/icons';
 
 export interface HeaderProps {
@@ -36,15 +36,15 @@ class Header extends React.Component<HeaderProps, HeaderState> {
         }
     }
 
-    onMenuSelection(e: ClickParam) {
-        // this.setState({
-        //     currentMenuItem: e.key
-        // })
-        // switch (e.key) {
-        //     case 'allorgs':
-        //         this.props.history.push('/organizations')
-        // }
-    }
+    // onMenuSelection(e: ClickParam) {
+    //     // this.setState({
+    //     //     currentMenuItem: e.key
+    //     // })
+    //     // switch (e.key) {
+    //     //     case 'allorgs':
+    //     //         this.props.history.push('/organizations')
+    //     // }
+    // }
 
     render() {
         return (

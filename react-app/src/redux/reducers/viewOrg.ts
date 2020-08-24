@@ -59,6 +59,18 @@ export function loadNormalSuccess(state: AsyncModel<ViewOrgViewModel>, action: a
     };
 }
 
+export function loadInaccessiblePrivateSuccess(state: AsyncModel<ViewOrgViewModel>, action: actions.LoadInaccessiblePrivateSuccess): AsyncModel<ViewInaccessiblePrivateOrgViewModel> {
+    return {
+        loadingState: AsyncModelState.SUCCESS,
+        value: {
+            kind: ViewOrgViewModelKind.PRIVATE_INACCESSIBLE,
+            organization: action.organization,
+            relation: action.relation,
+            requestOutbox: action.requestOutbox
+        }
+    };
+}
+
 export function reloadNormalSuccess(state: AsyncModel<ViewOrgViewModel>, action: actions.ReloadNormalSuccess): AsyncModel<ViewOrgViewModel> {
     // const viewModel = state.views.viewOrgView.viewModel;
     // if (viewModel === null) {
@@ -113,14 +125,14 @@ export function reloadNormalSuccess(state: AsyncModel<ViewOrgViewModel>, action:
     };
 }
 
-export function loadInaccessiblePrivateSuccess(state: ViewInaccessiblePrivateOrgViewModel, action: actions.LoadInaccessiblePrivateSuccess): ViewInaccessiblePrivateOrgViewModel {
-    return {
-        kind: ViewOrgViewModelKind.PRIVATE_INACCESSIBLE,
-        organization: action.organization,
-        relation: action.relation,
-        requestOutbox: action.requestOutbox
-    };
-}
+// export function loadInaccessiblePrivateSuccess(state: ViewInaccessiblePrivateOrgViewModel, action: actions.LoadInaccessiblePrivateSuccess): ViewInaccessiblePrivateOrgViewModel {
+//     return {
+//         kind: ViewOrgViewModelKind.PRIVATE_INACCESSIBLE,
+//         organization: action.organization,
+//         relation: action.relation,
+//         requestOutbox: action.requestOutbox
+//     };
+// }
 
 export function loadError(state: AsyncModel<ViewOrgViewModel>, action: actions.LoadError): AsyncModel<ViewOrgViewModel> {
     return {
@@ -226,9 +238,10 @@ function localViewModelReducer(state: AsyncModel<ViewOrgViewModel>, action: Acti
             return loadError(state, action as actions.LoadError);
         case ActionFlag.VIEW_ORG_UNLOAD:
             return unload(state, action as actions.Unload);
-
         case ActionFlag.VIEW_ORG_RELOAD_NORMAL_SUCCESS:
             return reloadNormalSuccess(state, action as actions.ReloadNormalSuccess);
+        case ActionFlag.VIEW_ORG_LOAD_INACCESSIBLE_PRIVATE_SUCCESS:
+            return loadInaccessiblePrivateSuccess(state, action as actions.LoadInaccessiblePrivateSuccess);
         default:
             return null;
     }
@@ -272,12 +285,14 @@ function localInaccessibleReducer(state: ViewInaccessiblePrivateOrgViewModel, ac
     // NB using discriminant union nature of the ActionX types to narrow
     // the type.
 
-    switch (action.type) {
-        case ActionFlag.VIEW_ORG_LOAD_INACCESSIBLE_PRIVATE_SUCCESS:
-            return loadInaccessiblePrivateSuccess(state, action as actions.LoadInaccessiblePrivateSuccess);
-        default:
-            return null;
-    }
+    // switch (action.type) {
+    //     case ActionFlag.VIEW_ORG_LOAD_INACCESSIBLE_PRIVATE_SUCCESS:
+    //         return loadInaccessiblePrivateSuccess(state, action as actions.LoadInaccessiblePrivateSuccess);
+    //     default:
+    //         return null;
+    // }
+    console.warn('inaccessible reducer has nothing to do!');
+    return null;
 }
 
 
@@ -290,8 +305,6 @@ export default function reducer(state: types.StoreState, action: Action<any>): S
     if (state.view.loadingState !== AsyncModelState.SUCCESS) {
         return null;
     }
-
-
 
     // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
     //     return null;
@@ -317,7 +330,6 @@ export default function reducer(state: types.StoreState, action: Action<any>): S
     if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
         return null;
     }
-
     if (state.view.value.views.viewOrg.value.kind === ViewOrgViewModelKind.NORMAL) {
         const newValue = localAccessibleReducer(state.view.value.views.viewOrg.value, action);
         if (newValue) {

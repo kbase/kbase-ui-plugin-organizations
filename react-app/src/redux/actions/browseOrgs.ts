@@ -234,7 +234,7 @@ export function load() {
             // done!
             dispatch(loadSuccess(defaultViewModel));
         } catch (ex) {
-            console.error('Error querying orgs', ex.name, ex.message);
+            console.error('Error querying groups', ex.name, ex.message);
             dispatch(searchOrgsError({
                 code: ex.name,
                 message: ex.message
@@ -285,7 +285,7 @@ export function searchOrgs(searchTerms: Array<string>) {
 
             dispatch(searchOrgsSuccess(organizations, total, openRequests));
         } catch (ex) {
-            console.error('Error querying orgs', ex.name, ex.message);
+            console.error('Error querying groups', ex.name, ex.message);
             dispatch(searchOrgsError({
                 code: ex.name,
                 message: ex.message
@@ -335,7 +335,7 @@ export function sortOrgs(sortField: string, sortDirection: SortDirection) {
 
             dispatch(searchOrgsSuccess(organizations, total, openRequests));
         } catch (ex) {
-            console.error('Error querying orgs', ex.name, ex.message);
+            console.error('Error querying groups', ex.name, ex.message);
             dispatch(searchOrgsError({
                 code: ex.name,
                 message: ex.message
@@ -401,7 +401,7 @@ export function filterOrgs(filter: orgModel.Filter) {
 
             dispatch(searchOrgsSuccess(organizations, total, openRequests));
         } catch (ex) {
-            console.error('Error querying orgs', ex.name, ex.message);
+            console.error('Error querying groups', ex.name, ex.message);
             dispatch(searchOrgsError({
                 code: ex.name,
                 message: ex.message

@@ -15,7 +15,7 @@ import * as dataServices from './dataServices';
 import { AnError, makeError } from '../../lib/error';
 import * as narrativeModel from '../../data/models/narrative';
 import { AppError } from '@kbase/ui-components';
-import { extractViewOrgModelPlus, extractAppInfo } from '../../lib/stateExtraction';
+import { extractViewOrgModelPlus, extractAppInfo, extractViewOrgModelPlus2 } from '../../lib/stateExtraction';
 import { ViewOrgViewModelKind, SubViewKind } from '../store/types/views/Main/views/ViewOrg';
 import { AsyncModelState } from '../store/types/common';
 
@@ -736,7 +736,7 @@ export function viewOrgJoinRequest() {
         //TODO: could do a start here...
         const { viewModel: {
             organization
-        }, username, token, config } = extractViewOrgModelPlus(getState());
+        }, username, token, config } = extractViewOrgModelPlus2(getState());
 
         const orgClient = new orgModel.OrganizationModel({
             token, username,
@@ -759,9 +759,9 @@ export function viewOrgJoinRequest() {
 
 export function viewOrgCancelJoinRequest(requestId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch(viewOrgJoinRequestStart());
+        dispatch(viewOrgCancelJoinRequestStart());
 
-        const { username, token, config } = extractViewOrgModelPlus(getState());
+        const { username, token, config } = extractViewOrgModelPlus2(getState());
 
         const requestClient = new requestModel.RequestsModel({
             token, username,
@@ -785,7 +785,7 @@ export function acceptJoinInvitation(requestId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(acceptJoinInvitationStart());
 
-        const { username, token, config } = extractViewOrgModelPlus(getState());
+        const { username, token, config } = extractViewOrgModelPlus2(getState());
 
         const requestClient = new requestModel.RequestsModel({
             token, username,
@@ -811,7 +811,7 @@ export function rejectJoinInvitation(requestId: string) {
     return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch(acceptJoinInvitationStart());
 
-        const { username, token, config } = extractViewOrgModelPlus(getState());
+        const { username, token, config } = extractViewOrgModelPlus2(getState());
 
         const requestClient = new requestModel.RequestsModel({
             token, username,

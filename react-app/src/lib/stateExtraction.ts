@@ -359,3 +359,48 @@ export function extractViewOrgModelPlus(state: StoreState): {
     // return state.view.value.model.value.subView;
     return { viewModel: value, token, username, config };
 }
+
+export function extractViewOrgModelPlus2(state: StoreState): {
+    viewModel: ViewAccessibleOrgViewModel | ViewInaccessiblePrivateOrgViewModel,
+    token: string,
+    username: string,
+    config: AppConfig;
+} {
+    if (state.auth.userAuthorization === null) {
+        throw new Error('Not authorized.');
+    }
+
+    if (state.view.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Async model not loaded!');
+    }
+
+    // if (state.view.value.kind !== ViewKind.VIEW_ORG) {
+    //     throw new Error('Not in view orgs view');
+    // }
+
+    if (state.view.value.views.viewOrg.loadingState !== AsyncModelState.SUCCESS) {
+        throw new Error('Async model not loaded!');
+    }
+
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL && 
+        state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.PRIVATE_INACCESSIBLE) {
+        throw new Error('Wrong model');
+    }
+
+    const {
+        auth: { userAuthorization: { token, username } },
+        app: { config },
+        view: {
+            value: {
+                views: {
+                    viewOrg: {
+                        value
+                    }
+                }
+            }
+        }
+    } = state;
+
+    // return state.view.value.model.value.subView;
+    return { viewModel: value, token, username, config };
+}

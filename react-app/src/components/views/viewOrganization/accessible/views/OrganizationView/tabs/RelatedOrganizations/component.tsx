@@ -33,7 +33,7 @@ export default class RelatedOrganizations extends React.Component<RelatedOrganiz
         );
     }
 
-    onAdminMenu(key: string, organizationId: orgModel.OrganizationID) {
+    onAdminMenu(key: React.Key, organizationId: orgModel.OrganizationID) {
         switch (key) {
             case 'removeRelation':
                 // this.props.onDemoteAdminToMember(member.username)
