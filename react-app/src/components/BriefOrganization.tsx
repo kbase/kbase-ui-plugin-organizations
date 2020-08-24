@@ -6,7 +6,10 @@ import Owner from './entities/OwnerContainer';
 import { ComponentView } from '../redux/store/types';
 import './BriefOrganization.css';
 import NiceElapsedTime from './NiceElapsedTime';
-import { UserOutlined, HomeOutlined, StopOutlined, CrownOutlined, UnlockOutlined, BellFilled, RobotOutlined, GlobalOutlined, MailFilled, LinkOutlined, TeamOutlined, FileOutlined, SaveOutlined, BulbOutlined } from '@ant-design/icons';
+import { 
+    UserOutlined, HomeOutlined, StopOutlined, CrownOutlined, UnlockOutlined, 
+    BellFilled, RobotOutlined, GlobalOutlined, MailFilled, LinkOutlined, 
+    TeamOutlined, FileOutlined, SaveOutlined, BulbOutlined } from '@ant-design/icons';
 import Linker from './Linker';
 
 export interface BriefOrganizationProps {
@@ -316,7 +319,8 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                 </p>
             </div>
         );
-        const menuClick = ({ key }: { key: string; }) => {
+        const menuClick = () => {
+            // { key }: { key: string; }
             Modal.info({
                 title: 'Org Permalink',
                 content: permalink

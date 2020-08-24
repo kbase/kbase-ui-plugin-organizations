@@ -23,7 +23,8 @@ export function cancelRequestSuccess(state: StoreState, action: actions.CancelJo
         throw new Error('Async model not loaded!');
     }
 
-    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL) {
+    if (state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.NORMAL && 
+        state.view.value.views.viewOrg.value.kind !== ViewOrgViewModelKind.PRIVATE_INACCESSIBLE) {
         throw new Error('Wrong model');
     }
 

@@ -53,7 +53,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
         });
     }
 
-    onNarrativeMenu(key: string, narrative: orgModel.NarrativeResource) {
+    onNarrativeMenu(key: React.Key, narrative: orgModel.NarrativeResource) {
         switch (key) {
             case 'removeNarrative':
                 this.onRemoveNarrative(narrative);

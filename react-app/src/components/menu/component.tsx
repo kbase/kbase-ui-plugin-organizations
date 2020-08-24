@@ -2,7 +2,7 @@ import * as React from 'react';
 // import { Route } from 'react-router-dom'
 import './component.css';
 // import { Menu } from 'antd';
-import { ClickParam } from 'antd/lib/menu';
+// import { ClickParam } from 'antd/lib/menu';
 
 interface MainMenuProps {
     buttons?: JSX.Element;
@@ -21,17 +21,17 @@ class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
         };
     }
 
-    onMenuSelection(e: ClickParam) {
-        // this.setState({
-        //     currentMenuItem: e.key
-        // })
-        // switch (e.key) {
-        //     case 'myorgs':
-        //         this.props.history.push('/dashboard')
-        //     case 'allorgs':
-        //         this.props.history.push('/organizations')
-        // }
-    }
+    // onMenuSelection(e: ClickParam) {
+    //     // this.setState({
+    //     //     currentMenuItem: e.key
+    //     // })
+    //     // switch (e.key) {
+    //     //     case 'myorgs':
+    //     //         this.props.history.push('/dashboard')
+    //     //     case 'allorgs':
+    //     //         this.props.history.push('/organizations')
+    //     // }
+    // }
 
 
     // renderMenu() {

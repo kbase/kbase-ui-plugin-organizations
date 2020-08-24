@@ -89,7 +89,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
         );
     }
 
-    onMemberMenu(key: string, member: orgModel.Member) {
+    onMemberMenu(key: React.Key, member: orgModel.Member) {
         switch (key) {
             case 'promoteToAdmin':
                 this.props.onPromoteMemberToAdmin(member.username);
@@ -100,7 +100,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
         }
     }
 
-    onAdminMenu(key: string, member: orgModel.Member) {
+    onAdminMenu(key: React.Key, member: orgModel.Member) {
         switch (key) {
             case 'demoteToMember':
                 this.props.onDemoteAdminToMember(member.username);

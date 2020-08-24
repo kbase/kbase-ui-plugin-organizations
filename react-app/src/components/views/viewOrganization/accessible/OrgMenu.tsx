@@ -51,7 +51,7 @@ export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState>
         this.props.onRejectInvitation(relation.requestId);
     }
 
-    onMenuClick({ key }: { key: string; }) {
+    onMenuClick({ key }: { key: React.Key; }) {
         switch (key) {
             case 'manageMyMembership':
                 this.props.onChangeSubView(SubViewKind.MANAGE_MEMBERSHIP);

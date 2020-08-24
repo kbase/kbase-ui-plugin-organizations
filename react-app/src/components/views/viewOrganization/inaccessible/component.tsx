@@ -126,7 +126,7 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         const description = (
             <React.Fragment>
                 {this.renderMessage()}
-                <div>
+                <div style={{marginTop: '10px'}}>
                     {this.renderJoinButton()}
                 </div>
             </React.Fragment>
@@ -168,8 +168,9 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
                 return (
                     <Button
                         onClick={this.onJoinClick.bind(this)}
+                        type="primary"
                     >
-                        Join this Organization
+                        Send Request to Join this Organization
                     </Button>
                 );
             case (orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):

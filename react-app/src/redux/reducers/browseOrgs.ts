@@ -38,6 +38,7 @@ export function searchOrgs(state: BrowseOrgsViewModel, action: actions.SearchOrg
 
     return {
         ...state,
+        // loadingState: AsyncModelState.LOADING,
         value: {
             ...state.value,
             selectedOrganizationId: null,
@@ -67,6 +68,7 @@ export function searchOrgsSuccess(state: BrowseOrgsViewModel, action: actions.Se
     }
     return {
         ...state,
+        loadingState: AsyncModelState.SUCCESS,
         value: {
             ...state.value,
             organizations: action.organizations,
@@ -87,11 +89,16 @@ export function searchOrgsError(state: BrowseOrgsViewModel, action: actions.Sear
 
     return {
         ...state,
-        value: {
-            ...state.value,
-            searching: false,
-            error: action.error
+        loadingState: AsyncModelState.ERROR,
+        error: {
+            code: action.error.code,
+            message: action.error.message
         }
+        // value: {
+        //     ...state.value,
+        //     searching: false,
+        //     error: action.error
+        // }
     };
 }
 

@@ -80,7 +80,6 @@ class Loader extends React.Component<ViewOrganizationProps, State> {
                 }
             case AsyncModelState.SUCCESS:
             default:
-                // return <div>well, ok</div>;
                 if (this.props.viewModel.value.organization.kind === OrganizationKind.INACCESSIBLE_PRIVATE) {
                     return <InaccessibleContainer />;
                 }

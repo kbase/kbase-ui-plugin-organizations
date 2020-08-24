@@ -327,8 +327,8 @@ export class GroupsClient {
             mode: 'cors'
         });
         if (response.status !== 200) {
-            console.error('error fetching groups', response);
-            throw new Error('Error fetching groups');
+            console.error(`Error fetching groups: ${response.status}`, response);
+            throw new Error(`Error fetching groups: ${response.status}`);
         }
         return await response.json();
     }
