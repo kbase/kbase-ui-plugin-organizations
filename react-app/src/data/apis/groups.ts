@@ -267,6 +267,10 @@ export class ServerException extends AppException {
     }
 }
 
+export interface ListGroupsOptions {
+    excludeUpTo?: string;
+}
+
 export class GroupsClient {
     token: string;
     url: string;
@@ -318,8 +322,17 @@ export class GroupsClient {
     //         })
     // }
 
-    async listGroups(): Promise<Array<BriefGroup>> {
-        const response = await fetch(this.url + '/group', {
+    async listGroups(options?: ListGroupsOptions): Promise<Array<BriefGroup>> {
+        const urlParams: {[key: string]: string} = {};
+        options = options || {};
+        if (typeof options.excludeUpTo !== 'undefined') {
+            urlParams.excludeupto = options.excludeUpTo
+        }
+        const urlSearch = Object.entries(urlParams).map(([key, value]) => {
+            return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+        })
+            .join('&');
+        const response = await fetch(`${this.url}/group?${urlSearch}`, {
             headers: {
                 Authorization: this.token,
                 Accept: 'application/json'
