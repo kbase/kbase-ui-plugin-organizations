@@ -838,11 +838,16 @@ export class OrganizationModel {
 
     async getAllOrgs2(): Promise<Array<BriefOrganization>> {
         let allGroups: Array<groupsApi.BriefGroup> = [];
-        let groups: Array<groupsApi.BriefGroup>;
-        do {
-            groups = await this.groupsClient.listGroups();
+        let groups: Array<groupsApi.BriefGroup> = await this.groupsClient.listGroups();
+        allGroups = allGroups.concat(groups);
+
+        // While we've maxed out the request size, keep getting them.
+        for (; groups.length === groupsApi.MAX_GROUPS_PER_LIST_REQUEST ;) {
+            groups = await this.groupsClient.listGroups({
+                excludeUpTo: groups[groups.length -1].id
+            });
             allGroups = allGroups.concat(groups);
-        } while (groups.length === groupsApi.MAX_GROUPS_PER_LIST_REQUEST);
+        }
 
         const usernames: Set<string> = new Set();
         allGroups.forEach((g) => {
