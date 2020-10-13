@@ -20,7 +20,8 @@ services:
         view: viewOrg
         authorization: true
   menu:
-    - name: organizations
-      path: [orgs]
-      label: Orgs
-      icon: users
+    items:
+      - name: organizations
+        path: orgs
+        label: Orgs
+        icon: users
