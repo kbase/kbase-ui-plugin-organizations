@@ -51,6 +51,8 @@ export interface ViewOrganizationProps {
     onSearchNarratives: (searchBy: string) => void;
     onRemoveApp: (appId: string) => void;
     subView: (subView: SubViewKind) => void;
+    onSearchApps: (searchBy: string) => void;
+    onSortApps: (sortBy: string) => void;
 }
 
 class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrganizationState> {
@@ -360,6 +362,8 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             onRemoveNarrative={this.props.onRemoveNarrative}
             onSearchNarratives={this.props.onSearchNarratives}
             onSortNarratives={this.props.onSortNarratives}
+            onSortApps={this.props.onSortApps}
+            onSearchApps={this.props.onSearchApps}
             // openSubview={this.onChangeSubView.bind(this)}
             openSubview={this.props.subView}
             navigateToBrowser={this.navigateToBrowser.bind(this)}

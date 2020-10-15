@@ -12,6 +12,8 @@ export interface AppsProps {
     apps: { sortBy: string; searchBy: string; apps: Array<orgModel.AppResource>; };
     onAssociateApp: () => void;
     onRemoveApp: (appId: string) => void;
+    onSearchApps: (searchBy: string) => void;
+    onSortApps: (sortBy: string) => void;
 }
 
 interface AppsState { }
@@ -50,14 +52,20 @@ export default class Apps extends React.Component<AppsProps, AppsState> {
     }
 
     renderSearchRow() {
+        const doChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            this.props.onSearchApps(e.target.value);
+        };
+        const handleSelect = (value: string) => {
+            this.props.onSortApps(value);
+        };
         return (
             <React.Fragment>
                 <div className="Apps-searchInput">
-                    <Input placeholder="Filter apps by title or author" />
+                    <Input placeholder="Filter apps by title or author" onChange={doChange} />
                 </div>
                 <div className="Apps-searchControls">
                     <span className="field-label">sort</span>
-                    <Select style={{ width: '11em' }} dropdownMatchSelectWidth={true} defaultValue="dateAdded">
+                    <Select style={{ width: '11em' }} dropdownMatchSelectWidth={true} defaultValue="dateAdded" onChange={handleSelect}>
                         <Select.Option key="dateAdded" value="dateAdded">
                             Date Added
                         </Select.Option>
@@ -75,28 +83,32 @@ export default class Apps extends React.Component<AppsProps, AppsState> {
             return <Alert type="info" message="Sorry, no apps" />;
         }
 
-        const apps = this.props.apps.apps.map((app, index) => {
-            const menu = (
-                <Menu>
-                    <Menu.Item key="removeApp" onClick={() => this.doRemoveApp(app.appId)}>
-                        <DeleteOutlined style={{ color: 'red' }} />
+        const apps = this.props.apps.apps
+            .filter((app) => {
+                return app.isVisible;
+            })
+            .map((app, index) => {
+                const menu = (
+                    <Menu>
+                        <Menu.Item key="removeApp" onClick={() => this.doRemoveApp(app.appId)}>
+                            <DeleteOutlined style={{ color: 'red' }} />
                         Remove App from Organization
                     </Menu.Item>
-                </Menu>
-            );
-            return (
-                <div key={String(index)} className="Apps-appRow SimpleCard">
-                    <div className="Apps-appColumn">
-                        <App appId={app.appId} />
+                    </Menu>
+                );
+                return (
+                    <div key={String(index)} className="Apps-appRow SimpleCard">
+                        <div className="Apps-appColumn">
+                            <App appId={app.appId} />
+                        </div>
+                        <div className="Apps-menuColumn">
+                            <Dropdown overlay={menu} trigger={['click']}>
+                                <EllipsisOutlined />
+                            </Dropdown>
+                        </div>
                     </div>
-                    <div className="Apps-menuColumn">
-                        <Dropdown overlay={menu} trigger={['click']}>
-                            <EllipsisOutlined />
-                        </Dropdown>
-                    </div>
-                </div>
-            );
-        });
+                );
+            });
         return <React.Fragment>{apps}</React.Fragment>;
     }
 

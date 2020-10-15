@@ -47,6 +47,8 @@ export interface OrgViewProps {
     onSortNarratives: (sortBy: string) => void;
     onSearchNarratives: (searchBy: string) => void;
     onRemoveApp: (appId: string) => void;
+    onSearchApps: (searchBy: string) => void;
+    onSortApps: (sortBy: string) => void;
 
     // Navigation
     openSubview: (subView: SubViewKind) => void;
@@ -618,8 +620,10 @@ class OrganizationView extends React.Component<OrgViewProps, OrgViewState> {
             <Apps
                 organization={this.props.viewModel.organization}
                 apps={this.props.viewModel.apps}
-                onAssociateApp={this.onAssociateApp.bind(this)}
-                onRemoveApp={this.props.onRemoveApp.bind(this)}
+                onAssociateApp={this.onAssociateApp}
+                onRemoveApp={this.props.onRemoveApp}
+                onSearchApps={this.props.onSearchApps}
+                onSortApps={this.props.onSortApps}
             />
         );
     }

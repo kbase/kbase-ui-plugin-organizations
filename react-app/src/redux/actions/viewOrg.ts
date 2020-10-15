@@ -862,7 +862,7 @@ export function sortNarratives(sortBy: string) {
         });
 
         const { viewModel: {
-            narratives: { narratives, sortBy, searchBy }
+            narratives: { narratives, searchBy }
         } } = extractViewOrgModelPlus(getState());
 
         const sorted = orgModel.queryNarratives(narratives, {
@@ -887,7 +887,7 @@ export interface SearchNarratives {
     searchBy: string;
 }
 
-export interface SearchtNarrativesStart {
+export interface SearchNarrativesStart {
     type: ActionFlag.VIEW_ORG_SEARCH_NARRATIVES_START;
 }
 
@@ -902,8 +902,6 @@ export interface SearchNarrativesError {
     error: AnError;
 }
 
-
-
 export function searchNarratives(searchBy: string) {
     return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
         dispatch({
@@ -911,24 +909,114 @@ export function searchNarratives(searchBy: string) {
         });
 
         const { viewModel: {
-            narratives: { narratives, sortBy, searchBy }
+            narratives: { narratives: currentNarratives, sortBy }
         } } = extractViewOrgModelPlus(getState());
 
-        const sorted = orgModel.queryNarratives(narratives, {
+        const narratives = orgModel.queryNarratives(currentNarratives, {
+            sortBy,
+            searchBy
+        });
+
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SEARCH_NARRATIVES_SUCCESS,
+            searchBy,
+            narratives
+        });
+    };
+}
+
+// SEARCH APPS
+
+export interface SearchApps {
+    type: ActionFlag.VIEW_ORG_SEARCH_APPS,
+    searchBy: string;
+}
+
+export interface SearchAppsStart {
+    type: ActionFlag.VIEW_ORG_SEARCH_APPS_START;
+}
+
+export interface SearchAppsSuccess {
+    type: ActionFlag.VIEW_ORG_SEARCH_APPS_SUCCESS;
+    apps: Array<orgModel.AppResource>;
+    searchBy: string;
+}
+
+export interface SearchAppsError {
+    type: ActionFlag.VIEW_ORG_SEARCH_APPS_ERROR;
+    error: AnError;
+}
+
+export function searchApps(searchBy: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_START
+        });
+
+        const { viewModel: {
+            apps: { apps, sortBy }
+        } } = extractViewOrgModelPlus(getState());
+
+        const queriedApps = orgModel.queryApps(apps, {
+            sortBy,
+            searchBy
+        });
+
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SEARCH_APPS_SUCCESS,
+            searchBy,
+            apps: queriedApps.slice()
+        });
+    };
+}
+
+// SOrt Apps
+
+export interface SortApps {
+    type: ActionFlag.VIEW_ORG_SORT_APPS,
+    sortBy: string;
+}
+
+export interface SortAppsStart {
+    type: ActionFlag.VIEW_ORG_SORT_APPS_START;
+}
+
+export interface SortAppsSuccess {
+    type: ActionFlag.VIEW_ORG_SORT_APPS_SUCCESS;
+    apps: Array<orgModel.AppResource>;
+    sortBy: string;
+}
+
+export interface SearchAppsError {
+    type: ActionFlag.VIEW_ORG_SEARCH_APPS_ERROR;
+    error: AnError;
+}
+
+
+export function sortApps(sortBy: string) {
+    return (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
+        dispatch({
+            type: ActionFlag.VIEW_ORG_SORT_APPS_START
+        });
+
+        const { viewModel: {
+            apps: { apps, searchBy }
+        } } = extractViewOrgModelPlus(getState());
+
+        const sorted = orgModel.queryApps(apps, {
             sortBy: sortBy,
             searchBy: searchBy
         });
 
         dispatch({
-            type: ActionFlag.VIEW_ORG_SEARCH_NARRATIVES_SUCCESS,
-            searchBy: searchBy,
-            narratives: sorted
+            type: ActionFlag.VIEW_ORG_SORT_APPS_SUCCESS,
+            apps: sorted,
+            sortBy
         });
-
     };
 }
 
-// REmove app
+// Remove app
 
 export interface RemoveApp {
     type: ActionFlag.VIEW_ORG_REMOVE_APP,
