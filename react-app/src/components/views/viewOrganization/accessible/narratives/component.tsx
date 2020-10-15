@@ -201,9 +201,13 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
         if (this.props.narratives.length === 0) {
             narrativesTable = <Alert type="info" message="No Narratives are yet associated with this Organization" />;
         } else {
-            narrativesTable = this.props.narratives.map((narrative) => {
-                return this.renderMemberNarrativeRow(narrative);
-            });
+            narrativesTable = this.props.narratives
+                .filter((narrative) => {
+                    return narrative.isVisible;
+                })
+                .map((narrative) => {
+                    return this.renderMemberNarrativeRow(narrative);
+                });
         }
 
         return (
@@ -270,26 +274,30 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
 
         let narrativesTable;
         if (narrativesToShow) {
-            narrativesTable = this.props.narratives.map((narrative) => {
-                // create buttons or not, depending on being an admin
-                return (
-                    <div
-                        className="ViewOrganization-Narratives-narrative SimpleCard"
-                        key={String(narrative.workspaceId)}
-                    >
-                        <div className="ViewOrganization-Narratives-dataCol">
-                            <OrganizationNarrative
-                                narrative={narrative}
-                                organization={this.props.organization}
-                                onGetViewAccess={this.props.onGetViewAccess}
-                            />
+            narrativesTable = this.props.narratives
+                .filter((narrative) => {
+                    return narrative.isVisible;
+                })
+                .map((narrative) => {
+                    // create buttons or not, depending on being an admin
+                    return (
+                        <div
+                            className="ViewOrganization-Narratives-narrative SimpleCard"
+                            key={String(narrative.workspaceId)}
+                        >
+                            <div className="ViewOrganization-Narratives-dataCol">
+                                <OrganizationNarrative
+                                    narrative={narrative}
+                                    organization={this.props.organization}
+                                    onGetViewAccess={this.props.onGetViewAccess}
+                                />
+                            </div>
+                            <div className="ViewOrganization-Narratives-buttonCol">
+                                {this.renderNarrativeMenu(narrative)}
+                            </div>
                         </div>
-                        <div className="ViewOrganization-Narratives-buttonCol">
-                            {this.renderNarrativeMenu(narrative)}
-                        </div>
-                    </div>
-                );
-            });
+                    );
+                });
         }
 
         // const narrativeCount = this.props.narratives.length

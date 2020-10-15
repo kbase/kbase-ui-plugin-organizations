@@ -40,6 +40,9 @@ interface DispatchProps {
     onSearchNarratives: (searchBy: string) => void;
     onRemoveApp: (appId: string) => void;
     subView: (subView: SubViewKind) => void;
+    onSearchApps: (searchBy: string) => void;
+    onSortApps: (sortBy: string) => void;
+
 }
 
 // hmm this bit would be for the interface for the wrapped component.
@@ -123,6 +126,12 @@ export function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         },
         subView: (subView: SubViewKind) => {
             dispatch(actions.loadSubview(subView));
+        },
+        onSearchApps: (searchBy: string) => {
+            dispatch(actions.searchApps(searchBy) as any);
+        },
+        onSortApps: (sortBy: string) => {
+            dispatch(actions.sortApps(sortBy) as any);
         }
     };
 }

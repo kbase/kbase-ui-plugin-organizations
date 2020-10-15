@@ -384,15 +384,13 @@ export function searchMembers(searchBy: string) {
 
         const {
             viewModel: {
-                searchMembersBy: searchBy,
                 sortMembersBy: sortBy,
                 organization: {
                     members
                 }
             } } = extractViewOrgModelPlus(getState());
 
-
-        const sorted = orgModel.queryMembers(members, {
+        const searched = orgModel.queryMembers(members, {
             sortBy: sortBy,
             searchBy: searchBy
         });
@@ -400,7 +398,7 @@ export function searchMembers(searchBy: string) {
         dispatch({
             type: ActionFlag.VIEW_ORG_SEARCH_MEMBERS_SUCCESS,
             searchBy: searchBy,
-            members: sorted
+            members: searched.slice()
         });
 
     };

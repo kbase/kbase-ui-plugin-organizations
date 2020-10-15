@@ -97,6 +97,7 @@ export interface Member {
     lastVisitedAt: Date | null;
     type: MemberType;
     title: string | null;
+    isVisible: boolean;
 }
 
 export interface MemberUpdate {
@@ -122,6 +123,7 @@ export interface NarrativeResource {
     updatedAt: Date;
     addedAt: Date | null;
     description: string;
+    isVisible: boolean;
 }
 
 export type AppID = string;
@@ -129,6 +131,7 @@ export type AppID = string;
 export interface AppResource {
     appId: AppID;
     addedAt: Date | null;
+    isVisible: boolean;
 }
 
 export interface BriefOrganization {
@@ -315,7 +318,8 @@ export function groupToOrganization(
         joinedAt: new Date(group.owner.joined),
         lastVisitedAt: group.owner.lastvisit ? new Date(group.owner.lastvisit) : null,
         type: MemberType.OWNER,
-        title: group.owner.custom.title
+        title: group.owner.custom.title,
+        isVisible: true
     };
 
     // We join admins and members, since they are all members, just different privileges in the org
@@ -330,7 +334,8 @@ export function groupToOrganization(
                     joinedAt: new Date(admin.joined),
                     lastVisitedAt: admin.lastvisit ? new Date(admin.lastvisit) : null,
                     type: MemberType.ADMIN,
-                    title: admin.custom.title
+                    title: admin.custom.title,
+                    isVisible: true
                 };
             })
         )
@@ -342,7 +347,8 @@ export function groupToOrganization(
                     joinedAt: new Date(member.joined),
                     lastVisitedAt: member.lastvisit ? new Date(member.lastvisit) : null,
                     type: MemberType.MEMBER,
-                    title: member.custom.title
+                    title: member.custom.title,
+                    isVisible: true
                 };
             })
         );
@@ -356,13 +362,15 @@ export function groupToOrganization(
             createdAt: new Date(info.narrcreate),
             updatedAt: new Date(info.moddate),
             description: info.description,
-            addedAt: info.added === null ? null : new Date(info.added)
+            addedAt: info.added === null ? null : new Date(info.added),
+            isVisible: true
         };
     });
     const apps: Array<AppResource> = group.resources.catalogmethod.map((info) => {
         return {
             appId: info.rid.split('.').join('/'),
-            addedAt: info.added === null ? null : new Date(info.added)
+            addedAt: info.added === null ? null : new Date(info.added),
+            isVisible: true
         };
     });
 
@@ -619,11 +627,17 @@ export function applyNarrativeSearch(narratives: Array<NarrativeResource>, searc
     if (tokens.length === 0) {
         return narratives;
     }
-    return narratives.slice().filter((narrative: NarrativeResource) => {
-        return tokens.every((token: RegExp) => {
+    // return narratives.slice().filter((narrative: NarrativeResource) => {
+    //     return tokens.every((token: RegExp) => {
+    //         return token.test(narrative.title);
+    //     });
+    // });
+    narratives.forEach((narrative: NarrativeResource) => {
+        narrative.isVisible = (tokens.every((token: RegExp) => {
             return token.test(narrative.title);
-        });
+        }));
     });
+    return narratives;
 }
 
 export interface NarrativeQuery {
@@ -634,6 +648,75 @@ export interface NarrativeQuery {
 export function queryNarratives(narratives: Array<NarrativeResource>, query: NarrativeQuery) {
     const searched = applyNarrativeSearch(narratives, query.searchBy);
     const sorted = applyNarrativeSort(searched, query.sortBy);
+    return sorted;
+}
+
+// App Sort and Search
+function appSortByToComparator(sortBy: string) {
+    switch (sortBy) {
+        case 'name':
+            return (a: AppResource, b: AppResource) => {
+                return a.appId.localeCompare(b.appId);
+            };
+        default:
+        case 'added':
+            return (a: AppResource, b: AppResource) => {
+                if (a.addedAt === null) {
+                    if (b.addedAt === null) {
+                        return 0;
+                    } else {
+                        // nulls sort to bottom
+                        return 1;
+                    }
+                } else {
+                    if (b.addedAt === null) {
+                        return -1;
+                    } else {
+                        return b.addedAt.getTime() - a.addedAt.getTime();
+                    }
+                }
+            };
+    }
+}
+
+export function applyAppSort(apps: Array<AppResource>, sortBy: string) {
+    if (!sortBy) {
+        return apps;
+    }
+    return apps.slice().sort((a: AppResource, b: AppResource) => {
+        const c1 = appSortByToComparator(sortBy)(a, b);
+        if (c1 === 0) {
+            if (sortBy !== 'name') {
+                return appSortByToComparator('name')(a, b);
+            }
+        }
+        return c1;
+    });
+}
+
+export function applyAppSearch(apps: Array<AppResource>, searchBy: string) {
+    const tokens = searchBy.split(/\s+/).map((token) => {
+        return new RegExp(token, 'i');
+    });
+    if (tokens.length === 0) {
+        return apps;
+    }
+    apps.forEach((app: AppResource) => {
+        app.isVisible = (tokens.every((token: RegExp) => {
+            return token.test(app.appId);
+        }));
+    });
+    return apps;
+}
+
+export interface AppQuery {
+    searchBy: string;
+    sortBy: string;
+}
+
+export function queryApps(apps: Array<AppResource>, query: AppQuery) {
+    const searched = applyAppSearch(apps, query.searchBy);
+    const sorted = applyAppSort(searched, query.sortBy);
     return sorted;
 }
 
@@ -677,11 +760,17 @@ export function applyMembersSearch(members: Array<Member>, searchBy: string) {
     if (tokens.length === 0) {
         return members;
     }
-    return members.slice().filter((member: Member) => {
-        return tokens.every((token: RegExp) => {
+    // return members.slice().filter((member: Member) => {
+    //     return tokens.every((token: RegExp) => {
+    //         return token.test(member.username) || token.test(member.title || '');
+    //     });
+    // });
+    members.forEach((member: Member) => {
+        member.isVisible = tokens.every((token: RegExp) => {
             return token.test(member.username) || token.test(member.title || '');
         });
     });
+    return members;
 }
 
 export interface MembersQuery {
@@ -817,7 +906,8 @@ export class OrganizationModel {
                 lastVisitedAt: null,
                 type: MemberType.OWNER,
                 joinedAt: new Date(group.createdate),
-                title: 'Owner'
+                title: 'Owner',
+                isVisible: true
             },
             relation: groupRoleToUserRelation(group.role),
             isMember: group.role !== 'None',
@@ -842,9 +932,9 @@ export class OrganizationModel {
         allGroups = allGroups.concat(groups);
 
         // While we've maxed out the request size, keep getting them.
-        for (; groups.length === groupsApi.MAX_GROUPS_PER_LIST_REQUEST ;) {
+        for (; groups.length === groupsApi.MAX_GROUPS_PER_LIST_REQUEST;) {
             groups = await this.groupsClient.listGroups({
-                excludeUpTo: groups[groups.length -1].id
+                excludeUpTo: groups[groups.length - 1].id
             });
             allGroups = allGroups.concat(groups);
         }

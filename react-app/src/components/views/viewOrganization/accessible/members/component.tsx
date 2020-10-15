@@ -180,28 +180,32 @@ export default class Members extends React.Component<MembersProps, MembersState>
                 <Alert type="info" message={message} />
             );
         } else {
-            members = this.props.members.map((member) => {
-                let isNew: boolean;
-                if (this.props.organization.lastVisitedAt === null) {
-                    isNew = false;
-                } else {
-                    isNew = this.props.organization.lastVisitedAt.getTime() < member.joinedAt.getTime();
-                }
-                const classNames = ['Members-row', 'SimpleCard'];
-                if (isNew) {
-                    classNames.push('Members-newMember');
-                }
-                return (
-                    <div className={classNames.join(' ')} key={member.username}>
-                        <div className="Members-member">
-                            <Member member={member} avatarSize={50} />
+            members = this.props.members
+                .filter((member) => {
+                    return member.isVisible;
+                })
+                .map((member) => {
+                    let isNew: boolean;
+                    if (this.props.organization.lastVisitedAt === null) {
+                        isNew = false;
+                    } else {
+                        isNew = this.props.organization.lastVisitedAt.getTime() < member.joinedAt.getTime();
+                    }
+                    const classNames = ['Members-row', 'SimpleCard'];
+                    if (isNew) {
+                        classNames.push('Members-newMember');
+                    }
+                    return (
+                        <div className={classNames.join(' ')} key={member.username}>
+                            <div className="Members-member">
+                                <Member member={member} avatarSize={50} />
+                            </div>
+                            <div className="Members-menu">
+                                {this.renderMemberOptions(member)}
+                            </div>
                         </div>
-                        <div className="Members-menu">
-                            {this.renderMemberOptions(member)}
-                        </div>
-                    </div>
-                );
-            });
+                    );
+                });
         }
 
         return (

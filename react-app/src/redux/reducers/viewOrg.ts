@@ -197,7 +197,32 @@ export function searchNarrativesSuccess(state: ViewAccessibleOrgViewModel, actio
         narratives: {
             ...state.narratives,
             searchBy: action.searchBy,
-            narratives: action.narratives
+            narratives: action.narratives.slice() // ensure it is updated
+        }
+    };
+}
+
+// Apps
+
+export function sortAppsSuccess(state: ViewAccessibleOrgViewModel, action: actions.SortAppsSuccess): ViewAccessibleOrgViewModel {
+    return {
+        ...state,
+        apps: {
+            ...state.narratives,
+            sortBy: action.sortBy,
+            apps: action.apps.slice()
+        }
+
+    };
+}
+
+export function searchAppsSuccess(state: ViewAccessibleOrgViewModel, action: actions.SearchAppsSuccess): ViewAccessibleOrgViewModel {
+    return {
+        ...state,
+        apps: {
+            ...state.narratives,
+            searchBy: action.searchBy,
+            apps: action.apps.slice() // ensure it is updated
         }
     };
 }
@@ -276,6 +301,10 @@ function localAccessibleReducer(state: ViewAccessibleOrgViewModel, action: Actio
             return searchNarrativesSuccess(state, action as actions.SearchNarrativesSuccess);
         case ActionFlag.VIEW_ORG_REMOVE_APP_SUCCESS:
             return removeAppSuccess(state, action as actions.RemoveAppSuccess);
+        case ActionFlag.VIEW_ORG_SORT_APPS_SUCCESS:
+            return sortAppsSuccess(state, action as actions.SortAppsSuccess);
+        case ActionFlag.VIEW_ORG_SEARCH_APPS_SUCCESS:
+            return searchAppsSuccess(state, action as actions.SearchAppsSuccess);
         default:
             return null;
     }
