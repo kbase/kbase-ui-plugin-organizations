@@ -10,7 +10,7 @@ export default abstract class DebouncingProcess {
         this.timer = null
     }
 
-    abstract async task(): Promise<void>
+    abstract task(): Promise<void>
 
     start() {
         if (this.timer) {

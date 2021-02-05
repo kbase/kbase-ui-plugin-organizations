@@ -208,13 +208,17 @@ export default class Validation {
 
     static validateOrgDescription(description: string): [string, ValidationState] {
         if (description.length === 0) {
-            // return [name, {
-            //     type: ValidationErrorType.OK,
-            //     validatedAt: new Date()
-            // }]
             return [description, {
                 type: ValidationErrorType.ERROR,
                 message: 'Organization description may not be empty',
+                validatedAt: new Date()
+            }];
+        }
+
+        if (description.trim().length === 0) {
+            return [description, {
+                type: ValidationErrorType.ERROR,
+                message: 'Organization description may not be composed of only spaces',
                 validatedAt: new Date()
             }];
         }
