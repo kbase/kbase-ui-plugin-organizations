@@ -23,6 +23,7 @@
     "devDependencies": {
         "bluebird": "3.7.2",
         "tar": "5.0.5",
-        "fs-extra": "8.1.0"
+        "fs-extra": "8.1.0",
+        "typescript": "4.1.3"
     }
 }

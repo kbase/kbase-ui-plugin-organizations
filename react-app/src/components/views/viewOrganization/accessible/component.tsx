@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Modal, Tooltip, Alert } from 'antd';
 import Members from './members/reduxAdapter';
 import BriefOrganizationHeader from './BriefOrganizationHeader';
-import ManageRelatedOrganizations from './ManageRelatedOrganizations';
+import ManageRelatedOrganizations from './manageRelatedOrganizations';
 import InviteUser from './views/InviteUser/loader';
 import ManageMembership from './views/ManageMembership/loader';
 import EditOrganization from './views/EditOrganization';

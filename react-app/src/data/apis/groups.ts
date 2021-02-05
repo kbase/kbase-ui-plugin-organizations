@@ -42,8 +42,8 @@ export type Role = 'None' | 'Member' | 'Admin' | 'Owner';
 
 export interface GroupCustomFields {
     logourl?: string;
-    description: string;
-    researchinterests: string;
+    description?: string;
+    researchinterests?: string;
     homeurl?: string;
     relatedgroups?: string;
 }

@@ -5,7 +5,7 @@ import {
 } from 'antd';
 import Header from '../../../../../Header';
 import Members from '../../members/reduxAdapter';
-import Requests from '../../Requests';
+import Requests from '../../requests';
 import Narratives from '../../narratives/component';
 import * as requestModel from '../../../../../../data/models/requests';
 import * as orgModel from '../../../../../../data/models/organization/model';

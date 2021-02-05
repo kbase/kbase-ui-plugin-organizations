@@ -386,7 +386,7 @@ export function groupToOrganization(
         logoUrl: group.custom.logourl || null,
         homeUrl: group.custom.homeurl || null,
         researchInterests: group.custom.researchinterests || '',
-        description: group.custom.description,
+        description: group.custom.description || '',
         owner: owner,
         areMembersPrivate: group.privatemembers,
         members: members,
