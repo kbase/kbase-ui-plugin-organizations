@@ -1,74 +1,79 @@
-import * as React from 'react';
-import * as appModel from '../../../data/models/apps';
-import App from './component';
+import * as React from "react";
+import * as appModel from "../../../data/models/apps";
+import App from "./component";
 
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import { StoreState } from '../../../redux/store/types';
-import * as actions from '../../../redux/actions/entities';
-import { LoadingOutlined } from '@ant-design/icons';
+import { Dispatch } from "redux";
+import { connect } from "react-redux";
+import { StoreState } from "../../../redux/store/types";
+import * as actions from "../../../redux/actions/entities";
+import { LoadingOutlined } from "@ant-design/icons";
 
 interface LoaderProps {
-    appId: appModel.AppID;
-    // TODO: don't really like AppFullInfo - as a name
-    app: appModel.AppFullInfo | undefined;
-    onLoad: (appId: appModel.AppID) => void;
+  appId: appModel.AppID;
+  // TODO: don't really like AppFullInfo - as a name
+  app: appModel.AppFullInfo | undefined;
+  imageBaseURL: string;
+  onLoad: (appId: appModel.AppID) => void;
 }
 
-interface LoaderState {
-
-}
+interface LoaderState {}
 
 class Loader extends React.Component<LoaderProps, LoaderState> {
-
-
-    render() {
-        if (this.props.app) {
-            return (
-                <App app={this.props.app} />
-            );
-        } else {
-            return (
-                <div>
-                    <LoadingOutlined /> Loading App...
-                </div>
-            );
-        }
+  render() {
+    if (this.props.app) {
+      return (
+        <App app={this.props.app} imageBaseURL={this.props.imageBaseURL} />
+      );
+    } else {
+      return (
+        <div>
+          <LoadingOutlined /> Loading App...
+        </div>
+      );
     }
+  }
 
-    componentDidMount() {
-        if (!this.props.app) {
-            this.props.onLoad(this.props.appId);
-        }
+  componentDidMount() {
+    if (!this.props.app) {
+      this.props.onLoad(this.props.appId);
     }
+  }
 }
 
-
-
 export interface OwnProps {
-    appId: appModel.AppID;
+  appId: appModel.AppID;
 }
 
 interface StateProps {
-    app: appModel.AppFullInfo | undefined;
+  app: appModel.AppFullInfo | undefined;
+  imageBaseURL: string;
 }
 
 interface DispatchProps {
-    onLoad: (appId: appModel.AppID) => void;
+  onLoad: (appId: appModel.AppID) => void;
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps): StateProps {
-    return {
-        app: state.entities.apps.byId.get(props.appId)
-    };
+  return {
+    app: state.entities.apps.byId.get(props.appId),
+    imageBaseURL: state.app.config.services.NarrativeMethodStore.url.slice(
+      0,
+      -4
+    ),
+  };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<actions.EntityAction>): DispatchProps {
-    return {
-        onLoad: (appId: appModel.AppID) => {
-            dispatch(actions.loadApp(appId) as any);
-        }
-    };
+function mapDispatchToProps(
+  dispatch: Dispatch<actions.EntityAction>
+): DispatchProps {
+  return {
+    onLoad: (appId: appModel.AppID) => {
+      dispatch(actions.loadApp(appId) as any);
+    },
+  };
 }
 
-export default connect<StateProps, DispatchProps, OwnProps, StoreState>(mapStateToProps, mapDispatchToProps)(Loader);
+export default connect<StateProps, DispatchProps, OwnProps, StoreState>(
+  mapStateToProps,
+  mapDispatchToProps
+)(Loader);

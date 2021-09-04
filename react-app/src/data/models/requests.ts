@@ -1,598 +1,627 @@
-import * as groupsApi from '../apis/groups'
-import * as orgModel from './organization/model'
+import * as groupsApi from "../apis/groups";
+import * as orgModel from "./organization/model";
 
-export type Username = string
+export type Username = string;
 
-export type RequestID = string
+export type RequestID = string;
 
 export enum RequestType {
-    REQUEST = 'REQUEST',
-    INVITATION = 'INVITATION'
+  REQUEST = "REQUEST",
+  INVITATION = "INVITATION",
 }
 
 export enum RequestResourceType {
-    USER = 0,
-    WORKSPACE,
-    APP
+  USER = 0,
+  WORKSPACE,
+  APP,
 }
 
 export enum RequestStatus {
-    OPEN = 0,
-    CANCELED,
-    EXPIRED,
-    ACCEPTED,
-    DENIED
+  OPEN = 0,
+  CANCELED,
+  EXPIRED,
+  ACCEPTED,
+  DENIED,
 }
 
 export interface BaseRequest {
-    id: string
-    organizationId: string
-    requester: Username
-    type: RequestType
-    status: RequestStatus
-    resourceType: RequestResourceType
-    createdAt: Date
-    expireAt: Date
-    modifiedAt: Date
+  id: string;
+  organizationId: string;
+  requester: Username;
+  type: RequestType;
+  status: RequestStatus;
+  resourceType: RequestResourceType;
+  createdAt: Date;
+  expireAt: Date;
+  modifiedAt: Date;
 }
 
 export interface UserRequest extends BaseRequest {
-    resourceType: RequestResourceType.USER
-    type: RequestType.REQUEST
-    user: Username
+  resourceType: RequestResourceType.USER;
+  type: RequestType.REQUEST;
+  user: Username;
 }
 
 export interface UserInvitation extends BaseRequest {
-    resourceType: RequestResourceType.USER
-    type: RequestType.INVITATION
-    user: Username
+  resourceType: RequestResourceType.USER;
+  type: RequestType.INVITATION;
+  user: Username;
 }
 
 export interface WorkspaceRequest extends BaseRequest {
-    resourceType: RequestResourceType.WORKSPACE
-    type: RequestType.REQUEST
-    narrativeId: string,
+  resourceType: RequestResourceType.WORKSPACE;
+  type: RequestType.REQUEST;
+  narrativeId: string;
 }
 
 export interface WorkspaceInvitation extends BaseRequest {
-    resourceType: RequestResourceType.WORKSPACE
-    type: RequestType.INVITATION
-    narrativeId: string
+  resourceType: RequestResourceType.WORKSPACE;
+  type: RequestType.INVITATION;
+  narrativeId: string;
 }
 
 export interface AppRequest extends BaseRequest {
-    resourceType: RequestResourceType.APP
-    type: RequestType.REQUEST
-    appId: string
+  resourceType: RequestResourceType.APP;
+  type: RequestType.REQUEST;
+  appId: string;
 }
 
 export interface AppInvitation extends BaseRequest {
-    resourceType: RequestResourceType.APP
-    type: RequestType.INVITATION
-    appId: string
+  resourceType: RequestResourceType.APP;
+  type: RequestType.INVITATION;
+  appId: string;
 }
 
-export type Request = UserRequest | UserInvitation | WorkspaceRequest | WorkspaceInvitation | AppRequest | AppInvitation
-
+export type Request =
+  | UserRequest
+  | UserInvitation
+  | WorkspaceRequest
+  | WorkspaceInvitation
+  | AppRequest
+  | AppInvitation;
 
 function stringToRequestType(type: string): RequestType {
-    switch (type) {
-        case 'Invite':
-            return RequestType.INVITATION
-        case 'Request':
-            return RequestType.REQUEST
-        default:
-            throw new Error('unknown request type: ' + type)
-    }
+  switch (type) {
+    case "Invite":
+      return RequestType.INVITATION;
+    case "Request":
+      return RequestType.REQUEST;
+    default:
+      throw new Error("unknown request type: " + type);
+  }
 }
 
 function stringToResourceType(type: string) {
-    switch (type) {
-        case 'user':
-            return RequestResourceType.USER
-        case 'workspace':
-            return RequestResourceType.WORKSPACE
-        case 'catalogmethod':
-            return RequestResourceType.APP
-        default:
-            throw new Error('unknown resource type: ' + type)
-    }
+  switch (type) {
+    case "user":
+      return RequestResourceType.USER;
+    case "workspace":
+      return RequestResourceType.WORKSPACE;
+    case "catalogmethod":
+      return RequestResourceType.APP;
+    default:
+      throw new Error("unknown resource type: " + type);
+  }
 }
 
 function stringToRequestStatus(status: string): RequestStatus {
-    return RequestStatus.OPEN
+  return RequestStatus.OPEN;
 }
 
 export function groupRequestToOrgRequest(request: groupsApi.Request): Request {
+  const requestType = stringToRequestType(request.type);
+  const resourceType = stringToResourceType(request.resourcetype);
+  const requestStatus = stringToRequestStatus(request.status);
 
-    const requestType = stringToRequestType(request.type)
-    const resourceType = stringToResourceType(request.resourcetype)
-    const requestStatus = stringToRequestStatus(request.status)
+  switch (resourceType) {
+    case RequestResourceType.USER:
+      if (requestType === RequestType.REQUEST) {
+        return {
+          id: request.id,
+          organizationId: request.groupid,
+          resourceType: resourceType,
+          requester: request.requester,
+          type: requestType,
+          status: requestStatus,
+          user: request.resource as Username,
+          createdAt: new Date(request.createdate),
+          expireAt: new Date(request.expiredate),
+          modifiedAt: new Date(request.moddate),
+        } as UserRequest;
+      } else {
+        return {
+          id: request.id,
+          organizationId: request.groupid,
+          resourceType: resourceType,
+          requester: request.requester,
+          type: requestType,
+          status: requestStatus,
+          user: request.resource as Username,
+          createdAt: new Date(request.createdate),
+          expireAt: new Date(request.expiredate),
+          modifiedAt: new Date(request.moddate),
+        } as UserInvitation;
+      }
 
-    switch (resourceType) {
-        case RequestResourceType.USER:
-            if (requestType === RequestType.REQUEST) {
-                return {
-                    id: request.id,
-                    organizationId: request.groupid,
-                    resourceType: resourceType,
-                    requester: request.requester,
-                    type: requestType,
-                    status: requestStatus,
-                    user: request.resource as Username,
-                    createdAt: new Date(request.createdate),
-                    expireAt: new Date(request.expiredate),
-                    modifiedAt: new Date(request.moddate)
-                } as UserRequest
-            } else {
-                return {
-                    id: request.id,
-                    organizationId: request.groupid,
-                    resourceType: resourceType,
-                    requester: request.requester,
-                    type: requestType,
-                    status: requestStatus,
-                    user: request.resource as Username,
-                    createdAt: new Date(request.createdate),
-                    expireAt: new Date(request.expiredate),
-                    modifiedAt: new Date(request.moddate)
-                } as UserInvitation
-            }
+    case RequestResourceType.WORKSPACE:
+      if (requestType === RequestType.REQUEST) {
+        return {
+          id: request.id,
+          organizationId: request.groupid,
+          resourceType: resourceType,
+          requester: request.requester,
+          type: requestType,
+          status: requestStatus,
+          narrativeId: request.resource,
+          createdAt: new Date(request.createdate),
+          expireAt: new Date(request.expiredate),
+          modifiedAt: new Date(request.moddate),
+        } as WorkspaceRequest;
+      } else {
+        return {
+          id: request.id,
+          organizationId: request.groupid,
+          resourceType: resourceType,
+          requester: request.requester,
+          type: requestType,
+          status: requestStatus,
+          narrativeId: request.resource,
+          createdAt: new Date(request.createdate),
+          expireAt: new Date(request.expiredate),
+          modifiedAt: new Date(request.moddate),
+        } as WorkspaceInvitation;
+      }
 
-        case RequestResourceType.WORKSPACE:
-            if (requestType === RequestType.REQUEST) {
-                return {
-                    id: request.id,
-                    organizationId: request.groupid,
-                    resourceType: resourceType,
-                    requester: request.requester,
-                    type: requestType,
-                    status: requestStatus,
-                    narrativeId: request.resource,
-                    createdAt: new Date(request.createdate),
-                    expireAt: new Date(request.expiredate),
-                    modifiedAt: new Date(request.moddate)
-                } as WorkspaceRequest
-            } else {
-                return {
-                    id: request.id,
-                    organizationId: request.groupid,
-                    resourceType: resourceType,
-                    requester: request.requester,
-                    type: requestType,
-                    status: requestStatus,
-                    narrativeId: request.resource,
-                    createdAt: new Date(request.createdate),
-                    expireAt: new Date(request.expiredate),
-                    modifiedAt: new Date(request.moddate)
-                } as WorkspaceInvitation
-            }
-
-        case RequestResourceType.APP:
-            if (requestType === RequestType.REQUEST) {
-                return {
-                    id: request.id,
-                    organizationId: request.groupid,
-                    resourceType: resourceType,
-                    requester: request.requester,
-                    type: requestType,
-                    status: requestStatus,
-                    appId: request.resource.split('.').join('/'),
-                    createdAt: new Date(request.createdate),
-                    expireAt: new Date(request.expiredate),
-                    modifiedAt: new Date(request.moddate)
-                } as AppRequest
-            } else {
-                return {
-                    id: request.id,
-                    organizationId: request.groupid,
-                    resourceType: resourceType,
-                    requester: request.requester,
-                    type: requestType,
-                    status: requestStatus,
-                    appId: request.resource.split('.').join('/'),
-                    createdAt: new Date(request.createdate),
-                    expireAt: new Date(request.expiredate),
-                    modifiedAt: new Date(request.moddate)
-                } as AppInvitation
-            }
-        default:
-            throw new Error('resource type not handled yet: ' + request.resourcetype)
-    }
+    case RequestResourceType.APP:
+      if (requestType === RequestType.REQUEST) {
+        return {
+          id: request.id,
+          organizationId: request.groupid,
+          resourceType: resourceType,
+          requester: request.requester,
+          type: requestType,
+          status: requestStatus,
+          appId: request.resource.split(".").join("/"),
+          createdAt: new Date(request.createdate),
+          expireAt: new Date(request.expiredate),
+          modifiedAt: new Date(request.moddate),
+        } as AppRequest;
+      } else {
+        return {
+          id: request.id,
+          organizationId: request.groupid,
+          resourceType: resourceType,
+          requester: request.requester,
+          type: requestType,
+          status: requestStatus,
+          appId: request.resource.split(".").join("/"),
+          createdAt: new Date(request.createdate),
+          expireAt: new Date(request.expiredate),
+          modifiedAt: new Date(request.moddate),
+        } as AppInvitation;
+      }
+    default:
+      throw new Error("resource type not handled yet: " + request.resourcetype);
+  }
 }
 
 interface RequestsModelParams {
-    groupsServiceURL: string
-    token: string
-    username: Username
+  groupsServiceURL: string;
+  token: string;
+  username: Username;
 }
 
 export class RequestsModel {
+  params: RequestsModelParams;
+  groupsClient: groupsApi.GroupsClient;
+  cache: Map<RequestID, Request>;
 
-    params: RequestsModelParams
-    groupsClient: groupsApi.GroupsClient
-    cache: Map<RequestID, Request>
+  constructor(params: RequestsModelParams) {
+    this.params = params;
+    this.groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
+    this.cache = new Map();
+  }
 
-    constructor(params: RequestsModelParams) {
-        this.params = params
-        this.groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
-        this.cache = new Map()
+  async getRequest(requestId: RequestID): Promise<Request> {
+    if (this.cache.has(requestId)) {
+      return this.cache.get(requestId)!;
     }
 
-    async getRequest(requestId: RequestID): Promise<Request> {
-        if (this.cache.has(requestId)) {
-            return this.cache.get(requestId)!
-        }
+    const grequest = await this.groupsClient.getRequest(requestId);
+    const request = groupRequestToOrgRequest(grequest);
 
-        const grequest = await this.groupsClient.getRequest(requestId)
-        const request = groupRequestToOrgRequest(grequest)
+    this.cache.set(request.id, request);
+    return request;
+  }
 
-        this.cache.set(request.id, request)
-        return request
+  async getOutboundRequests(): Promise<Array<Request>> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
+
+    const grequests = await groupsClient.getCreatedRequests({
+      includeClosed: false,
+      sortDirection: groupsApi.SortDirection.DESCENDING,
+    });
+
+    const requests = grequests.map((request) => {
+      return groupRequestToOrgRequest(request);
+    });
+
+    requests.forEach((request) => {
+      if (!this.cache.has(request.id)) {
+        this.cache.set(request.id, request);
+      }
+    });
+
+    return requests;
+  }
+
+  async getUserRequestForOrg(
+    organizationId: orgModel.OrganizationID
+  ): Promise<UserRequest | null> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
+
+    const grequests = await groupsClient.getCreatedRequests({
+      includeClosed: false,
+      sortDirection: groupsApi.SortDirection.DESCENDING,
+    });
+
+    // TODO should work in synchrony with above...
+    const grequest = grequests.find((r) => {
+      return r.groupid === organizationId;
+    });
+
+    if (!grequest) {
+      return null;
     }
 
-    async getOutboundRequests(): Promise<Array<Request>> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
+    return groupRequestToOrgRequest(grequest) as UserRequest;
+  }
 
-        const grequests = await groupsClient.getCreatedRequests({
-            includeClosed: false,
-            sortDirection: groupsApi.SortDirection.DESCENDING
-        })
+  async getPendingRequestsForOrg(
+    organizationId: orgModel.OrganizationID
+  ): Promise<Array<Request>> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
 
-        const requests = grequests.map((request) => {
-            return groupRequestToOrgRequest(request)
-        })
+    const grequests = await groupsClient.getCreatedRequests({
+      includeClosed: false,
+      sortDirection: groupsApi.SortDirection.DESCENDING,
+    });
 
-        requests.forEach((request) => {
-            if (!this.cache.has(request.id)) {
-                this.cache.set(request.id, request)
-            }
-        })
+    // TODO should work in synchrony with above...
+    return grequests
+      .filter((r) => {
+        return r.groupid === organizationId;
+      })
+      .map((r) => {
+        return groupRequestToOrgRequest(r);
+      });
+  }
 
-        return requests
-    }
+  async getRequestInboxForOrg(
+    organizationId: orgModel.OrganizationID
+  ): Promise<Array<Request>> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
 
-    async getUserRequestForOrg(organizationId: orgModel.OrganizationID): Promise<UserRequest | null> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
+    const grequests = await groupsClient.getTargetedRequests({
+      includeClosed: false,
+      sortDirection: groupsApi.SortDirection.DESCENDING,
+    });
 
-        const grequests = await groupsClient.getCreatedRequests({
-            includeClosed: false,
-            sortDirection: groupsApi.SortDirection.DESCENDING
-        })
+    // TODO should work in synchrony with above...
+    return grequests
+      .filter((r) => {
+        return r.groupid === organizationId;
+      })
+      .map((r) => {
+        return groupRequestToOrgRequest(r);
+      });
+  }
 
-        // TODO should work in synchrony with above...
-        const grequest = grequests.find((r) => {
-            return r.groupid === organizationId
-        })
-
-        if (!grequest) {
-            return null
-        }
-
-        return groupRequestToOrgRequest(grequest) as UserRequest
-    }
-
-    async getPendingRequestsForOrg(organizationId: orgModel.OrganizationID): Promise<Array<Request>> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
-
-        const grequests = await groupsClient.getCreatedRequests({
-            includeClosed: false,
-            sortDirection: groupsApi.SortDirection.DESCENDING
-        })
-
-        // TODO should work in synchrony with above...
-        return grequests
-            .filter((r) => {
-                return r.groupid === organizationId
-            })
-            .map((r) => {
-                return groupRequestToOrgRequest(r)
-            })
-    }
-
-    async getRequestInboxForOrg(organizationId: orgModel.OrganizationID): Promise<Array<Request>> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
-
-        const grequests = await groupsClient.getTargetedRequests({
-            includeClosed: false,
-            sortDirection: groupsApi.SortDirection.DESCENDING
-        })
-
-        // TODO should work in synchrony with above...
-        return grequests
-            .filter((r) => {
-                return r.groupid === organizationId
-            })
-            .map((r) => {
-                return groupRequestToOrgRequest(r)
-            })
-    }
-
-    /*
+  /*
         For a given organization (by id), return a list of all requests to that org 
     */
-    async getCombinedRequestInboxForOrg(organizationId: orgModel.OrganizationID): Promise<Array<Request>> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
+  async getCombinedRequestInboxForOrg(
+    organizationId: orgModel.OrganizationID
+  ): Promise<Array<Request>> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
+
+    let requests: Array<Request>;
+
+    // const grequests = await groupsClient.getTargetedRequests({
+    //     includeClosed: false,
+    //     sortDirection: groupsApi.SortDirection.DESCENDING
+    // })
+
+    // // TODO should work in synchrony with above...
+    // return grequests
+    //     .filter((r) => {
+    //         return r.groupid === organizationId
+    //     })
+    //     .map((r) => {
+    //         return groupRequestToOrgRequest(r)
+    //     })
+
+    try {
+      requests = (
+        await groupsClient.getGroupRequests(organizationId, {
+          includeClosed: false,
+          sortDirection: groupsApi.SortDirection.DESCENDING,
         })
-
-        let requests: Array<Request>
-
-        // const grequests = await groupsClient.getTargetedRequests({
-        //     includeClosed: false,
-        //     sortDirection: groupsApi.SortDirection.DESCENDING
-        // })
-
-        // // TODO should work in synchrony with above...
-        // return grequests
-        //     .filter((r) => {
-        //         return r.groupid === organizationId
-        //     })
-        //     .map((r) => {
-        //         return groupRequestToOrgRequest(r)
-        //     })
-
-        try {
-            requests = (await groupsClient.getGroupRequests(organizationId, {
-                includeClosed: false,
-                sortDirection: groupsApi.SortDirection.DESCENDING
-            }))
-                .map((request) => {
-                    return groupRequestToOrgRequest(request)
-                })
-        } catch (ex) {
-            requests = []
-        }
-
-        return requests
+      ).map((request) => {
+        return groupRequestToOrgRequest(request);
+      });
+    } catch (ex: any) {
+      requests = [];
     }
 
-    async getRequestOutboxForOrg(organizationId: orgModel.OrganizationID): Promise<Array<Request>> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
+    return requests;
+  }
 
-        const grequests = await groupsClient.getCreatedRequests({
-            includeClosed: false,
-            sortDirection: groupsApi.SortDirection.DESCENDING
-        })
+  async getRequestOutboxForOrg(
+    organizationId: orgModel.OrganizationID
+  ): Promise<Array<Request>> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
 
-        // TODO should work in synchrony with above...
-        return grequests
-            .filter((r) => {
-                return r.groupid === organizationId
-            })
-            .map((r) => {
-                return groupRequestToOrgRequest(r)
-            })
+    const grequests = await groupsClient.getCreatedRequests({
+      includeClosed: false,
+      sortDirection: groupsApi.SortDirection.DESCENDING,
+    });
+
+    // TODO should work in synchrony with above...
+    return grequests
+      .filter((r) => {
+        return r.groupid === organizationId;
+      })
+      .map((r) => {
+        return groupRequestToOrgRequest(r);
+      });
+  }
+
+  async getOrganizationInvitations(): Promise<Array<Request>> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
+
+    const grequests = await groupsClient.getCreatedRequests({
+      includeClosed: false,
+      sortDirection: groupsApi.SortDirection.DESCENDING,
+    });
+
+    const requests = grequests
+      .map((request) => {
+        return groupRequestToOrgRequest(request);
+      })
+      .filter((request) => {
+        return request.type === RequestType.INVITATION;
+      });
+
+    requests.forEach((request) => {
+      if (!this.cache.has(request.id)) {
+        this.cache.set(request.id, request);
+      }
+    });
+
+    return requests;
+  }
+
+  async getOrganizationInvitationsForOrg(
+    organizationId: orgModel.OrganizationID
+  ): Promise<Array<Request>> {
+    const invitations = await this.getOrganizationInvitations();
+    return invitations.filter((invitation) => {
+      return invitation.organizationId === organizationId;
+    });
+  }
+
+  async getInboundRequests(): Promise<Array<Request>> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
+
+    const grequests = await groupsClient.getTargetedRequests({
+      includeClosed: false,
+      sortDirection: groupsApi.SortDirection.DESCENDING,
+    });
+
+    const requests = grequests.map((request) => {
+      return groupRequestToOrgRequest(request);
+    });
+
+    requests.forEach((request) => {
+      if (!this.cache.has(request.id)) {
+        this.cache.set(request.id, request);
+      }
+    });
+
+    return requests;
+  }
+
+  async getUserInvitationForOrg(
+    organizationId: orgModel.OrganizationID
+  ): Promise<UserInvitation | null> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
+
+    const grequests = await groupsClient.getTargetedRequests({
+      includeClosed: false,
+      sortDirection: groupsApi.SortDirection.DESCENDING,
+    });
+
+    // TODO should work in synchrony with above...
+    const grequest = grequests.find((r) => {
+      return r.groupid === organizationId;
+    });
+
+    if (!grequest) {
+      return null;
     }
 
+    return groupRequestToOrgRequest(grequest) as UserInvitation;
+  }
 
-    async getOrganizationInvitations(): Promise<Array<Request>> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
+  async getPendingOrganizationRequestsForOrg(
+    organizationId: orgModel.OrganizationID
+  ): Promise<Array<Request>> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
 
-        const grequests = await groupsClient.getCreatedRequests({
-            includeClosed: false,
-            sortDirection: groupsApi.SortDirection.DESCENDING
-        })
+    const groupRequests = await groupsClient.getGroupRequests(organizationId, {
+      includeClosed: false,
+      sortDirection: groupsApi.SortDirection.DESCENDING,
+    });
 
-        const requests = grequests.map((request) => {
-            return groupRequestToOrgRequest(request)
-        }).filter((request) => {
-            return (request.type === RequestType.INVITATION)
-        })
+    return groupRequests.map((request) => {
+      return groupRequestToOrgRequest(request);
+    });
 
-        requests.forEach((request) => {
-            if (!this.cache.has(request.id)) {
-                this.cache.set(request.id, request)
-            }
-        })
+    // const [groupRequests, adminRequests] = await Promise.all([
+    //     groupsClient.getGroupRequests(groupId, {
+    //         includeClosed: false,
+    //         sortDirection: groupsApi.SortDirection.DESCENDING
+    //     }),
+    //     groupsClient.getCreatedRequests({
+    //         includeClosed: false,
+    //         sortDirection: groupsApi.SortDirection.DESCENDING
+    //     })
+    // ])
+    // const groupAdminRequests = adminRequests.filter((request) => {
+    //     return (request.groupid === groupId)
+    // })
 
-        return requests
-    }
+    // return Promise.all(groupRequests.concat(groupAdminRequests).map((request) => {
+    //     return groupRequestToOrgRequest(request)
+    // }))
+  }
 
-    async getOrganizationInvitationsForOrg(organizationId: orgModel.OrganizationID): Promise<Array<Request>> {
-        const invitations = await this.getOrganizationInvitations()
-        return invitations.filter((invitation) => {
-            return (invitation.organizationId === organizationId)
-        })
-    }
+  async getPendingOrganizationRequests(
+    groupIds: Array<string>
+  ): Promise<Array<Request>> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
 
-    async getInboundRequests(): Promise<Array<Request>> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
+    const groupRequests = await Promise.all(
+      groupIds.map((groupId) => {
+        return groupsClient.getGroupRequests(groupId, {
+          includeClosed: false,
+          sortDirection: groupsApi.SortDirection.DESCENDING,
+        });
+      })
+    );
 
-        const grequests = await groupsClient.getTargetedRequests({
-            includeClosed: false,
-            sortDirection: groupsApi.SortDirection.DESCENDING
-        })
+    const allRequests = groupRequests.reduce((allRequests, requests) => {
+      return allRequests.concat(requests);
+    }, []);
 
-        const requests = grequests.map((request) => {
-            return groupRequestToOrgRequest(request)
-        })
+    return allRequests.map((request) => {
+      return groupRequestToOrgRequest(request);
+    });
+  }
 
-        requests.forEach((request) => {
-            if (!this.cache.has(request.id)) {
-                this.cache.set(request.id, request)
-            }
-        })
+  async cancelRequest(requestId: string): Promise<Request> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
 
-        return requests
-    }
+    const request = await groupsClient.cancelRequest({
+      requestId,
+    });
+    return groupRequestToOrgRequest(request);
+  }
 
-    async getUserInvitationForOrg(organizationId: orgModel.OrganizationID): Promise<UserInvitation | null> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
+  async acceptRequest(requestId: string): Promise<Request> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
 
-        const grequests = await groupsClient.getTargetedRequests({
-            includeClosed: false,
-            sortDirection: groupsApi.SortDirection.DESCENDING
-        })
+    const request = await groupsClient.acceptRequest({
+      requestId,
+    });
+    return groupRequestToOrgRequest(request);
+  }
 
-        // TODO should work in synchrony with above...
-        const grequest = grequests.find((r) => {
-            return (r.groupid === organizationId)
-        })
+  async denyRequest(requestId: string): Promise<Request> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
 
-        if (!grequest) {
-            return null
-        }
+    const request = await groupsClient.denyRequest({
+      requestId,
+    });
+    return groupRequestToOrgRequest(request);
+  }
 
-        return groupRequestToOrgRequest(grequest) as UserInvitation
-    }
+  async acceptJoinInvitation(requestId: string): Promise<Request> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
 
-    async getPendingOrganizationRequestsForOrg(organizationId: orgModel.OrganizationID): Promise<Array<Request>> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
+    const request = await groupsClient.acceptRequest({
+      requestId,
+    });
+    return groupRequestToOrgRequest(request);
+  }
 
-        const groupRequests = await groupsClient.getGroupRequests(organizationId, {
-            includeClosed: false,
-            sortDirection: groupsApi.SortDirection.DESCENDING
-        })
+  async rejectJoinInvitation(requestId: string): Promise<Request> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
 
-        return groupRequests.map((request) => {
-            return groupRequestToOrgRequest(request)
-        })
+    const request = await groupsClient.denyRequest({
+      requestId,
+    });
+    return groupRequestToOrgRequest(request);
+  }
 
-        // const [groupRequests, adminRequests] = await Promise.all([
-        //     groupsClient.getGroupRequests(groupId, {
-        //         includeClosed: false,
-        //         sortDirection: groupsApi.SortDirection.DESCENDING
-        //     }),
-        //     groupsClient.getCreatedRequests({
-        //         includeClosed: false,
-        //         sortDirection: groupsApi.SortDirection.DESCENDING
-        //     })
-        // ])
-        // const groupAdminRequests = adminRequests.filter((request) => {
-        //     return (request.groupid === groupId)
-        // })
+  async inviteUserToJoinOrg(
+    groupId: string,
+    username: string
+  ): Promise<Request> {
+    const groupsClient = new groupsApi.GroupsClient({
+      url: this.params.groupsServiceURL,
+      token: this.params.token,
+    });
 
-        // return Promise.all(groupRequests.concat(groupAdminRequests).map((request) => {
-        //     return groupRequestToOrgRequest(request)
-        // }))
-    }
-
-    async getPendingOrganizationRequests(groupIds: Array<string>): Promise<Array<Request>> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
-
-        const groupRequests = await Promise.all(groupIds.map((groupId) => {
-            return groupsClient.getGroupRequests(groupId, {
-                includeClosed: false,
-                sortDirection: groupsApi.SortDirection.DESCENDING
-            })
-        }))
-
-        const allRequests = groupRequests.reduce((allRequests, requests) => {
-            return allRequests.concat(requests)
-        }, [])
-
-        return allRequests.map((request) => {
-            return groupRequestToOrgRequest(request)
-        })
-    }
-
-    async cancelRequest(requestId: string): Promise<Request> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
-
-        const request = await groupsClient.cancelRequest({
-            requestId
-        })
-        return groupRequestToOrgRequest(request)
-    }
-
-    async acceptRequest(requestId: string): Promise<Request> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
-
-        const request = await groupsClient.acceptRequest({
-            requestId
-        })
-        return groupRequestToOrgRequest(request)
-    }
-
-    async denyRequest(requestId: string): Promise<Request> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
-
-        const request = await groupsClient.denyRequest({
-            requestId
-        })
-        return groupRequestToOrgRequest(request)
-    }
-
-    async acceptJoinInvitation(requestId: string): Promise<Request> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
-
-        const request = await groupsClient.acceptRequest({
-            requestId
-        })
-        return groupRequestToOrgRequest(request)
-    }
-
-    async rejectJoinInvitation(requestId: string): Promise<Request> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
-
-        const request = await groupsClient.denyRequest({
-            requestId
-        })
-        return groupRequestToOrgRequest(request)
-    }
-
-    async inviteUserToJoinOrg(groupId: string, username: string): Promise<Request> {
-        const groupsClient = new groupsApi.GroupsClient({
-            url: this.params.groupsServiceURL,
-            token: this.params.token
-        })
-
-        return groupsClient.inviteUserToGroup({
-            groupId,
-            username
-        })
-            .then((request) => {
-                return groupRequestToOrgRequest(request)
-            })
-    }
+    return groupsClient
+      .inviteUserToGroup({
+        groupId,
+        username,
+      })
+      .then((request) => {
+        return groupRequestToOrgRequest(request);
+      });
+  }
 }
