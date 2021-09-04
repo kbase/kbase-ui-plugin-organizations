@@ -1,12 +1,11 @@
-import { Action } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
-import { ActionFlag } from '../index';
-import { AnError } from '../../../lib/error';
-import { StoreState } from '../../store/types';
-import * as orgModel from '../../../data/models/organization/model';
-import { makeError } from '../../../combo/error/api';
-import { extractViewOrgModelPlus } from '../../../lib/stateExtraction';
-
+import { Action } from "redux";
+import { ThunkDispatch } from "redux-thunk";
+import { ActionFlag } from "../index";
+import { AnError } from "../../../lib/error";
+import { StoreState } from "../../store/types";
+import * as orgModel from "../../../data/models/organization/model";
+import { makeError } from "../../../combo/error/api";
+import { extractViewOrgModelPlus } from "../../../lib/stateExtraction";
 
 // Add Org
 
@@ -55,7 +54,7 @@ import { extractViewOrgModelPlus } from '../../../lib/stateExtraction';
 //                 type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_ADD_ORGANIZATION_SUCCESS,
 //                 organizationId
 //             })
-//         } catch (ex) {
+//         } catch (ex: any) {
 //             dispatch({
 //                 type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_ADD_ORGANIZATION_ERROR,
 //                 error: makeError({
@@ -67,56 +66,69 @@ import { extractViewOrgModelPlus } from '../../../lib/stateExtraction';
 //     }
 // }
 
-
 // Remove Org
 
-export interface RemoveOrganization extends Action<ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION> {
-    type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION,
-    organizationId: orgModel.OrganizationID;
+export interface RemoveOrganization
+  extends Action<ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION> {
+  type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION;
+  organizationId: orgModel.OrganizationID;
 }
 
-export interface RemoveOrganizationStart extends Action<ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_START> {
-    type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_START;
+export interface RemoveOrganizationStart
+  extends Action<ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_START> {
+  type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_START;
 }
 
-export interface RemoveOrganizationSuccess extends Action<ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_SUCCESS> {
-    type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_SUCCESS,
-    organizationId: orgModel.OrganizationID;
+export interface RemoveOrganizationSuccess
+  extends Action<ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_SUCCESS> {
+  type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_SUCCESS;
+  organizationId: orgModel.OrganizationID;
 }
 
-export interface RemoveOrganizationError extends Action<ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_ERROR> {
-    type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_ERROR,
-    error: AnError;
+export interface RemoveOrganizationError
+  extends Action<ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_ERROR> {
+  type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_ERROR;
+  error: AnError;
 }
 
-export function removeOrganization(organizationId: orgModel.OrganizationID, relatedOrganizationId: orgModel.OrganizationID) {
-    return async (dispatch: ThunkDispatch<StoreState, void, Action>, getState: () => StoreState) => {
-        dispatch({
-            type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_START
-        } as RemoveOrganizationStart);
+export function removeOrganization(
+  organizationId: orgModel.OrganizationID,
+  relatedOrganizationId: orgModel.OrganizationID
+) {
+  return async (
+    dispatch: ThunkDispatch<StoreState, void, Action>,
+    getState: () => StoreState
+  ) => {
+    dispatch({
+      type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_START,
+    } as RemoveOrganizationStart);
 
-        const { username, token, config } = extractViewOrgModelPlus(getState());
+    const { username, token, config } = extractViewOrgModelPlus(getState());
 
-        const orgClient = new orgModel.OrganizationModel({
-            token, username,
-            groupsServiceURL: config.services.Groups.url,
-            userProfileServiceURL: config.services.UserProfile.url
-        });
-        try {
-            await orgClient.removeRelatedOrganization({ organizationId, relatedOrganizationId });
-            dispatch({
-                type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_SUCCESS,
-                organizationId: relatedOrganizationId
-            } as RemoveOrganizationSuccess);
-            // dispatch(viewOrgActions.reload(organizationId))
-        } catch (ex) {
-            dispatch({
-                type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_ERROR,
-                error: makeError({
-                    code: 'error',
-                    message: ex.message
-                })
-            });
-        }
-    };
+    const orgClient = new orgModel.OrganizationModel({
+      token,
+      username,
+      groupsServiceURL: config.services.Groups.url,
+      userProfileServiceURL: config.services.UserProfile.url,
+    });
+    try {
+      await orgClient.removeRelatedOrganization({
+        organizationId,
+        relatedOrganizationId,
+      });
+      dispatch({
+        type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_SUCCESS,
+        organizationId: relatedOrganizationId,
+      } as RemoveOrganizationSuccess);
+      // dispatch(viewOrgActions.reload(organizationId))
+    } catch (ex: any) {
+      dispatch({
+        type: ActionFlag.VIEW_ORG_RELATED_ORGANIZATIONS_REMOVE_ORGANIZATION_ERROR,
+        error: makeError({
+          code: "error",
+          message: ex.message,
+        }),
+      });
+    }
+  };
 }
