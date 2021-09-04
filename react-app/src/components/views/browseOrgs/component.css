@@ -1,166 +1,164 @@
 .OrganizationsBrowser {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: column;
+  flex: 1 1 0px;
+  display: flex;
+  flex-direction: column;
 }
 
 .OrganizationsBrowser-searchBarRow {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 10px;
-    padding: 6px 0;
-    border-bottom: 1px rgba(200, 200, 200, 0.5) solid;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  padding: 6px 0;
+  border-bottom: 1px rgba(200, 200, 200, 0.5) solid;
 }
 
 .OrganizationsBrowser-bodyRow {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: row;
-    min-height: 0;
+  flex: 1 1 0px;
+  display: flex;
+  flex-direction: row;
+  min-height: 0;
 }
 
 .OrganizationsBrowser-filterCol {
-    flex: 0 0 12em;
-    display: flex;
-    flex-direction: column;
-    margin-left: 10px;
+  flex: 0 0 12em;
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
 }
 
 .OrganizationsBrowser-bodyCol {
-    flex: 1 1 0px;
-    display: flex;
-    flex-direction: column;
+  flex: 1 1 0px;
+  display: flex;
+  flex-direction: column;
 }
 
 .OrganizationsBrowser-col1 {
-    flex: 0 0 14em;
-    margin: 0 0 0 10px;
-    display: flex;
-    flex-direction: column;
+  flex: 0 0 14em;
+  margin: 0 0 0 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .OrganizationsBrowser-col2 {
-    flex: 1 1 0px;
-    margin: 0 0 0 0;
-    margin: 0 0 0 10px;
-    display: flex;
-    flex-direction: column;
+  flex: 1 1 0px;
+  margin: 0 0 0 0;
+  margin: 0 0 0 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .OrganizationsBrowser-sortCol {
-    flex: 1.5 1 0px;
-    margin: 5px 0 0 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+  flex: 1.5 1 0px;
+  margin: 5px 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .OrganizationsBrowser-searchBarCol1 {
-    flex: 1 1 0px;
-    margin: 0 5px 0 0;
-    display: flex;
-    flex-direction: column;
+  flex: 1 1 0px;
+  margin: 0 5px 0 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .OrganizationsBrowser-searchBarCol2 {
-    /* flex: 0 0 auto; */
-    flex: 0 0 12em;
-    margin: 0 5px 0 5px;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
+  /* flex: 0 0 auto; */
+  flex: 0 0 12em;
+  margin: 0 5px 0 5px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
 }
 
 .OrganizationsBrowser-searchBarCol3 {
-    flex: 0 0 12em;
-    margin: 0 0 0 5px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
+  flex: 0 0 12em;
+  margin: 0 0 0 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .OrganizationsBrowser-searchInput {
-    width: 100%;
-    /* max-width: 30em; */
-    height: 100%;
+  width: 100%;
+  /* max-width: 30em; */
+  height: 100%;
 }
 
-.OrganizationsBrowser-controlArea {}
+.OrganizationsBrowser-controlArea {
+}
 
 .OrganizationsBrowser-controlGroup {
-    border: 1px rgba(200, 200, 200, 0.5) solid;
-    margin-bottom: 14px;
-    padding: 4px;
-    border-radius: 8px;
+  border: 1px rgba(200, 200, 200, 0.5) solid;
+  margin-bottom: 14px;
+  padding: 4px;
+  border-radius: 8px;
 }
 
 .OrganizationsBrowser-controlGroup-radio {
-    display: block;
-    height: 1.8em;
+  display: block;
+  height: 1.8em;
 }
 
 .OrganizationsBrowser-controlArea-controlGroup-header {
-    font-weight: bold;
-    color: rgba(150, 150, 150, 1);
-    text-align: center;
+  font-weight: bold;
+  color: rgba(150, 150, 150, 1);
+  text-align: center;
 }
 
-.OrganizationsBrowser-controlArea>.controlGroup>.row {
-    padding: 4px;
-    cursor: pointer;
-    /* height: 2em; */
+.OrganizationsBrowser-controlArea > .controlGroup > .row {
+  padding: 4px;
+  cursor: pointer;
+  /* height: 2em; */
 }
 
-.OrganizationsBrowser-controlArea>.controlGroup>.row>.col1 {
-    display: inline-block;
-    width: 10%;
+.OrganizationsBrowser-controlArea > .controlGroup > .row > .col1 {
+  display: inline-block;
+  width: 10%;
 }
 
-.OrganizationsBrowser-controlArea>.controlGroup>.row>.col2 {
-    /* display: inline-block; */
-    /* width: 90% */
+.OrganizationsBrowser-controlArea > .controlGroup > .row > .col2 {
+  /* display: inline-block; */
+  /* width: 90% */
 }
 
 .OrganizationsBrowser-searchBar {
-    flex: 0 0 30px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  flex: 0 0 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
-.OrganizationsBrowser-searchBar>.col1 {
-    flex: 2 1 0px;
+.OrganizationsBrowser-searchBar > .col1 {
+  flex: 2 1 0px;
 }
 
-.OrganizationsBrowser-searchBar>.col2 {
-    flex: 1 1 0px;
-    text-align: right;
-}
-
-.OrganizationsBrowser-searchBar button {
-    height: 100%;
-    padding: 4px;
+.OrganizationsBrowser-searchBar > .col2 {
+  flex: 1 1 0px;
+  text-align: right;
 }
 
 .OrganizationsBrowser-searchBar .message {
-    display: inline-block;
-    margin-left: 1em;
+  display: inline-block;
+  margin-left: 1em;
 }
 
 .OrganizationsBrowser-checkboxGroup.ant-checkbox-group {
-    display: block;
-    margin-left: 8px;
+  display: block;
+  margin-left: 8px;
 }
 
 .OrganizationsBrowser-checkboxGroup .ant-checkbox-group-item,
-.OrganizationsBrowser-checkboxGroup .ant-checkbox-group-item+.ant-checkbox-group-item {
-    display: block;
-    margin-bottom: 4px;
+.OrganizationsBrowser-checkboxGroup
+  .ant-checkbox-group-item
+  + .ant-checkbox-group-item {
+  display: block;
+  margin-bottom: 4px;
 }
 
 .OrganizationsBrowser-searchFeedback {
-    width: 12em;
-    text-align: center;
+  width: 12em;
+  text-align: center;
 }
