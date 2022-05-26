@@ -1,8 +1,8 @@
-import * as React from 'react';
-// import { Redirect } from 'react-router-dom';
-import { Marked } from 'marked-ts';
 import { Button, Modal, Checkbox, Input, Tooltip, Collapse, Tabs } from 'antd';
+import DOMPurify from "dompurify";
+import { Marked } from 'marked-ts';
 import md5 from 'md5';
+import * as React from 'react';
 import {
 
 } from '../../../../../../redux/store/types';
@@ -869,7 +869,11 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                             </Tabs.TabPane>
                             <Tabs.TabPane tab="Preview" key="preview">
                                 <div className="NewOrganization-preview-description"
-                                    dangerouslySetInnerHTML={({ __html: Marked.parse(descriptionField.value || '') })}
+                                    dangerouslySetInnerHTML={({
+                                      __html: DOMPurify.sanitize(Marked.parse(
+                                        descriptionField.value || ''
+                                      ))
+                                    })}
                                 />
                             </Tabs.TabPane>
                         </Tabs>

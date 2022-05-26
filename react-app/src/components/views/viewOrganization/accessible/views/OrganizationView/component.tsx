@@ -1,6 +1,8 @@
-import * as React from "react";
-import { Marked } from "marked-ts";
 import { Button, Modal, Tooltip, Card, Alert, Tabs } from "antd";
+import DOMPurify from "dompurify";
+import { Marked } from "marked-ts";
+import * as React from "react";
+
 import Header from "../../../../../Header";
 import Members from "../../members/reduxAdapter";
 import Requests from "../../requests";
@@ -659,9 +661,9 @@ class OrganizationView extends React.Component<OrgViewProps, OrgViewState> {
         <div
           className="OrganizationView-org-description"
           dangerouslySetInnerHTML={{
-            __html: Marked.parse(
+            __html: DOMPurify.sanitize(Marked.parse(
               this.props.viewModel.organization.description || ""
-            ),
+            )),
           }}
         />
       </div>
