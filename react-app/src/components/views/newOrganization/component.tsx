@@ -1,18 +1,20 @@
+import { ExclamationCircleOutlined, LinkOutlined, LockOutlined, GlobalOutlined, QuestionOutlined, CloseOutlined, ExclamationOutlined, RollbackOutlined, SaveOutlined } from "@ant-design/icons";
+import { AppError } from '@kbase/ui-components';
+import { Button, Modal, Input, Checkbox, Tooltip, Collapse, Tabs } from 'antd';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import TextArea from 'antd/lib/input/TextArea';
+import DOMPurify from "dompurify";
 import * as React from 'react';
 import { Marked } from 'marked-ts';
-import { Button, Modal, Input, Checkbox, Tooltip, Collapse, Tabs } from 'antd';
 import md5 from 'md5';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+
 import OrgLogo from '../../OrgLogo';
-import TextArea from 'antd/lib/input/TextArea';
 import './component.css';
-import { AppError } from '@kbase/ui-components';
 import {
     EditState, SaveState, ValidationState, EditableOrganization,
     ValidationErrorType, Editable, SyncState, EditableString,
     EditableNullableString, EditableBoolean
 } from '../../../redux/store/types/common';
-import { ExclamationCircleOutlined, LinkOutlined, LockOutlined, GlobalOutlined, QuestionOutlined, CloseOutlined, ExclamationOutlined, RollbackOutlined, SaveOutlined } from "@ant-design/icons";
 import { redirect } from '../../../ui/utils';
 
 export interface NewOrganizationProps {
@@ -678,7 +680,11 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                             </Tabs.TabPane>
                             <Tabs.TabPane tab="Preview" key="preview">
                                 <div className="NewOrganization-preview-description"
-                                    dangerouslySetInnerHTML={({ __html: Marked.parse(descriptionField.value || '') })}
+                                    dangerouslySetInnerHTML={({
+                                      __html: DOMPurify.sanitize(Marked.parse(
+                                        descriptionField.value || ''
+                                      ))
+                                    })}
                                 />
                             </Tabs.TabPane>
                         </Tabs>
