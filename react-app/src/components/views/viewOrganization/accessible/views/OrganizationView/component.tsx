@@ -660,10 +660,8 @@ class OrganizationView extends React.Component<OrgViewProps, OrgViewState> {
       <div className="OrganizationView-org-description-org scrollable-flex-column">
         <div
           className="OrganizationView-org-description"
-          dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(Marked.parse(
-              this.props.viewModel.organization.description || ""
-            )),
+          // xss safe
+          dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(Marked.parse(this.props.viewModel.organization.description || "")),
           }}
         />
       </div>

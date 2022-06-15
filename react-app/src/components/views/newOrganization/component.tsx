@@ -680,11 +680,8 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                             </Tabs.TabPane>
                             <Tabs.TabPane tab="Preview" key="preview">
                                 <div className="NewOrganization-preview-description"
-                                    dangerouslySetInnerHTML={({
-                                      __html: DOMPurify.sanitize(Marked.parse(
-                                        descriptionField.value || ''
-                                      ))
-                                    })}
+                                    // xss safe
+                                    dangerouslySetInnerHTML={({__html: DOMPurify.sanitize(Marked.parse(descriptionField.value || ''))})}
                                 />
                             </Tabs.TabPane>
                         </Tabs>

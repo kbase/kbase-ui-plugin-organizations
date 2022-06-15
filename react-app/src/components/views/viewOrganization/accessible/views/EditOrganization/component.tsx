@@ -869,11 +869,8 @@ class EditOrganization extends React.Component<EditOrganizationProps, EditOrgani
                             </Tabs.TabPane>
                             <Tabs.TabPane tab="Preview" key="preview">
                                 <div className="NewOrganization-preview-description"
-                                    dangerouslySetInnerHTML={({
-                                      __html: DOMPurify.sanitize(Marked.parse(
-                                        descriptionField.value || ''
-                                      ))
-                                    })}
+                                    // xss safe
+                                    dangerouslySetInnerHTML={({__html: DOMPurify.sanitize(Marked.parse(descriptionField.value || ''))})}
                                 />
                             </Tabs.TabPane>
                         </Tabs>
