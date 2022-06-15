@@ -1,11 +1,17 @@
-echo "Running plugin post install script"
-cd react-app && \
-yarn install --cache-folder=".yarn-cache" && \
-echo "✓ dependencies installed successfully" && \
-yarn build && \
-echo "✓ built successfully" && \
-echo "SKIPPING TESTS" && \
-cd .. && \
-yarn install-plugin && \
-echo "✓ plugin setup successfully" && \
-echo "✓ plugin installed successfully"
+set -e
+echo "Building plugin"
+cd react-app
+echo "Installing npm dependencies..."
+npm install
+echo "✓ dependencies installed successfully"
+echo "Building app..."
+npm run build
+echo "✓ built successfully"
+echo "Testing app..."
+npm run test -- --watchAll=false
+echo "✓ tested successfully"
+cd ..
+echo "Creating plugin distribution..."
+npm run dist 
+echo "✓ plugin distribution created successfully" 
+echo "✓ plugin build completed"
