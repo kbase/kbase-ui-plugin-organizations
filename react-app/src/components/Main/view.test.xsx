@@ -8,11 +8,10 @@
 import React from 'react';
 // Enzyme needs
 import { configure, shallow } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 
 // We always need to import the component we are testing
 import Component from './view';
-import { JobLog } from '../../redux/store';
 import { MainParams } from './state';
 
 configure({ adapter: new Adapter() });

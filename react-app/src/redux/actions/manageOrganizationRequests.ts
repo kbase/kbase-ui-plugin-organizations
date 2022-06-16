@@ -6,9 +6,10 @@ import * as requestModel from "../../data/models/requests";
 import * as orgModel from "../../data/models/organization/model";
 import { AppError } from "@kbase/ui-components";
 import {
-  extractViewOrgModelPlus,
   extractManageOrganizationRequestsModel,
+  extractViewOrgModelPlus,
 } from "../../lib/stateExtraction";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 // Action types
 
@@ -61,7 +62,7 @@ export interface AcceptJoinRequestError extends Action {
 }
 
 export function acceptJoinRequestStart(
-  requestId: string
+  requestId: string,
 ): AcceptJoinRequestStart {
   return {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_START,
@@ -70,7 +71,7 @@ export function acceptJoinRequestStart(
 }
 
 export function acceptJoinRequestSuccess(
-  request: requestModel.Request
+  request: requestModel.Request,
 ): AcceptJoinRequestSuccess {
   return {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_SUCCESS,
@@ -79,7 +80,7 @@ export function acceptJoinRequestSuccess(
 }
 
 export function acceptJoinRequestError(
-  error: AppError
+  error: AppError,
 ): AcceptJoinRequestError {
   return {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_ACCEPT_JOIN_REQUEST_ERROR,
@@ -117,7 +118,7 @@ export function denyJoinRequestStart(requestId: string): DenyJoinRequestStart {
 }
 
 export function denyJoinRequestSuccess(
-  request: requestModel.Request
+  request: requestModel.Request,
 ): DenyJoinRequestSuccess {
   return {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_DENY_JOIN_REQUEST_SUCCESS,
@@ -160,7 +161,7 @@ export function cancelJoinInvitationStart(): CancelJoinInvitationStart {
 }
 
 export function cancelJoinInvitationSuccess(
-  request: requestModel.Request
+  request: requestModel.Request,
 ): CancelJoinInvitationSuccess {
   return {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_CANCEL_JOIN_INVITATION_SUCCESS,
@@ -169,7 +170,7 @@ export function cancelJoinInvitationSuccess(
 }
 
 export function cancelJoinInvitationError(
-  error: AppError
+  error: AppError,
 ): CancelJoinInvitationError {
   return {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_CANCEL_JOIN_INVITATION_ERROR,
@@ -204,7 +205,7 @@ export function getViewAccessStart(): GetViewAccessStart {
 }
 
 export function getViewAccessSuccess(
-  request: requestModel.Request
+  request: requestModel.Request,
 ): GetViewAccessSuccess {
   return {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_GET_VIEW_ACCESS_SUCCESS,
@@ -222,19 +223,19 @@ export function getViewAccessError(error: AppError): GetViewAccessError {
 export function getViewAccess(requestId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(getViewAccessStart());
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     const orgClient = new orgModel.OrganizationModel({
       token,
@@ -252,7 +253,7 @@ export function getViewAccess(requestId: string) {
         getViewAccessError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -269,7 +270,7 @@ export function loadStart(): LoadStart {
 export function loadSuccess(
   organization: orgModel.Organization,
   requests: Array<requestModel.Request>,
-  invitations: Array<requestModel.Request>
+  invitations: Array<requestModel.Request>,
 ): LoadSuccess {
   return {
     type: ActionFlag.ADMIN_MANAGE_REQUESTS_LOAD_SUCCESS,
@@ -297,17 +298,17 @@ export function unload(): Unload {
 export function load(organizationId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     const orgClient = new orgModel.OrganizationModel({
       token,
@@ -334,7 +335,7 @@ export function load(organizationId: string) {
           loadError({
             code: "invalid state",
             message: 'Organization must be of kind "NORMAL"',
-          })
+          }),
         );
         return;
       }
@@ -344,7 +345,7 @@ export function load(organizationId: string) {
         loadError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -353,7 +354,7 @@ export function load(organizationId: string) {
 export function acceptJoinRequest(requestId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     const { username, token, config } = extractViewOrgModelPlus(getState());
 
@@ -386,7 +387,7 @@ export function acceptJoinRequest(requestId: string) {
         acceptJoinRequestError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -395,7 +396,7 @@ export function acceptJoinRequest(requestId: string) {
 export function denyJoinRequest(requestId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     const { username, token, config } = extractViewOrgModelPlus(getState());
     const viewModel = extractManageOrganizationRequestsModel(getState());
@@ -415,7 +416,7 @@ export function denyJoinRequest(requestId: string) {
         denyJoinRequestError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -424,7 +425,7 @@ export function denyJoinRequest(requestId: string) {
 export function cancelJoinInvitation(requestId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     const { username, token, config } = extractViewOrgModelPlus(getState());
     const viewModel = extractManageOrganizationRequestsModel(getState());
@@ -443,7 +444,7 @@ export function cancelJoinInvitation(requestId: string) {
         cancelJoinInvitationError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };

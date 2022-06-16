@@ -1,11 +1,12 @@
 import React from 'react'
 import { configure, shallow } from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16'
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17'
 
-import { AppError, SortDirection } from '../../types';
+// import { AppError, SortDirection } from '../../types';
 
 import OrganizationsBrowser, { OrganizationsBrowserProps } from './component';
-import { appError } from '../../redux/actions/app';
+import { SortDirection } from '../../../redux/store/types/common';
+// import { appError } from '../../redux/actions/app';
 
 
 configure({ adapter: new Adapter() })

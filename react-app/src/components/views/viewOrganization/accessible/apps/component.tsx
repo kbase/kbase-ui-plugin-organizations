@@ -8,6 +8,7 @@ import {
   DeleteOutlined,
   EllipsisOutlined,
 } from "@ant-design/icons";
+import { View } from '../../../../entities/app/component';
 
 export interface AppsProps {
   organization: orgModel.Organization;
@@ -121,7 +122,7 @@ export default class Apps extends React.Component<AppsProps, AppsState> {
         return (
           <div key={String(index)} className="Apps-appRow SimpleCard">
             <div className="Apps-appColumn">
-              <App appId={app.appId} />
+              <App appId={app.appId} initialView={View.COMPACT}/>
             </div>
             <div className="Apps-menuColumn">
               <Dropdown overlay={menu} trigger={["click"]}>

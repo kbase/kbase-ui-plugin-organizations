@@ -1,10 +1,10 @@
-import React from "react";
-import { Unsubscribe } from "redux";
-import { RootState } from "@kbase/ui-components";
-import { Navigation } from "@kbase/ui-components/lib/redux/integration/store";
+import {Component} from "react";
 import { Router } from "./Router";
 import RequestFetcher from "./Request";
 import { RouteSpec } from "./RouteSpec";
+import { Unsubscribe } from 'redux';
+import {RootState} from  "@kbase/ui-components"
+import { Navigation } from "@kbase/ui-components/lib/redux/integration/store";
 
 export interface NavigationListenerProps {
   routes: Array<RouteSpec>;
@@ -17,7 +17,7 @@ export interface NavigationListenerProps {
 
 interface NavigationListenerState {}
 
-export default class NavigationListener extends React.Component<
+export default class NavigationListener extends Component<
   NavigationListenerProps,
   NavigationListenerState
 > {

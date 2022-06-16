@@ -10,10 +10,10 @@ import {
 } from "../../../../../../redux/store/types/views/Main/views/ViewOrg/views/AddApp";
 import {
   RollbackOutlined,
-  CheckOutlined,
   LoadingOutlined,
   CheckCircleOutlined,
 } from "@ant-design/icons";
+import { View } from '../../../../../entities/app/component';
 
 export interface AddAppsProps {
   apps: Array<SelectableApp>;
@@ -223,7 +223,7 @@ export default class AddApps extends React.Component<
     }
     return (
       <div className="AddApps-selectedApp">
-        <App appId={this.props.selectedApp.app.id} />
+        <App appId={this.props.selectedApp.app.id} initialView={View.NORMAL} />
       </div>
     );
   }

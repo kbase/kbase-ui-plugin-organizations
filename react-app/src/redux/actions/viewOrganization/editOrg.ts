@@ -9,17 +9,18 @@ import DebouncingProcess from "../../../lib/DebouncingProcess";
 import { UIServiceClient } from "../../../data/apis/uiService";
 import { AppError } from "@kbase/ui-components";
 import {
+  AsyncModelState,
   EditableOrganization,
-  ValidationState,
   SyncState,
   ValidationErrorType,
-  AsyncModelState,
+  ValidationState,
 } from "../../store/types/common";
 import {
-  extractViewOrgSubView,
   extractViewOrgModelPlus,
+  extractViewOrgSubView,
 } from "../../../lib/stateExtraction";
 import { SubViewKind } from "../../store/types/views/Main/views/ViewOrg";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 // ACTIONS
 
@@ -209,7 +210,7 @@ export function loadStart(): LoadStart {
 
 export function loadSuccess(
   editedOrganization: EditableOrganization,
-  organization: orgModel.Organization
+  organization: orgModel.Organization,
 ): LoadSuccess {
   return {
     type: ActionFlag.EDIT_ORG_LOAD_SUCCESS,
@@ -275,7 +276,7 @@ export function editOrgSaveError(error: AppError): EditOrgSaveError {
 // Update Name
 
 export function editOrgUpdateNameSuccess(
-  name: string
+  name: string,
 ): EditOrgUpdateNameSuccess {
   return {
     type: ActionFlag.EDIT_ORG_UPDATE_NAME_SUCCESS,
@@ -285,7 +286,7 @@ export function editOrgUpdateNameSuccess(
 
 export function editOrgUpdateNameError(
   name: string,
-  error: ValidationState
+  error: ValidationState,
 ): EditOrgUpdateNameError {
   return {
     type: ActionFlag.EDIT_ORG_UPDATE_NAME_ERROR,
@@ -304,7 +305,7 @@ export function editOrgUpdateNameError(
 // Update Logo Url
 
 export function updateLogoUrlSuccess(
-  logoUrl: string | null
+  logoUrl: string | null,
 ): UpdateLogoUrlSuccess {
   return {
     type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_SUCCESS,
@@ -314,7 +315,7 @@ export function updateLogoUrlSuccess(
 
 export function updateLogoUrlError(
   logoUrl: string | null,
-  error: ValidationState
+  error: ValidationState,
 ): UpdateLogoUrlError {
   return {
     type: ActionFlag.EDIT_ORG_UPDATE_LOGO_URL_ERROR,
@@ -334,7 +335,7 @@ export function updateLogoUrlError(
 // }
 
 export function editOrgUpdateDescriptionSuccess(
-  description: string
+  description: string,
 ): EditOrgUpdateDescriptionSuccess {
   return {
     type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_SUCCESS,
@@ -344,7 +345,7 @@ export function editOrgUpdateDescriptionSuccess(
 
 export function editOrgUpdateDescriptionError(
   description: string,
-  error: ValidationState
+  error: ValidationState,
 ): EditOrgUpdateDescriptionError {
   return {
     type: ActionFlag.EDIT_ORG_UPDATE_DESCRIPTION_ERROR,
@@ -358,19 +359,19 @@ export function editOrgUpdateDescriptionError(
 export function load(organizationId: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(loadStart());
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     // const model = new Model({
     //     token, username,
@@ -423,7 +424,7 @@ export function load(organizationId: string) {
             remoteValue: org.researchInterests,
             syncState: SyncState.NEW,
             validationState: Validation.validateOrgResearchInterests(
-              org.researchInterests
+              org.researchInterests,
             )[1],
           },
           description: {
@@ -431,7 +432,7 @@ export function load(organizationId: string) {
             remoteValue: org.description,
             syncState: SyncState.NEW,
             validationState: Validation.validateOrgDescription(
-              org.description
+              org.description,
             )[1],
           },
           isPrivate: {
@@ -452,7 +453,7 @@ export function load(organizationId: string) {
           loadError({
             code: err.name,
             message: err.message,
-          })
+          }),
         );
       });
   };
@@ -475,7 +476,7 @@ function ensureViewModel(state: StoreState) {
 export function editOrgSave() {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(editOrgSaveStart());
 
@@ -516,7 +517,7 @@ export function editOrgSave() {
         editOrgSaveError({
           code: "app",
           message: "The new organization data does not yet exist",
-        })
+        }),
       );
       return;
     }
@@ -541,7 +542,7 @@ export function editOrgSave() {
           editOrgSaveError({
             code: "invalid",
             message: error.message,
-          })
+          }),
         );
       });
   };
@@ -550,7 +551,7 @@ export function editOrgSave() {
 export function editOrgEvaluate() {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     const { editedOrganization } = ensureViewModel(getState());
 
@@ -582,7 +583,7 @@ export function editOrgEvaluate() {
 
     if (
       editedOrganization.researchInterests.validationState.type !==
-      ValidationErrorType.OK
+        ValidationErrorType.OK
     ) {
       dispatch(editOrgEvaluateErrors());
       return;
@@ -590,7 +591,7 @@ export function editOrgEvaluate() {
 
     if (
       editedOrganization.description.validationState.type !==
-      ValidationErrorType.OK
+        ValidationErrorType.OK
     ) {
       dispatch(editOrgEvaluateErrors());
       return;
@@ -670,7 +671,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "This logo url does not exist",
-              })
+              }),
             );
             break;
           case "invalid-content-type":
@@ -678,9 +679,9 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
               updateLogoUrlError(this.url, {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
-                message:
-                  "Invalid content type: " + result.error.info["content_type"],
-              })
+                message: "Invalid content type: " +
+                  result.error.info["content_type"],
+              }),
             );
             break;
           case "missing-content-type":
@@ -689,7 +690,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "Missing content type",
-              })
+              }),
             );
             break;
           default:
@@ -698,7 +699,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "unknown error",
-              })
+              }),
             );
             break;
         }
@@ -714,7 +715,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
           type: ValidationErrorType.ERROR,
           validatedAt: new Date(),
           message: "Error checking logo url: " + ex.message,
-        })
+        }),
       );
     }
     this.dispatch(editOrgEvaluate());
@@ -724,7 +725,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
 export function updateLogoUrl(logoUrl: string | null) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     if (checkLogoUrlProcess) {
       checkLogoUrlProcess.cancel();
@@ -743,7 +744,7 @@ export function updateLogoUrl(logoUrl: string | null) {
 
     if (validatedLogoUrl !== null && validatedLogoUrl.length > 0) {
       const {
-        auth: { userAuthorization },
+        authentication,
         app: {
           config: {
             services: {
@@ -753,10 +754,10 @@ export function updateLogoUrl(logoUrl: string | null) {
         },
       } = getState();
 
-      if (userAuthorization === null) {
-        throw new Error("Unauthorized");
+      if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+        throw new Error("Not authenticated.");
       }
-      const { token } = userAuthorization;
+      const { userAuthentication: { token } } = authentication;
 
       checkLogoUrlProcess = new CheckIfLogoUrlExistsProcess({
         delay: 100,
@@ -831,7 +832,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "This home url does not exist",
-              })
+              }),
             );
             break;
           case "invalid-content-type":
@@ -839,9 +840,9 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
               updateHomeUrlError(this.url, {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
-                message:
-                  "Invalid content type: " + result.error.info["content_type"],
-              })
+                message: "Invalid content type: " +
+                  result.error.info["content_type"],
+              }),
             );
             break;
           case "missing-content-type":
@@ -850,7 +851,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "Missing content type",
-              })
+              }),
             );
             break;
           default:
@@ -859,7 +860,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "unknown error",
-              })
+              }),
             );
             break;
         }
@@ -873,7 +874,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
           type: ValidationErrorType.ERROR,
           validatedAt: new Date(),
           message: "Error checking home url: " + ex.message,
-        })
+        }),
       );
     }
     this.dispatch(editOrgEvaluate());
@@ -889,7 +890,7 @@ function updateHomeUrlSuccess(homeUrl: string): UpdateHomeUrlSuccess {
 
 function updateHomeUrlError(
   homeUrl: string,
-  error: ValidationState
+  error: ValidationState,
 ): UpdateHomeUrlError {
   return {
     type: ActionFlag.EDIT_ORG_UPDATE_HOME_URL_ERROR,
@@ -901,7 +902,7 @@ function updateHomeUrlError(
 export function updateHomeUrl(homeUrl: string | null) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     if (checkHomeUrlProcess) {
       checkHomeUrlProcess.cancel();
@@ -927,7 +928,7 @@ export function updateHomeUrl(homeUrl: string | null) {
 
     if (validatedHomeUrl !== null && validatedHomeUrl.length > 0) {
       const {
-        auth: { userAuthorization },
+        authentication,
         app: {
           config: {
             services: {
@@ -937,10 +938,10 @@ export function updateHomeUrl(homeUrl: string | null) {
         },
       } = getState();
 
-      if (userAuthorization === null) {
-        throw new Error("Unauthorized");
+      if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+        throw new Error("Not authenticated.");
       }
-      const { token } = userAuthorization;
+      const { userAuthentication: { token } } = authentication;
 
       checkHomeUrlProcess = new CheckIfHomeUrlExistsProcess({
         delay: 100,
@@ -958,8 +959,8 @@ export function updateHomeUrl(homeUrl: string | null) {
 
 export function updateResearchInterests(researchInterests: string) {
   return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
-    const [validatedResearchInterests, error] =
-      Validation.validateOrgResearchInterests(researchInterests);
+    const [validatedResearchInterests, error] = Validation
+      .validateOrgResearchInterests(researchInterests);
 
     if (error.type !== ValidationErrorType.OK) {
       dispatch({
@@ -980,10 +981,11 @@ export function updateResearchInterests(researchInterests: string) {
 export function updateDescription(description: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
-    const [validatedDescription, error] =
-      Validation.validateOrgDescription(description);
+    const [validatedDescription, error] = Validation.validateOrgDescription(
+      description,
+    );
 
     if (error.type !== ValidationErrorType.OK) {
       dispatch(editOrgUpdateDescriptionError(validatedDescription, error));

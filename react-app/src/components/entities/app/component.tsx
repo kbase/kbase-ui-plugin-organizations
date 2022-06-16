@@ -5,13 +5,10 @@ import { Tooltip, Button } from "antd";
 import {
   UpOutlined,
   DownOutlined,
-  BorderOutlined,
-  AppstoreTwoTone,
-  AppstoreOutlined,
   FileImageOutlined,
 } from "@ant-design/icons";
 
-enum View {
+export enum View {
   COMPACT = 0,
   NORMAL,
 }
@@ -28,6 +25,7 @@ function reverseView(v: View) {
 export interface AppProps {
   app: appModel.AppFullInfo; // for now, we'll switch to full app soon
   imageBaseURL: string;
+  initialView: View;
 }
 
 interface AppState {
@@ -39,7 +37,7 @@ export default class App extends React.Component<AppProps, AppState> {
     super(props);
 
     this.state = {
-      view: View.COMPACT,
+      view: props.initialView,
     };
   }
 
@@ -92,7 +90,10 @@ export default class App extends React.Component<AppProps, AppState> {
 
   renderViewControl() {
     return (
-      <Button type="link" size="small" onClick={this.onToggleView.bind(this)}>
+      <Button type="link" size="small" onClick={(e) => {
+          e.stopPropagation();
+          this.onToggleView();
+      }}>
         {this.state.view === View.NORMAL ? <UpOutlined /> : <DownOutlined />}
       </Button>
     );

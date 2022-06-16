@@ -14,6 +14,7 @@ import { Spin, Alert } from 'antd';
 import { load, unload } from '../../redux/actions/main';
 import { AsyncModelState, ModelError } from '../../redux/store/types/common';
 import { MainViewModel } from '../../redux/store/types/views/Main';
+import { AuthenticationStatus } from '@kbase/ui-components/lib/redux/auth/store';
 
 // First the loader component, which takes care of a loading view, error view, and the
 // container.
@@ -96,12 +97,21 @@ interface DispatchProps {
 
 function mapStateToProps(state: StoreState): StateProps {
     const {
-        auth: { userAuthorization },
+        authentication,
         view
     } = state;
+
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+        throw new Error('Unauthenticated - should never occur');
+    }
+
+    const {
+        userAuthentication: {token}
+    } = authentication;
+
     return {
         view,
-        token: userAuthorization!.token
+        token
     };
 }
 

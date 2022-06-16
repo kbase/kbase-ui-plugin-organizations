@@ -5,7 +5,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import TextArea from 'antd/lib/input/TextArea';
 import DOMPurify from "dompurify";
 import * as React from 'react';
-import { Marked } from 'marked-ts';
+import {marked} from 'marked';
 import md5 from 'md5';
 
 import OrgLogo from '../../OrgLogo';
@@ -681,7 +681,7 @@ class NewOrganization extends React.Component<NewOrganizationProps, NewOrganizat
                             <Tabs.TabPane tab="Preview" key="preview">
                                 <div className="NewOrganization-preview-description"
                                     // xss safe
-                                    dangerouslySetInnerHTML={({__html: DOMPurify.sanitize(Marked.parse(descriptionField.value || ''))})}
+                                    dangerouslySetInnerHTML={({__html: DOMPurify.sanitize(marked.parse(descriptionField.value || ''))})}
                                 />
                             </Tabs.TabPane>
                         </Tabs>

@@ -48,9 +48,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
 
     renderError(error: AppError) {
         return (
-            <Alert message="error">
-                Error! {error.message}
-            </Alert>
+            <Alert message={error.message} />
         );
     }
 

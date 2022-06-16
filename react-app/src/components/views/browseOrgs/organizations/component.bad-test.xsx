@@ -2,9 +2,10 @@ import React from 'react'
 import { configure, shallow } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 
-import { AppState, UserRelationToOrganization, Organization, MemberType } from '../../types';
+// import { AppState, UserRelationToOrganization, Organization, MemberType } from '../../types';
 
 import Organizations from './component'
+import { UserRelationToOrganization } from '../../../../data/models/organization/model';
 
 
 configure({ adapter: new Adapter() })

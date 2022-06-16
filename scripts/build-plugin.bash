@@ -7,11 +7,8 @@ echo "✓ dependencies installed successfully"
 echo "Building app..."
 npm run build
 echo "✓ built successfully"
-echo "Testing app..."
-npm run test -- --watchAll=false
-echo "✓ tested successfully"
 cd ..
 echo "Creating plugin distribution..."
-npm run dist 
+npm run install-plugin 
 echo "✓ plugin distribution created successfully" 
 echo "✓ plugin build completed"

@@ -1,18 +1,19 @@
 // import { AuthorizedServiceClient, ServiceClientParams, JSONPayload } from './serviceClient'
 
-import { DynamicServiceClient, DynamicServiceClientParams } from './dynamicServiceClient';
+import {
+  DynamicServiceClient,
+  DynamicServiceClientParams,
+} from "./dynamicServiceClient";
 
-import { RawObjectInfo, RawWorkspaceInfo } from './workspaceUtils';
+import { RawObjectInfo, RawWorkspaceInfo } from "./workspaceUtils";
 
-export interface NarrativeServiceClientParams extends DynamicServiceClientParams {
-
+export interface NarrativeServiceClientParams
+  extends DynamicServiceClientParams {
 }
 
 export interface ListNarrativesParams {
-    type: string;
+  type: string;
 }
-
-type Metadata = {};
 
 /* Information about an object, including user provided metadata.
 
@@ -31,22 +32,20 @@ type Metadata = {};
    */
 
 export interface ListNarrativesResult {
-    narratives: Array<{
-        ws: RawWorkspaceInfo;
-        nar: RawObjectInfo;
-    }>;
+  narratives: Array<{
+    ws: RawWorkspaceInfo;
+    nar: RawObjectInfo;
+  }>;
 }
 
 export class NarrativeServiceClient extends DynamicServiceClient {
-    static module: string = 'NarrativeService';
+  static module: string = "NarrativeService";
 
-
-
-    async listNarratives(type: string): Promise<ListNarrativesResult> {
-        // note usage of unknown below -- Bluebird and native Promise!
-        const [result] = await this.callFunc('list_narratives', [{
-            type: type
-        }]);
-        return result;
-    }
+  async listNarratives(type: string): Promise<ListNarrativesResult> {
+    // note usage of unknown below -- Bluebird and native Promise!
+    const [result] = await this.callFunc("list_narratives", [{
+      type: type,
+    }]);
+    return result;
+  }
 }
