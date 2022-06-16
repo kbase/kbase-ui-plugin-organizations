@@ -1,7 +1,7 @@
 import { Button, Modal, Tooltip, Card, Alert, Tabs } from "antd";
 import DOMPurify from "dompurify";
-import { Marked } from "marked-ts";
-import * as React from "react";
+import {marked} from 'marked';
+import {Component} from "react";
 
 import Header from "../../../../../Header";
 import Members from "../../members/reduxAdapter";
@@ -62,7 +62,7 @@ export interface OrgViewProps {
   navigateToBrowser: () => void;
 }
 
-class OrganizationView extends React.Component<OrgViewProps, OrgViewState> {
+class OrganizationView extends Component<OrgViewProps, OrgViewState> {
   constructor(props: OrgViewProps) {
     super(props);
 
@@ -439,7 +439,7 @@ class OrganizationView extends React.Component<OrgViewProps, OrgViewState> {
         return;
       case orgModel.UserRelationToOrganization.ADMIN:
         return (
-          <React.Fragment>
+          <>
             <Tooltip
               placement="bottomRight"
               title="Invite a user to this organization"
@@ -448,11 +448,11 @@ class OrganizationView extends React.Component<OrgViewProps, OrgViewState> {
                 <MailOutlined />
               </Button>
             </Tooltip>
-          </React.Fragment>
+          </>
         );
       case orgModel.UserRelationToOrganization.OWNER:
         return (
-          <React.Fragment>
+          <>
             <Tooltip
               placement="bottomRight"
               title="Invite a user to this organization"
@@ -461,7 +461,7 @@ class OrganizationView extends React.Component<OrgViewProps, OrgViewState> {
                 <MailOutlined />
               </Button>
             </Tooltip>
-          </React.Fragment>
+          </>
         );
     }
   }
@@ -660,10 +660,8 @@ class OrganizationView extends React.Component<OrgViewProps, OrgViewState> {
       <div className="OrganizationView-org-description-org scrollable-flex-column">
         <div
           className="OrganizationView-org-description"
-          dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(Marked.parse(
-              this.props.viewModel.organization.description || ""
-            )),
+          // xss safe
+          dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(marked.parse(this.props.viewModel.organization.description || "")),
           }}
         />
       </div>

@@ -7,6 +7,7 @@ import { Button } from 'antd';
 import './InboxRequest.css';
 import App from '../../../../entities/app/loader';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { View } from '../../../../entities/app/component';
 
 export interface RequestProps {
     request: requestModel.Request;
@@ -162,7 +163,7 @@ export default class Request extends React.Component<RequestProps, RequestState>
                 <div className="miniDetail">
                     {/* <Narrative workspaceId={parseInt(request.narrativeId, 10)} /> */}
                     <div>
-                        <App appId={request.appId} />
+                        <App appId={request.appId}  initialView={View.COMPACT}/>
                     </div>
                 </div>
 

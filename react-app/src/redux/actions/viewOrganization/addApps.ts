@@ -13,8 +13,8 @@ import {
 } from "../../../data/models/requests";
 import * as viewOrgActions from "../viewOrg";
 import {
-  extractViewOrgModelPlus,
   extractViewOrgModel,
+  extractViewOrgModelPlus,
   extractViewOrgSubView,
 } from "../../../lib/stateExtraction";
 import {
@@ -23,6 +23,7 @@ import {
 } from "../../store/types/views/Main/views/ViewOrg/views/AddApp";
 import { SubViewKind } from "../../store/types/views/Main/views/ViewOrg";
 import { AsyncModelState } from "../../store/types/common";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 export interface AddAppsAction extends Action {}
 
@@ -85,7 +86,7 @@ export function unload(): Unload {
 export function load() {
   return async (
     dispatch: ThunkDispatch<StoreState, void, AddAppsAction>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(loadStart());
 
@@ -184,8 +185,8 @@ export function load() {
           makeError({
             code: "error",
             message: ex.message,
-          })
-        )
+          }),
+        ),
       );
     }
   };
@@ -227,7 +228,7 @@ function ensureViewModel(state: StoreState) {
 export function select(selectedAppId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, AddAppsAction>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     try {
       const viewModel = ensureViewModel(getState());
@@ -248,8 +249,8 @@ export function select(selectedAppId: string) {
             makeError({
               code: "runtime-error",
               message: "Strange, no matching app for selection",
-            })
-          )
+            }),
+          ),
         );
         return;
       }
@@ -261,8 +262,8 @@ export function select(selectedAppId: string) {
           makeError({
             code: "runtime-error",
             message: ex.message,
-          })
-        )
+          }),
+        ),
       );
       return;
     }
@@ -293,7 +294,7 @@ export interface RequestAssociationError {
 
 export function requestAssociationSuccess(
   appId: string,
-  pending: boolean
+  pending: boolean,
 ): RequestAssociationSuccess {
   return {
     type: ActionFlag.VIEW_ORG_ADD_APPS_REQUEST_ASSOCIATE_APP_SUCCESS,
@@ -303,7 +304,7 @@ export function requestAssociationSuccess(
 }
 
 export function requestAssociationError(
-  error: AnError
+  error: AnError,
 ): RequestAssociationError {
   return {
     type: ActionFlag.VIEW_ORG_ADD_APPS_REQUEST_ASSOCIATE_APP_ERROR,
@@ -314,7 +315,7 @@ export function requestAssociationError(
 export function requestAssociation(appId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, AddAppsAction>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     try {
       const orgViewModel = extractViewOrgModel(getState());
@@ -323,7 +324,7 @@ export function requestAssociation(appId: string) {
 
       // depending on the response, set the pending flag
       const {
-        auth: { userAuthorization },
+        authentication,
         app: {
           config: {
             services: {
@@ -334,10 +335,10 @@ export function requestAssociation(appId: string) {
         },
       } = getState();
 
-      if (userAuthorization === null) {
-        throw new Error("Unauthorized");
+      if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+        throw new Error("Not authenticated.");
       }
-      const { token, username } = userAuthorization;
+      const { userAuthentication: { token, username } } = authentication;
 
       const orgClient = new orgModel.OrganizationModel({
         groupsServiceURL: groupsUrl,
@@ -352,7 +353,7 @@ export function requestAssociation(appId: string) {
 
       const result = await orgClient.addOrRequestAppToGroup(
         orgViewModel.organization.id,
-        groupsAppId
+        groupsAppId,
       );
 
       let pending: boolean;
@@ -388,8 +389,8 @@ export function requestAssociation(appId: string) {
           makeError({
             code: "runtime-error",
             message: ex.message,
-          })
-        )
+          }),
+        ),
       );
       return;
     }
@@ -468,7 +469,7 @@ type SearchExpression = Array<RegExp>;
 
 function applySearch(
   apps: Array<SelectableApp>,
-  searchExpression: SearchExpression
+  searchExpression: SearchExpression,
 ) {
   return apps.filter((app) => {
     if (searchExpression.length === 0) {
@@ -487,7 +488,7 @@ function applySearch(
 export function search(searchBy: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, AddAppsAction>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     try {
       dispatch(searchStart());
@@ -510,8 +511,8 @@ export function search(searchBy: string) {
           makeError({
             code: "error",
             message: ex.message,
-          })
-        )
+          }),
+        ),
       );
     }
   };
@@ -580,7 +581,7 @@ function applySort(apps: Array<SelectableApp>, sortBy: string) {
 export function sort(sortBy: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, AddAppsAction>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     try {
       dispatch(sortStart());
@@ -599,8 +600,8 @@ export function sort(sortBy: string) {
           makeError({
             code: "error",
             message: ex.message,
-          })
-        )
+          }),
+        ),
       );
     }
   };

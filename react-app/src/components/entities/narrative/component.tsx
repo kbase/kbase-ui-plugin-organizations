@@ -1,11 +1,11 @@
-import * as React from 'react';
+import {Component, Fragment} from 'react';
 import * as narrativeModel from '../../../data/models/narrative';
 import { Tooltip, Button } from 'antd';
 import UserSimple from '../UserSimpleContainer';
 import { niceElapsed } from '../../../lib/time';
-import './component.css';
 import NiceElapsedTime from '../../NiceElapsedTime';
 import { GlobalOutlined, SaveOutlined, UpOutlined, DownOutlined, LockOutlined, EditOutlined, EyeOutlined, UnlockOutlined, CrownOutlined } from '@ant-design/icons';
+import './component.css';
 
 export interface NarrativeProps {
     narrative: narrativeModel.Narrative;
@@ -29,7 +29,7 @@ interface NarrativeState {
     view: View;
 }
 
-export default class Narrative extends React.Component<NarrativeProps, NarrativeState> {
+export default class Narrative extends Component<NarrativeProps, NarrativeState> {
     constructor(props: NarrativeProps) {
         super(props);
 
@@ -175,7 +175,7 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
 
     renderCompact(narrative: narrativeModel.AccessibleNarrative) {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="controlCol">
                     <Button
                         type="link"
@@ -229,13 +229,13 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                     </div> */}
                 </div>
 
-            </React.Fragment>
+            </Fragment>
         );
     }
 
     renderNormal(narrative: narrativeModel.AccessibleNarrative) {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="controlCol">
                     <Button
                         type="link"
@@ -285,13 +285,13 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                         <UserSimple avatarSize={20} userId={narrative.lastSavedBy} />
                     </div>
                 </div>
-            </React.Fragment>
+            </Fragment>
         );
     }
 
     renderNarrative(narrative: narrativeModel.AccessibleNarrative) {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="mainCol">
                     <div>
                         <div className="Narrative-title">
@@ -320,7 +320,7 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                         <NiceElapsedTime time={narrative.lastSavedAt} tooltipPrefix="last saved " />
                     </div>
                 </div>
-            </React.Fragment>
+            </Fragment>
         );
     }
 

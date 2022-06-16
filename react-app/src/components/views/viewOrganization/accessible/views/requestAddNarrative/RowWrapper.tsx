@@ -1,4 +1,4 @@
-import * as React from 'react'
+import {Component, createRef} from 'react'
 import './RowWrapper.css'
 
 export interface Dimensions {
@@ -18,11 +18,11 @@ interface RowWrapperState {
 
 }
 
-export default class RowWrapper extends React.Component<RowWrapperProps, RowWrapperState> {
+export default class RowWrapper extends Component<RowWrapperProps, RowWrapperState> {
     ref: React.RefObject<HTMLDivElement>
     constructor(props: RowWrapperProps) {
         super(props)
-        this.ref = React.createRef()
+        this.ref = createRef()
     }
 
     isVisible() {

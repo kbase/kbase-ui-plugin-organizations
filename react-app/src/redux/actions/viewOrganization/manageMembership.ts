@@ -12,11 +12,12 @@ import {
   extractViewOrgSubView,
 } from "../../../lib/stateExtraction";
 import {
+  AsyncModelState,
   SyncState,
   ValidationErrorType,
-  AsyncModelState,
 } from "../../store/types/common";
 import { SubViewKind } from "../../store/types/views/Main/views/ViewOrg";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 // Loading
 
@@ -51,7 +52,7 @@ export function loadStart(): LoadStart {
 
 export function loadSuccess(
   organization: orgModel.Organization,
-  editableMemberProfile: orgModel.EditableMemberProfile
+  editableMemberProfile: orgModel.EditableMemberProfile,
 ): LoadSuccess {
   return {
     type: ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_LOAD_SUCCESS,
@@ -76,7 +77,7 @@ export function unload() {
 export function load(organizationId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(loadStart());
 
@@ -98,8 +99,8 @@ export function load(organizationId: string) {
             makeError({
               code: "invalid state",
               message: 'Organization must be of kind "NORMAL"',
-            })
-          )
+            }),
+          ),
         );
         return;
       }
@@ -109,10 +110,10 @@ export function load(organizationId: string) {
           loadError(
             makeError({
               code: "notfound",
-              message:
-                'The user "' + username + '" is not a member of this org',
-            })
-          )
+              message: 'The user "' + username +
+                '" is not a member of this org',
+            }),
+          ),
         );
         return;
       }
@@ -132,10 +133,10 @@ export function load(organizationId: string) {
           loadError(
             makeError({
               code: "notfound",
-              message:
-                'The user "' + username + '" was not found in the members list',
-            })
-          )
+              message: 'The user "' + username +
+                '" was not found in the members list',
+            }),
+          ),
         );
         return;
       }
@@ -160,8 +161,8 @@ export function load(organizationId: string) {
           makeError({
             code: ex.name,
             message: ex.message,
-          })
-        )
+          }),
+        ),
       );
     }
   };
@@ -186,21 +187,21 @@ interface LeaveOrgError extends Action {
 export function leaveOrg(organizationId: orgModel.OrganizationID) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch({
       type: ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_LEAVE_ORG_START,
     });
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     const orgClient = new orgModel.OrganizationModel({
       token,
@@ -321,14 +322,14 @@ function ensureViewModel(state: StoreState) {
 export function evaluate() {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     const viewModel = ensureViewModel(getState());
     const { editableMemberProfile } = viewModel;
 
     if (
       editableMemberProfile.title.validationState.type !==
-      ValidationErrorType.OK
+        ValidationErrorType.OK
     ) {
       dispatch({
         type: ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_EVALUATE_ERROR,
@@ -365,7 +366,7 @@ export interface SaveError
 export function save() {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch({
       type: ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_SAVE_START,
@@ -375,14 +376,14 @@ export function save() {
     const { organization, editableMemberProfile } = viewModel;
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     const update = {
       title: editableMemberProfile.title.value,
@@ -444,7 +445,7 @@ export function demoteToMemberStart(): DemoteSelfToMemberStart {
 }
 
 export function demoteSelfToMemberSuccess(
-  organizationId: string
+  organizationId: string,
 ): DemoteSelfToMemberSuccess {
   return {
     type: ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_DEMOTE_SELF_TO_MEMBER_SUCCESS,
@@ -453,7 +454,7 @@ export function demoteSelfToMemberSuccess(
 }
 
 export function demoteSelfToMemberError(
-  error: AnError
+  error: AnError,
 ): DemoteSelfToMemberError {
   return {
     type: ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_DEMOTE_SELF_TO_MEMBER_ERROR,
@@ -464,7 +465,7 @@ export function demoteSelfToMemberError(
 export function demoteSelfToMember(organizationId: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(demoteToMemberStart());
     const { username, token, config } = extractViewOrgModelPlus(getState());
@@ -506,8 +507,8 @@ export function demoteSelfToMember(organizationId: string) {
             makeError({
               code: err.name,
               message: err.message,
-            })
-          )
+            }),
+          ),
         );
       });
   };

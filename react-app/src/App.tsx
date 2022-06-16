@@ -1,12 +1,11 @@
-import React from "react";
 import { Provider } from "react-redux";
 import { createReduxStore } from "./redux/store";
-import { AppBase, AuthGate } from "@kbase/ui-components";
+import {marked, Renderer} from 'marked';
+// import { AppBase, AuthGate } from "@kbase/ui-components";
 import ErrorBoundary from "./ui/ErrorBoundary";
 import Dispatcher from "./ui/dispatcher";
+import 'antd/dist/antd.variable.min.css'
 import "./App.css";
-
-import { Marked, Renderer, MarkedOptions } from "marked-ts";
 
 // fontawesome setup
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -22,7 +21,38 @@ import Main from "./components/Main";
 
 // Setup
 
+import { ConfigProvider } from 'antd';
+import { Component } from 'react';
+import { AppBase, AuthGate } from '@kbase/ui-components';
+
+ConfigProvider.config({
+  theme: {
+    primaryColor: '#337ab7',
+    successColor: '#3c763d',
+    // infoColor: '#31708f',
+    // warningColor: '#8a6d3b',
+    errorColor: '#a94442',
+
+              //  '@font-size-base': '14px',                           // major text font size
+              //  '@heading-color': 'rgba(0,0,0,0.85)',                // heading text color
+              //  '@text-color': 'rgba(0, 0, 0, 1.0)',                 // major text color
+              //  '@text-color-secondary': 'rgba(0, 0, 0. 0.45)',      // secondary text color
+              //  '@disabled-color': 'rgba(0, 0, 0, 0.25)',            // disable state color
+              //  '@border-radius-base': '4px',                        // major border radius
+              //  '@border-color-base': '#d9d9d9',                     // major border color
+              //  '@box-shadow-base': '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',  // major shadow for layers
+              //  '@border-color-split': 'hsv(0, 0, 80%)'
+  }
+})
+
+
 library.add(faSpinner, faSearch, faGlobe, faUserLock, faSquare, faCube);
+
+// const renderer: Renderer = {
+//   link(href:)
+// }
+//link(this: Renderer | RendererThis, href: string | null, title: string | null, text: string): string | T;
+       
 
 class DescriptionRenderer extends Renderer {
   link(href: string, title: string, text: string) {
@@ -30,7 +60,7 @@ class DescriptionRenderer extends Renderer {
       let prot: string;
 
       try {
-        prot = decodeURIComponent(this.options.unescape!(href))
+        prot = decodeURIComponent(href)
           .replace(/[^\w:]/g, "")
           .toLowerCase();
       } catch (e) {
@@ -62,9 +92,11 @@ class DescriptionRenderer extends Renderer {
   }
 }
 
-const options = new MarkedOptions();
-options.renderer = new DescriptionRenderer();
-Marked.setOptions({ renderer: new DescriptionRenderer() });
+marked.use({renderer: new DescriptionRenderer()});
+
+// const options = new MarkedOptions();
+// options.renderer = new DescriptionRenderer();
+// Marked.setOptions({ renderer: new DescriptionRenderer() });
 
 // The App Component
 
@@ -74,7 +106,7 @@ interface AppProps {}
 
 interface AppState {}
 
-export default class App<AppProps, AppState> extends React.Component {
+export default class App<AppProps, AppState> extends Component {
   render() {
     return (
       <ErrorBoundary>

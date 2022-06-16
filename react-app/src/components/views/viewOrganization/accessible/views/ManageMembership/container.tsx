@@ -10,6 +10,8 @@ import Component from './component';
 import { EditState, SaveState, ValidationState, AsyncModelState } from '../../../../../../redux/store/types/common';
 import { ViewOrgViewModelKind, SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
 
+import { AuthenticationStatus } from '@kbase/ui-components/lib/redux/auth/store';
+
 export interface OwnProps {
     onFinish: () => void;
 }
@@ -31,8 +33,8 @@ interface DispatchProps {
 }
 
 function mapStateToProps(state: StoreState): StateProps {
-    if (state.auth.userAuthorization === null) {
-        throw new Error('Not authorized');
+    if (state.authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+        throw new Error('Unauthenticated - should never occur');
     }
 
     if (state.view.loadingState !== AsyncModelState.SUCCESS) {
@@ -60,8 +62,8 @@ function mapStateToProps(state: StoreState): StateProps {
     }
 
     const {
-        auth: {
-            userAuthorization: {
+        authentication: {
+            userAuthentication: {
                 username
             }
         },

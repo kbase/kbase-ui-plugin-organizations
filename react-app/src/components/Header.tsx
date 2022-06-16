@@ -14,9 +14,6 @@ interface HeaderState {
     currentMenuItem: string;
 }
 
-interface MenuProps {
-    currentItem: string;
-}
 
 class Header extends React.Component<HeaderProps, HeaderState> {
 

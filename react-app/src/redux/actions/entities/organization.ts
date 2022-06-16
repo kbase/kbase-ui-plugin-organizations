@@ -5,6 +5,7 @@ import { ActionFlag } from "../index";
 import * as orgModel from "../../../data/models/organization/model";
 import { StoreState } from "../../store/types";
 import { AnError, makeError } from "../../../lib/error";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 export interface OrganizationEntityAction extends Action {}
 
@@ -31,21 +32,21 @@ interface LoadError extends OrganizationEntityAction {
 export function load(organizationId: orgModel.OrganizationID) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, OrganizationEntityAction>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch({
       type: ActionFlag.ENTITY_ORGANIZATION_LOAD_START,
     } as LoadStart);
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     const orgClient = new orgModel.OrganizationModel({
       token,

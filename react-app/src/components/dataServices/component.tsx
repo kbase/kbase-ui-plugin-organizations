@@ -1,4 +1,4 @@
-import * as React from 'react';
+import {Component} from 'react';
 
 export interface Props {
     onLoad: () => void;
@@ -9,7 +9,7 @@ interface State {
 
 }
 
-export default class DataServices extends React.Component<Props, State> {
+export default class DataServices extends Component<Props, State> {
     componentWillMount() {
         this.props.onLoad();
     }

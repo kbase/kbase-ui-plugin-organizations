@@ -8,6 +8,7 @@ import * as orgModel from "../../data/models/organization/model";
 import * as uberModel from "../../data/models/uber";
 import { AppError } from "@kbase/ui-components";
 import { extractViewOrgModelPlus } from "../../lib/stateExtraction";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 // LOADING
 
@@ -43,7 +44,7 @@ export function loadStart(): LoadStart {
 
 export function loadSuccess(
   organization: orgModel.Organization,
-  relation: orgModel.Relation
+  relation: orgModel.Relation,
 ): LoadSuccess {
   return {
     type: ActionFlag.VIEW_MEMBERS_LOAD_SUCCESS,
@@ -68,19 +69,19 @@ export function unload(): Unload {
 export function load(organizationId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(loadStart());
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     const uberClient = new uberModel.UberModel({
       token,
@@ -92,14 +93,14 @@ export function load(organizationId: string) {
     });
 
     try {
-      const { organization, relation } =
-        await uberClient.getOrganizationForUser(organizationId);
+      const { organization, relation } = await uberClient
+        .getOrganizationForUser(organizationId);
       if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
         dispatch(
           loadError({
             code: "invalid state",
             message: 'Organization must be of kind "NORMAL"',
-          })
+          }),
         );
         return;
       }
@@ -109,7 +110,7 @@ export function load(organizationId: string) {
         loadError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -143,7 +144,7 @@ export function promoteToAdminStart(): PromoteToAdminStart {
 }
 
 export function promoteToAdminSuccess(
-  memberUsername: string
+  memberUsername: string,
 ): PromoteToAdminSuccess {
   return {
     type: ActionFlag.VIEW_MEMBERS_PROMOTE_TO_ADMIN_SUCCESS,
@@ -161,12 +162,12 @@ export function promoteToAdminError(error: AppError): PromoteToAdminError {
 export function promoteToAdmin(memberUsername: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(promoteToAdminStart());
 
     const { viewModel, username, token, config } = extractViewOrgModelPlus(
-      getState()
+      getState(),
     );
 
     const orgClient = new orgModel.OrganizationModel({
@@ -186,7 +187,7 @@ export function promoteToAdmin(memberUsername: string) {
           promoteToAdminError({
             code: err.name,
             message: err.message,
-          })
+          }),
         );
       });
   };
@@ -220,7 +221,7 @@ export function demoteToMemberStart(): DemoteToMemberStart {
 }
 
 export function demoteToMemberSuccess(
-  memberUsername: string
+  memberUsername: string,
 ): DemoteToMemberSuccess {
   return {
     type: ActionFlag.VIEW_MEMBERS_DEMOTE_TO_MEMBER_SUCCESS,
@@ -238,12 +239,12 @@ export function demoteToMemberError(error: AppError): DemoteToMemberError {
 export function demoteToMember(memberUsername: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(demoteToMemberStart());
 
     const { viewModel, username, token, config } = extractViewOrgModelPlus(
-      getState()
+      getState(),
     );
 
     const orgClient = new orgModel.OrganizationModel({
@@ -264,7 +265,7 @@ export function demoteToMember(memberUsername: string) {
           demoteToMemberError({
             code: err.name,
             message: err.message,
-          })
+          }),
         );
       });
   };
@@ -312,12 +313,12 @@ function removeMemberError(error: AppError): RemoveMemberError {
 export function removeMember(memberUsername: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(removeMemberStart());
 
     const { viewModel, username, token, config } = extractViewOrgModelPlus(
-      getState()
+      getState(),
     );
 
     const orgClient = new orgModel.OrganizationModel({
@@ -338,7 +339,7 @@ export function removeMember(memberUsername: string) {
           removeMemberError({
             code: err.name,
             message: err.message,
-          })
+          }),
         );
       });
   };

@@ -13,15 +13,16 @@ import { AnError, makeError } from "../../lib/error";
 import * as narrativeModel from "../../data/models/narrative";
 import { AppError } from "@kbase/ui-components";
 import {
-  extractViewOrgModelPlus,
   extractAppInfo,
+  extractViewOrgModelPlus,
   extractViewOrgModelPlus2,
 } from "../../lib/stateExtraction";
 import {
-  ViewOrgViewModelKind,
   SubViewKind,
+  ViewOrgViewModelKind,
 } from "../store/types/views/Main/views/ViewOrg";
 import { AsyncModelState } from "../store/types/common";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 // Action Types
 
@@ -205,7 +206,7 @@ export function removeNarrativeStart(): RemoveNarrativeStart {
 }
 
 export function removeNarrativeSuccess(
-  narrativeId: narrativeModel.NarrativeID
+  narrativeId: narrativeModel.NarrativeID,
 ): RemoveNarrativeSuccess {
   return {
     type: ActionFlag.VIEW_ORG_REMOVE_NARRATIVE_SUCCESS,
@@ -225,7 +226,7 @@ export function removeNarrativeError(error: AppError): RemoveNarrativeError {
 export function removeNarrative(narrative: orgModel.NarrativeResource) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(removeNarrativeStart());
 
@@ -253,7 +254,7 @@ export function removeNarrative(narrative: orgModel.NarrativeResource) {
         removeNarrativeError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -290,7 +291,7 @@ export function accessNarrativeStart(): AccessNarrativeStart {
 
 export function accessNarrativeSuccess(
   organization: orgModel.Organization,
-  narratives: Array<orgModel.NarrativeResource>
+  narratives: Array<orgModel.NarrativeResource>,
 ): AccessNarrativeSuccess {
   return {
     type: ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_SUCCESS,
@@ -311,7 +312,7 @@ export function accessNarrativeError(error: AppError): AccessNarrativeError {
 export function accessNarrative(narrative: orgModel.NarrativeResource) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(accessNarrativeStart());
 
@@ -351,7 +352,7 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
           accessNarrativeError({
             code: "error",
             message: "Not a NORMAL org",
-          })
+          }),
         );
         return;
       }
@@ -370,7 +371,7 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
         accessNarrativeError({
           code: "error",
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -396,7 +397,7 @@ export function loadNormalSuccess(
   narratives: Array<orgModel.NarrativeResource>,
   apps: Array<orgModel.AppResource>,
   sortMembersBy: string,
-  members: Array<orgModel.Member>
+  members: Array<orgModel.Member>,
 ): LoadNormalSuccess {
   return {
     type: ActionFlag.VIEW_ORG_LOAD_NORMAL_SUCCESS,
@@ -427,7 +428,7 @@ export function reloadNormalSuccess(
   narratives: Array<orgModel.NarrativeResource>,
   apps: Array<orgModel.AppResource>,
   sortMembersBy: string,
-  members: Array<orgModel.Member>
+  members: Array<orgModel.Member>,
 ): ReloadNormalSuccess {
   return {
     type: ActionFlag.VIEW_ORG_RELOAD_NORMAL_SUCCESS,
@@ -449,7 +450,7 @@ export function reloadNormalSuccess(
 export function loadInaccessiblePrivateSuccess(
   organization: orgModel.InaccessiblePrivateOrganization,
   relation: orgModel.Relation,
-  requestOutbox: Array<requestModel.Request>
+  requestOutbox: Array<requestModel.Request>,
 ): LoadInaccessiblePrivateSuccess {
   return {
     type: ActionFlag.VIEW_ORG_LOAD_INACCESSIBLE_PRIVATE_SUCCESS,
@@ -481,7 +482,7 @@ export function viewOrgJoinRequestSuccess(): ViewOrgJoinRequestSuccess {
 }
 
 export function viewOrgJoinRequestError(
-  error: UIError
+  error: UIError,
 ): ViewOrgJoinRequestError {
   return {
     type: ActionFlag.VIEW_ORG_JOIN_REQUEST_ERROR,
@@ -504,7 +505,7 @@ export function viewOrgCancelJoinRequestSuccess(): ViewOrgCancelJoinRequestSucce
 }
 
 export function viewOrgCancelJoinRequestError(
-  error: UIError
+  error: UIError,
 ): ViewOrgCancelJoinRequestError {
   return {
     type: ActionFlag.VIEW_ORG_CANCEL_JOIN_REQUEST_ERROR,
@@ -527,7 +528,7 @@ export function acceptJoinInvitationSuccess(): AcceptJoinInvitationSuccess {
 }
 
 export function acceptJoinInvitationError(
-  error: AppError
+  error: AppError,
 ): AcceptJoinInvitationError {
   return {
     type: ActionFlag.VIEW_ORG_ACCEPT_JOIN_INVITATION_ERROR,
@@ -550,7 +551,7 @@ export function rejectJoinInvitationSuccess(): RejectJoinInvitationSuccess {
 }
 
 export function rejectJoinInvitationError(
-  error: AppError
+  error: AppError,
 ): RejectJoinInvitationError {
   return {
     type: ActionFlag.VIEW_ORG_REJECT_JOIN_INVITATION_ERROR,
@@ -567,10 +568,10 @@ export function rejectJoinInvitationError(
 export function unload() {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     const state = getState();
-    if (state.auth.userAuthorization === null) {
+    if (state.authentication.status !== AuthenticationStatus.AUTHENTICATED) {
       return;
     }
 
@@ -632,19 +633,19 @@ export function unload() {
 export function load(organizationId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(loadStart());
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     const uberClient = new uberModel.UberModel({
       token,
@@ -669,14 +670,14 @@ export function load(organizationId: string) {
     });
 
     try {
-      const { organization, relation } =
-        await uberClient.getOrganizationForUser(organizationId);
+      const { organization, relation } = await uberClient
+        .getOrganizationForUser(organizationId);
       if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
         const requestInbox = await requestClient.getRequestInboxForOrg(
-          organizationId
+          organizationId,
         );
         dispatch(
-          loadInaccessiblePrivateSuccess(organization, relation, requestInbox)
+          loadInaccessiblePrivateSuccess(organization, relation, requestInbox),
         );
         return;
       }
@@ -690,14 +691,14 @@ export function load(organizationId: string) {
         relation.type === orgModel.UserRelationToOrganization.ADMIN
       ) {
         orgRequests = await requestClient.getPendingOrganizationRequestsForOrg(
-          organizationId
+          organizationId,
         );
         orgInvitations = await requestClient.getOrganizationInvitationsForOrg(
-          organizationId
+          organizationId,
         );
         openRequest = await orgClient.getOpenRequestStatus({ organizationId });
         requestInbox = await requestClient.getCombinedRequestInboxForOrg(
-          organizationId
+          organizationId,
         );
       } else {
         orgRequests = null;
@@ -707,8 +708,8 @@ export function load(organizationId: string) {
       }
 
       // const requestInbox: Array<requestModel.Request> = await requestClient.getCombinedRequestInboxForOrg(organizationId)
-      const requestOutbox: Array<requestModel.Request> =
-        await requestClient.getRequestOutboxForOrg(organizationId);
+      const requestOutbox: Array<requestModel.Request> = await requestClient
+        .getRequestOutboxForOrg(organizationId);
 
       // default narrative sort?
       const narrativesSortBy = "added";
@@ -739,15 +740,15 @@ export function load(organizationId: string) {
           narratives,
           apps,
           sortMembersBy,
-          members
-        )
+          members,
+        ),
       );
     } catch (ex: any) {
       dispatch(
         loadError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -756,10 +757,10 @@ export function load(organizationId: string) {
 export function reload(organizationId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     const { viewModel, username, token, config } = extractViewOrgModelPlus(
-      getState()
+      getState(),
     );
 
     const uberClient = new uberModel.UberModel({
@@ -785,14 +786,14 @@ export function reload(organizationId: string) {
     });
 
     try {
-      const { organization, relation } =
-        await uberClient.getOrganizationForUser(organizationId);
+      const { organization, relation } = await uberClient
+        .getOrganizationForUser(organizationId);
       if (organization.kind !== orgModel.OrganizationKind.NORMAL) {
         const requestInbox = await requestClient.getRequestInboxForOrg(
-          organizationId
+          organizationId,
         );
         dispatch(
-          loadInaccessiblePrivateSuccess(organization, relation, requestInbox)
+          loadInaccessiblePrivateSuccess(organization, relation, requestInbox),
         );
         return;
       }
@@ -805,10 +806,10 @@ export function reload(organizationId: string) {
         relation.type === orgModel.UserRelationToOrganization.ADMIN
       ) {
         orgRequests = await requestClient.getPendingOrganizationRequestsForOrg(
-          organizationId
+          organizationId,
         );
         orgInvitations = await requestClient.getOrganizationInvitationsForOrg(
-          organizationId
+          organizationId,
         );
         openRequest = await orgClient.getOpenRequestStatus({ organizationId });
       } else {
@@ -817,10 +818,10 @@ export function reload(organizationId: string) {
         openRequest = orgModel.RequestStatus.INAPPLICABLE;
       }
 
-      const requestInbox: Array<requestModel.Request> =
-        await requestClient.getCombinedRequestInboxForOrg(organizationId);
-      const requestOutbox: Array<requestModel.Request> =
-        await requestClient.getRequestOutboxForOrg(organizationId);
+      const requestInbox: Array<requestModel.Request> = await requestClient
+        .getCombinedRequestInboxForOrg(organizationId);
+      const requestOutbox: Array<requestModel.Request> = await requestClient
+        .getRequestOutboxForOrg(organizationId);
 
       // default narrative sort?
       const narrativesSortBy = "added";
@@ -851,15 +852,15 @@ export function reload(organizationId: string) {
           narratives,
           apps,
           sortMembersBy,
-          members
-        )
+          members,
+        ),
       );
     } catch (ex: any) {
       dispatch(
         loadError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -868,7 +869,7 @@ export function reload(organizationId: string) {
 export function viewOrgJoinRequest() {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     //TODO: could do a start here...
     const {
@@ -894,7 +895,7 @@ export function viewOrgJoinRequest() {
         viewOrgJoinRequestError({
           type: UIErrorType.ERROR,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -903,7 +904,7 @@ export function viewOrgJoinRequest() {
 export function viewOrgCancelJoinRequest(requestId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(viewOrgCancelJoinRequestStart());
 
@@ -924,7 +925,7 @@ export function viewOrgCancelJoinRequest(requestId: string) {
         viewOrgCancelJoinRequestError({
           type: UIErrorType.ERROR,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -933,7 +934,7 @@ export function viewOrgCancelJoinRequest(requestId: string) {
 export function acceptJoinInvitation(requestId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(acceptJoinInvitationStart());
 
@@ -955,7 +956,7 @@ export function acceptJoinInvitation(requestId: string) {
         acceptJoinInvitationError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -964,7 +965,7 @@ export function acceptJoinInvitation(requestId: string) {
 export function rejectJoinInvitation(requestId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(acceptJoinInvitationStart());
 
@@ -985,7 +986,7 @@ export function rejectJoinInvitation(requestId: string) {
         rejectJoinInvitationError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -1015,7 +1016,7 @@ export interface SortNarrativesError {
 export function sortNarratives(sortBy: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch({
       type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_START,
@@ -1065,7 +1066,7 @@ export interface SearchNarrativesError {
 export function searchNarratives(searchBy: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch({
       type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_START,
@@ -1115,7 +1116,7 @@ export interface SearchAppsError {
 export function searchApps(searchBy: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch({
       type: ActionFlag.VIEW_ORG_SORT_NARRATIVES_START,
@@ -1165,7 +1166,7 @@ export interface SearchAppsError {
 export function sortApps(sortBy: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch({
       type: ActionFlag.VIEW_ORG_SORT_APPS_START,
@@ -1233,14 +1234,14 @@ function removeAppError(error: AnError) {
 
 function orgClientFromState(state: StoreState): orgModel.OrganizationModel {
   const {
-    auth: { userAuthorization },
+    authentication,
     app: { config },
   }: StoreState = state;
 
-  if (userAuthorization === null) {
-    throw new Error("Unauthorized");
+  if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+    throw new Error("Not authenticated.");
   }
-  const { token, username } = userAuthorization;
+  const { userAuthentication: { token, username } } = authentication;
 
   return new orgModel.OrganizationModel({
     token,
@@ -1253,7 +1254,7 @@ function orgClientFromState(state: StoreState): orgModel.OrganizationModel {
 export function removeApp(appId: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(removeAppStart());
 
@@ -1269,8 +1270,8 @@ export function removeApp(appId: string) {
           makeError({
             code: "error",
             message: ex.message,
-          })
-        )
+          }),
+        ),
       );
     }
   };

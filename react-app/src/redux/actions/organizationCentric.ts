@@ -5,6 +5,7 @@ import * as orgModel from "../../data/models/organization/model";
 import * as requestModel from "../../data/models/requests";
 import { StoreState } from "../store/types";
 import { AppError } from "@kbase/ui-components";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 export interface OrganizationCentricAction<T> extends Action<T> {}
 
@@ -14,12 +15,16 @@ export interface Load
 }
 
 export interface LoadStart
-  extends OrganizationCentricAction<ActionFlag.ORGANIZATION_CENTRIC_VIEW_LOAD_START> {
+  extends
+    OrganizationCentricAction<ActionFlag.ORGANIZATION_CENTRIC_VIEW_LOAD_START> {
   type: ActionFlag.ORGANIZATION_CENTRIC_VIEW_LOAD_START;
 }
 
 export interface LoadSuccess
-  extends OrganizationCentricAction<ActionFlag.ORGANIZATION_CENTRIC_VIEW_LOAD_SUCCESS> {
+  extends
+    OrganizationCentricAction<
+      ActionFlag.ORGANIZATION_CENTRIC_VIEW_LOAD_SUCCESS
+    > {
   type: ActionFlag.ORGANIZATION_CENTRIC_VIEW_LOAD_SUCCESS;
   organization: orgModel.Organization;
   pendingJoinRequest: requestModel.UserRequest | null;
@@ -28,13 +33,15 @@ export interface LoadSuccess
 }
 
 export interface LoadError
-  extends OrganizationCentricAction<ActionFlag.ORGANIZATION_CENTRIC_VIEW_LOAD_ERROR> {
+  extends
+    OrganizationCentricAction<ActionFlag.ORGANIZATION_CENTRIC_VIEW_LOAD_ERROR> {
   type: ActionFlag.ORGANIZATION_CENTRIC_VIEW_LOAD_ERROR;
   error: AppError;
 }
 
 export interface Unload
-  extends OrganizationCentricAction<ActionFlag.ORGANIZATION_CENTRIC_VIEW_UNLOAD> {
+  extends
+    OrganizationCentricAction<ActionFlag.ORGANIZATION_CENTRIC_VIEW_UNLOAD> {
   type: ActionFlag.ORGANIZATION_CENTRIC_VIEW_UNLOAD;
 }
 
@@ -80,19 +87,19 @@ export function unload(): Unload {
 export function load(organizationId: orgModel.OrganizationID) {
   return async (
     dispatch: ThunkDispatch<StoreState, ValidityState, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(loadStart());
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     const orgClient = new orgModel.OrganizationModel({
       token,
@@ -115,7 +122,7 @@ export function load(organizationId: orgModel.OrganizationID) {
           loadError({
             code: "invalid state",
             message: 'Organization must be of kind "NORMAL"',
-          })
+          }),
         );
         return;
       }
@@ -123,14 +130,14 @@ export function load(organizationId: orgModel.OrganizationID) {
       // get pending requests
       const request = await requestClient.getUserRequestForOrg(organizationId);
       const invitation = await requestClient.getUserInvitationForOrg(
-        organizationId
+        organizationId,
       );
 
       const relation = orgModel.determineRelation(
         organization,
         username,
         request,
-        invitation
+        invitation,
       );
 
       // current username is already here.
@@ -140,14 +147,14 @@ export function load(organizationId: orgModel.OrganizationID) {
           relation,
           pendingJoinRequest: request,
           pendingJoinInvitation: invitation,
-        })
+        }),
       );
     } catch (ex: any) {
       dispatch(
         loadError({
           code: ex.name,
           message: ex.message,
-        })
+        }),
       );
     }
   };

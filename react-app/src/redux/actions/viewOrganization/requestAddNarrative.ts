@@ -1,7 +1,7 @@
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import { ActionFlag } from "../index";
-import { StoreState, Narrative } from "../../store/types";
+import { Narrative, StoreState } from "../../store/types";
 import * as orgModel from "../../../data/models/organization/model";
 import * as narrativeModel from "../../../data/models/narrative";
 import * as requestModel from "../../../data/models/requests";
@@ -15,6 +15,7 @@ import {
 } from "../../../lib/stateExtraction";
 import { SubViewKind } from "../../store/types/views/Main/views/ViewOrg";
 import { AsyncModelState } from "../../store/types/common";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 export interface Load extends Action {
   type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD;
@@ -45,7 +46,7 @@ export function loadStart(): LoadStart {
 export function loadSuccess(
   organization: orgModel.Organization,
   narratives: Array<narrativeModel.OrganizationNarrative>,
-  relation: orgModel.Relation
+  relation: orgModel.Relation,
 ): LoadSuccess {
   return {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_LOAD_SUCCESS,
@@ -65,7 +66,7 @@ export function loadError(error: AnError): LoadError {
 export function load(organizationId: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(loadStart());
 
@@ -92,12 +93,7 @@ export function load(organizationId: string) {
     });
 
     try {
-      const [org, narratives, request, invitation] = await Promise.all<
-        orgModel.Organization,
-        narrativeModel.OrganizationNarrative[],
-        requestModel.UserRequest | null,
-        requestModel.UserInvitation | null
-      >([
+      const [org, narratives, request, invitation] = await Promise.all([
         orgClient.getOrganization(organizationId),
         narrativeClient.getOwnNarratives(organizationId),
         requestClient.getUserRequestForOrg(organizationId),
@@ -108,7 +104,7 @@ export function load(organizationId: string) {
         org,
         username,
         request,
-        invitation
+        invitation,
       );
 
       dispatch(loadSuccess(org, narratives, relation));
@@ -119,8 +115,8 @@ export function load(organizationId: string) {
           makeError({
             code: ex.name,
             message: ex.message,
-          })
-        )
+          }),
+        ),
       );
     }
   };
@@ -153,7 +149,7 @@ export function selectNarrativeStart(): SelectNarrativeStart {
 }
 
 export function selectNarrativeSuccess(
-  narrative: OrganizationNarrative
+  narrative: OrganizationNarrative,
 ): SelectNarrativeSuccess {
   return {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_SELECT_NARRATIVE_SUCCESS,
@@ -171,7 +167,7 @@ export function selectNarrativeError(error: AnError): SelectNarrativeError {
 export function selectNarrative(narrative: OrganizationNarrative) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(selectNarrativeStart());
 
@@ -206,7 +202,7 @@ export function sendRequestStart(): SendRequestStart {
 }
 
 export function sendRequestSuccess(
-  request: requestModel.Request | boolean
+  request: requestModel.Request | boolean,
 ): SendRequestSuccess {
   return {
     type: ActionFlag.REQUEST_ADD_NARRATIVE_SEND_SUCCESS,
@@ -224,19 +220,19 @@ export function sendRequestError(error: AnError): SendRequestError {
 export function sendRequest(groupId: string, workspaceId: number) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(sendRequestStart());
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     const orgClient = new orgModel.OrganizationModel({
       token,
@@ -248,7 +244,7 @@ export function sendRequest(groupId: string, workspaceId: number) {
     try {
       const request = await orgClient.addOrRequestNarrativeToGroup(
         groupId,
-        workspaceId
+        workspaceId,
       );
       dispatch(sendRequestSuccess(request));
       dispatch(viewOrgActions.reload(groupId));
@@ -258,8 +254,8 @@ export function sendRequest(groupId: string, workspaceId: number) {
           makeError({
             code: ex.name,
             message: ex.message,
-          })
-        )
+          }),
+        ),
       );
     }
   };
@@ -315,7 +311,7 @@ function ensureViewModel(state: StoreState) {
 export function sort(sort: narrativeModel.Sort) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch({
       type: ActionFlag.REQUEST_ADD_NARRATIVE_SORT_START,
@@ -336,7 +332,7 @@ export function sort(sort: narrativeModel.Sort) {
     try {
       const sorted = narrativeClient.sortOrganizationNarratives(
         viewModel.narratives,
-        sort
+        sort,
       );
       dispatch({
         type: ActionFlag.REQUEST_ADD_NARRATIVE_SORT_SUCCESS,

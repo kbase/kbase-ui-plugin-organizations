@@ -5,10 +5,11 @@ import { ActionFlag } from "../actions";
 import * as orgModel from "../../data/models/organization/model";
 import { BrowseOrgsViewModel } from "../store/types/views/Main/views/BrowseOrgs";
 import { AsyncModelState } from "../store/types/common";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 export function applyOrgSearch(
   orgs: Array<orgModel.Organization>,
-  searchTerms: Array<string>
+  searchTerms: Array<string>,
 ) {
   const filteredOrgs = orgs.filter((org) => {
     if (searchTerms.length === 0) {
@@ -36,7 +37,7 @@ export function applyOrgSearch(
 // do it here...
 export function searchOrgs(
   state: BrowseOrgsViewModel,
-  action: actions.SearchOrgs
+  action: actions.SearchOrgs,
 ): BrowseOrgsViewModel {
   if (state.loadingState !== AsyncModelState.SUCCESS) {
     return state;
@@ -56,7 +57,7 @@ export function searchOrgs(
 
 export function searchOrgsStart(
   state: BrowseOrgsViewModel,
-  action: actions.SearchOrgsStart
+  action: actions.SearchOrgsStart,
 ): BrowseOrgsViewModel {
   if (state.loadingState !== AsyncModelState.SUCCESS) {
     return state;
@@ -73,7 +74,7 @@ export function searchOrgsStart(
 
 export function searchOrgsSuccess(
   state: BrowseOrgsViewModel,
-  action: actions.SearchOrgsSuccess
+  action: actions.SearchOrgsSuccess,
 ): BrowseOrgsViewModel {
   if (state.loadingState !== AsyncModelState.SUCCESS) {
     return state;
@@ -96,7 +97,7 @@ export function searchOrgsSuccess(
 // and this should now go in the "browseOrgs" (or better named "searchOrgs") branch.
 export function searchOrgsError(
   state: BrowseOrgsViewModel,
-  action: actions.SearchOrgsError
+  action: actions.SearchOrgsError,
 ): BrowseOrgsViewModel {
   if (state.loadingState !== AsyncModelState.SUCCESS) {
     return state;
@@ -119,7 +120,7 @@ export function searchOrgsError(
 
 export function sortOrgsStart(
   state: BrowseOrgsViewModel,
-  action: actions.SortOrgsStart
+  action: actions.SortOrgsStart,
 ): BrowseOrgsViewModel {
   if (state.loadingState !== AsyncModelState.SUCCESS) {
     return state;
@@ -138,7 +139,7 @@ export function sortOrgsStart(
 
 function filterOrgsStart(
   state: BrowseOrgsViewModel,
-  action: actions.FilterOrgsStart
+  action: actions.FilterOrgsStart,
 ): BrowseOrgsViewModel {
   if (state.loadingState !== AsyncModelState.SUCCESS) {
     return state;
@@ -158,7 +159,7 @@ function filterOrgsStart(
 
 function loadStart(
   state: BrowseOrgsViewModel,
-  action: actions.LoadStart
+  action: actions.LoadStart,
 ): BrowseOrgsViewModel {
   return {
     loadingState: AsyncModelState.LOADING,
@@ -167,7 +168,7 @@ function loadStart(
 
 function loadError(
   state: BrowseOrgsViewModel,
-  action: actions.LoadError
+  action: actions.LoadError,
 ): BrowseOrgsViewModel {
   return {
     loadingState: AsyncModelState.ERROR,
@@ -177,7 +178,7 @@ function loadError(
 
 function loadSuccess(
   state: BrowseOrgsViewModel,
-  action: actions.LoadSuccess
+  action: actions.LoadSuccess,
 ): BrowseOrgsViewModel {
   const {
     defaultViewModel: {
@@ -217,7 +218,7 @@ function loadSuccess(
 
 function unload(
   state: BrowseOrgsViewModel,
-  action: actions.Unload
+  action: actions.Unload,
 ): BrowseOrgsViewModel {
   return {
     loadingState: AsyncModelState.NONE,
@@ -226,7 +227,7 @@ function unload(
 
 function localReducer(
   state: BrowseOrgsViewModel,
-  action: Action
+  action: Action,
 ): BrowseOrgsViewModel | null {
   // NB using discriminant union nature of the ActionX types to narrow
   // the type.
@@ -261,9 +262,9 @@ function localReducer(
 
 export default function reducer(
   state: StoreState,
-  action: Action<any>
+  action: Action<any>,
 ): StoreState | null {
-  if (state.auth.userAuthorization === null) {
+  if (state.authentication.status !== AuthenticationStatus.AUTHENTICATED) {
     return null;
   }
 
@@ -281,7 +282,7 @@ export default function reducer(
 
   const browseOrgsView = localReducer(
     state.view.value.views.browseOrgs,
-    action
+    action,
   );
   if (browseOrgsView) {
     return {

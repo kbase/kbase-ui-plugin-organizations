@@ -11,11 +11,12 @@ import { UIServiceClient } from "../../data/apis/uiService";
 import { AppError } from "@kbase/ui-components";
 import {
   EditableOrganization,
-  ValidationState,
   SyncState,
   ValidationErrorType,
+  ValidationState,
 } from "../store/types/common";
 import { extractAddOrgModel, extractAppInfo } from "../../lib/stateExtraction";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 // ACTIONS
 
@@ -283,7 +284,7 @@ export function updateNameSuccess(name: string): UpdateNameSuccess {
 
 export function updateNameError(
   name: string,
-  error: ValidationState
+  error: ValidationState,
 ): UpdateNameError {
   return {
     type: ActionFlag.ADD_ORG_UPDATE_NAME_ERROR,
@@ -309,7 +310,7 @@ export function updateIdPass(id: string): UpdateIdPass {
 // Update Logo URL Hash
 
 export function updateLogoUrlSuccess(
-  logoUrl: string | null
+  logoUrl: string | null,
 ): UpdateLogoUrlSuccess {
   return {
     type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_SUCCESS,
@@ -319,7 +320,7 @@ export function updateLogoUrlSuccess(
 
 export function updateLogoUrlError(
   logoUrl: string | null,
-  error: ValidationState
+  error: ValidationState,
 ): UpdateLogoUrlError {
   return {
     type: ActionFlag.ADD_ORG_UPDATE_LOGO_URL_ERROR,
@@ -331,7 +332,7 @@ export function updateLogoUrlError(
 // Update Home URL Hash
 
 export function updateHomeUrlSuccess(
-  logoUrl: string | null
+  logoUrl: string | null,
 ): UpdateHomeUrlSuccess {
   return {
     type: ActionFlag.ADD_ORG_UPDATE_HOME_URL_SUCCESS,
@@ -341,7 +342,7 @@ export function updateHomeUrlSuccess(
 
 export function updateHomeUrlError(
   logoUrl: string | null,
-  error: ValidationState
+  error: ValidationState,
 ): UpdateHomeUrlError {
   return {
     type: ActionFlag.ADD_ORG_UPDATE_HOME_URL_ERROR,
@@ -354,7 +355,7 @@ export function updateHomeUrlError(
 
 export function updateIdError(
   id: string,
-  error: ValidationState
+  error: ValidationState,
 ): UpdateIdError {
   return {
     type: ActionFlag.ADD_ORG_UPDATE_ID_ERROR,
@@ -364,7 +365,7 @@ export function updateIdError(
 }
 
 export function updateDescriptionSuccess(
-  description: string
+  description: string,
 ): UpdateDescriptionSuccess {
   return {
     type: ActionFlag.ADD_ORG_UPDATE_DESCRIPTION_SUCCESS,
@@ -374,7 +375,7 @@ export function updateDescriptionSuccess(
 
 export function updateDescriptionError(
   description: string,
-  error: ValidationState
+  error: ValidationState,
 ): UpdateDescriptionError {
   return {
     type: ActionFlag.ADD_ORG_UPDATE_DESCRIPTION_ERROR,
@@ -388,7 +389,7 @@ export function updateDescriptionError(
 export function load() {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(loadStart());
 
@@ -461,7 +462,7 @@ export function load() {
 export function addOrg() {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     const state = getState();
 
@@ -523,7 +524,7 @@ export function addOrg() {
         saveError({
           code: "app",
           message: "The new organization data does not yet exist",
-        })
+        }),
       );
       return;
     }
@@ -542,7 +543,7 @@ export function addOrg() {
           saveError({
             code: error.code || error.name,
             message: error.message,
-          })
+          }),
         );
       });
   };
@@ -551,7 +552,7 @@ export function addOrg() {
 export function addOrgEvaluate() {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     const state = getState();
 
@@ -585,7 +586,7 @@ export function addOrgEvaluate() {
 
     if (
       newOrganization.researchInterests.validationState.type !==
-      ValidationErrorType.OK
+        ValidationErrorType.OK
     ) {
       dispatch(addOrgEvaluateErrors());
       return;
@@ -593,7 +594,7 @@ export function addOrgEvaluate() {
 
     if (
       newOrganization.description.validationState.type !==
-      ValidationErrorType.OK
+        ValidationErrorType.OK
     ) {
       dispatch(addOrgEvaluateErrors());
       return;
@@ -605,14 +606,14 @@ export function addOrgEvaluate() {
 
 function orgModelFromState(state: StoreState) {
   const {
-    auth: { userAuthorization },
+    authentication,
     app: { config },
   } = state;
 
-  if (userAuthorization === null) {
-    throw new Error("Unauthorized");
+  if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+    throw new Error("Not authenticated.");
   }
-  const { token, username } = userAuthorization;
+  const { userAuthentication: { token, username } } = authentication;
 
   return new orgModel.OrganizationModel({
     token,
@@ -692,7 +693,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "This logo url does not exist",
-              })
+              }),
             );
             break;
           case "invalid-content-type":
@@ -700,9 +701,9 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
               updateLogoUrlError(this.url, {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
-                message:
-                  "Invalid content type: " + result.error.info["content_type"],
-              })
+                message: "Invalid content type: " +
+                  result.error.info["content_type"],
+              }),
             );
             break;
           case "missing-content-type":
@@ -711,7 +712,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "Missing content type",
-              })
+              }),
             );
             break;
           default:
@@ -720,7 +721,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "unknown error",
-              })
+              }),
             );
             break;
         }
@@ -735,7 +736,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
           type: ValidationErrorType.ERROR,
           validatedAt: new Date(),
           message: "Error checking logo url: " + ex.message,
-        })
+        }),
       );
     }
     this.dispatch(addOrgEvaluate());
@@ -745,7 +746,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
 export function updateLogoUrl(logoUrl: string | null) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     if (checkLogoUrlProcess) {
       checkLogoUrlProcess.cancel();
@@ -772,7 +773,7 @@ export function updateLogoUrl(logoUrl: string | null) {
 
     if (validatedLogoUrl !== null && validatedLogoUrl.length > 0) {
       const {
-        auth: { userAuthorization },
+        authentication,
         app: {
           config: {
             services: {
@@ -782,10 +783,10 @@ export function updateLogoUrl(logoUrl: string | null) {
         },
       } = getState();
 
-      if (userAuthorization === null) {
-        throw new Error("Unauthorized");
+      if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+        throw new Error("Not authenticated.");
       }
-      const { token } = userAuthorization;
+      const { userAuthentication: { token } } = authentication;
 
       checkLogoUrlProcess = new CheckIfLogoUrlExistsProcess({
         delay: 100,
@@ -871,7 +872,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "This home url does not exist",
-              })
+              }),
             );
             break;
           case "invalid-content-type":
@@ -879,9 +880,9 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
               updateHomeUrlError(this.url, {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
-                message:
-                  "Invalid content type: " + result.error.info["content_type"],
-              })
+                message: "Invalid content type: " +
+                  result.error.info["content_type"],
+              }),
             );
             break;
           case "missing-content-type":
@@ -890,7 +891,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "Missing content type",
-              })
+              }),
             );
             break;
           default:
@@ -899,7 +900,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
                 message: "unknown error",
-              })
+              }),
             );
             break;
         }
@@ -913,7 +914,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
           type: ValidationErrorType.ERROR,
           validatedAt: new Date(),
           message: "Error checking home url: " + ex.message,
-        })
+        }),
       );
     }
     this.dispatch(addOrgEvaluate());
@@ -923,7 +924,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
 export function updateHomeUrl(homeUrl: string | null) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     if (checkHomeUrlProcess) {
       checkHomeUrlProcess.cancel();
@@ -950,7 +951,7 @@ export function updateHomeUrl(homeUrl: string | null) {
 
     if (validatedHomeUrl !== null && validatedHomeUrl.length > 0) {
       const {
-        auth: { userAuthorization },
+        authentication,
         app: {
           config: {
             services: {
@@ -960,10 +961,10 @@ export function updateHomeUrl(homeUrl: string | null) {
         },
       } = getState();
 
-      if (userAuthorization === null) {
-        throw new Error("Unauthorized");
+      if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+        throw new Error("Not authenticated.");
       }
-      const { token } = userAuthorization;
+      const { userAuthentication: { token } } = authentication;
 
       checkHomeUrlProcess = new CheckIfHomeUrlExistsProcess({
         delay: 100,
@@ -981,8 +982,8 @@ export function updateHomeUrl(homeUrl: string | null) {
 
 export function updateResearchInterests(researchInterests: string) {
   return (dispatch: ThunkDispatch<StoreState, void, Action>) => {
-    const [validatedResearchInterests, error] =
-      Validation.validateOrgResearchInterests(researchInterests);
+    const [validatedResearchInterests, error] = Validation
+      .validateOrgResearchInterests(researchInterests);
 
     if (error.type !== ValidationErrorType.OK) {
       dispatch({
@@ -1045,7 +1046,7 @@ class CheckIfExistsProcess extends DebouncingProcess {
             type: ValidationErrorType.ERROR,
             validatedAt: new Date(),
             message: "This org id is already in use",
-          })
+          }),
         );
       } else {
         this.dispatch(updateIdSuccess(this.id));
@@ -1059,7 +1060,7 @@ class CheckIfExistsProcess extends DebouncingProcess {
           type: ValidationErrorType.ERROR,
           validatedAt: new Date(),
           message: "Error checking for org id existence: " + ex.message,
-        })
+        }),
       );
     }
     this.dispatch(addOrgEvaluate());
@@ -1074,14 +1075,14 @@ updateId
 Handles updating an org id update from the new organization form.
 
 This action handles the normal field validation, but also requires a check
-that the org id is not in use. This requires an api call to the groups 
+that the org id is not in use. This requires an api call to the groups
 service, which introduces an indeterminate latency, and thus special handling.
 */
 
 export function updateId(id: string) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     if (checkIDProcess) {
       checkIDProcess.cancel();
@@ -1140,10 +1141,11 @@ export function updateId(id: string) {
 export function updateDescription(description: string) {
   return (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
-    const [validatedDescription, error] =
-      Validation.validateOrgDescription(description);
+    const [validatedDescription, error] = Validation.validateOrgDescription(
+      description,
+    );
 
     if (error.type !== ValidationErrorType.OK) {
       dispatch(updateDescriptionError(validatedDescription, error));

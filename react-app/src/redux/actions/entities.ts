@@ -10,6 +10,7 @@ import * as appModel from "../../data/models/apps";
 import { AnError, makeError } from "../../lib/error";
 import { AppError } from "@kbase/ui-components";
 import { extractViewOrgModelPlus } from "../../lib/stateExtraction";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 export interface EntityAction extends Action {}
 
@@ -55,19 +56,19 @@ export function userLoaderError(error: AppError): UserLoaderError {
 export function userLoader(userId: userModel.Username) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(userLoaderStart());
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token } = userAuthorization;
+    const { userAuthentication: { token } } = authentication;
 
     const model = new userModel.UserModel({
       token,
@@ -82,7 +83,7 @@ export function userLoader(userId: userModel.Username) {
         userLoaderError({
           code: "error",
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -116,7 +117,9 @@ export function organizationLoaderStart(): OrganizationLoaderStart {
 }
 
 export function organizationLoaderSuccess(
-  organization: orgModel.Organization | orgModel.InaccessiblePrivateOrganization
+  organization:
+    | orgModel.Organization
+    | orgModel.InaccessiblePrivateOrganization,
 ): OrganizationLoaderSuccess {
   return {
     type: ActionFlag.ENTITY_ORGANIZATION_LOADER_SUCCESS,
@@ -125,7 +128,7 @@ export function organizationLoaderSuccess(
 }
 
 export function organizationLoaderError(
-  error: AppError
+  error: AppError,
 ): OrganizationLoaderError {
   return {
     type: ActionFlag.ENTITY_ORGANIZATION_LOADER_ERROR,
@@ -136,19 +139,19 @@ export function organizationLoaderError(
 export function organizationLoader(organizationId: orgModel.OrganizationID) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(organizationLoaderStart());
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     const model = new orgModel.OrganizationModel({
       token,
@@ -165,7 +168,7 @@ export function organizationLoader(organizationId: orgModel.OrganizationID) {
         organizationLoaderError({
           code: "error",
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -194,21 +197,21 @@ interface LoadNarrativeError {
 export function loadNarrative(workspaceId: narrativeModel.WorkspaceID) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch({
       type: ActionFlag.ENTITY_NARRATIVE_LOAD_START,
     } as LoadNarrativeStart);
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token, username } = userAuthorization;
+    const { userAuthentication: { token, username } } = authentication;
 
     const narrativeClient = new narrativeModel.NarrativeModel({
       token,
@@ -266,7 +269,7 @@ export function accessNarrativeStart(): AccessNarrativeStart {
 }
 
 export function accessNarrativeSuccess(
-  organization: orgModel.Organization
+  organization: orgModel.Organization,
 ): AccessNarrativeSuccess {
   return {
     type: ActionFlag.VIEW_ORG_ACCESS_NARRATIVE_SUCCESS,
@@ -286,7 +289,7 @@ export function accessNarrativeError(error: AppError): AccessNarrativeError {
 export function accessNarrative(narrative: orgModel.NarrativeResource) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(accessNarrativeStart());
 
@@ -316,7 +319,7 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
             code: "invalid state",
             message:
               "Cannot access a Narrative for an inaccessible Organization",
-          })
+          }),
         );
         return;
       }
@@ -326,7 +329,7 @@ export function accessNarrative(narrative: orgModel.NarrativeResource) {
         accessNarrativeError({
           code: "error",
           message: ex.message,
-        })
+        }),
       );
     }
   };
@@ -376,19 +379,19 @@ function loadAppError(error: AnError): LoadAppError {
 export function loadApp(appId: appModel.AppID) {
   return async (
     dispatch: ThunkDispatch<StoreState, void, Action>,
-    getState: () => StoreState
+    getState: () => StoreState,
   ) => {
     dispatch(loadAppStart());
 
     const {
-      auth: { userAuthorization },
+      authentication,
       app: { config },
     } = getState();
 
-    if (userAuthorization === null) {
-      throw new Error("Unauthorized");
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      throw new Error("Not authenticated.");
     }
-    const { token } = userAuthorization;
+    const { userAuthentication: { token } } = authentication;
 
     const appClient = new appModel.AppClient({
       token,
@@ -404,8 +407,8 @@ export function loadApp(appId: appModel.AppID) {
           makeError({
             code: "error",
             message: ex.message,
-          })
-        )
+          }),
+        ),
       );
     }
   };

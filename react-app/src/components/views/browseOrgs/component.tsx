@@ -47,7 +47,7 @@ class OrganizationsBrowser extends React.Component<
   OrganizationsBrowserProps,
   OrganizationsBrowserState
 > {
-  searchInput: React.RefObject<Input>;
+  searchInput: React.RefObject<HTMLInputElement>;
   searchButton: React.RefObject<HTMLButtonElement>;
   filterByRoleValues: Array<any>;
   searchText: string;

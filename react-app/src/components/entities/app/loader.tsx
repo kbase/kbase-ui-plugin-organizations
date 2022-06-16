@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as appModel from "../../../data/models/apps";
-import App from "./component";
+import App, { View } from "./component";
 
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -13,6 +13,7 @@ interface LoaderProps {
   // TODO: don't really like AppFullInfo - as a name
   app: appModel.AppFullInfo | undefined;
   imageBaseURL: string;
+  initialView?: View;
   onLoad: (appId: appModel.AppID) => void;
 }
 
@@ -22,7 +23,7 @@ class Loader extends React.Component<LoaderProps, LoaderState> {
   render() {
     if (this.props.app) {
       return (
-        <App app={this.props.app} imageBaseURL={this.props.imageBaseURL} />
+        <App app={this.props.app} imageBaseURL={this.props.imageBaseURL} initialView={this.props.initialView || View.COMPACT}/>
       );
     } else {
       return (
