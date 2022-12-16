@@ -1,23 +1,23 @@
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 
-import * as orgModel from "../../../data/models/organization/model";
-import { StoreState } from "../../store/types";
-import { AnError, makeError } from "../../../lib/error";
-import Validation from "../../../data/models/organization/validation";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 import { ActionFlag } from "..";
-import * as viewOrgActions from "../viewOrg";
+import * as orgModel from "../../../data/models/organization/model";
+import Validation from "../../../data/models/organization/validation";
+import { AnError, makeError } from "../../../lib/error";
 import {
   extractViewOrgModelPlus,
-  extractViewOrgSubView,
+  extractViewOrgSubView
 } from "../../../lib/stateExtraction";
+import { StoreState } from "../../store/types";
 import {
   AsyncModelState,
   SyncState,
-  ValidationErrorType,
+  ValidationErrorType
 } from "../../store/types/common";
 import { SubViewKind } from "../../store/types/views/Main/views/ViewOrg";
-import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
+import * as viewOrgActions from "../viewOrg";
 
 // Loading
 
@@ -175,14 +175,18 @@ export interface LeaveOrg extends Action {
   organizationId: orgModel.OrganizationID;
 }
 
-interface LeaveOrgSuccess extends Action {
-  type: ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_LEAVE_ORG_SUCCESS;
-}
+// 
+// For some reason decided to avoid action functions in this case.
+// 
+// interface LeaveOrgSuccess extends Action {
+//   type: ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_LEAVE_ORG_SUCCESS;
+// }
 
-interface LeaveOrgError extends Action {
-  type: ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_LEAVE_ORG_ERROR;
-  error: AnError;
-}
+// interface LeaveOrgError extends Action {
+//   type: ActionFlag.VIEW_ORG_MANAGE_MEMBERSHIP_LEAVE_ORG_ERROR;
+//   error: AnError;
+// }
+
 
 export function leaveOrg(organizationId: orgModel.OrganizationID) {
   return async (

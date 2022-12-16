@@ -319,3 +319,15 @@ textarea.Lite.ant-input {
     flex-direction: column !important;
     min-height: 0;
 }
+
+/* NEW SUPPLEMENTAL STYLES */
+
+a {
+    background-color: initial;
+    color: rgb(51, 122, 183);
+    /* color: var(--ant-primary-color); */
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+    transition: color .3s;
+}

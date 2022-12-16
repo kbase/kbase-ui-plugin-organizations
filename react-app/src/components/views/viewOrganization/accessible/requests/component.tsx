@@ -1,16 +1,16 @@
-import * as React from 'react';
+import { Component, Fragment } from 'react';
 
-import './component.css';
-import Header from '../../../../Header';
-import { Button, Modal, Card, Alert } from 'antd';
-import User from '../../../../entities/UserContainer';
-import Narrative from '../../../../entities/NarrativeContainer';
-import * as requestModel from '../../../../../data/models/requests';
+import { AppstoreOutlined, ArrowRightOutlined, FileOutlined, MailOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { Alert, Button, Card, Modal } from 'antd';
 import * as orgModel from '../../../../../data/models/organization/model';
+import * as requestModel from '../../../../../data/models/requests';
 import { niceElapsed } from '../../../../../lib/time';
+import Narrative from '../../../../entities/NarrativeContainer';
+import User from '../../../../entities/UserContainer';
+import Header from '../../../../Header';
+import './component.css';
 import InboxRequest from './InboxRequestContainer';
 import OutboxRequest from './OutboxRequestContainer';
-import { UserOutlined, ArrowRightOutlined, TeamOutlined, MailOutlined, FileOutlined, AppstoreOutlined } from '@ant-design/icons';
 
 export interface RequestsProps {
     inbox: Array<requestModel.Request>;
@@ -30,7 +30,7 @@ export interface RequestsState {
     cancelToViewer: boolean;
 }
 
-class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> {
+class ManageGroupRequests extends Component<RequestsProps, RequestsState> {
 
     constructor(props: RequestsProps) {
         super(props);
@@ -435,9 +435,9 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
             );
         }
         return (
-            <React.Fragment>
+            <Fragment>
                 {inbox}
-            </React.Fragment>
+            </Fragment>
         );
     }
 
@@ -463,9 +463,9 @@ class ManageGroupRequests extends React.Component<RequestsProps, RequestsState> 
             );
         }
         return (
-            <React.Fragment>
+            <Fragment>
                 {outbox}
-            </React.Fragment>
+            </Fragment>
         );
     }
 

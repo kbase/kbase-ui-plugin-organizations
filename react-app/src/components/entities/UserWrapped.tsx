@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import * as userModel from '../../data/models/user';
 
 export interface UserProps {
@@ -9,7 +9,7 @@ export interface UserProps {
 interface UserState {
 }
 
-class User extends React.Component<UserProps, UserState> {
+class User extends Component<UserProps, UserState> {
     render() {
         return (
             this.props.render(this.props.user)

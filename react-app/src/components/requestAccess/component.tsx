@@ -1,8 +1,8 @@
-import * as React from 'react';
 import { Drawer, Radio } from 'antd';
-import './component.css';
+import { Component } from 'react';
 import * as orgModel from '../../data/models/organization/model';
 import { Member } from '../../redux/store/types/common';
+import './component.css';
 
 export interface RequestAccessProps {
     narrative: orgModel.NarrativeResource;
@@ -15,7 +15,7 @@ export interface RequestAccessState {
 
 }
 
-export class RequestAccess extends React.Component<RequestAccessProps, RequestAccessState> {
+export class RequestAccess extends Component<RequestAccessProps, RequestAccessState> {
 
 
     renderNarrativePermission() {

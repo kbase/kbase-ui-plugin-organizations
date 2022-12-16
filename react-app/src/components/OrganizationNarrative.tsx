@@ -1,10 +1,10 @@
-import * as React from 'react';
+import { GlobalOutlined, LockOutlined } from '@ant-design/icons';
+import { Button, Drawer, Tooltip } from 'antd';
+import { Component, Fragment } from 'react';
 import * as orgModel from '../data/models/organization/model';
-import { Button, Tooltip, Drawer } from 'antd';
 import Narrative from './entities/narrative/reduxAdapter';
 import NiceElapsedTime from './NiceElapsedTime';
 import './OrganizationNarrative.css';
-import { GlobalOutlined, LockOutlined } from '@ant-design/icons';
 
 export interface Props {
     organization: orgModel.Organization;
@@ -16,7 +16,7 @@ interface State {
     requestAccess: boolean;
 }
 
-export default class OrganizationNarrative extends React.Component<Props, State> {
+export default class OrganizationNarrative extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -124,7 +124,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
         }
 
         return (
-            <React.Fragment>
+            <Fragment>
                 <Tooltip title={permissionTooltip} placement="right">
                     <span style={{ cursor: 'help' }}>
                         <span className="field-label">your permission</span>
@@ -135,7 +135,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                 <Tooltip title={buttonTooltip} placement="right">
                     {shareButton}
                 </Tooltip>
-            </React.Fragment>
+            </Fragment>
         );
     }
 
@@ -165,12 +165,12 @@ export default class OrganizationNarrative extends React.Component<Props, State>
             if (narrative.permission === orgModel.UserWorkspacePermission.NONE &&
                 !narrative.isPublic) {
                 return (
-                    <React.Fragment>
+                    <Fragment>
                         <a href={'/narrative/' + narrative.workspaceId} target="_blank" rel="noopener noreferrer">
                             <div className="title">{narrative.title}</div>
                         </a>
                         <div>{this.renderNarrativePermission(narrative)}</div>
-                    </React.Fragment>
+                    </Fragment>
                 );
             }
             return (

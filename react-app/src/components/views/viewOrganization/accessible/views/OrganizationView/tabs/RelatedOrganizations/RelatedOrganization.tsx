@@ -1,6 +1,6 @@
-import * as React from 'react';
-import './RelatedOrganization.css';
+import { Component } from 'react';
 import * as orgModel from '../../../../../../../../data/models/organization/model';
+import './RelatedOrganization.css';
 
 export interface RelatedOrganizationProps {
     organizationId: orgModel.OrganizationID;
@@ -11,7 +11,7 @@ export interface RelatedOrganizationProps {
 export interface RelatedOrganizationState {
 }
 
-export default class RelatedOrganization extends React.Component<RelatedOrganizationProps, RelatedOrganizationState> {
+export default class RelatedOrganization extends Component<RelatedOrganizationProps, RelatedOrganizationState> {
 
 
     render() {

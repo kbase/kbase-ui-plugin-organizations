@@ -1,13 +1,12 @@
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 
-import { ActionFlag } from "../index";
 import { StoreState } from "../../store/types";
+import { ActionFlag } from "../index";
 
 import * as requestModel from "../../../data/models/requests";
-import * as viewOrgActions from "../viewOrg";
-import { AppError } from "@kbase/ui-components";
 import { extractViewOrgModelPlus } from "../../../lib/stateExtraction";
+import * as viewOrgActions from "../viewOrg";
 
 export interface AcceptRequestAction<T> extends Action<T> {}
 
@@ -17,10 +16,13 @@ export interface AcceptRequest
   request: requestModel.Request;
 }
 
-interface AcceptRequestStart
-  extends AcceptRequestAction<ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_START> {
-  type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_START;
-}
+//
+// Didn't use action wrapping functions, but kept the types for now.
+// 
+// interface AcceptRequestStart
+//   extends AcceptRequestAction<ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_START> {
+//   type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_START;
+// }
 
 export interface AcceptRequestSuccess
   extends AcceptRequestAction<ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_SUCCESS> {
@@ -28,11 +30,11 @@ export interface AcceptRequestSuccess
   requests: Array<requestModel.Request>;
 }
 
-interface AcceptRequestError
-  extends AcceptRequestAction<ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR> {
-  type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR;
-  error: AppError;
-}
+// interface AcceptRequestError
+//   extends AcceptRequestAction<ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR> {
+//   type: ActionFlag.VIEW_ORG_ACCEPT_INBOX_REQUEST_ERROR;
+//   error: AppError;
+// }
 
 export function acceptRequest(requestId: requestModel.RequestID) {
   return async (

@@ -1,10 +1,9 @@
-// import { AuthorizedServiceClient, ServiceClientParams, JSONPayload } from './serviceClient'
+// import {
+//   DynamicServiceClient,
+//   DynamicServiceClientParams
+// } from "./dynamicServiceClient";
 
-import {
-  DynamicServiceClient,
-  DynamicServiceClientParams,
-} from "./dynamicServiceClient";
-
+import { DynamicServiceClient, DynamicServiceClientParams } from '@kbase/ui-lib/lib/comm/JSONRPC11/DynamicServiceClient';
 import { RawObjectInfo, RawWorkspaceInfo } from "./workspaceUtils";
 
 export interface NarrativeServiceClientParams
@@ -39,13 +38,14 @@ export interface ListNarrativesResult {
 }
 
 export class NarrativeServiceClient extends DynamicServiceClient {
-  static module: string = "NarrativeService";
+  module: string = "NarrativeService";
 
   async listNarratives(type: string): Promise<ListNarrativesResult> {
     // note usage of unknown below -- Bluebird and native Promise!
     const [result] = await this.callFunc("list_narratives", [{
       type: type,
     }]);
-    return result;
+    // TODO: should have a function to ensure this is what it says it is.
+    return result as unknown as ListNarrativesResult;
   }
 }

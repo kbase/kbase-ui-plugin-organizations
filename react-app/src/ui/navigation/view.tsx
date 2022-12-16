@@ -1,12 +1,12 @@
-import {Component} from "react";
-import { Router } from "./Router";
-import RequestFetcher from "./Request";
-import { RouteSpec } from "./RouteSpec";
-import { Unsubscribe } from 'redux';
-import {RootState} from  "@kbase/ui-components"
+import { RootState } from "@kbase/ui-components";
 import { Navigation } from "@kbase/ui-components/lib/redux/integration/store";
+import { Component, PropsWithChildren } from "react";
+import { Unsubscribe } from 'redux';
+import RequestFetcher from "./Request";
+import { Router } from "./Router";
+import { RouteSpec } from "./RouteSpec";
 
-export interface NavigationListenerProps {
+export interface NavigationListenerProps extends PropsWithChildren{
   routes: Array<RouteSpec>;
   rootState: RootState;
   // navigationView: NavigationView;

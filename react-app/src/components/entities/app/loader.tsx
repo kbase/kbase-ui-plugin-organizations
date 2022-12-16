@@ -1,12 +1,12 @@
-import * as React from "react";
+import { Component } from "react";
 import * as appModel from "../../../data/models/apps";
 import App, { View } from "./component";
 
-import { Dispatch } from "redux";
-import { connect } from "react-redux";
-import { StoreState } from "../../../redux/store/types";
-import * as actions from "../../../redux/actions/entities";
 import { LoadingOutlined } from "@ant-design/icons";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
+import * as actions from "../../../redux/actions/entities";
+import { StoreState } from "../../../redux/store/types";
 
 interface LoaderProps {
   appId: appModel.AppID;
@@ -19,7 +19,7 @@ interface LoaderProps {
 
 interface LoaderState {}
 
-class Loader extends React.Component<LoaderProps, LoaderState> {
+class Loader extends Component<LoaderProps, LoaderState> {
   render() {
     if (this.props.app) {
       return (

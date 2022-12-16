@@ -1,41 +1,33 @@
-import { Button, Modal, Tooltip, Card, Alert, Tabs } from "antd";
+import { Alert, Button, Card, Modal, Tabs, Tooltip } from "antd";
 import DOMPurify from "dompurify";
-import {marked} from 'marked';
-import {Component} from "react";
+import { marked } from "marked";
+import { Component } from "react";
 
-import Header from "../../../../../Header";
-import Members from "../../members/reduxAdapter";
-import Requests from "../../requests";
-import Narratives from "../../narratives/component";
-import * as requestModel from "../../../../../../data/models/requests";
+import {
+  AppstoreOutlined,
+  CloseOutlined,
+  ExclamationCircleTwoTone,
+  FileOutlined,
+  InboxOutlined,
+  InfoCircleOutlined,
+  MailOutlined,
+  TeamOutlined,
+  UnlockOutlined,
+} from "@ant-design/icons";
 import * as orgModel from "../../../../../../data/models/organization/model";
-import "./component.css";
-import Apps from "../../apps/component";
+import * as requestModel from "../../../../../../data/models/requests";
 import {
   SubViewKind,
   ViewAccessibleOrgViewModel,
 } from "../../../../../../redux/store/types/views/Main/views/ViewOrg";
-import RelatedOrganizations from "./tabs/RelatedOrganizations";
-import {
-  ExclamationCircleTwoTone,
-  UnlockOutlined,
-  MailOutlined,
-  InboxOutlined,
-  TeamOutlined,
-  CloseOutlined,
-  InfoCircleOutlined,
-  FileOutlined,
-  AppstoreOutlined,
-} from "@ant-design/icons";
+import Header from "../../../../../Header";
 import Linker from "../../../../../Linker";
-
-// enum NavigateTo {
-//     NONE = 0,
-//     VIEW_MEMBERS,
-//     MANAGE_REQUESTS,
-//     VIEW_ORGANIZATION,
-//     BROWSER
-// }
+import Apps from "../../apps/component";
+import Members from "../../members/reduxAdapter";
+import Narratives from "../../narratives/component";
+import Requests from "../../requests";
+import "./component.css";
+import RelatedOrganizations from "./tabs/RelatedOrganizations";
 
 export interface OrgViewState {}
 
@@ -475,7 +467,7 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
 
     const isMember = this.props.viewModel.organization.isMember;
 
-    const tabs = [];
+    const tabItems = [];
 
     let memberCount;
     if (this.props.viewModel.organization.memberCount - 1) {
@@ -483,21 +475,18 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
     } else {
       memberCount = "Ø";
     }
-    tabs.push(
-      <Tabs.TabPane
-        tab={
-          <span>
-            <TeamOutlined />
-            Members{" "}
-            <span className="OrganizationView-tabCount">({memberCount})</span>
-          </span>
-        }
-        key="members"
-        style={{ flexDirection: "column" }}
-      >
-        {this.renderMembersTab()}
-      </Tabs.TabPane>
-    );
+
+    tabItems.push({
+      key: "members",
+      label: (
+        <span>
+          <TeamOutlined />
+          Members{" "}
+          <span className="OrganizationView-tabCount">({memberCount})</span>
+        </span>
+      ),
+      children: this.renderMembersTab(),
+    });
 
     if (isMember) {
       if (isAdmin) {
@@ -509,24 +498,22 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
             ({totalRequestCount || "Ø"})
           </span>
         );
-        tabs.push(
-          <Tabs.TabPane
-            tab={
-              <span>
-                <InboxOutlined />
-                Requests {totalRequests}{" "}
-              </span>
-            }
-            key="inbox"
-            style={{ flexDirection: "column" }}
-          >
+        tabItems.push({
+          key: "inbox",
+          label: (
+            <span>
+              <InboxOutlined />
+              Requests {totalRequests}{" "}
+            </span>
+          ),
+          children: (
             <Requests
               inbox={this.props.viewModel.requestInbox}
               outbox={this.props.viewModel.requestOutbox}
               relation={this.props.viewModel.relation}
             />
-          </Tabs.TabPane>
-        );
+          ),
+        });
       } else {
         const outboxSize = this.props.viewModel.requestOutbox.length;
         let titleCount;
@@ -535,57 +522,59 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
         } else {
           titleCount = "Ø";
         }
-        tabs.push(
-          <Tabs.TabPane
-            tab={
-              <span>
-                <InboxOutlined />
-                Requests{" "}
-                <span className="OrganizationView-tabCount">
-                  ({titleCount})
-                </span>
-              </span>
-            }
-            key="outbox"
-            style={{ flexDirection: "column" }}
-          >
+        tabItems.push({
+          key: "outbox",
+          label: (
+            <span>
+              <InboxOutlined />
+              Requests{" "}
+              <span className="OrganizationView-tabCount">({titleCount})</span>
+            </span>
+          ),
+          children: (
             <Requests
               inbox={[]}
               outbox={this.props.viewModel.requestOutbox}
               relation={this.props.viewModel.relation}
             />
-          </Tabs.TabPane>
-        );
+          ),
+        });
       }
     }
 
     const relatedOrgCount =
       this.props.viewModel.organization.relatedOrganizations.length;
-    const relatedOrgTab = (
-      <span>
-        <TeamOutlined />
-        Related Orgs{" "}
-        <span className="OrganizationView-tabCount">({relatedOrgCount})</span>
-      </span>
-    );
-    tabs.push(
-      <Tabs.TabPane
-        tab={relatedOrgTab}
-        key="relatedorgs"
-        style={{ flexDirection: "column" }}
-      >
-        {this.renderRelatedOrgsToolbar()}
-        <RelatedOrganizations
-          relatedOrganizations={
-            this.props.viewModel.organization.relatedOrganizations
-          }
-          organization={this.props.viewModel.organization}
-          onManageRelatedOrgs={() => {
-            this.onManageRelatedOrgs();
-          }}
-        />
-      </Tabs.TabPane>
-    );
+    // const relatedOrgTab = (
+    //   <span>
+    //     <TeamOutlined />
+    //     Related Orgs{" "}
+    //     <span className="OrganizationView-tabCount">({relatedOrgCount})</span>
+    //   </span>
+    // );
+    tabItems.push({
+      key: "relatedorgs",
+      label: (
+        <span>
+          <TeamOutlined />
+          Related Orgs{" "}
+          <span className="OrganizationView-tabCount">({relatedOrgCount})</span>
+        </span>
+      ),
+      children: (
+        <>
+          {this.renderRelatedOrgsToolbar()}
+          <RelatedOrganizations
+            relatedOrganizations={
+              this.props.viewModel.organization.relatedOrganizations
+            }
+            organization={this.props.viewModel.organization}
+            onManageRelatedOrgs={() => {
+              this.onManageRelatedOrgs();
+            }}
+          />
+        </>
+      ),
+    });
 
     return (
       <Tabs
@@ -594,9 +583,8 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
         animated={false}
         size="small"
         tabPosition="top"
-      >
-        {tabs}
-      </Tabs>
+        items={tabItems}
+      />
     );
   }
 
@@ -617,40 +605,7 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
 
   onNavigateToOrgsBrowser() {
     this.props.navigateToBrowser();
-    // this.setState({ navigateTo: NavigateTo.BROWSER });
   }
-
-  // onMenuClick({ key }: { key: string; }) {
-  //     switch (key) {
-  //         case 'manageMyMembership':
-  //             this.props.openSubview(SubViewKind.MANAGE_MEMBERSHIP);
-  //             // this.setState({ subView: SubViewKind.MANAGE_MEMBERSHIP });
-  //             break;
-  //         case 'viewMembers':
-  //             this.setState({ navigateTo: NavigateTo.VIEW_MEMBERS });
-  //             break;
-  //         case 'editOrg':
-  //             this.props.openSubview(SubViewKind.EDIT_ORGANIZATION);
-  //             // this.setState({ subView: SubViewKind.EDIT_ORGANIZATION });
-  //             break;
-  //         case 'inviteUser':
-  //             this.props.openSubview(SubViewKind.INVITE_USER);
-  //             // this.setState({ subView: SubViewKind.INVITE_USER });
-  //             break;
-  //         case 'manageRequests':
-  //             this.setState({ navigateTo: NavigateTo.MANAGE_REQUESTS });
-  //             break;
-  //         case 'addNarrative':
-  //             this.setState({ subView: SubViewKind.ADD_NARRATIVE });
-  //             break;
-  //         case 'addApp':
-  //             this.setState({ subView: SubViewKind.ADD_APP });
-  //             break;
-  //         case 'manageRelatedOrgs':
-  //             this.setState({ subView: SubViewKind.MANAGE_RELATED_ORGS });
-  //             break;
-  //     }
-  // }
 
   renderDescriptionTab() {
     if (!this.props.viewModel.organization) {
@@ -661,7 +616,10 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
         <div
           className="OrganizationView-org-description"
           // xss safe
-          dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(marked.parse(this.props.viewModel.organization.description || "")),
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(
+              marked.parse(this.props.viewModel.organization.description || "")
+            ),
           }}
         />
       </div>
@@ -690,6 +648,7 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
       <Apps
         organization={this.props.viewModel.organization}
         apps={this.props.viewModel.apps}
+        relation={this.props.viewModel.relation}
         onAssociateApp={this.onAssociateApp.bind(this)}
         onRemoveApp={this.props.onRemoveApp}
         onSearchApps={this.props.onSearchApps}
@@ -699,7 +658,7 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
   }
 
   renderMainTabs() {
-    const tabs = [];
+    const tabList = [];
 
     const aboutTabTitle = (
       <span>
@@ -707,15 +666,11 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
         About
       </span>
     );
-    tabs.push(
-      <Tabs.TabPane
-        tab={aboutTabTitle}
-        key="about"
-        style={{ flexDirection: "column" }}
-      >
-        {this.renderDescriptionTab()}
-      </Tabs.TabPane>
-    );
+    tabList.push({
+      key: "about",
+      label: aboutTabTitle,
+      children: this.renderDescriptionTab(),
+    });
 
     const narrativeCount = this.props.viewModel.narratives.narratives.length;
     const narrativesTabTitle = (
@@ -726,15 +681,11 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
       </span>
     );
 
-    tabs.push(
-      <Tabs.TabPane
-        tab={narrativesTabTitle}
-        key="narratives"
-        style={{ flexDirection: "column" }}
-      >
-        {this.renderNarrativesTab()}
-      </Tabs.TabPane>
-    );
+    tabList.push({
+      key: "narratives",
+      label: narrativesTabTitle,
+      children: this.renderNarrativesTab(),
+    });
 
     const appCount = this.props.viewModel.organization.appCount;
     const appsTabTitle = (
@@ -743,15 +694,11 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
         Apps <span className="OrganizationView-tabCount">({appCount})</span>
       </span>
     );
-    tabs.push(
-      <Tabs.TabPane
-        tab={appsTabTitle}
-        key="apps"
-        style={{ flexDirection: "column" }}
-      >
-        {this.renderAppsTab()}
-      </Tabs.TabPane>
-    );
+    tabList.push({
+      key: "apps",
+      label: appsTabTitle,
+      children: this.renderAppsTab(),
+    });
 
     let defaultActiveKey: string;
     if (this.props.viewModel.organization.isMember) {
@@ -767,15 +714,14 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
         animated={false}
         size="small"
         tabPosition="top"
-      >
-        {tabs}
-      </Tabs>
+        items={tabList}
+      />
     );
   }
 
   render() {
     return (
-      <div className="OrganizationView-mainRow scrollable-flex-column">
+      <div className="OrganizationView-mainRow xscrollable-flex-column">
         <div className="OrganizationView-mainColumn  scrollable-flex-column">
           {this.renderMainTabs()}
         </div>

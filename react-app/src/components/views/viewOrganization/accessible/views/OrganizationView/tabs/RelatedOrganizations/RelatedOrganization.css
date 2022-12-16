@@ -29,6 +29,7 @@
 .RelatedOrganization-logoCol {
     flex: 0 0 20px;
     margin-right: 4px;
+    overflow-y: hidden;
 }
 
 .RelatedOrganization-name {

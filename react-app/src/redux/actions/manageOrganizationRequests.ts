@@ -1,15 +1,15 @@
-import { ActionFlag } from "./index";
-import { StoreState } from "../store/types";
-import { ThunkDispatch } from "redux-thunk";
-import { Action } from "redux";
-import * as requestModel from "../../data/models/requests";
-import * as orgModel from "../../data/models/organization/model";
 import { AppError } from "@kbase/ui-components";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
+import { Action } from "redux";
+import { ThunkDispatch } from "redux-thunk";
+import * as orgModel from "../../data/models/organization/model";
+import * as requestModel from "../../data/models/requests";
 import {
   extractManageOrganizationRequestsModel,
-  extractViewOrgModelPlus,
+  extractViewOrgModelPlus
 } from "../../lib/stateExtraction";
-import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
+import { StoreState } from "../store/types";
+import { ActionFlag } from "./index";
 
 // Action types
 
@@ -437,7 +437,7 @@ export function cancelJoinInvitation(requestId: string) {
     });
 
     try {
-      const request = await requestClient.cancelRequest(requestId);
+      await requestClient.cancelRequest(requestId);
       dispatch(load(viewModel.organization.id));
     } catch (ex: any) {
       dispatch(

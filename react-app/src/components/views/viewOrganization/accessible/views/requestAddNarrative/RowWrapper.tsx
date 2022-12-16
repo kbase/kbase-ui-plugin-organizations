@@ -1,12 +1,12 @@
-import {Component, createRef} from 'react'
-import './RowWrapper.css'
+import { Component, createRef, PropsWithChildren } from 'react';
+import './RowWrapper.css';
 
 export interface Dimensions {
     offsetHeight: number,
     scrollTop: number,
     clientHeight: number
 }
-export interface RowWrapperProps {
+export interface RowWrapperProps extends PropsWithChildren{
     index: number
     containerDimensions: Dimensions | null
     buffer: number

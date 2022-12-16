@@ -1,5 +1,4 @@
-import React from 'react';
-
+import { Component } from 'react';
 export interface TestProps {
     id: string;
 }
@@ -7,7 +6,7 @@ export interface TestProps {
 interface TestState {
 }
 
-export default class TestComponent extends React.Component<TestProps, TestState> {
+export default class TestComponent extends Component<TestProps, TestState> {
     render() {
         return (
             <div>

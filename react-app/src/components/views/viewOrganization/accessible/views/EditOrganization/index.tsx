@@ -1,18 +1,18 @@
-import * as React from 'react';
+import { Component } from 'react';
+import * as orgModel from '../../../../../../data/models/organization/model';
 import { StoreState } from '../../../../../../redux/store/types';
 import Container from './container';
-import * as orgModel from '../../../../../../data/models/organization/model';
 
-import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
 
-import * as actions from '../../../../../../redux/actions/viewOrganization/editOrg';
-import { Alert, Spin } from 'antd';
-import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
-import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
-import { EditOrgViewModel } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/EditOrg';
-import { AsyncModelState, AsyncModel } from '../../../../../../redux/store/types/common';
 import { AppError } from '@kbase/ui-components';
+import { Alert, Spin } from 'antd';
+import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
+import * as actions from '../../../../../../redux/actions/viewOrganization/editOrg';
+import { AsyncModel, AsyncModelState } from '../../../../../../redux/store/types/common';
+import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
+import { EditOrgViewModel } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/EditOrg';
 
 // First the loader component, which takes care of a loading view, error view, and the 
 // container.
@@ -28,7 +28,7 @@ export interface LoaderProps {
 interface LoaderState {
 }
 
-class Loader extends React.Component<LoaderProps, LoaderState> {
+class Loader extends Component<LoaderProps, LoaderState> {
     renderLoading() {
         const message = (
             <div>

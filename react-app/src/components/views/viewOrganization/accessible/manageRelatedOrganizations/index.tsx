@@ -1,17 +1,17 @@
-import * as React from 'react';
-import { Spin, Alert } from 'antd';
+import { Alert, Spin } from 'antd';
+import { Component } from 'react';
 import Container from './reduxAdapter';
 
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
-import * as types from '../../../../../redux/store/types';
-import * as actions from '../../../../../redux/actions/viewOrganization/manageRelatedOrganizations';
 import { AppError } from '@kbase/ui-components';
-import { ManageRelatedOrgsViewModel } from '../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
-import { AsyncModelState, AsyncModel } from '../../../../../redux/store/types/common';
 import { extractViewOrgSubView } from '../../../../../lib/stateExtraction';
+import * as actions from '../../../../../redux/actions/viewOrganization/manageRelatedOrganizations';
+import * as types from '../../../../../redux/store/types';
+import { AsyncModel, AsyncModelState } from '../../../../../redux/store/types/common';
 import { SubViewKind } from '../../../../../redux/store/types/views/Main/views/ViewOrg';
+import { ManageRelatedOrgsViewModel } from '../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
 
 
 export interface Props {
@@ -24,7 +24,7 @@ export interface Props {
 interface State {
 }
 
-class Loader extends React.Component<Props, State> {
+class Loader extends Component<Props, State> {
     renderLoading() {
         const message = (
             <div>

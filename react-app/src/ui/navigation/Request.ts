@@ -18,34 +18,13 @@ export interface Query {
   [key: string]: string;
 }
 
-function parseQueryString(queryString: string): Query {
-  const fields = queryString.split(/[?&]/);
-  const params: Query = {};
-  fields.forEach((field) => {
-    if (field.length > 0) {
-      const [key, value] = field.split("=");
-      if (key.length > 0) {
-        params[decodeURIComponent(key)] = decodeURIComponent(value);
-      }
-    }
-  });
-  return params;
-}
-
-function getQuery(): Query {
-  const query = window.location.search;
-  if (!query || query.length === 1) {
-    return {};
-  }
-  return parseQueryString(query.substr(1));
-}
-
 export default class RequestFetcher {
   getHashRequest(): Request {
-    let hashQuery: Query = {};
+    // let hashQuery: Query = {};
 
     // Also get the query the normal way ...
-    const query = getQuery();
+    // const query = getQuery();
+    const url = new URL(window.location.href);
 
     // Handle top level window and iframe.
     let global;
@@ -67,10 +46,15 @@ export default class RequestFetcher {
     // Merge the query attached to the hash with the real query.
     // The real query will most likely be empty.
     if (pathAndQuery.length === 2) {
-      hashQuery = parseQueryString(pathAndQuery[1]);
-      Object.keys(hashQuery).forEach((key) => {
-        query[key] = hashQuery[key];
-      });
+      for (const [key, value] of new URLSearchParams(pathAndQuery[1]).entries()) {
+        url.searchParams.set(key, value);
+      }
+    }
+
+    const query: Query = {}
+    
+    for (const [key, value] of url.searchParams.entries()) {
+      query[key] = value;
     }
 
     // Get a normalized path as an array.

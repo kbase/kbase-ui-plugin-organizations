@@ -1,6 +1,6 @@
-import {Component} from 'react';
+import { Component, PropsWithChildren } from 'react';
 
-export interface Props {
+export interface Props  extends PropsWithChildren {
     onLoad: () => void;
     onUnload: () => void;
 }

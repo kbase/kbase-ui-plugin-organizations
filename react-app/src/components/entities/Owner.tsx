@@ -1,10 +1,10 @@
-import * as React from 'react';
+import { Component } from 'react';
 import './Owner.css';
 
-import Avatar from './Avatar';
-import { Tooltip, Button } from 'antd';
+import { CrownOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
+import { Button, Tooltip } from 'antd';
 import * as userModel from '../../data/models/user';
-import { CrownOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
+import Avatar from './Avatar';
 
 enum View {
     COMPACT = 0,
@@ -30,7 +30,7 @@ function reverseView(v: View) {
     }
 }
 
-export default class Owner extends React.Component<OwnerProps, OwnerState> {
+export default class Owner extends Component<OwnerProps, OwnerState> {
     constructor(props: OwnerProps) {
         super(props);
 

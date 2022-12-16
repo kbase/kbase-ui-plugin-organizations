@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { SomeError } from '../../redux/store/types';
 import { Alert, Collapse } from 'antd';
+import { Component } from 'react';
+import { SomeError } from '../../redux/store/types';
 import './component.css';
 
 export interface ErrorProps {
@@ -11,7 +11,7 @@ interface ErrorState {
 
 }
 
-export default class Error extends React.Component<ErrorProps, ErrorState> {
+export default class Error extends Component<ErrorProps, ErrorState> {
 
 
     renderDetail() {

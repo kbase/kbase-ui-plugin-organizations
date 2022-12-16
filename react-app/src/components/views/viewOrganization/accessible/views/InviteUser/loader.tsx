@@ -1,19 +1,19 @@
-import * as React from 'react';
+import { Component } from 'react';
 
-import Container from './container';
 import {
     StoreState
 } from '../../../../../../redux/store/types';
+import Container from './container';
 
-import { Dispatch } from 'redux';
+import { AppError } from '@kbase/ui-components';
+import { Alert, Spin } from 'antd';
 import { connect } from 'react-redux';
-import * as actions from '../../../../../../redux/actions/viewOrganization/inviteUser';
-import { Spin, Alert } from 'antd';
+import { Dispatch } from 'redux';
 import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
+import * as actions from '../../../../../../redux/actions/viewOrganization/inviteUser';
+import { AsyncModel, AsyncModelState } from '../../../../../../redux/store/types/common';
 import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
 import { InviteUserViewModel } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/InviteUser';
-import { AsyncModelState, AsyncModel } from '../../../../../../redux/store/types/common';
-import { AppError } from '@kbase/ui-components';
 
 export interface InviteUserLoaderProps {
     view: AsyncModel<InviteUserViewModel>;
@@ -26,7 +26,7 @@ export interface InviteUserLoaderProps {
 interface InviteUserLoaderState {
 }
 
-class InviteUserLoader extends React.Component<InviteUserLoaderProps, InviteUserLoaderState> {
+class InviteUserLoader extends Component<InviteUserLoaderProps, InviteUserLoaderState> {
     renderLoading() {
         const message = (
             <div>

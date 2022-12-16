@@ -6,6 +6,7 @@
 .OrganizationEntity-Inaccessible-logoCol {
     flex: 0 0 30px;
     margin-right: 4px;
+    overflow-y: hidden;
 }
 
 .OrganizationEntity-Inaccessible-mainCol {

@@ -1,22 +1,23 @@
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 
-import { ActionFlag } from "./index";
 import { StoreState } from "../store/types";
+import { ActionFlag } from "./index";
 
+import { AppError } from "@kbase/ui-components";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
+import { JSONRPC11Exception } from "@kbase/ui-lib/lib/comm/JSONRPC11/JSONRPC11";
+import { UIServiceClient } from "../../data/apis/uiService";
 import * as orgModel from "../../data/models/organization/model";
 import Validation from "../../data/models/organization/validation";
 import DebouncingProcess from "../../lib/DebouncingProcess";
-import { UIServiceClient } from "../../data/apis/uiService";
-import { AppError } from "@kbase/ui-components";
+import { extractAddOrgModel, extractAppInfo } from "../../lib/stateExtraction";
 import {
   EditableOrganization,
   SyncState,
   ValidationErrorType,
-  ValidationState,
+  ValidationState
 } from "../store/types/common";
-import { extractAddOrgModel, extractAppInfo } from "../../lib/stateExtraction";
-import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
 
 // ACTIONS
 
@@ -673,6 +674,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
       const client = new UIServiceClient({
         url: this.serviceWizardURL,
         token: this.token,
+        timeout: this.timeout
       });
       const result = await client.checkImageURL({
         url: this.url,
@@ -852,7 +854,9 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
       const client = new UIServiceClient({
         url: this.serviceWizardURL,
         token: this.token,
+        timeout: this.timeout
       });
+
       const result = await client.checkHTMLURL({
         url: this.url,
         timeout: this.timeout,
@@ -865,7 +869,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
       if (result.is_valid) {
         this.dispatch(updateHomeUrlSuccess(this.url));
       } else {
-        switch (result.error.code) {
+        switch (result.code) {
           case "not-found":
             this.dispatch(
               updateHomeUrlError(this.url, {
@@ -894,28 +898,34 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
               }),
             );
             break;
-          default:
+        }
+      }
+    } catch (ex) {
+        if (ex instanceof JSONRPC11Exception) {
             this.dispatch(
               updateHomeUrlError(this.url, {
                 type: ValidationErrorType.ERROR,
                 validatedAt: new Date(),
-                message: "unknown error",
+                message: ex.message,
               }),
             );
-            break;
+        } else if (ex instanceof Error) {
+          this.dispatch(
+              updateHomeUrlError(this.url, {
+                type: ValidationErrorType.ERROR,
+                validatedAt: new Date(),
+                message: "Error checking home url: " + ex.message,
+              }),
+            );
+        } else {
+          this.dispatch(
+              updateHomeUrlError(this.url, {
+                type: ValidationErrorType.ERROR,
+                validatedAt: new Date(),
+                message: "Unknown error checking home url",
+              }),
+            );
         }
-      }
-    } catch (ex: any) {
-      if (this.canceled) {
-        return;
-      }
-      this.dispatch(
-        updateHomeUrlError(this.url, {
-          type: ValidationErrorType.ERROR,
-          validatedAt: new Date(),
-          message: "Error checking home url: " + ex.message,
-        }),
-      );
     }
     this.dispatch(addOrgEvaluate());
   }

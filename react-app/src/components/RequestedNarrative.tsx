@@ -1,7 +1,7 @@
-import * as React from 'react';
-import * as orgModel from '../data/models/organization/model';
-import { Button, Tooltip, Drawer } from 'antd';
 import { GlobalOutlined, LockOutlined } from '@ant-design/icons';
+import { Button, Drawer, Tooltip } from 'antd';
+import { Component, Fragment } from 'react';
+import * as orgModel from '../data/models/organization/model';
 
 export interface Props {
     narrative: orgModel.NarrativeResource;
@@ -12,7 +12,7 @@ interface State {
     requestAccess: boolean;
 }
 
-export default class OrganizationNarrative extends React.Component<Props, State> {
+export default class OrganizationNarrative extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -121,7 +121,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
         }
 
         return (
-            <React.Fragment>
+            <Fragment>
                 <Tooltip title={permissionTooltip} placement="right">
                     <span style={{ cursor: 'help' }}>
                         <span className="field-label">your permission</span>
@@ -132,7 +132,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                 <Tooltip title={buttonTooltip} placement="right">
                     {shareButton}
                 </Tooltip>
-            </React.Fragment>
+            </Fragment>
         );
     }
 
@@ -160,7 +160,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
         const narrative = this.props.narrative;
         if (narrative.permission === orgModel.UserWorkspacePermission.NONE) {
             return (
-                <React.Fragment>
+                <Fragment>
                     <div className="title">{narrative.title}</div>
                     <div>{this.renderPublicPermission(narrative)}</div>
                     <div>{this.renderNarrativePermission(narrative)}</div>
@@ -168,11 +168,11 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                     {/* <div><i>abstract here?</i></div> */}
                     <div><i>One-liner abstract?</i></div>
                     <div><i>created, saved info here?</i></div>
-                </React.Fragment>
+                </Fragment>
             );
         } else {
             return (
-                <React.Fragment>
+                <Fragment>
                     <div className="title"><a href={'/narrative/ws.' + narrative.workspaceId + '.obj.' + '1'} target="_blank" rel="noopener noreferrer">{narrative.title}</a></div>
                     <div>{this.renderPublicPermission(narrative)}</div>
                     <div>{this.renderNarrativePermission(narrative)}</div>
@@ -180,7 +180,7 @@ export default class OrganizationNarrative extends React.Component<Props, State>
                     {/* <div><i>abstract here?</i></div> */}
                     <div><i>One-liner abstract?</i></div>
                     <div><i>created, saved info here?</i></div>
-                </React.Fragment>
+                </Fragment>
             );
         }
     }

@@ -1,19 +1,19 @@
-import * as React from 'react';
+import { Component, Fragment } from 'react';
 import {
     StoreState
 } from '../../../../../../redux/store/types';
 import Container from './container';
 
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import * as actions from '../../../../../../redux/actions/viewOrganization/manageMembership';
-import { Alert } from 'antd';
-import { ManageMembershipViewModel } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageMembership';
-import { AsyncModelState, AsyncModel } from '../../../../../../redux/store/types/common';
-import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
-import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
-import { AppError } from '@kbase/ui-components';
 import { LoadingOutlined } from '@ant-design/icons';
+import { AppError } from '@kbase/ui-components';
+import { Alert } from 'antd';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
+import * as actions from '../../../../../../redux/actions/viewOrganization/manageMembership';
+import { AsyncModel, AsyncModelState } from '../../../../../../redux/store/types/common';
+import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
+import { ManageMembershipViewModel } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageMembership';
 
 export interface Props {
     organizationId: string;
@@ -26,12 +26,12 @@ export interface Props {
 interface State {
 }
 
-class Loader extends React.Component<Props, State> {
+class Loader extends Component<Props, State> {
     renderLoading() {
         const message = (
-            <React.Fragment>
+            <Fragment>
                 <LoadingOutlined />{' '}Loading Your Membership...
-            </React.Fragment>
+            </Fragment>
         );
         return (
             <Alert type="info" message={message}

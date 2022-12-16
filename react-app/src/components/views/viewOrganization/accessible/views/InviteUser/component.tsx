@@ -1,18 +1,15 @@
-import * as React from 'react';
-import { Button, Alert, Tooltip } from 'antd';
-import UserComponent from '../../../../../User';
+import { CrownOutlined, InboxOutlined, LockOutlined, MailOutlined, RollbackOutlined, SearchOutlined, StopOutlined, UnlockOutlined, UserOutlined } from '@ant-design/icons';
+import { Alert, Button, Tooltip } from 'antd';
+import { Component, createRef } from 'react';
 import * as orgModel from '../../../../../../data/models/organization/model';
 import * as userModel from '../../../../../../data/models/user';
-import MainMenu from '../../../../../menu/component';
-import UserEntityComponent from '../../../../../entities/UserWrappedContainer';
-import './component.css';
-import Avatar from '../../../../../entities/Avatar';
-import { InviteUserViewState } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/InviteUser';
 import { OrganizationUser, User } from '../../../../../../redux/store/types/common';
-import {
-    UserOutlined, CrownOutlined, MailOutlined, InboxOutlined, LockOutlined,
-    StopOutlined, UnlockOutlined, SearchOutlined, RollbackOutlined
-} from '@ant-design/icons';
+import { InviteUserViewState } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/InviteUser';
+import Avatar from '../../../../../entities/Avatar';
+import UserEntityComponent from '../../../../../entities/UserWrappedContainer';
+import MainMenu from '../../../../../menu/component';
+import UserComponent from '../../../../../User';
+import './component.css';
 
 export interface InviteUserProps {
     organization: orgModel.Organization,
@@ -31,7 +28,7 @@ export interface InviteUserProps {
 interface InviteUserState {
     autocompleteMessage: string;
 }
-class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
+class InviteUser extends Component<InviteUserProps, InviteUserState> {
 
     lastSearchAt: Date | null;
 
@@ -44,8 +41,8 @@ class InviteUser extends React.Component<InviteUserProps, InviteUserState> {
         super(props);
 
         this.lastSearchAt = null;
-        this.searchInput = React.createRef();
-        this.searchButton = React.createRef();
+        this.searchInput = createRef();
+        this.searchButton = createRef();
 
         this.state = {
             autocompleteMessage: ''

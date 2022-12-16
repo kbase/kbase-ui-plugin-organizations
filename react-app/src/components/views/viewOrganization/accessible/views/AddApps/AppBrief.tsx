@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Component } from 'react';
 import * as appModel from '../../../../../../data/models/apps';
 import './AppBrief.css';
 
@@ -10,7 +10,7 @@ interface AppBriefState {
 
 }
 
-export default class AppBrief extends React.Component<AppBriefProps, AppBriefState> {
+export default class AppBrief extends Component<AppBriefProps, AppBriefState> {
 
 
     render() {

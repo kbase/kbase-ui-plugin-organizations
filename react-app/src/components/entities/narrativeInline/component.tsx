@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Component } from 'react';
 import * as narrativeModel from '../../../data/models/narrative';
 import './component.css';
 
@@ -9,7 +9,7 @@ export interface NarrativeProps {
 interface NarrativeState {
 }
 
-export default class Narrative extends React.Component<NarrativeProps, NarrativeState> {
+export default class Narrative extends Component<NarrativeProps, NarrativeState> {
 
 
     render() {

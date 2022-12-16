@@ -87,8 +87,7 @@
   height: 100%;
 }
 
-.OrganizationsBrowser-controlArea {
-}
+.OrganizationsBrowser-controlArea {}
 
 .OrganizationsBrowser-controlGroup {
   border: 1px rgba(200, 200, 200, 0.5) solid;
@@ -108,18 +107,18 @@
   text-align: center;
 }
 
-.OrganizationsBrowser-controlArea > .controlGroup > .row {
+.OrganizationsBrowser-controlArea>.controlGroup>.row {
   padding: 4px;
   cursor: pointer;
   /* height: 2em; */
 }
 
-.OrganizationsBrowser-controlArea > .controlGroup > .row > .col1 {
+.OrganizationsBrowser-controlArea>.controlGroup>.row>.col1 {
   display: inline-block;
   width: 10%;
 }
 
-.OrganizationsBrowser-controlArea > .controlGroup > .row > .col2 {
+.OrganizationsBrowser-controlArea>.controlGroup>.row>.col2 {
   /* display: inline-block; */
   /* width: 90% */
 }
@@ -131,11 +130,11 @@
   align-items: center;
 }
 
-.OrganizationsBrowser-searchBar > .col1 {
+.OrganizationsBrowser-searchBar>.col1 {
   flex: 2 1 0px;
 }
 
-.OrganizationsBrowser-searchBar > .col2 {
+.OrganizationsBrowser-searchBar>.col2 {
   flex: 1 1 0px;
   text-align: right;
 }
@@ -145,18 +144,18 @@
   margin-left: 1em;
 }
 
-.OrganizationsBrowser-checkboxGroup.ant-checkbox-group {
+/* .OrganizationsBrowser-checkboxGroup.ant-checkbox-group {
   display: block;
   margin-left: 8px;
-}
+} */
 
-.OrganizationsBrowser-checkboxGroup .ant-checkbox-group-item,
+/* .OrganizationsBrowser-checkboxGroup .ant-checkbox-group-item,
 .OrganizationsBrowser-checkboxGroup
   .ant-checkbox-group-item
   + .ant-checkbox-group-item {
-  display: block;
+  display: inline-block;
   margin-bottom: 4px;
-}
+} */
 
 .OrganizationsBrowser-searchFeedback {
   width: 12em;

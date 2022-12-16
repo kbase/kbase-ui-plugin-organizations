@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Component } from 'react';
 import './Header.css';
 // import { ClickParam } from 'antd/lib/menu';
 import { RightOutlined } from '@ant-design/icons';
@@ -15,7 +15,7 @@ interface HeaderState {
 }
 
 
-class Header extends React.Component<HeaderProps, HeaderState> {
+class Header extends Component<HeaderProps, HeaderState> {
 
     constructor(props: HeaderProps, context: React.Context<any>) {
         super(props);

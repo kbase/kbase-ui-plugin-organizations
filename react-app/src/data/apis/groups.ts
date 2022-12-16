@@ -64,6 +64,7 @@ export interface BriefGroup {
   memcount: number;
   rescount: {
     workspace: number;
+    catalogmethod: number;
   };
 }
 

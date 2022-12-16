@@ -1,11 +1,10 @@
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 
-import { ActionFlag } from "../index";
 import { StoreState } from "../../store/types";
+import { ActionFlag } from "../index";
 
 import * as requestModel from "../../../data/models/requests";
-import { AppError } from "@kbase/ui-components";
 import { extractViewOrgModelPlus } from "../../../lib/stateExtraction";
 
 // Reject inbound request
@@ -18,10 +17,13 @@ export interface RejectInboxRequest
   request: requestModel.Request;
 }
 
-interface RejectInboxRequestStart
-  extends RejectRequestAction<ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_START> {
-  type: ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_START;
-}
+//
+// Didn't use action wrapping functions, but preserving the types for them
+// 
+// interface RejectInboxRequestStart
+//   extends RejectRequestAction<ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_START> {
+//   type: ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_START;
+// }
 
 export interface RejectInboxRequestSuccess
   extends RejectRequestAction<ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_SUCCESS> {
@@ -29,11 +31,11 @@ export interface RejectInboxRequestSuccess
   requests: Array<requestModel.Request>;
 }
 
-interface RejectInboxRequestError
-  extends RejectRequestAction<ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_ERROR> {
-  type: ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_ERROR;
-  error: AppError;
-}
+// interface RejectInboxRequestError
+//   extends RejectRequestAction<ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_ERROR> {
+//   type: ActionFlag.VIEW_ORG_REJECT_INBOX_REQUEST_ERROR;
+//   error: AppError;
+// }
 
 export function denyRequest(requestId: requestModel.RequestID) {
   return async (

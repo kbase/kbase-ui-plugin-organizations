@@ -1,9 +1,9 @@
-import * as React from 'react';
+import { Component } from 'react';
 import * as orgModel from '../../../data/models/organization/model';
-import './component.css';
+import Linker from '../../Linker';
 import OrgLogo from '../../OrgLogo';
 import Owner from '../OwnerContainer';
-import Linker from '../../Linker';
+import './component.css';
 
 export interface OrganizationProps {
     organization: orgModel.Organization;
@@ -13,7 +13,7 @@ interface OrganizationState {
 
 }
 
-export default class Organization extends React.Component<OrganizationProps, OrganizationState> {
+export default class Organization extends Component<OrganizationProps, OrganizationState> {
 
 
     fullTimestamp(d: Date) {

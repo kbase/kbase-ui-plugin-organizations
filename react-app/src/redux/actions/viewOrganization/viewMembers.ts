@@ -3,13 +3,13 @@ import { ThunkDispatch } from "redux-thunk";
 
 import { ActionFlag } from "../index";
 
-import { StoreState } from "../../store/types";
+import { AppError } from "@kbase/ui-components";
 import * as orgModel from "../../../data/models/organization/model";
 import * as uberModel from "../../../data/models/uber";
 import { AnError } from "../../../lib/error";
-import { reload as reloadOrg } from "../viewOrg";
-import { AppError } from "@kbase/ui-components";
 import { extractViewOrgModelPlus } from "../../../lib/stateExtraction";
+import { StoreState } from "../../store/types";
+import { reload as reloadOrg } from "../viewOrg";
 
 // LOADING
 

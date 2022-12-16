@@ -1,25 +1,16 @@
-import * as React from "react";
-import { Button, Modal, Input, Tooltip } from "antd";
+import { Button, Input, Modal, Tooltip } from "antd";
+import { Component, Fragment } from "react";
 import * as orgModel from "../../../../../../data/models/organization/model";
 import * as userModel from "../../../../../../data/models/user";
 
-import "./component.css";
 import {
-  EditState,
-  SaveState,
-  ValidationState,
-  ValidationErrorType,
-  Editable,
-  SyncState,
-} from "../../../../../../redux/store/types/common";
-import {
-  DeleteOutlined,
-  CloseOutlined,
-  RollbackOutlined,
-  StopOutlined,
-  SaveOutlined,
-  UserOutlined,
+  CloseOutlined, DeleteOutlined, RollbackOutlined, SaveOutlined, StopOutlined, UserOutlined
 } from "@ant-design/icons";
+import {
+  Editable, EditState,
+  SaveState, SyncState, ValidationErrorType, ValidationState
+} from "../../../../../../redux/store/types/common";
+import "./component.css";
 
 export interface ManageMembershipProps {
   username: userModel.Username;
@@ -37,7 +28,7 @@ export interface ManageMembershipProps {
 
 interface MangeMembershipState {}
 
-class ManageMembership extends React.Component<
+class ManageMembership extends Component<
   ManageMembershipProps,
   MangeMembershipState
 > {
@@ -160,7 +151,7 @@ class ManageMembership extends React.Component<
         break;
       case orgModel.UserRelationToOrganization.ADMIN:
         const adminTooltip = (
-          <React.Fragment>
+          <Fragment>
             <p>
               As an organization administrator, you may not leave the
               organization.
@@ -169,7 +160,7 @@ class ManageMembership extends React.Component<
               In order to leave the organization, you will need to become a
               regular member first.
             </p>
-          </React.Fragment>
+          </Fragment>
         );
         leaveOrgButton = (
           <div className="ButtonSet-button">
@@ -183,12 +174,12 @@ class ManageMembership extends React.Component<
         break;
       case orgModel.UserRelationToOrganization.OWNER:
         const ownerTooltip = (
-          <React.Fragment>
+          <Fragment>
             <p>
               As an organization owner, you are the only permanent member of
               this organization.
             </p>
-          </React.Fragment>
+          </Fragment>
         );
         leaveOrgButton = (
           <div className="ButtonSet-button">

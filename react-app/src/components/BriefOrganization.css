@@ -23,8 +23,10 @@
 
 .BriefOrganization-logoCol {
     flex: 0 0 80px;
+    overflow-y: hidden;
     display: flex;
     flex-direction: column;
+
 }
 
 .BriefOrganization-infoCol {
