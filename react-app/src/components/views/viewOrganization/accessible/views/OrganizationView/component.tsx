@@ -467,7 +467,6 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
 
     const isMember = this.props.viewModel.organization.isMember;
 
-    const tabs = [];
     const tabItems = [];
 
     let memberCount;
