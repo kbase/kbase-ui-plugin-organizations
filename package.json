@@ -20,9 +20,8 @@
     "url": "https://github.com/eapearson/kbase-ui-plugin-organizations/issues"
   },
   "homepage": "https://github.com/eapearson/kbase-ui-plugin-organizations#readme",
-  "devDependencies": {
-    "bluebird": "3.7.2",
-    "fs-extra": "10.1.0",
-    "tar": "6.1.12"
+  "dependencies": {
+    "fs-extra": "11.1.0",
+    "tar": "6.1.13"
   }
 }

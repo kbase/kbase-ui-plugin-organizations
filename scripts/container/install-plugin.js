@@ -1,8 +1,7 @@
 /*eslint-env node */
 /*eslint strict: ["error", "global"] */
 'use strict';
-const bluebird = require('bluebird');
-const fs = bluebird.promisifyAll(require('fs-extra'));
+const fs = require('fs-extra');
 const path = require('path');
 const tar = require('tar');
 
@@ -14,14 +13,14 @@ async function copyBuildFiles(rootDir) {
     const root = rootDir.split('/');
     const source = root.concat(['react-app', 'build']).join('/');
     const dest = root.concat(['dist', 'plugin', 'iframe_root']).join('/');
-    await fs.ensureDirAsync(dest);
-    await fs.copyAsync(source, dest);
+    await fs.ensureDir(dest);
+    await fs.copy(source, dest);
 }
 
 async function removeDist(rootDir) {
     const root = rootDir.split('/');
     const dist = root.concat(['dist']).join('/');
-    await fs.removeAsync(dist);
+    await fs.remove(dist);
 }
 
 /*
@@ -31,8 +30,8 @@ async function copyPluginTemplate(rootDir) {
     const root = rootDir.split('/');
     const source = root.concat(['plugin']).join('/');
     const dest = root.concat(['dist', 'plugin']).join('/');
-    await fs.ensureDirAsync(dest);
-    await fs.copyAsync(source, dest);
+    await fs.ensureDir(dest);
+    await fs.copy(source, dest);
 }
 
 async function taritup(rootDir) {
