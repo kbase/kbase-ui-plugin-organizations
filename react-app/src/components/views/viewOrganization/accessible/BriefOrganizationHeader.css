@@ -25,6 +25,7 @@
     flex: 0 0 80px;
     display: flex;
     flex-direction: column;
+    overflow-y: hidden;
 }
 
 .BriefOrganizationHeader-infoCol {

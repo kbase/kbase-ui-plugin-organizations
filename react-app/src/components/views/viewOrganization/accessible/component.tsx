@@ -1,25 +1,24 @@
-import * as React from "react";
-import { Button, Modal, Tooltip, Alert } from "antd";
-import Members from "./members/reduxAdapter";
-import BriefOrganizationHeader from "./BriefOrganizationHeader";
-import ManageRelatedOrganizations from "./manageRelatedOrganizations";
-import InviteUser from "./views/InviteUser/loader";
-import ManageMembership from "./views/ManageMembership/loader";
-import EditOrganization from "./views/EditOrganization";
-import RequestAddNarrative from "./views/requestAddNarrative/loader";
-import * as requestModel from "../../../../data/models/requests";
+import { ExclamationCircleTwoTone, MailOutlined } from "@ant-design/icons";
+import { Alert, Button, Modal, Tooltip } from "antd";
+import { Component } from "react";
 import * as orgModel from "../../../../data/models/organization/model";
+import * as requestModel from "../../../../data/models/requests";
+import {
+    SubViewKind, ViewAccessibleOrgViewModel
+} from "../../../../redux/store/types/views/Main/views/ViewOrg";
+import { redirect } from "../../../../ui/utils";
+import Linker from "../../../Linker";
+import BriefOrganizationHeader from "./BriefOrganizationHeader";
 import "./component.css";
+import ManageRelatedOrganizations from "./manageRelatedOrganizations";
+import Members from "./members/reduxAdapter";
 import OrgMenu from "./OrgMenu";
 import AddApps from "./views/AddApps";
-import {
-  ViewAccessibleOrgViewModel,
-  SubViewKind,
-} from "../../../../redux/store/types/views/Main/views/ViewOrg";
+import EditOrganization from "./views/EditOrganization";
+import InviteUser from "./views/InviteUser/loader";
+import ManageMembership from "./views/ManageMembership/loader";
 import OrganizationView from "./views/OrganizationView/component";
-import { ExclamationCircleTwoTone, MailOutlined } from "@ant-design/icons";
-import Linker from "../../../Linker";
-import { redirect } from "../../../../ui/utils";
+import RequestAddNarrative from "./views/requestAddNarrative/loader";
 
 enum NavigateTo {
   NONE = 0,
@@ -57,7 +56,7 @@ export interface ViewOrganizationProps {
   onSortApps: (sortBy: string) => void;
 }
 
-class ViewOrganization extends React.Component<
+class ViewOrganization extends Component<
   ViewOrganizationProps,
   ViewOrganizationState
 > {

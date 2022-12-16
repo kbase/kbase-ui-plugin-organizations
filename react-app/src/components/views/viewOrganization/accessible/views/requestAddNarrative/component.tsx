@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { NarrativeState } from '../../../../../../redux/store/types';
-import { Button, Alert, Select, Tooltip } from 'antd';
-import './component.css';
-import * as orgModel from '../../../../../../data/models/organization/model';
+import { CheckOutlined, CrownOutlined, EditOutlined, EyeOutlined, GlobalOutlined, LoadingOutlined, LockOutlined, RollbackOutlined, SaveOutlined, SearchOutlined, UnlockOutlined } from '@ant-design/icons';
+import { Alert, Button, Select, Tooltip } from 'antd';
+import { Component, Fragment } from 'react';
 import * as narrativeModel from '../../../../../../data/models/narrative';
+import { AccessibleNarrative, OrganizationNarrative } from '../../../../../../data/models/narrative';
+import * as orgModel from '../../../../../../data/models/organization/model';
+import { NarrativeState } from '../../../../../../redux/store/types';
 import MainMenu from '../../../../../menu/component';
-import { OrganizationNarrative, AccessibleNarrative } from '../../../../../../data/models/narrative';
 import NiceElapsedTime from '../../../../../NiceElapsedTime';
+import './component.css';
 import { FlexibleColumnWrapper, Renderable } from './FlexibleColumnWrapper';
-import { EyeOutlined, EditOutlined, CrownOutlined, SaveOutlined, GlobalOutlined, LockOutlined, CheckOutlined, LoadingOutlined, SearchOutlined, RollbackOutlined, UnlockOutlined } from '@ant-design/icons';
 
 export interface Props {
     organization: orgModel.Organization;
@@ -56,7 +56,7 @@ class NarrativeRenderer extends Renderable {
     }
 }
 
-export class RequestAddNarrative extends React.Component<Props, State> {
+export class RequestAddNarrative extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -154,7 +154,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
 
     renderNarrative(narrative: AccessibleNarrative) {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="RequestNarrative-title">
                     {narrative.title}
                 </div>
@@ -169,7 +169,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     {' '}
                     <NiceElapsedTime time={narrative.lastSavedAt} tooltipPrefix="last saved " />
                 </div>
-            </React.Fragment>
+            </Fragment>
         );
     }
 
@@ -431,7 +431,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
     renderAlert() {
         if (this.props.relation.type === orgModel.UserRelationToOrganization.MEMBER) {
             const warning = (
-                <React.Fragment>
+                <Fragment>
                     <p>
                         As an Organization member, you are able to request association of any Narrative you
                         own with this Organization.
@@ -446,7 +446,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     <p>
                         Only Organization administrators will be able to disassociate the Narrative from the Organization.
                     </p>
-                </React.Fragment>
+                </Fragment>
             );
             return (
                 <Alert type="warning"
@@ -455,7 +455,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
             );
         } else {
             const warning = (
-                <React.Fragment>
+                <Fragment>
                     <p>
                         As an Organization administrator, you will be able to immediate associate a Narrative you
                         own with this Organization.
@@ -466,7 +466,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                     <p>
                         Only Organization administrators will be able to disassociate the Narrative from the Organization.
                     </p>
-                </React.Fragment>
+                </Fragment>
 
             );
             return (
@@ -481,7 +481,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
         if (this.props.selectedNarrative && this.props.selectedNarrative.status === NarrativeState.NONE) {
             if (this.props.relation.type === orgModel.UserRelationToOrganization.MEMBER) {
                 const warning = (
-                    <React.Fragment>
+                    <Fragment>
                         <p>
                             Please be aware that if your request to associate this Narrative is accepted,
                             you will be unable to directly remove it from the Organization.
@@ -489,7 +489,7 @@ export class RequestAddNarrative extends React.Component<Props, State> {
                         <p>
                             Only Organization administrators are able to remove associated Narratives from the Organization.
                     </p>
-                    </React.Fragment>
+                    </Fragment>
                 );
                 return (
                     <Alert type="warning"

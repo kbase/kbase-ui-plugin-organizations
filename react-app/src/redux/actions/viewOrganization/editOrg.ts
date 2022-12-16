@@ -1,26 +1,26 @@
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 
-import { ActionFlag } from "../index";
-import { StoreState } from "../../store/types";
-import Validation from "../../../data/models/organization/validation";
-import * as orgModel from "../../../data/models/organization/model";
-import DebouncingProcess from "../../../lib/DebouncingProcess";
-import { UIServiceClient } from "../../../data/apis/uiService";
 import { AppError } from "@kbase/ui-components";
+import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
+import { UIServiceClient } from "../../../data/apis/uiService";
+import * as orgModel from "../../../data/models/organization/model";
+import Validation from "../../../data/models/organization/validation";
+import DebouncingProcess from "../../../lib/DebouncingProcess";
+import {
+  extractViewOrgModelPlus,
+  extractViewOrgSubView
+} from "../../../lib/stateExtraction";
+import { StoreState } from "../../store/types";
 import {
   AsyncModelState,
   EditableOrganization,
   SyncState,
   ValidationErrorType,
-  ValidationState,
+  ValidationState
 } from "../../store/types/common";
-import {
-  extractViewOrgModelPlus,
-  extractViewOrgSubView,
-} from "../../../lib/stateExtraction";
 import { SubViewKind } from "../../store/types/views/Main/views/ViewOrg";
-import { AuthenticationStatus } from "@kbase/ui-components/lib/redux/auth/store";
+import { ActionFlag } from "../index";
 
 // ACTIONS
 
@@ -651,6 +651,7 @@ class CheckIfLogoUrlExistsProcess extends DebouncingProcess {
       const client = new UIServiceClient({
         url: this.serviceWizardURL,
         token: this.token,
+        timeout: this.timeout
       });
       const result = await client.checkImageURL({
         url: this.url,
@@ -812,6 +813,7 @@ class CheckIfHomeUrlExistsProcess extends DebouncingProcess {
       const client = new UIServiceClient({
         url: this.serviceWizardURL,
         token: this.token,
+        timeout: this.timeout
       });
       const result = await client.checkHTMLURL({
         url: this.url,

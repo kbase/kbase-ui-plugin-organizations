@@ -1,19 +1,19 @@
-import * as React from 'react';
+import { Component } from 'react';
 
-import Container from './reduxAdapter';
 import {
     StoreState
 } from '../../../../../../redux/store/types';
+import Container from './reduxAdapter';
 
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import * as actions from '../../../../../../redux/actions/viewOrganization/addApps';
-import { Spin, Alert } from 'antd';
-import { AsyncModelState, AsyncModel } from '../../../../../../redux/store/types/common';
 import { AppError } from '@kbase/ui-components';
+import { Alert, Spin } from 'antd';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
+import * as actions from '../../../../../../redux/actions/viewOrganization/addApps';
+import { AsyncModel, AsyncModelState } from '../../../../../../redux/store/types/common';
 import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
 import { AddAppViewModel } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/AddApp';
-import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
 
 export interface LoaderProps {
     view: AsyncModel<AddAppViewModel>;
@@ -25,7 +25,7 @@ export interface LoaderProps {
 interface LoaderState {
 }
 
-class Loader extends React.Component<LoaderProps, LoaderState> {
+class Loader extends Component<LoaderProps, LoaderState> {
     renderLoading() {
         const message = (
             <div>

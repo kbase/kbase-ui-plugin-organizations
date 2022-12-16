@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { RequestResourceType } from '../../redux/store/types';
+import { AppstoreOutlined, ArrowRightOutlined, FileOutlined, MailOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { Card } from 'antd';
+import { Component } from 'react';
+import * as requestModel from '../../data/models/requests';
+import { niceElapsed } from '../../lib/time';
+import { RequestResourceType } from '../../redux/store/types';
 import User from '../entities/UserContainer';
 import './component.css';
-import { niceElapsed } from '../../lib/time';
-import * as requestModel from '../../data/models/requests';
-import { UserOutlined, ArrowRightOutlined, TeamOutlined, MailOutlined, FileOutlined, AppstoreOutlined } from '@ant-design/icons';
 
 export interface RequestProps {
     request: requestModel.Request;
@@ -15,7 +15,7 @@ export interface RequestState {
 
 }
 
-export class Request extends React.Component<RequestProps, RequestState> {
+export class Request extends Component<RequestProps, RequestState> {
 
 
     renderRequestJoinRequest(request: requestModel.UserRequest) {

@@ -1,12 +1,12 @@
-import * as React from 'react';
-import * as userModel from '../../data/models/user';
-import Owner from './Owner';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import { StoreState } from '../../redux/store/types';
-import * as actions from '../../redux/actions/entities';
-import * as orgModel from '../../data/models/organization/model';
 import { LoadingOutlined } from '@ant-design/icons';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import * as orgModel from '../../data/models/organization/model';
+import * as userModel from '../../data/models/user';
+import * as actions from '../../redux/actions/entities';
+import { StoreState } from '../../redux/store/types';
+import Owner from './Owner';
 
 interface LoaderProps {
     username: orgModel.Username;
@@ -19,7 +19,7 @@ interface LoaderProps {
 interface LoaderState {
 }
 
-class Loader extends React.Component<LoaderProps, LoaderState> {
+class Loader extends Component<LoaderProps, LoaderState> {
     times: number;
     constructor(props: LoaderProps) {
         super(props);

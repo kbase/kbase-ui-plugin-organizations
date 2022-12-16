@@ -1,9 +1,9 @@
-import React from 'react';
-import './AvailableOrganization.css';
-import OrgLogo from '../../../../OrgLogo';
-import Owner from '../../../../entities/OwnerContainer';
-import { SelectableRelatableOrganization } from '../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
 import { CheckOutlined } from '@ant-design/icons';
+import { Component } from 'react';
+import { SelectableRelatableOrganization } from '../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import Owner from '../../../../entities/OwnerContainer';
+import OrgLogo from '../../../../OrgLogo';
+import './AvailableOrganization.css';
 
 export interface AvailableOrganizationProps {
     selectableOrganization: SelectableRelatableOrganization;
@@ -14,7 +14,7 @@ export interface AvailableOrganizationProps {
 export interface AvailableOrganizationState {
 }
 
-export default class AvailableOrganization extends React.Component<AvailableOrganizationProps, AvailableOrganizationState> {
+export default class AvailableOrganization extends Component<AvailableOrganizationProps, AvailableOrganizationState> {
 
 
     renderRelated() {

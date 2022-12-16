@@ -1,11 +1,11 @@
-import * as React from 'react';
+import { DeleteOutlined, EllipsisOutlined, FolderOpenOutlined, PlusOutlined } from '@ant-design/icons';
 import {
-    Alert, Button, Menu, Dropdown, Input, Select, Modal
+    Alert, Button, Dropdown, Input, Menu, Modal, Select
 } from 'antd';
-import OrganizationNarrative from '../../../../OrganizationNarrative';
+import { Component, Fragment } from 'react';
 import * as orgModel from '../../../../../data/models/organization/model';
+import OrganizationNarrative from '../../../../OrganizationNarrative';
 import './component.css';
-import { DeleteOutlined, EllipsisOutlined, PlusOutlined, FolderOpenOutlined } from '@ant-design/icons';
 
 export interface NarrativesProps {
     organization: orgModel.Organization;
@@ -22,9 +22,7 @@ export interface NarrativesProps {
 
 interface NarrativesState { }
 
-export default class Narratives extends React.Component<NarrativesProps, NarrativesState> {
-
-
+export default class Narratives extends Component<NarrativesProps, NarrativesState> {
     onRequestAddNarrative() {
         this.props.onRequestAddNarrative();
     }
@@ -34,13 +32,13 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
             this.props.onRemoveNarrative(narrative);
         };
         const message = (
-            <React.Fragment>
+            <Fragment>
                 <p>Please confirm the removal of this Narrative from this Organization.</p>
                 <p>Any view permission granted to organization members will be unaffected by removing the Narrative.</p>
                 {/* <p>
                     All Organization members and the Narrative owner will receive a notification.
                 </p> */}
-            </React.Fragment>
+            </Fragment>
         );
         Modal.confirm({
             title: 'Confirm',
@@ -118,7 +116,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
         };
 
         return (
-            <React.Fragment>
+            <Fragment>
                 <span className="field-label">sort</span>
                 <Select
                     onChange={handleSelect}
@@ -136,7 +134,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
                         Last Changed
                     </Select.Option>
                 </Select>
-            </React.Fragment>
+            </Fragment>
         );
     }
 
@@ -236,20 +234,20 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
         if (narrativesToShow) {
             if (hiddenNarrativeCount) {
                 const message = (
-                    <React.Fragment>
+                    <Fragment>
                         <p>Since you are not a member of this Organization, only public Narratives are displayed.</p>
                         <p>
                             {hiddenNarrativeCount} private Narrative{hiddenNarrativeCount !== 1 ? 's have ' : ' has '}{' '}
                             been hidden.
                         </p>
-                    </React.Fragment>
+                    </Fragment>
                 );
                 alert = <Alert type="info" message={message} style={alertStyle} />;
             }
         } else {
             if (hiddenNarrativeCount) {
                 const message = (
-                    <React.Fragment>
+                    <Fragment>
                         <p>
                             Since you are not a member of this Organization, only public Narratives would be displayed,
                             but this Organization has none.
@@ -258,7 +256,7 @@ export default class Narratives extends React.Component<NarrativesProps, Narrati
                             {hiddenNarrativeCount} private Narrative{hiddenNarrativeCount !== 1 ? 's have ' : ' has '}{' '}
                             been hidden.
                         </p>
-                    </React.Fragment>
+                    </Fragment>
                 );
                 alert = <Alert type="info" message={message} style={alertStyle} />;
             } else {

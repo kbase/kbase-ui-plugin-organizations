@@ -1,8 +1,8 @@
-import * as React from 'react';
-import './component.css';
 import { Alert } from 'antd';
+import { Component } from 'react';
 import * as orgModel from '../../../../data/models/organization/model';
 import BriefOrganization from '../../../BriefOrganization';
+import './component.css';
 
 // TODO: need more ergonomic way to resolve the common issue of data types interfering with 
 // component types.
@@ -17,7 +17,7 @@ export interface OrganizationsState {
     searchTerms: Array<string>;
 }
 
-export class Organizations extends React.Component<OrganizationsProps, OrganizationsState> {
+export class Organizations extends Component<OrganizationsProps, OrganizationsState> {
     constructor(props: OrganizationsProps) {
         super(props);
 

@@ -1,12 +1,12 @@
-import * as React from 'react';
+import { Component, Fragment } from 'react';
 
 import './component.css';
 
-import { Button, Modal, Alert } from 'antd';
-import Header from '../../../Header';
+import { CheckOutlined, DeleteOutlined, InfoCircleOutlined, LockOutlined, StopOutlined } from '@ant-design/icons';
+import { Alert, Button, Modal } from 'antd';
 import * as orgModel from '../../../../data/models/organization/model';
 import * as requestModel from '../../../../data/models/requests';
-import { DeleteOutlined, LockOutlined, StopOutlined, CheckOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import Header from '../../../Header';
 
 enum NavigateTo {
     NONE = 0,
@@ -31,7 +31,7 @@ export interface ViewOrganizationProps {
     onRejectInvitation: (requestId: string) => void;
 }
 
-class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrganizationState> {
+class ViewOrganization extends Component<ViewOrganizationProps, ViewOrganizationState> {
     constructor(props: ViewOrganizationProps) {
         super(props);
 
@@ -89,24 +89,24 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
         switch (this.props.relation.type) {
             case (orgModel.UserRelationToOrganization.NONE):
                 return (
-                    <React.Fragment>
+                    <Fragment>
                         <p>This organization is <b>private</b> and you are not a member.</p>
                         <p>Although no information about this organization may be revealed to non-members, you may request membership</p>
                         <p>Upon requesting membership, the organization administrators will be notified.</p>
                         <p>When your request is either accepted or denied, you will received a notification in your KBase Feed.</p>
-                    </React.Fragment>
+                    </Fragment>
                 );
             case (orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING):
                 return (
-                    <React.Fragment>
+                    <Fragment>
                         <p>Your membership request to this private organization is pending.</p>
-                    </React.Fragment>
+                    </Fragment>
                 );
             case (orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING):
                 return (
-                    <React.Fragment>
+                    <Fragment>
                         <p>You have been invited to this private organization.</p>
-                    </React.Fragment>
+                    </Fragment>
                 );
             default:
                 return (
@@ -124,12 +124,12 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             </span>
         );
         const description = (
-            <React.Fragment>
+            <Fragment>
                 {this.renderMessage()}
                 <div style={{marginTop: '10px'}}>
                     {this.renderJoinButton()}
                 </div>
-            </React.Fragment>
+            </Fragment>
         );
         return (
             <Alert
@@ -206,11 +206,11 @@ class ViewOrganization extends React.Component<ViewOrganizationProps, ViewOrgani
             </div>
         );
         const buttons = (
-            <React.Fragment>
+            <Fragment>
                 <Button
                     icon={<InfoCircleOutlined />}
                     onClick={this.onShowInfo.bind(this)} />
-            </React.Fragment>
+            </Fragment>
         );
         return (
             <Header breadcrumbs={breadcrumbs} buttons={buttons} />

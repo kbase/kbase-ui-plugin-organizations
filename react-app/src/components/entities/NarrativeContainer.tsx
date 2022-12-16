@@ -1,11 +1,11 @@
-import React from 'react';
 import * as narrativeModel from '../../data/models/narrative';
 import Narrative from './Narrative';
 
-import { Dispatch } from 'redux';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { StoreState } from '../../redux/store/types';
+import { Dispatch } from 'redux';
 import * as actions from '../../redux/actions/entities';
+import { StoreState } from '../../redux/store/types';
 
 interface LoaderProps {
     workspaceId: narrativeModel.WorkspaceID;
@@ -15,7 +15,7 @@ interface LoaderProps {
 
 interface LoaderState { }
 
-class Loader extends React.Component<LoaderProps, LoaderState> {
+class Loader extends Component<LoaderProps, LoaderState> {
     render() {
         if (this.props.narrative) {
             return (

@@ -1,24 +1,24 @@
-import * as React from "react";
-import Organizations from "./organizations/component";
-import { Button, Radio, Select, Alert, Checkbox, Input } from "antd";
-import { RadioChangeEvent } from "antd/lib/radio";
-import { CheckboxValueType } from "antd/lib/checkbox/Group";
 import {
-  Filter,
+  LoadingOutlined,
+  PlusCircleOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { AppError } from "@kbase/ui-components";
+import { Alert, Button, Checkbox, Radio, Select, Space } from "antd";
+import { CheckboxValueType } from "antd/lib/checkbox/Group";
+import Search from "antd/lib/input/Search";
+import { RadioChangeEvent } from "antd/lib/radio";
+import { Component, createRef, Fragment } from "react";
+import {
   BriefOrganization,
+  Filter,
   OrganizationID,
   RequestStatus,
 } from "../../../data/models/organization/model";
-import "./component.css";
-import { AppError } from "@kbase/ui-components";
 import { SortDirection } from "../../../redux/store/types/common";
-import {
-  LoadingOutlined,
-  SearchOutlined,
-  PlusCircleOutlined,
-} from "@ant-design/icons";
-import Search from "antd/lib/input/Search";
 import Linker from "../../Linker";
+import "./component.css";
+import Organizations from "./organizations/component";
 
 export interface OrganizationsBrowserProps {
   totalCount: number;
@@ -43,7 +43,7 @@ export interface OrganizationsBrowserState {
   // filterByPrivacyType: Array<CheckboxValueType>
 }
 
-class OrganizationsBrowser extends React.Component<
+class OrganizationsBrowser extends Component<
   OrganizationsBrowserProps,
   OrganizationsBrowserState
 > {
@@ -54,8 +54,8 @@ class OrganizationsBrowser extends React.Component<
   constructor(props: OrganizationsBrowserProps) {
     super(props);
 
-    this.searchInput = React.createRef();
-    this.searchButton = React.createRef();
+    this.searchInput = createRef();
+    this.searchButton = createRef();
 
     this.filterByRoleValues = [
       {
@@ -120,6 +120,9 @@ class OrganizationsBrowser extends React.Component<
         break;
       case "narrativeCount":
         this.props.onSortOrgs("narrativeCount", SortDirection.DESCENDING);
+        break;
+      case "appCount":
+        this.props.onSortOrgs("appCount", SortDirection.DESCENDING);
         break;
     }
   }
@@ -280,13 +283,14 @@ class OrganizationsBrowser extends React.Component<
         <Select.Option value="narrativeCount" key="narrativeCount">
           # narratives
         </Select.Option>
+        <Select.Option value="appCount" key="appCount">
+          # apps
+        </Select.Option>
       </Select>
     );
   }
 
   onToggleAdvanced() {
-    // event: React.MouseEvent<HTMLAnchorElement>
-    // event.preventDefault();
     // When switching back to basic filter mode, we need to ensure that advanced
     // filtering is removed.
     if (this.state.showAdvancedControls) {
@@ -343,49 +347,69 @@ class OrganizationsBrowser extends React.Component<
     };
     if (this.state.showAdvancedControls) {
       return (
-        <React.Fragment>
+        <Fragment>
           <Radio.Group
             onChange={this.onFilterByRoleTypeChange.bind(this)}
             value={this.state.filterByRoleType}
           >
-            <Radio value="myorgs" style={radioStyle}>
-              My Orgs
-            </Radio>
-            <Radio value="all" style={radioStyle}>
-              All Orgs
-            </Radio>
+            <Space.Compact direction="vertical">
+              <Radio value="myorgs" style={radioStyle}>
+                My Orgs
+              </Radio>
+              <Radio value="all" style={radioStyle}>
+                All Orgs
+              </Radio>
 
-            <Radio value="notmyorgs" style={radioStyle}>
-              Not My Orgs
-            </Radio>
-            <Radio value="select" style={radioStyle}>
-              Specific Role
-            </Radio>
+              <Radio value="notmyorgs" style={radioStyle}>
+                Not My Orgs
+              </Radio>
+              <Radio value="select" style={radioStyle}>
+                Specific Role
+              </Radio>
+            </Space.Compact>
           </Radio.Group>
 
           <Checkbox.Group
-            options={this.filterByRoleValues}
             value={this.state.filterByRole}
             className="OrganizationsBrowser-checkboxGroup"
             onChange={this.onFilterByRoleChange.bind(this)}
-          />
-        </React.Fragment>
+            style={{
+              flex: "0 0 1",
+              display: "flex",
+              flexDirection: "column",
+              paddingLeft: "0.5em",
+              paddingTop: "0.5em",
+            }}
+          >
+            <div>
+              <Checkbox value="member">Member</Checkbox>
+            </div>
+            <div>
+              <Checkbox value="admin">Admin</Checkbox>
+            </div>
+            <div>
+              <Checkbox value="owner">Owner</Checkbox>
+            </div>
+          </Checkbox.Group>
+        </Fragment>
       );
     } else {
       return (
-        <React.Fragment>
+        <Fragment>
           <Radio.Group
             onChange={this.onFilterByRoleTypeChange.bind(this)}
             value={this.state.filterByRoleType}
           >
-            <Radio value="myorgs" style={radioStyle}>
-              My Orgs
-            </Radio>
-            <Radio value="all" style={radioStyle}>
-              All Orgs
-            </Radio>
+            <Space.Compact direction="vertical">
+              <Radio value="myorgs" style={radioStyle}>
+                My Orgs
+              </Radio>
+              <Radio value="all" style={radioStyle}>
+                All Orgs
+              </Radio>
+            </Space.Compact>
           </Radio.Group>
-        </React.Fragment>
+        </Fragment>
       );
     }
   }
@@ -401,22 +425,24 @@ class OrganizationsBrowser extends React.Component<
       margin: "0px",
     };
     return (
-      <React.Fragment>
+      <Fragment>
         <Radio.Group
           onChange={this.onFilterByPrivacyChange.bind(this)}
           value={this.state.filterByPrivacy}
         >
-          <Radio value="any" style={radioStyle}>
-            Any
-          </Radio>
-          <Radio value="public" style={radioStyle}>
-            Visible
-          </Radio>
-          <Radio value="private" style={radioStyle}>
-            Hidden
-          </Radio>
+          <Space.Compact direction="vertical">
+            <Radio value="any" style={radioStyle}>
+              Any
+            </Radio>
+            <Radio value="public" style={radioStyle}>
+              Visible
+            </Radio>
+            <Radio value="private" style={radioStyle}>
+              Hidden
+            </Radio>
+          </Space.Compact>
         </Radio.Group>
-      </React.Fragment>
+      </Fragment>
     );
   }
 
@@ -456,7 +482,7 @@ class OrganizationsBrowser extends React.Component<
 
   renderFilterColumn() {
     return (
-      <React.Fragment>
+      <Fragment>
         <div className="field-label">sort by</div>
         {this.renderSortByControl()}
 
@@ -491,7 +517,7 @@ class OrganizationsBrowser extends React.Component<
             FAQ
           </a>
         </div>
-      </React.Fragment>
+      </Fragment>
     );
   }
 

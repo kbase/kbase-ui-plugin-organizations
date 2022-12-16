@@ -1,9 +1,9 @@
-import * as React from 'react';
+import { DeleteOutlined, EllipsisOutlined, UnlockOutlined, UserOutlined } from '@ant-design/icons';
+import { Alert, Dropdown, Input, Menu, Modal, Select } from 'antd';
+import { Component, Fragment } from 'react';
 import * as orgModel from '../../../../../data/models/organization/model';
-import { Alert, Menu, Dropdown, Modal, Input, Select } from 'antd';
 import Member from '../../../../entities/MemberContainer';
 import './component.css';
-import { UnlockOutlined, DeleteOutlined, UserOutlined, EllipsisOutlined } from '@ant-design/icons';
 
 export interface MembersProps {
     organization: orgModel.Organization;
@@ -25,7 +25,7 @@ interface MembersState {
     } | null;
 }
 
-export default class Members extends React.Component<MembersProps, MembersState> {
+export default class Members extends Component<MembersProps, MembersState> {
     constructor(props: MembersProps) {
         super(props);
         this.state = {
@@ -59,7 +59,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
         });
         const title = 'Confirm Removal of Member';
         const content = (
-            <React.Fragment>
+            <Fragment>
                 <p>
                     Please confirm removal of this member from this organization.
                 </p>
@@ -74,7 +74,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
                     Any Narratives associated by this member with this Organization will be unaffected. This member
                     will also retain any Narrative permissions granted through this Organization.
                 </p>
-            </React.Fragment>
+            </Fragment>
         );
         return (
             <Modal
@@ -233,7 +233,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
             this.props.onSortMembers(value);
         };
         return (
-            <React.Fragment>
+            <Fragment>
                 <span className="field-label">sort</span>
                 <Select onChange={handleSelect}
                     style={{ width: '10em' }}
@@ -243,7 +243,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
                     <Select.Option value="name" key="name">Name</Select.Option>
                     <Select.Option value="added" key="added">Date Joined</Select.Option>
                 </Select>
-            </React.Fragment>
+            </Fragment>
         );
     }
 
@@ -266,7 +266,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
             confirm = this.renderConfirmMemberRemoval();
         }
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="ViewOrganizationMembers scrollable-flex-column">
                     <div className="ViewOrganizationMembers-header">
                         {this.renderHeader()}
@@ -276,7 +276,7 @@ export default class Members extends React.Component<MembersProps, MembersState>
                     </div>
                 </div>
                 {confirm}
-            </React.Fragment>
+            </Fragment>
         );
     }
 }

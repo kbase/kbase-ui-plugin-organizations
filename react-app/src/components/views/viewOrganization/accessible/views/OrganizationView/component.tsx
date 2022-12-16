@@ -1,33 +1,25 @@
-import { Button, Modal, Tooltip, Card, Alert, Tabs } from "antd";
+import { Alert, Button, Card, Modal, Tabs, Tooltip } from "antd";
 import DOMPurify from "dompurify";
-import {marked} from 'marked';
-import {Component} from "react";
+import { marked } from 'marked';
+import { Component } from "react";
 
-import Header from "../../../../../Header";
-import Members from "../../members/reduxAdapter";
-import Requests from "../../requests";
-import Narratives from "../../narratives/component";
-import * as requestModel from "../../../../../../data/models/requests";
+import {
+  AppstoreOutlined, CloseOutlined, ExclamationCircleTwoTone, FileOutlined, InboxOutlined, InfoCircleOutlined, MailOutlined, TeamOutlined, UnlockOutlined
+} from "@ant-design/icons";
 import * as orgModel from "../../../../../../data/models/organization/model";
-import "./component.css";
-import Apps from "../../apps/component";
+import * as requestModel from "../../../../../../data/models/requests";
 import {
   SubViewKind,
-  ViewAccessibleOrgViewModel,
+  ViewAccessibleOrgViewModel
 } from "../../../../../../redux/store/types/views/Main/views/ViewOrg";
-import RelatedOrganizations from "./tabs/RelatedOrganizations";
-import {
-  ExclamationCircleTwoTone,
-  UnlockOutlined,
-  MailOutlined,
-  InboxOutlined,
-  TeamOutlined,
-  CloseOutlined,
-  InfoCircleOutlined,
-  FileOutlined,
-  AppstoreOutlined,
-} from "@ant-design/icons";
+import Header from "../../../../../Header";
 import Linker from "../../../../../Linker";
+import Apps from "../../apps/component";
+import Members from "../../members/reduxAdapter";
+import Narratives from "../../narratives/component";
+import Requests from "../../requests";
+import "./component.css";
+import RelatedOrganizations from "./tabs/RelatedOrganizations";
 
 // enum NavigateTo {
 //     NONE = 0,
@@ -690,6 +682,8 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
       <Apps
         organization={this.props.viewModel.organization}
         apps={this.props.viewModel.apps}
+
+        relation={this.props.viewModel.relation}
         onAssociateApp={this.onAssociateApp.bind(this)}
         onRemoveApp={this.props.onRemoveApp}
         onSearchApps={this.props.onSearchApps}

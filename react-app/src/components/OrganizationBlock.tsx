@@ -1,13 +1,13 @@
-import * as React from 'react';
+import { Component } from 'react';
 
+import { Tooltip } from 'antd';
 import * as orgModel from '../data/models/organization/model';
 import * as requestModel from '../data/models/requests';
-import { Tooltip } from 'antd';
 
+import { CrownOutlined, ExclamationCircleTwoTone, StopOutlined, UnlockOutlined, UserOutlined } from '@ant-design/icons';
+import Linker from './Linker';
 import './OrganizationBlock.css';
 import OrgLogo from './OrgLogo';
-import { StopOutlined, UserOutlined, UnlockOutlined, CrownOutlined, ExclamationCircleTwoTone } from '@ant-design/icons';
-import Linker from './Linker';
 
 export interface OrganizationBlockProps {
     organization: orgModel.Organization;
@@ -18,7 +18,7 @@ export interface OrganizationBlockProps {
 interface OrganizationBlockState {
 }
 
-export default class OrganizationBlock extends React.Component<OrganizationBlockProps, OrganizationBlockState> {
+export default class OrganizationBlock extends Component<OrganizationBlockProps, OrganizationBlockState> {
 
 
     renderLogo(org: orgModel.Organization) {

@@ -4,5 +4,6 @@
     "typescript.format.semicolons": "insert",
     "editor.formatOnType": true,
     "editor.cursorBlinking": "expand",
-    "typescript.format.enable": false
+    "typescript.format.enable": false,
+    "editor.formatOnSave": true
 }

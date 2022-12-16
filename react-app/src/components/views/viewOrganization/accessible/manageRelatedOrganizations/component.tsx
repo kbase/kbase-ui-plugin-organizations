@@ -1,12 +1,13 @@
 import React from 'react';
 
-import * as orgModel from '../../../../../data/models/organization/model';
-import './component.css';
-import { Button, Input, Alert } from 'antd';
-import AvailableOrganization from './AvailableOrganization';
-import BriefOrganization from '../../../../BriefOrganization';
-import { SelectableRelatableOrganization } from '../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
 import { RollbackOutlined } from '@ant-design/icons';
+import { Alert, Button, Input } from 'antd';
+import { Component, Fragment } from 'react';
+import * as orgModel from '../../../../../data/models/organization/model';
+import { SelectableRelatableOrganization } from '../../../../../redux/store/types/views/Main/views/ViewOrg/views/ManageRelatedOrgs';
+import BriefOrganization from '../../../../BriefOrganization';
+import AvailableOrganization from './AvailableOrganization';
+import './component.css';
 
 export interface ManageRelatedOrganizationsProps {
     organization: orgModel.Organization;
@@ -24,7 +25,7 @@ export interface ManageRelatedOrganizationsProps {
 interface ManageRelatedOrganizationsState {
 }
 
-export default class ManageRelatedOrganizations extends React.Component<ManageRelatedOrganizationsProps, ManageRelatedOrganizationsState> {
+export default class ManageRelatedOrganizations extends Component<ManageRelatedOrganizationsProps, ManageRelatedOrganizationsState> {
     onAddSelectedOrganization() {
         if (!this.props.selectedOrganization) {
             return;
@@ -78,11 +79,11 @@ export default class ManageRelatedOrganizations extends React.Component<ManageRe
         };
         if (!this.props.selectedOrganization) {
             const message = (
-                <React.Fragment>
+                <Fragment>
                     <p>
                         When you select an organization on the left, details about it will be displayed here.
                     </p>
-                </React.Fragment>
+                </Fragment>
             );
             alert = (
                 <Alert type="info" message={message} style={alertStyle} />
@@ -126,13 +127,13 @@ export default class ManageRelatedOrganizations extends React.Component<ManageRe
         }
 
         return (
-            <React.Fragment>
+            <Fragment>
                 {alert}
                 {content}
                 <div className="ManageRelatedOrganizations-buttonBar">
                     {button}
                 </div>
-            </React.Fragment>
+            </Fragment>
         );
     }
 

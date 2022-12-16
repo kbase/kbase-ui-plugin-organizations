@@ -1,12 +1,10 @@
-import * as React from 'react';
+import { Alert, Button, Dropdown, Menu } from 'antd';
+import { Component } from 'react';
 import * as orgModel from '../../../../../../../../data/models/organization/model';
-import {
-    Button, Menu, Dropdown, Alert
-} from 'antd';
 import OrganizationEntity from '../../../../../../../entities/organization/loader';
 // import { withRouter } from 'react-router-dom';
-import './component.css';
 import { DeleteOutlined, EllipsisOutlined } from '@ant-design/icons';
+import './component.css';
 
 export interface RelatedOrganizationsProps {
     organization: orgModel.Organization;
@@ -18,7 +16,7 @@ export interface RelatedOrganizationsProps {
 interface RelatedOrganizationsState {
 }
 
-export default class RelatedOrganizations extends React.Component<RelatedOrganizationsProps, RelatedOrganizationsState> {
+export default class RelatedOrganizations extends Component<RelatedOrganizationsProps, RelatedOrganizationsState> {
     onManageRelatedOrgs() {
         this.props.onManageRelatedOrgs();
     }

@@ -1,19 +1,19 @@
-import * as React from 'react';
+import { Component } from 'react';
 
+import { Alert, Spin } from 'antd';
 import AccessibleContainer from './accessible/container';
 import InaccessibleContainer from './inaccessible/container';
-import { Spin, Alert } from 'antd';
 
 //
 
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
-import * as types from '../../../redux/store/types';
-import * as actions from '../../../redux/actions/viewOrg';
-import { OrganizationKind } from '../../../data/models/organization/model';
 import { AppError } from '@kbase/ui-components';
-import { AsyncModelState, AsyncModel } from '../../../redux/store/types/common';
+import { OrganizationKind } from '../../../data/models/organization/model';
+import * as actions from '../../../redux/actions/viewOrg';
+import * as types from '../../../redux/store/types';
+import { AsyncModel, AsyncModelState } from '../../../redux/store/types/common';
 import { ViewOrgViewModel } from '../../../redux/store/types/views/Main/views/ViewOrg';
 
 export interface ViewOrganizationProps {
@@ -25,7 +25,7 @@ export interface ViewOrganizationProps {
 
 interface State { }
 
-class Loader extends React.Component<ViewOrganizationProps, State> {
+class Loader extends Component<ViewOrganizationProps, State> {
     previousOrganizationId: string | null;
 
     constructor(props: ViewOrganizationProps) {

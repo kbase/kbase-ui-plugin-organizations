@@ -1,16 +1,16 @@
-import * as React from 'react';
+import {
+    AppstoreOutlined,
+    BellFilled, BulbOutlined, CrownOutlined, FileOutlined, GlobalOutlined, HomeOutlined, LinkOutlined, MailFilled, RobotOutlined, SaveOutlined, StopOutlined, TeamOutlined, UnlockOutlined, UserOutlined
+} from '@ant-design/icons';
+import { Dropdown, Menu, Modal, Tooltip } from 'antd';
+import { Component, Fragment } from 'react';
 import * as orgModel from '../data/models/organization/model';
-import OrgLogo from './OrgLogo';
-import { Tooltip, Menu, Dropdown, Modal } from 'antd';
-import Owner from './entities/OwnerContainer';
 import { ComponentView } from '../redux/store/types';
 import './BriefOrganization.css';
-import NiceElapsedTime from './NiceElapsedTime';
-import { 
-    UserOutlined, HomeOutlined, StopOutlined, CrownOutlined, UnlockOutlined, 
-    BellFilled, RobotOutlined, GlobalOutlined, MailFilled, LinkOutlined, 
-    TeamOutlined, FileOutlined, SaveOutlined, BulbOutlined } from '@ant-design/icons';
+import Owner from './entities/OwnerContainer';
 import Linker from './Linker';
+import NiceElapsedTime from './NiceElapsedTime';
+import OrgLogo from './OrgLogo';
 
 export interface BriefOrganizationProps {
     organization: orgModel.BriefOrganization;
@@ -30,7 +30,7 @@ function reverseView(v: ComponentView) {
     }
 }
 
-export default class BriefOrganization extends React.Component<BriefOrganizationProps, BriefOrganizationState> {
+export default class BriefOrganization extends Component<BriefOrganizationProps, BriefOrganizationState> {
     constructor(props: BriefOrganizationProps) {
         super(props);
         this.state = {
@@ -62,11 +62,11 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             );
         }
         const tooltip = (
-            <React.Fragment>
+            <Fragment>
                 <p>
                     Home page for this Organization (external to KBase)
                 </p>
-            </React.Fragment>
+            </Fragment>
         );
         return (
             <div className="BriefOrganization-homeUrl">
@@ -98,6 +98,20 @@ export default class BriefOrganization extends React.Component<BriefOrganization
         );
     }
 
+    renderAppCount(org: orgModel.BriefOrganization) {
+        if (!org.appCount) {
+            return (
+                <span style={{ color: 'gray' }}>
+                    Ø
+                </span>
+            );
+        }
+        return (
+            <span>
+                {org.appCount}
+            </span>
+        );
+    }
     renderMemberCount(org: orgModel.BriefOrganization) {
         if (org.memberCount === 1) {
             return (
@@ -348,7 +362,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
 
     renderLogoColumn(org: orgModel.BriefOrganization) {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="BriefOrganization-logoRow">
                     <Linker to={`/orgs/${org.id}`}>
                         {this.renderLogo(org)}
@@ -377,7 +391,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         {this.renderPermalink()}
                     </div>
                 </div>
-            </React.Fragment>
+            </Fragment>
         );
     }
 
@@ -395,7 +409,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
 
     renderInfoCol(org: orgModel.BriefOrganization) {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="BriefOrganization-researchInterests BriefOrganization-infoTableRow">
                     {org.researchInterests}
                 </div>
@@ -429,7 +443,7 @@ export default class BriefOrganization extends React.Component<BriefOrganization
                         </Tooltip>
                     </div>
                 </div>
-            </React.Fragment>
+            </Fragment>
         );
     }
 
@@ -508,7 +522,43 @@ export default class BriefOrganization extends React.Component<BriefOrganization
             </Tooltip>
         );
     }
-
+renderAppsRow(org: orgModel.BriefOrganization) {
+        const count = org.appCount;
+        let tooltip;
+        if (count) {
+            if (count === 1) {
+                tooltip = (
+                    <span>
+                        There is <b>1</b> app in this organization
+                    </span>
+                );
+            } else {
+                tooltip = (
+                    <span>
+                        There are <b>{count}</b> apps in this organization
+                    </span>
+                );
+            }
+        } else {
+            tooltip = (
+                <span>
+                    There are <b>no apps</b> in this organization
+                </span>
+            );
+        }
+        return (
+            <Tooltip placement="bottomRight" title={tooltip}>
+                <div className="BriefOrganization-orgCreated BriefOrganization-infoTableRow">
+                    <div className="BriefOrganization-infoTableCol1">
+                        <span className="field-label"><AppstoreOutlined /></span>
+                    </div>
+                    <div className="BriefOrganization-infoTableCol2">
+                        {this.renderAppCount(org)}
+                    </div>
+                </div>
+            </Tooltip>
+        );
+    }
     renderModifiedRow(org: orgModel.BriefOrganization) {
         const tooltip = (
             <span>
@@ -533,11 +583,12 @@ export default class BriefOrganization extends React.Component<BriefOrganization
 
     renderStatsCol(org: orgModel.BriefOrganization) {
         return (
-            <React.Fragment>
+            <Fragment>
                 {this.renderMemberRow(org)}
                 {this.renderNarrativeRow(org)}
+                {this.renderAppsRow(org)}
                 {this.renderModifiedRow(org)}
-            </React.Fragment>
+            </Fragment>
         );
     }
 

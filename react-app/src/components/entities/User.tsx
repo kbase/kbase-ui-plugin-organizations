@@ -1,9 +1,9 @@
-import * as React from 'react';
-import './User.css';
-import Avatar from './Avatar';
-import * as userModel from '../../data/models/user';
+import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import { UpOutlined, DownOutlined } from '@ant-design/icons';
+import { Component, Fragment } from 'react';
+import * as userModel from '../../data/models/user';
+import Avatar from './Avatar';
+import './User.css';
 
 export interface UserProps {
     user: userModel.User;
@@ -37,7 +37,7 @@ function reverseView(v: View) {
 //     }
 // }
 
-class User extends React.Component<UserProps, UserState> {
+class User extends Component<UserProps, UserState> {
     constructor(props: UserProps) {
         super(props);
 
@@ -54,7 +54,7 @@ class User extends React.Component<UserProps, UserState> {
 
     renderCompact() {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="controlCol">
                     <Button
                         type="link"
@@ -75,13 +75,13 @@ class User extends React.Component<UserProps, UserState> {
                         {this.props.user.username}
                     </div>
                 </div>
-            </React.Fragment>
+            </Fragment>
         );
     }
 
     renderNormal() {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="controlCol">
                     <Button
                         type="link"
@@ -108,7 +108,7 @@ class User extends React.Component<UserProps, UserState> {
                         {[this.props.user.city, this.props.user.state, this.props.user.country].filter(x => x).join(', ') || <i>no location information in user profile</i>}
                     </div>
                 </div>
-            </React.Fragment>
+            </Fragment>
         );
     }
 

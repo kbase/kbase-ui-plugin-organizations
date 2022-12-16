@@ -1,6 +1,6 @@
-import React from 'react';
-import { niceElapsed } from '../lib/time';
 import { Tooltip } from 'antd';
+import { Component } from 'react';
+import { niceElapsed } from '../lib/time';
 
 export interface NiceElapsedTimeProps {
     time: Date;
@@ -26,7 +26,7 @@ const intervals = [
     [Infinity, 60 * 60 * 24 * 1000]
 ];
 
-export default class NiceElapsedTime extends React.Component<NiceElapsedTimeProps, NiceElapsedTimeState> {
+export default class NiceElapsedTime extends Component<NiceElapsedTimeProps, NiceElapsedTimeState> {
     nowTimer: number | null;
     interval: number;
     constructor(props: NiceElapsedTimeProps) {

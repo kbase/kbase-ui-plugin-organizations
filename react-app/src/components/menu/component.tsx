@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Component } from 'react';
 // import { Route } from 'react-router-dom'
 import './component.css';
 // import { Menu } from 'antd';
@@ -12,7 +12,7 @@ interface MainMenuState {
     currentMenuItem: string;
 }
 
-class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
+class MainMenu extends Component<MainMenuProps, MainMenuState> {
     constructor(props: MainMenuProps, context: React.Context<any>) {
         super(props);
 

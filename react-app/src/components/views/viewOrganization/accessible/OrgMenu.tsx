@@ -1,14 +1,10 @@
-import * as React from 'react';
+import { AppstoreOutlined, CheckOutlined, DeleteOutlined, EditOutlined, FileOutlined, MailOutlined, SettingFilled, StopOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Menu, Tooltip } from 'antd';
+import { Component } from 'react';
 import * as orgModel from '../../../../data/models/organization/model';
 import * as requestModel from '../../../../data/models/requests';
-import { Button, Tooltip, Menu, Dropdown } from 'antd';
-import './OrgMenu.css';
 import { SubViewKind, ViewAccessibleOrgViewModel } from '../../../../redux/store/types/views/Main/views/ViewOrg';
-import {
-    DeleteOutlined, StopOutlined, CheckOutlined, AppstoreOutlined,
-    FileOutlined, UserOutlined, SettingFilled,
-    EditOutlined, MailOutlined, TeamOutlined
-} from '@ant-design/icons';
+import './OrgMenu.css';
 
 export interface OrgMenuProps {
     viewModel: ViewAccessibleOrgViewModel;
@@ -23,7 +19,7 @@ export interface OrgMenuState {
 
 }
 
-export default class OrgMenu extends React.Component<OrgMenuProps, OrgMenuState> {
+export default class OrgMenu extends Component<OrgMenuProps, OrgMenuState> {
     // Event handlers
 
     onJoinClick() {

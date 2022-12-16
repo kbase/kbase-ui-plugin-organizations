@@ -1,7 +1,7 @@
-import * as React from 'react';
 import { Alert, Collapse } from 'antd';
-import './component.css';
+import { Component } from 'react';
 import { AnError } from './api';
+import './component.css';
 
 export interface ErrorProps {
     error: AnError;
@@ -11,7 +11,7 @@ interface ErrorState {
 
 }
 
-export default class Error extends React.Component<ErrorProps, ErrorState> {
+export default class Error extends Component<ErrorProps, ErrorState> {
 
 
     renderDetail() {

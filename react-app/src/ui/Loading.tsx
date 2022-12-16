@@ -1,5 +1,5 @@
-import React from 'react';
 import { Spin } from 'antd';
+import { Component } from 'react';
 import './Loading.css';
 
 export interface Props {
@@ -8,7 +8,7 @@ export interface Props {
 
 interface State { }
 
-export default class Loading extends React.Component<Props, State> {
+export default class Loading extends Component<Props, State> {
     render() {
         return (
             <div className="Loading-box">

@@ -1,20 +1,20 @@
-import * as React from 'react';
+import { Component, Fragment } from 'react';
 import Container from './container';
 
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
-import * as actions from '../../../../../../redux/actions/viewOrganization/requestAddNarrative';
+import { LoadingOutlined } from '@ant-design/icons';
+import { AppError } from '@kbase/ui-components';
 import { Alert } from 'antd';
+import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
+import * as actions from '../../../../../../redux/actions/viewOrganization/requestAddNarrative';
 import {
     StoreState
 } from '../../../../../../redux/store/types';
-import { extractViewOrgSubView } from '../../../../../../lib/stateExtraction';
+import { AsyncModel, AsyncModelState } from '../../../../../../redux/store/types/common';
 import { SubViewKind } from '../../../../../../redux/store/types/views/Main/views/ViewOrg';
 import { RequestNarrativeViewModel } from '../../../../../../redux/store/types/views/Main/views/ViewOrg/views/RequestNarrative';
-import { AsyncModelState, AsyncModel } from '../../../../../../redux/store/types/common';
-import { AppError } from '@kbase/ui-components';
-import { LoadingOutlined } from '@ant-design/icons';
 
 export interface Props {
     organizationId: string;
@@ -27,12 +27,12 @@ export interface Props {
 interface State {
 }
 
-class Loader extends React.Component<Props, State> {
+class Loader extends Component<Props, State> {
     renderLoading() {
         const message = (
-            <React.Fragment>
+            <Fragment>
                 <LoadingOutlined />{' '}Loading Your Narratives...
-            </React.Fragment>
+            </Fragment>
         );
         return (
             <Alert type="info" message={message}

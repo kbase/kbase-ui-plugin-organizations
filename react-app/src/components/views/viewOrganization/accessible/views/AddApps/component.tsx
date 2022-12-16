@@ -1,19 +1,15 @@
-import * as React from "react";
-import MainMenu from "../../../../../menu/component";
-import { Button, Input, Alert, Select } from "antd";
-import "./component.css";
-import App from "../../../../../entities/app/loader";
-import { ChangeEvent } from "react";
 import {
-  SelectableApp,
-  ResourceRelationToOrg,
-} from "../../../../../../redux/store/types/views/Main/views/ViewOrg/views/AddApp";
-import {
-  RollbackOutlined,
-  LoadingOutlined,
-  CheckCircleOutlined,
+  CheckCircleOutlined, LoadingOutlined, RollbackOutlined
 } from "@ant-design/icons";
+import { Alert, Button, Input, Select } from "antd";
+import { ChangeEvent, Component, Fragment } from "react";
+import {
+  ResourceRelationToOrg, SelectableApp
+} from "../../../../../../redux/store/types/views/Main/views/ViewOrg/views/AddApp";
 import { View } from '../../../../../entities/app/component';
+import App from "../../../../../entities/app/loader";
+import MainMenu from "../../../../../menu/component";
+import "./component.css";
 
 export interface AddAppsProps {
   apps: Array<SelectableApp>;
@@ -30,7 +26,7 @@ interface AddAppsState {}
 
 type AlertType = "info" | "warning" | "error" | "success";
 
-export default class AddApps extends React.Component<
+export default class AddApps extends Component<
   AddAppsProps,
   AddAppsState
 > {
@@ -134,9 +130,9 @@ export default class AddApps extends React.Component<
   renderApps() {
     if (this.props.apps.length === 0) {
       const message = (
-        <React.Fragment>
+        <Fragment>
           <p>You have not authored any released apps</p>
-        </React.Fragment>
+        </Fragment>
       );
       return <Alert type="info" message={message} />;
     }
@@ -170,10 +166,10 @@ export default class AddApps extends React.Component<
 
   renderAppSelector() {
     return (
-      <React.Fragment>
+      <Fragment>
         {this.renderSearchBar()}
         {this.renderApps()}
-      </React.Fragment>
+      </Fragment>
     );
   }
 
@@ -265,13 +261,13 @@ export default class AddApps extends React.Component<
 
   renderAppAdder() {
     return (
-      <React.Fragment>
+      <Fragment>
         {this.renderSelectedApp()}
         {this.renderMessage()}
         <div className="AddApps-selectionControls">
           {this.renderAppSelectionControls()}
         </div>
-      </React.Fragment>
+      </Fragment>
     );
   }
 

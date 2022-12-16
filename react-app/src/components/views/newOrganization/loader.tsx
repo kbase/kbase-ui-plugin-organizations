@@ -1,12 +1,12 @@
-import * as React from 'react';
+import { Component } from 'react';
 
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { StoreState } from '../../../redux/store/types';
 import Container from './container';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
 
-import * as actions from '../../../redux/actions/addOrg';
 import { AppError } from '@kbase/ui-components';
+import * as actions from '../../../redux/actions/addOrg';
 import { AsyncModelState } from '../../../redux/store/types/common';
 import { AddOrgViewModel } from '../../../redux/store/types/views/Main/views/AddOrg';
 
@@ -21,7 +21,7 @@ interface LoaderState {
 
 }
 
-class Loader extends React.Component<LoaderProps, LoaderState> {
+class Loader extends Component<LoaderProps, LoaderState> {
     renderLoading() {
         return (
             <div>

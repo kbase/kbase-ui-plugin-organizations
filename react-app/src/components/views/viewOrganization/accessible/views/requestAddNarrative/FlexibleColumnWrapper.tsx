@@ -1,6 +1,6 @@
-import * as React from 'react'
-import RowWrapper from './RowWrapper'
-import './FlexibleColumnWrapper.css'
+import { Component, createRef } from 'react';
+import './FlexibleColumnWrapper.css';
+import RowWrapper from './RowWrapper';
 
 export interface Dimensions {
     offsetHeight: number,
@@ -35,7 +35,7 @@ export interface FlexibleColumnWrapperState {
     containerDimensions: Dimensions | null
 }
 
-export class FlexibleColumnWrapper extends React.Component<FlexibleColumnWrapperProps, FlexibleColumnWrapperState> {
+export class FlexibleColumnWrapper extends Component<FlexibleColumnWrapperProps, FlexibleColumnWrapperState> {
 
     wrapperContainerRef: React.RefObject<HTMLDivElement>
     listeners: Array<Listener>
@@ -49,7 +49,7 @@ export class FlexibleColumnWrapper extends React.Component<FlexibleColumnWrapper
             containerDimensions: null
         }
 
-        this.wrapperContainerRef = React.createRef()
+        this.wrapperContainerRef = createRef()
         this.listeners = []
         this.limitingTimer = null
         this.limitingTimeout = 100

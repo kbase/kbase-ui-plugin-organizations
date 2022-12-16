@@ -1,16 +1,16 @@
-import * as React from 'react';
+import { Component } from 'react';
 import { StoreState } from '../../../redux/store/types';
 import Container from './container';
 
 // THe redux connection
 
-import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
 
+import { Alert, Spin } from 'antd';
 import * as actions from '../../../redux/actions/browseOrgs';
-import { Spin, Alert } from 'antd';
-import { BrowseOrgsViewModel } from '../../../redux/store/types/views/Main/views/BrowseOrgs';
 import { AsyncModelState, ModelError } from '../../../redux/store/types/common';
+import { BrowseOrgsViewModel } from '../../../redux/store/types/views/Main/views/BrowseOrgs';
 
 // First the loader component, which takes care of a loading view, error view, and the
 // container.
@@ -23,7 +23,7 @@ export interface LoaderProps {
 
 interface LoaderState { }
 
-class Loader extends React.Component<LoaderProps, LoaderState> {
+class Loader extends Component<LoaderProps, LoaderState> {
     renderLoading() {
         const message = (
             <div>

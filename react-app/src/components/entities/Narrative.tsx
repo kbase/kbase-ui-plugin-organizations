@@ -1,9 +1,9 @@
-import * as React from 'react';
+import { DownOutlined, ExclamationCircleOutlined, FileOutlined, GlobalOutlined, LockOutlined, UpOutlined } from '@ant-design/icons';
+import { Button, Tooltip } from 'antd';
+import { Component, Fragment } from 'react';
 import * as narrativeModel from '../../data/models/narrative';
-import { Tooltip, Button } from 'antd';
 import './Narrative.css';
 import UserSimple from './UserContainer';
-import { GlobalOutlined, LockOutlined, FileOutlined, UpOutlined, DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 export interface NarrativeProps {
     narrative: narrativeModel.Narrative;
@@ -27,7 +27,7 @@ interface NarrativeState {
     view: View;
 }
 
-export default class Narrative extends React.Component<NarrativeProps, NarrativeState> {
+export default class Narrative extends Component<NarrativeProps, NarrativeState> {
     constructor(props: NarrativeProps) {
         super(props);
 
@@ -93,7 +93,7 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
 
     renderCompact(narrative: narrativeModel.AccessibleNarrative) {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="controlCol">
                     <Button
                         type="link"
@@ -117,14 +117,14 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                         <UserSimple avatarSize={20} userId={narrative.owner} />
                     </div>
                 </div>
-            </React.Fragment>
+            </Fragment>
         );
     }
 
     renderNormal(narrative: narrativeModel.AccessibleNarrative) {
         // const narrative = this.props.narrative
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="controlCol">
                     <Button
                         type="link"
@@ -168,7 +168,7 @@ export default class Narrative extends React.Component<NarrativeProps, Narrative
                     </div>
                 </div>
 
-            </React.Fragment>
+            </Fragment>
         );
     }
 

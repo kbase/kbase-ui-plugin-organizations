@@ -1,9 +1,9 @@
 import * as groupsApi from '../../apis/groups';
 
+import { EditableOrganization, EditableString, ValidationErrorType, ValidationState } from '../../../redux/store/types/common';
 import * as requestModel from '../requests';
 import * as userModel from '../user';
 import Validation from './validation';
-import { EditableString, EditableOrganization, ValidationErrorType, ValidationState } from '../../../redux/store/types/common';
 
 export interface OrganizationUpdate {
     name: string;
@@ -155,6 +155,7 @@ export interface BriefOrganization {
 
     memberCount: number;
     narrativeCount: number;
+    appCount: number;
     relatedOrganizations: Array<OrganizationID>;
 }
 
@@ -475,6 +476,8 @@ function applySortComparison(sortField: string, direction: number, a: BriefOrgan
             return direction * a.owner.username.localeCompare(b.owner.username);
         case 'narrativeCount':
             return direction * (a.narrativeCount - b.narrativeCount);
+        case 'appCount':
+            return direction * (a.appCount - b.appCount);
         case 'memberCount':
             return direction * (a.memberCount - b.memberCount);
         default:
@@ -918,6 +921,7 @@ export class OrganizationModel {
             lastVisitedAt: group.lastvisit ? new Date(group.lastvisit) : null,
             memberCount: group.memcount || 0,
             narrativeCount: group.rescount.workspace || 0,
+            appCount: group.rescount.catalogmethod || 0,
             relatedOrganizations: group.custom
                 ? group.custom.relatedgroups
                     ? group.custom.relatedgroups.split(',')

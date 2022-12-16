@@ -1,8 +1,8 @@
-import * as React from 'react';
-import './UserSimple.css';
-import Avatar from './Avatar';
-import * as userModel from '../../data/models/user';
 import { Tooltip } from 'antd';
+import { Component } from 'react';
+import * as userModel from '../../data/models/user';
+import Avatar from './Avatar';
+import './UserSimple.css';
 
 export interface UserProps {
     user: userModel.User;
@@ -12,7 +12,7 @@ export interface UserProps {
 interface UserState {
 }
 
-class User extends React.Component<UserProps, UserState> {
+class User extends Component<UserProps, UserState> {
     render() {
         const tooltip = (
             <div>

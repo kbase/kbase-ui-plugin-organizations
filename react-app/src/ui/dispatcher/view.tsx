@@ -1,12 +1,12 @@
-import React from 'react';
-import { RootState, AppError } from '@kbase/ui-components';
+import { AppError, RootState } from '@kbase/ui-components';
 import { Alert } from 'antd';
+import React, { Component } from 'react';
 import { Params } from '.';
-import Navigation from '../navigation';
-import { RouteConfig, routeConfigToSpec } from '../navigation/RouteConfig';
 import OrganizationsBrowser from '../../components/views/browseOrgs';
 import NewOrganization from '../../components/views/newOrganization/loader';
 import ViewOrganization from '../../components/views/viewOrganization/loader';
+import Navigation from '../navigation';
+import { RouteConfig, routeConfigToSpec } from '../navigation/RouteConfig';
 
 const routes: Array<RouteConfig> = [
     {
@@ -52,7 +52,7 @@ interface DispatcherState {
     currentRoute: ViewRouter | null;
 }
 
-export class Dispatcher extends React.Component<DispatcherProps, DispatcherState> {
+export class Dispatcher extends Component<DispatcherProps, DispatcherState> {
     views: ViewRouters;
 
     constructor(props: DispatcherProps) {

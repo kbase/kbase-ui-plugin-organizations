@@ -1,13 +1,13 @@
-import * as React from 'react';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import { Component, Fragment } from 'react';
 import * as requestModel from '../../../../../data/models/requests';
 import { niceElapsed } from '../../../../../lib/time';
+import { View } from '../../../../entities/app/component';
+import App from '../../../../entities/app/loader';
 import Narrative from '../../../../entities/NarrativeContainer';
 import User from '../../../../entities/UserContainer';
-import { Button } from 'antd';
 import './InboxRequest.css';
-import App from '../../../../entities/app/loader';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { View } from '../../../../entities/app/component';
 
 export interface RequestProps {
     request: requestModel.Request;
@@ -19,7 +19,7 @@ interface RequestState {
 
 }
 
-export default class Request extends React.Component<RequestProps, RequestState> {
+export default class Request extends Component<RequestProps, RequestState> {
     onAcceptRequest() {
         this.props.onAcceptInboxRequest(this.props.request);
     }
@@ -118,7 +118,7 @@ export default class Request extends React.Component<RequestProps, RequestState>
 
     renderJoinRequest(request: requestModel.UserRequest) {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="cardSectionHeader">
                     REQUEST to join Organization
                 </div>
@@ -128,13 +128,13 @@ export default class Request extends React.Component<RequestProps, RequestState>
                 <div className="requestSubject">{this.renderRequestRequester(request)}</div>
 
                 {this.renderRequestOptions(request)}
-            </React.Fragment>
+            </Fragment>
         );
     }
 
     renderWorkspaceRequest(request: requestModel.WorkspaceRequest) {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="cardSectionHeader">
                     REQUEST to associate Narrative
                 </div>
@@ -148,14 +148,14 @@ export default class Request extends React.Component<RequestProps, RequestState>
                 <div className="requester miniDetail">{this.renderRequestRequester(request)}</div>
 
                 {this.renderRequestOptions(request)}
-            </React.Fragment>
+            </Fragment>
         );
     }
 
 
     renderAppRequest(request: requestModel.AppRequest) {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="cardSectionHeader">
                     REQUEST to associate App
                 </div>
@@ -172,7 +172,7 @@ export default class Request extends React.Component<RequestProps, RequestState>
                 <div className="requester miniDetail">{this.renderRequestRequester(request)}</div>
 
                 {this.renderRequestOptions(request)}
-            </React.Fragment>
+            </Fragment>
         );
     }
 
@@ -196,7 +196,7 @@ export default class Request extends React.Component<RequestProps, RequestState>
 
     renderUserInvitation(request: requestModel.UserInvitation) {
         return (
-            <React.Fragment>
+            <Fragment>
                 <div className="cardSectionHeader">
                     INVITATION to join organization
                 </div>
@@ -209,7 +209,7 @@ export default class Request extends React.Component<RequestProps, RequestState>
                 <User userId={request.requester} avatarSize={30} />
 
                 {this.renderRequestOptions(request)}
-            </React.Fragment>
+            </Fragment>
         );
     }
 
@@ -232,15 +232,15 @@ export default class Request extends React.Component<RequestProps, RequestState>
                         return this.renderUserInvitation(request);
                     case requestModel.RequestResourceType.WORKSPACE:
                         return (
-                            <React.Fragment>
+                            <Fragment>
                                 <div>Hmm, not supported</div>
-                            </React.Fragment>
+                            </Fragment>
                         );
                     case requestModel.RequestResourceType.APP:
                         return (
-                            <React.Fragment>
+                            <Fragment>
                                 <div>Hmm, not supported</div>
-                            </React.Fragment>
+                            </Fragment>
                         );
                 }
         }

@@ -1,6 +1,6 @@
-import {Component} from 'react';
+import { Component, PropsWithChildren } from 'react';
 
-export interface LinkerProps {
+export interface LinkerProps extends PropsWithChildren {
     to: string;
 }
 
