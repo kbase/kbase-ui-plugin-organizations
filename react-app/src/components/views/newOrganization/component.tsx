@@ -41,6 +41,7 @@ import {
 } from "../../../redux/store/types/common";
 import { redirect } from "../../../ui/utils";
 import OrgLogo from "../../OrgLogo";
+import Well from "../../Well";
 import "./component.css";
 
 export interface NewOrganizationProps {
@@ -568,6 +569,7 @@ class NewOrganization extends Component<
                 checked={isPrivateField.value}
                 className={this.calcFieldClass(isPrivateField)}
                 onChange={onChange}
+                style={{ marginRight: "0.5em" }}
               />
               {this.renderIsPrivate(isPrivateField.value)}
             </div>
@@ -697,6 +699,42 @@ class NewOrganization extends Component<
       </Fragment>
     );
     const placeholder = "Text or Markdown describing your Organization";
+    const tabItems = [
+      {
+        key: "editor",
+        label: "Editor",
+        children: (
+          <>
+            <TextArea
+              value={descriptionField.value || ""}
+              className={
+                this.calcFieldClass(descriptionField) +
+                " NewOrganization-control-description"
+              }
+              autoSize={{ minRows: 5, maxRows: 15 }}
+              placeholder={placeholder}
+              onChange={onChange}
+            />
+            {this.renderFieldError(descriptionField)}
+          </>
+        ),
+      },
+      {
+        key: "preview",
+        label: "Preview",
+        children: (
+          <div
+            className="NewOrganization-preview-description"
+            // xss safe
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(
+                marked.parse(descriptionField.value || "")
+              ),
+            }}
+          />
+        ),
+      },
+    ];
     return (
       <div className="NewOrganization-row">
         <div className="NewOrganization-col1">
@@ -708,32 +746,7 @@ class NewOrganization extends Component<
         </div>
         <div className="NewOrganization-col2">
           <div className="NewOrganization-formControl">
-            <Tabs defaultActiveKey="editor" animated={false}>
-              <Tabs.TabPane tab="Editor" key="editor">
-                <TextArea
-                  value={descriptionField.value || ""}
-                  className={
-                    this.calcFieldClass(descriptionField) +
-                    " NewOrganization-control-description"
-                  }
-                  autoSize={{ minRows: 5, maxRows: 15 }}
-                  placeholder={placeholder}
-                  onChange={onChange}
-                />
-                {this.renderFieldError(descriptionField)}
-              </Tabs.TabPane>
-              <Tabs.TabPane tab="Preview" key="preview">
-                <div
-                  className="NewOrganization-preview-description"
-                  // xss safe
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(
-                      marked.parse(descriptionField.value || "")
-                    ),
-                  }}
-                />
-              </Tabs.TabPane>
-            </Tabs>
+            <Tabs defaultActiveKey="editor" animated={false} items={tabItems} />
           </div>
         </div>
       </div>
@@ -760,7 +773,7 @@ class NewOrganization extends Component<
         className="NewOrganization-editor  scrollable-flex-column"
         onSubmit={this.onSubmit.bind(this)}
       >
-        {this.renderEditorHeader()}
+        {/* {this.renderEditorHeader()} */}
         <div className="NewOrganization-body">
           {this.renderNameRow(
             this.props.newOrganization.name,
@@ -795,16 +808,7 @@ class NewOrganization extends Component<
             <div
               className="NewOrganization-col2"
               style={{ textAlign: "center" }}
-            >
-              <div className="ButtonSet">
-                <span className="ButtonSet-button">
-                  {this.renderSaveButton()}
-                </span>
-                <span className="ButtonSet-button">
-                  {this.renderCancelButton()}
-                </span>
-              </div>
-            </div>
+            ></div>
           </div>
         </div>
       </form>
@@ -1054,8 +1058,35 @@ class NewOrganization extends Component<
 
     return (
       <div className="NewOrganization scrollable-flex-column">
-        <div className="NewOrganization-main scrollable-flex-column">
-          {this.renderEditor()}
+        <div className="scrollable-flex-column NewOrganization-main">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              minHeight: "0",
+            }}
+          >
+            <Well
+              style={{
+                maxWidth: "60em",
+                flex: "1 1 0",
+              }}
+            >
+              <Well.Header>Create Your Organization</Well.Header>
+              <Well.Body>{this.renderEditor()}</Well.Body>
+              <Well.Footer style={{ justifyContent: "center" }}>
+                <div className="ButtonSet">
+                  <span className="ButtonSet-button">
+                    {this.renderSaveButton()}
+                  </span>
+                  <span className="ButtonSet-button">
+                    {this.renderCancelButton()}
+                  </span>
+                </div>
+              </Well.Footer>
+            </Well>
+          </div>
         </div>
         {/* TODO: improve error display*/}
         {this.renderError()}

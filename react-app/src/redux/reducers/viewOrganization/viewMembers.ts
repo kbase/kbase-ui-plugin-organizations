@@ -1,7 +1,7 @@
 import { Action } from 'redux';
+import { ActionFlag } from '../../actions';
 import * as actions from '../../actions/viewOrganization/viewMembers';
 import { StoreState } from '../../store/types';
-import { ActionFlag } from '../../actions';
 import { AsyncModelState, MemberType } from '../../store/types/common';
 import { ViewOrgViewModelKind } from '../../store/types/views/Main/views/ViewOrg';
 

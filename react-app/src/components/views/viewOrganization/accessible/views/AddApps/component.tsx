@@ -1,12 +1,15 @@
 import {
-  CheckCircleOutlined, LoadingOutlined, RollbackOutlined
+  CheckCircleOutlined,
+  LoadingOutlined,
+  RollbackOutlined,
 } from "@ant-design/icons";
 import { Alert, Button, Input, Select } from "antd";
 import { ChangeEvent, Component, Fragment } from "react";
 import {
-  ResourceRelationToOrg, SelectableApp
+  ResourceRelationToOrg,
+  SelectableApp,
 } from "../../../../../../redux/store/types/views/Main/views/ViewOrg/views/AddApp";
-import { View } from '../../../../../entities/app/component';
+import { View } from "../../../../../entities/app/component";
 import App from "../../../../../entities/app/loader";
 import MainMenu from "../../../../../menu/component";
 import "./component.css";
@@ -26,10 +29,7 @@ interface AddAppsState {}
 
 type AlertType = "info" | "warning" | "error" | "success";
 
-export default class AddApps extends Component<
-  AddAppsProps,
-  AddAppsState
-> {
+export default class AddApps extends Component<AddAppsProps, AddAppsState> {
   addedApp: SelectableApp | null;
   constructor(props: AddAppsProps) {
     super(props);
@@ -87,6 +87,7 @@ export default class AddApps extends Component<
       <div className="AddApps-searchBar">
         <div className="AddApps-searchInput">
           <Input
+            allowClear
             onChange={this.doSearch.bind(this)}
             style={{ width: "100%" }}
             placeholder="Filter apps by title"

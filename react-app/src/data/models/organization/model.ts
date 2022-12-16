@@ -719,8 +719,7 @@ export interface AppQuery {
 
 export function queryApps(apps: Array<AppResource>, query: AppQuery) {
     const searched = applyAppSearch(apps, query.searchBy);
-    const sorted = applyAppSort(searched, query.sortBy);
-    return sorted;
+    return applyAppSort(searched, query.sortBy);
 }
 
 // Members Sort and Search
@@ -763,14 +762,9 @@ export function applyMembersSearch(members: Array<Member>, searchBy: string) {
     if (tokens.length === 0) {
         return members;
     }
-    // return members.slice().filter((member: Member) => {
-    //     return tokens.every((token: RegExp) => {
-    //         return token.test(member.username) || token.test(member.title || '');
-    //     });
-    // });
     members.forEach((member: Member) => {
         member.isVisible = tokens.every((token: RegExp) => {
-            return token.test(member.username) || token.test(member.title || '');
+            return token.test(member.username) || token.test(member.realname || '');
         });
     });
     return members;
@@ -783,19 +777,8 @@ export interface MembersQuery {
 
 export function queryMembers(members: Array<Member>, query: MembersQuery) {
     const searched = applyMembersSearch(members, query.searchBy);
-    const sorted = applyMembersSort(searched, query.sortBy);
-    return sorted;
+    return applyMembersSort(searched, query.sortBy);
 }
-
-// function getCustomField(group: groupsApi.Group | groupsApi.BriefGroup, name: string): string | null {
-//     if (!group.custom) {
-//         return null
-//     }
-//     if (name in group.custom) {
-//         return group.custom[name]
-//     }
-//     return null
-// }
 
 export interface ConstructorParams {
     groupsServiceURL: string;

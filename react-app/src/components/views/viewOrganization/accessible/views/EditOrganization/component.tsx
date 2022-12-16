@@ -41,6 +41,7 @@ import {
   ValidationState,
 } from "../../../../../../redux/store/types/common";
 import { redirect } from "../../../../../../ui/utils";
+import Well from "../../../../../Well";
 
 export interface EditOrganizationProps {
   editState: EditState;
@@ -874,6 +875,44 @@ class EditOrganization extends Component<
       </Fragment>
     );
     const placeholder = "Text or Markdown describing your Organization";
+
+    const tabItems = [];
+    tabItems.push(
+      {
+        key: "editor",
+        label: "Editor",
+        children: (
+          <>
+            <TextArea
+              value={descriptionField.value || ""}
+              className={
+                this.calcFieldClass(descriptionField) +
+                " NewOrganization-control-description"
+              }
+              autoSize={{ minRows: 5, maxRows: 15 }}
+              placeholder={placeholder}
+              onChange={onChange}
+            />
+            {this.renderFieldError(descriptionField)}
+          </>
+        ),
+      },
+      {
+        key: "preview",
+        label: "Preview",
+        children: (
+          <div
+            className="NewOrganization-preview-description"
+            // xss safe
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(
+                marked.parse(descriptionField.value || "")
+              ),
+            }}
+          />
+        ),
+      }
+    );
     return (
       <div className="NewOrganization-row">
         <div className="NewOrganization-col1">
@@ -885,32 +924,7 @@ class EditOrganization extends Component<
         </div>
         <div className="NewOrganization-col2">
           <div className="NewOrganization-formControl">
-            <Tabs defaultActiveKey="editor" animated={false}>
-              <Tabs.TabPane tab="Editor" key="editor">
-                <TextArea
-                  value={descriptionField.value || ""}
-                  className={
-                    this.calcFieldClass(descriptionField) +
-                    " NewOrganization-control-description"
-                  }
-                  autoSize={{ minRows: 5, maxRows: 15 }}
-                  placeholder={placeholder}
-                  onChange={onChange}
-                />
-                {this.renderFieldError(descriptionField)}
-              </Tabs.TabPane>
-              <Tabs.TabPane tab="Preview" key="preview">
-                <div
-                  className="NewOrganization-preview-description"
-                  // xss safe
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(
-                      marked.parse(descriptionField.value || "")
-                    ),
-                  }}
-                />
-              </Tabs.TabPane>
-            </Tabs>
+            <Tabs defaultActiveKey="editor" animated={false} items={tabItems} />
           </div>
         </div>
       </div>
@@ -964,7 +978,6 @@ class EditOrganization extends Component<
         className="EditOrganization-editor scrollable-flex-column"
         onSubmit={this.onSubmit.bind(this)}
       >
-        {this.renderEditorHeader()}
         <div className="EditOrganization-body">
           {this.renderNameRow(
             this.props.editedOrganization.name,
@@ -994,22 +1007,6 @@ class EditOrganization extends Component<
             this.props.editedOrganization.description,
             this.onDescriptionChange.bind(this)
           )}
-          <div className="EditOrganization-row">
-            <div className="EditOrganization-col1"></div>
-            <div
-              className="EditOrganization-col2"
-              style={{ textAlign: "center" }}
-            >
-              <div className="ButtonSet">
-                <span className="ButtonSet-button">
-                  {this.renderSaveButton()}
-                </span>
-                <span className="ButtonSet-button">
-                  {this.renderCancelButton()}
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </form>
     );
@@ -1173,7 +1170,34 @@ class EditOrganization extends Component<
     return (
       <div className="EditOrganization scrollable-flex-column">
         <div className="EditOrganization-main scrollable-flex-column">
-          {this.renderEditor()}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              minHeight: "0",
+            }}
+          >
+            <Well
+              style={{
+                maxWidth: "60em",
+                flex: "1 1 0",
+              }}
+            >
+              <Well.Header>Edit Your Organization</Well.Header>
+              <Well.Body>{this.renderEditor()}</Well.Body>
+              <Well.Footer style={{ justifyContent: "center" }}>
+                <div className="ButtonSet">
+                  <span className="ButtonSet-button">
+                    {this.renderSaveButton()}
+                  </span>
+                  <span className="ButtonSet-button">
+                    {this.renderCancelButton()}
+                  </span>
+                </div>
+              </Well.Footer>
+            </Well>
+          </div>
         </div>
       </div>
     );

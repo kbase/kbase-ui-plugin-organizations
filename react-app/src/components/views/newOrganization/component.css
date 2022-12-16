@@ -224,9 +224,10 @@
 
 .NewOrganization-main {
     flex: 1 1 0px;
-    min-width: 50em;
-    max-width: 100em;
-    margin: 0 auto;
+    /* min-width: 50em; */
+    /* max-width: 100em; */
+    /* margin: 0 auto; */
+    /* align-items: center; */
 }
 
 /* new editor layout ends */

@@ -1,12 +1,12 @@
 import {
-    AppstoreOutlined,
-    DeleteOutlined,
-    EllipsisOutlined
+  AppstoreOutlined,
+  DeleteOutlined,
+  EllipsisOutlined,
 } from "@ant-design/icons";
 import { Alert, Button, Dropdown, Input, Menu, Modal, Select } from "antd";
 import { Component, Fragment } from "react";
 import * as orgModel from "../../../../../data/models/organization/model";
-import { View } from '../../../../entities/app/component';
+import { View } from "../../../../entities/app/component";
 import App from "../../../../entities/app/loader";
 import "./component.css";
 
@@ -14,7 +14,7 @@ export interface AppsProps {
   organization: orgModel.Organization;
   apps: { sortBy: string; searchBy: string; apps: Array<orgModel.AppResource> };
 
-    relation: orgModel.Relation;
+  relation: orgModel.Relation;
   onAssociateApp: () => void;
   onRemoveApp: (appId: string) => void;
   onSearchApps: (searchBy: string) => void;
@@ -48,17 +48,21 @@ export default class Apps extends Component<AppsProps, AppsState> {
   }
 
   renderButtonRow() {
-    if (this.props.organization.isAdmin || this.props.organization.isOwner || this.props.organization.isMember) {
-        return (
+    if (
+      this.props.organization.isAdmin ||
+      this.props.organization.isOwner ||
+      this.props.organization.isMember
+    ) {
+      return (
         <Button
-            size="small"
-            className="Button-important"
-            onClick={this.props.onAssociateApp.bind(this)}
+          size="small"
+          className="Button-important"
+          onClick={this.props.onAssociateApp.bind(this)}
         >
-            <AppstoreOutlined type="appstore" />
-            Associate Apps
+          <AppstoreOutlined type="appstore" />
+          Associate Apps
         </Button>
-        );
+      );
     }
   }
 
@@ -73,6 +77,7 @@ export default class Apps extends Component<AppsProps, AppsState> {
       <Fragment>
         <div className="Apps-searchInput">
           <Input
+            allowClear
             placeholder="Filter apps by title or author"
             onChange={doChange}
           />
@@ -97,37 +102,38 @@ export default class Apps extends Component<AppsProps, AppsState> {
     );
   }
 
-   renderAppMenu(app: orgModel.AppResource) {
-        const relation = this.props.relation;
-        let menu;
-        switch (relation.type) {
-            case orgModel.UserRelationToOrganization.NONE:
-                // should never occur
-                return;
-            case orgModel.UserRelationToOrganization.VIEW:
-            case orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING:
-            case orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING:
-            case orgModel.UserRelationToOrganization.MEMBER:
-                return;
-            case orgModel.UserRelationToOrganization.ADMIN:
-            case orgModel.UserRelationToOrganization.OWNER:
-                menu = <Menu>
-                        <Menu.Item
-                          key="removeApp"
-                          onClick={() => this.doRemoveApp(app.appId)}
-                        >
-                          <DeleteOutlined style={{ color: "red" }} /> Remove App from
-                          Organization
-                        </Menu.Item>
-                      </Menu>
-                      return (
-            <Dropdown overlay={menu} trigger={['click']}>
-                <EllipsisOutlined className="IconButton-hover" />
-            </Dropdown>
+  renderAppMenu(app: orgModel.AppResource) {
+    const relation = this.props.relation;
+    let menu;
+    switch (relation.type) {
+      case orgModel.UserRelationToOrganization.NONE:
+        // should never occur
+        return;
+      case orgModel.UserRelationToOrganization.VIEW:
+      case orgModel.UserRelationToOrganization.MEMBER_REQUEST_PENDING:
+      case orgModel.UserRelationToOrganization.MEMBER_INVITATION_PENDING:
+      case orgModel.UserRelationToOrganization.MEMBER:
+        return;
+      case orgModel.UserRelationToOrganization.ADMIN:
+      case orgModel.UserRelationToOrganization.OWNER:
+        menu = (
+          <Menu>
+            <Menu.Item
+              key="removeApp"
+              onClick={() => this.doRemoveApp(app.appId)}
+            >
+              <DeleteOutlined style={{ color: "red" }} /> Remove App from
+              Organization
+            </Menu.Item>
+          </Menu>
         );
-        }
-
+        return (
+          <Dropdown overlay={menu} trigger={["click"]}>
+            <EllipsisOutlined className="IconButton-hover" />
+          </Dropdown>
+        );
     }
+  }
 
   renderBrowseRows() {
     if (this.props.apps.apps.length === 0) {
@@ -148,11 +154,9 @@ export default class Apps extends Component<AppsProps, AppsState> {
         return (
           <div key={String(index)} className="Apps-appRow SimpleCard">
             <div className="Apps-appColumn">
-              <App appId={app.appId} initialView={View.COMPACT}/>
+              <App appId={app.appId} initialView={View.COMPACT} />
             </div>
-            <div className="Apps-menuColumn">
-              {menu}
-            </div>
+            <div className="Apps-menuColumn">{menu}</div>
           </div>
         );
       });
