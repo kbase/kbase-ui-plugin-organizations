@@ -176,6 +176,14 @@ a:hover {
     min-width: 0;
 }
 
+.scrollable-flex-row {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    min-height: 0;
+    min-width: 0;
+}
+
 .IconButton-hover {
     padding: 3px;
     cursor: pointer;

@@ -953,7 +953,7 @@ class EditOrganization extends Component<
         danger
         onClick={this.onFinish.bind(this)}
       >
-        Cancel
+        Close
       </Button>
     );
   }
