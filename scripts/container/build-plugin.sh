@@ -1,6 +1,6 @@
 set -e
 echo "Building plugin"
-cd react-app
+cd vite-app
 echo "Installing npm dependencies..."
 npm install
 echo "✓ dependencies installed successfully"

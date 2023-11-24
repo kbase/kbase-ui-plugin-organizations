@@ -13,7 +13,7 @@
 # echo "✓ plugin distribution created successfully" 
 # echo "✓ plugin build completed"
 cd tools/node
-DIR=`pwd`/../../react-app docker compose run --rm node npm install
-DIR=`pwd`/../../react-app docker compose run --rm node npm run build
+DIR=`pwd`/../../vite-app docker compose run --rm node npm install
+DIR=`pwd`/../../vite-app docker compose run --rm node npm run build
 DIR=`pwd`/../.. docker compose run --rm node npm install
 DIR=`pwd`/../.. docker compose run --rm node npm run install-plugin
