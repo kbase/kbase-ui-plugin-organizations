@@ -1,8 +1,6 @@
 name: Plugin build and create dist upon release
 on:
   release:
-    branches: 
-      -master
     types: [published]
 jobs:
   build-dist:
