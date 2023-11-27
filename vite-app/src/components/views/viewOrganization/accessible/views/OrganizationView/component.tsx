@@ -21,7 +21,7 @@ import {
   ViewAccessibleOrgViewModel,
 } from "../../../../../../redux/store/types/views/Main/views/ViewOrg";
 import Header from "../../../../../Header";
-import Linker from "../../../../../Linker";
+import UILink from '../../../../../UILink';
 import Apps from "../../apps/component";
 import Members from "../../members/reduxAdapter";
 import Narratives from "../../narratives/component";
@@ -201,14 +201,9 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
             {invitations.length > 1 ? "s" : ""}
           </div>
           <div>
-            <Linker
-              to={
-                "/manageOrganizationRequests/" +
-                this.props.viewModel.organization.id
-              }
-            >
+            <UILink hashPath={{hash: `manageOrganizationRequests/${this.props.viewModel.organization.id}`}}>
               <Button>Manage Requests</Button>
-            </Linker>
+            </UILink>
           </div>
         </div>
       );
@@ -245,14 +240,9 @@ class OrganizationView extends Component<OrgViewProps, OrgViewState> {
             {invitations.length > 1 ? "s" : ""}
           </div>
           <div>
-            <Linker
-              to={
-                "/manageOrganizationRequests/" +
-                this.props.viewModel.organization!.id
-              }
-            >
+            <UILink hashPath={{hash: `manageOrganizationRequests/${this.props.viewModel.organization.id}`}}>
               <Button>Manage Requests</Button>
-            </Linker>
+            </UILink>
           </div>
         </div>
       );

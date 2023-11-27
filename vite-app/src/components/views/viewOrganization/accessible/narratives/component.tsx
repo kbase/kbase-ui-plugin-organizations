@@ -4,7 +4,7 @@ import {
   FolderOpenOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Alert, Button, Dropdown, Input, Menu, Modal, Select } from "antd";
+import { Alert, Button, Dropdown, Input, MenuProps, Modal, Select } from "antd";
 import { Component, Fragment } from "react";
 import * as orgModel from "../../../../../data/models/organization/model";
 import OrganizationNarrative from "../../../../OrganizationNarrative";
@@ -62,17 +62,9 @@ export default class Narratives extends Component<
     });
   }
 
-  onNarrativeMenu(key: React.Key, narrative: orgModel.NarrativeResource) {
-    switch (key) {
-      case "removeNarrative":
-        this.onRemoveNarrative(narrative);
-        break;
-    }
-  }
-
   renderNarrativeMenu(narrative: orgModel.NarrativeResource) {
     const relation = this.props.relation;
-    let menu;
+    const items: MenuProps['items'] = [];
     switch (relation.type) {
       case orgModel.UserRelationToOrganization.NONE:
         // should never occur
@@ -84,24 +76,19 @@ export default class Narratives extends Component<
         break;
       case orgModel.UserRelationToOrganization.ADMIN:
       case orgModel.UserRelationToOrganization.OWNER:
-        menu = (
-          <Menu
-            onClick={({ key }) => {
-              this.onNarrativeMenu(key, narrative);
-            }}
-          >
-            <Menu.Item key="removeNarrative">
-              <DeleteOutlined style={{ color: "#f5222d" }} /> Remove Narrative
-              from Organization
-            </Menu.Item>
-          </Menu>
-        );
+        items.push({
+          key: "removeNarrative",
+          label: <span><DeleteOutlined style={{ color: "#f5222d" }} /> Remove Narrative from Organization</span>,
+          onClick: () => {
+            this.onRemoveNarrative(narrative);
+          }
+        })
     }
-    if (!menu) {
+    if (items.length === 0) {
       return;
     }
     return (
-      <Dropdown overlay={menu} trigger={["click"]}>
+      <Dropdown menu={{items}} trigger={["click"]}>
         <EllipsisOutlined className="IconButton-hover" />
       </Dropdown>
     );

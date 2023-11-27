@@ -4,15 +4,15 @@ import { Component } from "react";
 import * as orgModel from "../../../../data/models/organization/model";
 import * as requestModel from "../../../../data/models/requests";
 import {
-    SubViewKind, ViewAccessibleOrgViewModel
+  SubViewKind, ViewAccessibleOrgViewModel
 } from "../../../../redux/store/types/views/Main/views/ViewOrg";
 import { redirect } from "../../../../ui/utils";
-import Linker from "../../../Linker";
+import UILink from '../../../UILink';
 import BriefOrganizationHeader from "./BriefOrganizationHeader";
+import OrgMenu from "./OrgMenu";
 import "./component.css";
 import ManageRelatedOrganizations from "./manageRelatedOrganizations";
 import Members from "./members/reduxAdapter";
-import OrgMenu from "./OrgMenu";
 import AddApps from "./views/AddApps";
 import EditOrganization from "./views/EditOrganization";
 import InviteUser from "./views/InviteUser/loader";
@@ -220,14 +220,9 @@ class ViewOrganization extends Component<
             {invitations.length > 1 ? "s" : ""}
           </div>
           <div>
-            <Linker
-              to={
-                "/manageOrganizationRequests/" +
-                this.props.viewModel.organization.id
-              }
-            >
+            <UILink hashPath={{hash: `manageOrganizationRequests/${this.props.viewModel.organization.id}`}}>
               <Button>Manage Requests</Button>
-            </Linker>
+            </UILink>
           </div>
         </div>
       );
@@ -264,14 +259,9 @@ class ViewOrganization extends Component<
             {invitations.length > 1 ? "s" : ""}
           </div>
           <div>
-            <Linker
-              to={
-                "/manageOrganizationRequests/" +
-                this.props.viewModel.organization!.id
-              }
-            >
+            <UILink hashPath={{hash: `manageOrganizationRequests/${this.props.viewModel.organization.id}`}}>
               <Button>Manage Requests</Button>
-            </Linker>
+            </UILink>
           </div>
         </div>
       );

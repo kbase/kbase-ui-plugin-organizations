@@ -13,8 +13,8 @@ import {
   UnlockOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { europaLink } from '../../lib/euoropa';
 import NiceElapsedTime from "../NiceElapsedTime";
+import UILink from '../UILink';
 import "./Member.css";
 
 enum View {
@@ -102,14 +102,12 @@ class Member extends Component<MemberProps, MemberState> {
         <div className="Member-infoCol">
           <div className="Member-name">
             <Tooltip placement="bottomRight" title={userTooltip}>
-              {europaLink({hash: `people/${this.props.member.username}`}, this.props.member.realname, {newWindow: true})}
-              {/* <a
-                href={"/#people/" + this.props.member.username}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {this.props.user.realname}
-              </a> */}
+              <UILink 
+                hashPath={{hash: `people/${this.props.member.username}`}}
+                newWindow={true}
+                >
+                  {this.props.member.realname}
+              </UILink>
             </Tooltip>
           </div>
           <div className="Member-role">
@@ -148,14 +146,10 @@ class Member extends Component<MemberProps, MemberState> {
         <div className="Member-infoCol">
           <div className="Member-name">
             <Tooltip placement="bottomRight" title={userTooltip}>
-            {europaLink({hash: `people/${this.props.member.username}`}, this.props.member.realname, {newWindow: true})}
-              {/* <a
-                href={"/#people/" + this.props.member.username}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {this.props.user.realname}
-              </a> */}
+              <UILink hashPath={{pathname: `people/${this.props.user.username}`}}
+                      newWindow={true}>
+                  {this.props.user.realname}
+              </UILink>
             </Tooltip>
           </div>
           <div className="Member-role">

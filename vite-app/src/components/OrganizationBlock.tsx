@@ -5,10 +5,9 @@ import * as orgModel from '../data/models/organization/model';
 import * as requestModel from '../data/models/requests';
 
 import { CrownOutlined, ExclamationCircleTwoTone, StopOutlined, UnlockOutlined, UserOutlined } from '@ant-design/icons';
-import { europaLink } from '../lib/euoropa';
-import Linker from './Linker';
 import OrgLogo from './OrgLogo';
 import './OrganizationBlock.css';
+import UILink from './UILink';
 
 export interface OrganizationBlockProps {
     organization: orgModel.Organization;
@@ -162,20 +161,22 @@ export default class OrganizationBlock extends Component<OrganizationBlockProps,
         return (
             <div className="OrganizationBlock" key={org.id}>
                 <div className="avatarCol">
-                    <Linker to={`/orgs/${org.id}`}>
+                    <UILink hashPath={{hash: `orgs/${org.id}`}}>
                         {this.renderLogo(org)}
-                    </Linker>
+                    </UILink>
                 </div>
                 <div className="bodyCol">
                     <div className="orgName">
-                        <Linker to={`/orgs/${org.id}`}>
-                            {org.name}
-                        </Linker>
+                        <UILink hashPath={{hash: `orgs/${org.id}`}}>
+                        {org.name}
+                        </UILink>
                     </div>
                     <div className="orgOwner">
                         <span className="field-label">owner</span>
                         <span className="field-value">
-                            {europaLink({hash: `people/${org.owner.username}`}, org.owner.username, {newWindow: true})}
+                            <UILink hashPath={{hash:  `people/${org.owner.username}`}} newWindow={true}>
+                                {org.owner.username}
+                            </UILink>
                         </span>
 
                     </div>

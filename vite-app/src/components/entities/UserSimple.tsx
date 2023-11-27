@@ -1,7 +1,7 @@
 import { Tooltip } from 'antd';
 import { Component } from 'react';
 import * as userModel from '../../data/models/user';
-import { europaLink } from '../../lib/euoropa';
+import UILink from '../UILink';
 import Avatar from './Avatar';
 import './UserSimple.css';
 
@@ -30,8 +30,12 @@ class User extends Component<UserProps, UserState> {
         return (
             <div className="UserSimple">
                 <Tooltip title={tooltip} placement="bottomRight">
-                    {europaLink({hash: `people/${this.props.user.username}`}, this.props.user.realname, {newWindow: true})}
-                    {/* <a href={"/#people/" + this.props.user.username} target="_blank" rel="noopener noreferrer">{this.props.user.realname}</a> */}
+                    <UILink
+                        hashPath={{hash: `people/${this.props.user.username}`}}
+                        newWindow={true}
+                    >
+                        {this.props.user.realname}
+                    </UILink>
                 </Tooltip>
             </div>
         );

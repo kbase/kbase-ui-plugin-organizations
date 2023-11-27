@@ -975,7 +975,7 @@ class EditOrganization extends Component<
     return (
       <form
         id="editOrganizationForm"
-        className="EditOrganization-editor scrollable-flex-column"
+        className="EditOrganization-editor"
         onSubmit={this.onSubmit.bind(this)}
       >
         <div className="EditOrganization-body">
@@ -1168,8 +1168,8 @@ class EditOrganization extends Component<
     //     return <Redirect push to={"/viewOrganization/" + this.props.organization.id} />;
     // }
     return (
-      <div className="EditOrganization scrollable-flex-column">
-        <div className="EditOrganization-main scrollable-flex-column">
+      <div className="EditOrganization">
+        <div className="EditOrganization-main">
           <div
             style={{
               display: "flex",

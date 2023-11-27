@@ -2,7 +2,7 @@ import { GlobalOutlined, LockOutlined } from '@ant-design/icons';
 import { Button, Drawer, Tooltip } from 'antd';
 import { Component, Fragment } from 'react';
 import * as orgModel from '../data/models/organization/model';
-import { europaLink } from '../lib/euoropa';
+import UILink from './UILink';
 
 export interface Props {
     narrative: orgModel.NarrativeResource;
@@ -175,8 +175,10 @@ export default class OrganizationNarrative extends Component<Props, State> {
             return (
                 <Fragment>
                     <div className="title">
-                        {europaLink({pathname: `/narrative/${narrative.workspaceId}`}, narrative.title, {newWindow: true})}
-                        {/* <a href={'/narrative/ws.' + narrative.workspaceId + '.obj.' + '1'} target="_blank" rel="noopener noreferrer">{narrative.title}</a> */}
+                        <UILink hashPath={{pathname: `narrative/${narrative.workspaceId}`}}
+                            newWindow={true}>
+                            {narrative.title}
+                        </UILink>
                     </div>
                     <div>{this.renderPublicPermission(narrative)}</div>
                     <div>{this.renderNarrativePermission(narrative)}</div>

@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import * as orgModel from '../../../data/models/organization/model';
-import Linker from '../../Linker';
 import OrgLogo from '../../OrgLogo';
+import UILink from '../../UILink';
 import Owner from '../OwnerContainer';
 import './component.css';
 
@@ -43,9 +43,10 @@ export default class Organization extends Component<OrganizationProps, Organizat
                 </div>
                 <div className="OrganizationEntity-Accessible-mainCol">
                     <div className="OrganizationEntity-Accessible-name">
-                        <Linker to={`/orgs/${org.id}`}>
+                        <UILink 
+                            hashPath={{hash: `orgs/${org.id}`}}>
                             {org.name}
-                        </Linker>
+                        </UILink>
                     </div>
                     <div className="OrganizationEntity-Accessible-researchInterests">
                         {org.researchInterests}

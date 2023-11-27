@@ -2,7 +2,7 @@ import { DownOutlined, ExclamationCircleOutlined, FileOutlined, GlobalOutlined, 
 import { Button, Tooltip } from 'antd';
 import { Component, Fragment } from 'react';
 import * as narrativeModel from '../../data/models/narrative';
-import { europaLink } from '../../lib/euoropa';
+import UILink from '../UILink';
 import './Narrative.css';
 import UserSimple from './UserContainer';
 
@@ -109,10 +109,11 @@ export default class Narrative extends Component<NarrativeProps, NarrativeState>
                 </div>
                 <div className="mainCol">
                     <div className="Narrative-title">
-                        {europaLink({pathname: `narrative/${narrative.workspaceId}`}, narrative.title, {newWindow: true})}
-                        {/* <a href={"/narrative/" + narrative.workspaceId} target="_blank" rel="noopener noreferrer">
+                        <UILink 
+                            hashPath={{pathname: `narrative/${narrative.workspaceId}`}}
+                            newWindow={true}>
                             {narrative.title}
-                        </a> */}
+                        </UILink>
                     </div>
                     {' '}
                     <div className="Narrative-owner">
@@ -142,10 +143,11 @@ export default class Narrative extends Component<NarrativeProps, NarrativeState>
                 <div className="mainCol">
                     <div className="mainCol">
                         <div className="Narrative-title">
-                            {europaLink({pathname: `narrative/${narrative.workspaceId}`}, narrative.title, {newWindow: true})}
-                            {/* <a href={"/narrative/" + narrative.workspaceId} target="_blank" rel="noopener noreferrer">
+                            <UILink 
+                                hashPath={{pathname: `narrative/${narrative.workspaceId}`}}
+                                newWindow={true}>
                                 {narrative.title}
-                            </a> */}
+                            </UILink>
                         </div>
                         {' '}
                         <div className="Narrative-owner">

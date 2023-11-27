@@ -6,7 +6,7 @@ import {
 import { Button, Image, Tooltip } from "antd";
 import { Component } from "react";
 import * as appModel from "../../../data/models/apps";
-import { europaLink, europaURL } from '../../../lib/euoropa';
+import UILink from '../../UILink';
 import "./component.css";
 
 export enum View {
@@ -79,16 +79,13 @@ export default class App extends Component<AppProps, AppState> {
         sep = ", ";
       }
       return (
-        // {europaLink({hash: `people/${tauthorUsername}`}, authorUsername + sep, {newWindow: true})}
-        <a
-          href={europaURL({hash: `people/${authorUsername}`}).toString()}
-          target="_blank"
-          rel="noopener noreferrer"
-          key={authorUsername}
-        >
-          {authorUsername}
+        <UILink 
+          hashPath={{hash: `people/${authorUsername}`}}
+          newWindow={true}
+          >
+            {authorUsername}
           {sep}
-        </a>
+        </UILink>
       );
     });
   }
@@ -120,7 +117,12 @@ export default class App extends Component<AppProps, AppState> {
         <div className="App-appCol">
           <div className="App-name">
             <Tooltip placement="bottomRight" title={this.props.app.subtitle}>
-              {europaLink({hash: `catalog/apps/${this.props.app.id}`}, this.props.app.name, {newWindow: true})}
+              <UILink 
+                  hashPath={{hash: `catalog/apps/${this.props.app.id}`}}
+                    newWindow={true}>
+                    {this.props.app.name}
+                </UILink>
+              {/* {europaLink({hash: `catalog/apps/${this.props.app.id}`}, this.props.app.name, {newWindow: true})} */}
               {/* <a
                 href={"/#catalog/apps/" + this.props.app.id}
                 target="_blank"
@@ -153,14 +155,11 @@ export default class App extends Component<AppProps, AppState> {
         <div className="App-appCol">
           <div className="App-name">
             <Tooltip placement="bottomRight" title={this.props.app.subtitle}>
-            {europaLink({hash: `catalog/apps/${this.props.app.id}`}, this.props.app.name, {newWindow: true})}
-              {/* <a
-                href={"/#catalog/apps/" + this.props.app.id}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {this.props.app.name}
-              </a> */}
+                <UILink 
+                  hashPath={{hash: `catalog/apps/${this.props.app.id}`}}
+                    newWindow={true}>
+                    {this.props.app.name}
+                </UILink>
             </Tooltip>
           </div>
           <div className="App-subtitle">{this.props.app.subtitle}</div>
