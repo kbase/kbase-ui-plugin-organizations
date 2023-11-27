@@ -6,7 +6,6 @@ import {
 import { Button, Image, Tooltip } from "antd";
 import { Component } from "react";
 import * as appModel from "../../../data/models/apps";
-import { europaURL } from '../../../lib/euoropa';
 import UILink from '../../UILink';
 import "./component.css";
 
@@ -80,16 +79,13 @@ export default class App extends Component<AppProps, AppState> {
         sep = ", ";
       }
       return (
-        // {europaLink({hash: `people/${tauthorUsername}`}, authorUsername + sep, {newWindow: true})}
-        <a
-          href={europaURL({hash: `people/${authorUsername}`}).toString()}
-          target="_blank"
-          rel="noopener noreferrer"
-          key={authorUsername}
-        >
-          {authorUsername}
+        <UILink 
+          hashPath={{hash: `people/${authorUsername}`}}
+          newWindow={true}
+          >
+            {authorUsername}
           {sep}
-        </a>
+        </UILink>
       );
     });
   }
