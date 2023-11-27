@@ -4,7 +4,6 @@ import { AppstoreOutlined, ArrowRightOutlined, FileOutlined, MailOutlined, TeamO
 import { Alert, Button, Card, Modal } from 'antd';
 import * as orgModel from '../../../../../data/models/organization/model';
 import * as requestModel from '../../../../../data/models/requests';
-import { europaOpen } from '../../../../../lib/euoropa';
 import { niceElapsed } from '../../../../../lib/time';
 import Header from '../../../../Header';
 import Narrative from '../../../../entities/NarrativeContainer';
@@ -63,10 +62,7 @@ class ManageGroupRequests extends Component<RequestsProps, RequestsState> {
     onGetViewAccess(request: requestModel.Request) {
         this.props.onGetViewAccess(request);
     }
-    onViewProfile(username: string) {
-        europaOpen({hash: `people/${username}`}, {newWindow: true});
-        // window.open('/#people/' + username, '_blank');
-    }
+
     onShowInfo() {
         Modal.info({
             title: 'Manage Requests Help',

@@ -770,7 +770,7 @@ class NewOrganization extends Component<
     return (
       <form
         id="newOrganizationForm"
-        className="NewOrganization-editor  scrollable-flex-column"
+        className="NewOrganization-editor"
         onSubmit={this.onSubmit.bind(this)}
       >
         {/* {this.renderEditorHeader()} */}

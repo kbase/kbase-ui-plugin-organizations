@@ -2,7 +2,7 @@ import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { Component, Fragment } from 'react';
 import * as userModel from '../../data/models/user';
-import { europaLink } from '../../lib/euoropa';
+import UILink from '../UILink';
 import Avatar from './Avatar';
 import './User.css';
 
@@ -70,8 +70,11 @@ class User extends Component<UserProps, UserState> {
                 </div>
                 <div className="infoCol">
                     <div className="name">
-                        {europaLink({hash: `people/${this.props.user.username}`}, this.props.user.realname, {newWindow: true})}
-                        {/* <a href={"/#people/" + this.props.user.username} target="_blank" rel="noopener noreferrer">{this.props.user.realname}</a> */}
+                        <UILink 
+                            hashPath={{pathname: `people/${this.props.user.username}`}}
+                            newWindow={true}>
+                            {this.props.user.realname}
+                        </UILink>
                     </div>
                     <div>
                         {this.props.user.username}
@@ -98,8 +101,11 @@ class User extends Component<UserProps, UserState> {
                 </div>
                 <div className="infoCol">
                     <div className="name">
-                        {europaLink({hash: `people/${this.props.user.username}`}, this.props.user.realname, {newWindow: true})}
-                        {/* <a href={"/#people/" + this.props.user.username} target="_blank" rel="noopener noreferrer">{this.props.user.realname}</a> */}
+                        <UILink 
+                            hashPath={{pathname: `people/${this.props.user.username}`}}
+                            newWindow={true}>
+                            {this.props.user.realname}
+                        </UILink>
                     </div>
                     <div>
                         {this.props.user.username}

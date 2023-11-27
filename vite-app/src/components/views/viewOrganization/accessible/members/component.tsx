@@ -4,7 +4,7 @@ import {
   UnlockOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Alert, Dropdown, Input, Menu, Modal, Select } from "antd";
+import { Alert, Dropdown, Input, MenuProps, Modal, Select } from "antd";
 import { Component, Fragment } from "react";
 import * as orgModel from "../../../../../data/models/organization/model";
 import Member from "../../../../entities/MemberContainer";
@@ -98,45 +98,30 @@ export default class Members extends Component<MembersProps, MembersState> {
     );
   }
 
-  onMemberMenu(key: React.Key, member: orgModel.Member) {
-    switch (key) {
-      case "promoteToAdmin":
-        this.props.onPromoteMemberToAdmin(member.username);
-        break;
-      case "removeMember":
-        this.onConfirmRemoveMember(member);
-        break;
-    }
-  }
-
-  onAdminMenu(key: React.Key, member: orgModel.Member) {
-    switch (key) {
-      case "demoteToMember":
-        this.props.onDemoteAdminToMember(member.username);
-        break;
-    }
-  }
-
   renderMemberMenu(member: orgModel.Member) {
-    const menu = (
-      <Menu
-        onClick={({ key }) => {
-          this.onMemberMenu.call(this, key, member);
-        }}
-      >
-        <Menu.Item key="promoteToAdmin">
-          <UnlockOutlined />
-          Promote to Admin
-        </Menu.Item>
-        <Menu.Item key="removeMember">
-          <DeleteOutlined />
-          Remove Member
-        </Menu.Item>
-      </Menu>
-    );
+    const items: MenuProps['items'] = [
+      {
+        key: 'promoteToAdmin',
+        label: (
+          <span><UnlockOutlined /> Promote to Admin</span>
+        ),
+        onClick: () => {
+            this.props.onPromoteMemberToAdmin(member.username);
+        }
+      },
+      {
+        key: 'removeMember',
+        label: (
+          <span><DeleteOutlined /> Remove Member</span>
+        ),
+        onClick: () => {
+          this.onConfirmRemoveMember(member);
+        }
+      }
+    ]
     return (
       <div>
-        <Dropdown overlay={menu} trigger={["click"]}>
+        <Dropdown menu={{items}} trigger={["click"]}>
           <EllipsisOutlined className="IconButton-hover" />
         </Dropdown>
       </div>
@@ -144,21 +129,18 @@ export default class Members extends Component<MembersProps, MembersState> {
   }
 
   renderAdminMenu(member: orgModel.Member) {
-    const menu = (
-      <Menu
-        onClick={({ key }) => {
-          this.onAdminMenu.call(this, key, member);
-        }}
-      >
-        <Menu.Item key="demoteToMember">
-          <UserOutlined />
-          Demote to Member
-        </Menu.Item>
-      </Menu>
-    );
+    const items: MenuProps['items'] = [
+      {
+        key: 'demoteToMember',
+        label: <span><UserOutlined /> Demote to Member</span>,
+        onClick: () => {
+          this.props.onDemoteAdminToMember(member.username);
+        }
+      }
+    ]
     return (
       <div>
-        <Dropdown overlay={menu} trigger={["click"]}>
+        <Dropdown menu={{items}} trigger={["click"]}>
           <EllipsisOutlined className="IconButton-hover" />
         </Dropdown>
       </div>

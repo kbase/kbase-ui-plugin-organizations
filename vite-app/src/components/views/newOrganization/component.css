@@ -126,9 +126,9 @@
 /* New editor layout */
 
 .NewOrganization-editor {
-    flex: 1 1 0px;
+    /* flex: 1 1 0px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; */
 }
 
 /* Top level grid */

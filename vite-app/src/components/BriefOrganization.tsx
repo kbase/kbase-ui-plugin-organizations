@@ -18,12 +18,13 @@ import {
 import { Dropdown, MenuProps, Modal, Tooltip } from "antd";
 import { Component, Fragment } from "react";
 import * as orgModel from "../data/models/organization/model";
+import { europaURL } from '../lib/euoropa';
 import { ComponentView } from "../redux/store/types";
 import "./BriefOrganization.css";
-import Owner from "./entities/OwnerContainer";
-import Linker from "./Linker";
 import NiceElapsedTime from "./NiceElapsedTime";
 import OrgLogo from "./OrgLogo";
+import UILink from './UILink';
+import Owner from "./entities/OwnerContainer";
 
 export interface BriefOrganizationProps {
   organization: orgModel.BriefOrganization;
@@ -325,48 +326,58 @@ export default class BriefOrganization extends Component<
 
   renderPermalink() {
     const permalink = (
-      <div>
-        <p>
-          Below is the "permalink" for this organization. You may copy this url
-          and use it to access this organization in a web browser.
-        </p>
-        <p style={{ fontFamily: "monospace", fontWeight: "bold" }}>
-          {window.location.origin}/#org/{this.props.organization.id}
-        </p>
-      </div>
+        <div>
+            <p>
+                Below is the "permalink" for this organization. You may copy
+                this url and use it to access this organization in a web browser.
+            </p>
+            <p style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>
+                {
+                    europaURL({hash: `org/${this.props.organization.id}`}, true).toString()
+                }
+            </p>
+        </div>
     );
-    const menuClick = () => {
-      Modal.info({
-        title: "Org Permalink",
-        content: permalink,
-      });
-    };
-    const items: MenuProps["items"] = [
-      {
-        key: "1",
-        label: "View Permalink",
-        onClick: menuClick,
-      },
-    ];
+    const items: MenuProps['items'] = [
+        {
+            key:"view",
+            label:<span>View Permalink</span>,
+            onClick: () => {
+                Modal.info({
+                    title: 'Org Permalink',
+                    content: permalink
+                });
+            }
+        }
+    ]
     return (
-      <Dropdown menu={{ items }} trigger={["click", "contextMenu"]}>
-        <a
-          href={"/#orgs/" + this.props.organization.id}
-          onClick={(e) => {
-            e.preventDefault();
-          }}
-        >
-          <LinkOutlined />
-        </a>
-      </Dropdown>
+        <Dropdown
+            menu={{items}}
+            trigger={['click', 'contextMenu']}>
+              <LinkOutlined />
+              {/* <UILink hashPath={{hash: `org/${this.props.organization.id}`}}
+                      newWindow={true}
+                      preventDefault={true}
+              >
+                <LinkOutlined />
+              </UILink> */}
+            {/* <a href={europaURL({hash: `org/{this.props.organization.id}`}).toString()}
+               onClick={(e) => e.preventDefault()}               
+            >
+                <LinkOutlined />
+            </a> */}
+        </Dropdown> 
     );
-  }
+}
 
   renderLogoColumn(org: orgModel.BriefOrganization) {
     return (
       <Fragment>
         <div className="BriefOrganization-logoRow">
-          <Linker to={`/orgs/${org.id}`}>{this.renderLogo(org)}</Linker>
+          <UILink hashPath={{hash: `orgs/${org.id}`}}>
+            {this.renderLogo(org)}
+          </UILink>
+          {/* <Linker to={`/orgs/${org.id}`}>{this.renderLogo(org)}</Linker> */}
         </div>
         <div className="BriefOrganization-statusRow">
           <div className="BriefOrganization-relationCol">
@@ -624,7 +635,10 @@ export default class BriefOrganization extends Component<
             <div className="BriefOrganization-infoCol-row">
               <div className="BriefOrganization-infoCol-col1">
                 <div className="BriefOrganization-orgName BriefOrganization-infoTableRow">
-                  <Linker to={`/orgs/${org.id}`}>{org.name}</Linker>
+                  <UILink hashPath={{hash: `orgs/${org.id}`}}>
+                    {org.name}
+                  </UILink>
+                  {/* <Linker to={`/orgs/${org.id}`}>{org.name}</Linker> */}
                 </div>
               </div>
             </div>

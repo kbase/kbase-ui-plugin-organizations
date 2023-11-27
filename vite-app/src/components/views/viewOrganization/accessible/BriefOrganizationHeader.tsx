@@ -1,11 +1,13 @@
 import { BellFilled, BulbOutlined, CrownOutlined, FileOutlined, GlobalOutlined, HomeOutlined, LinkOutlined, MailFilled, RobotOutlined, SaveOutlined, StopOutlined, TeamOutlined, UnlockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Menu, Modal, Tooltip } from 'antd';
+import { Button, Dropdown, Modal, Tooltip } from 'antd';
+import { MenuProps } from 'antd/lib';
 import { Component, Fragment } from 'react';
 import * as orgModel from '../../../../data/models/organization/model';
+import { europaURL } from '../../../../lib/euoropa';
 import { ComponentView } from '../../../../redux/store/types';
-import Linker from '../../../Linker';
 import NiceElapsedTime from '../../../NiceElapsedTime';
 import OrgLogo from '../../../OrgLogo';
+import UILink from '../../../UILink';
 import Owner from '../../../entities/OwnerContainer';
 import './BriefOrganizationHeader.css';
 
@@ -329,33 +331,30 @@ export default class BriefOrganization extends Component<BriefOrganizationProps,
                     this url and use it to access this organization in a web browser.
                 </p>
                 <p style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>
-                    {window.location.origin}/#org/{this.props.organization.id}
+                    {
+                        europaURL({hash: `org/${this.props.organization.id}`}, true).toString()
+                    }
                 </p>
             </div>
         );
-        const menuClick = () => {
-            Modal.info({
-                title: 'Org Permalink',
-                content: permalink
-            });
-        };
-        const menu = (
-            <Menu
-                onClick={menuClick}
-            >
-                <Menu.Item key="view">
-                    View Permalink
-                </Menu.Item>
-            </Menu>
-        );
+        const items: MenuProps['items'] = [
+            {
+                key:"view",
+                label:<span>View Permalink</span>,
+                onClick: () => {
+                    Modal.info({
+                        title: 'Org Permalink',
+                        content: permalink
+                    });
+                }
+            }
+        ]
         return (
             <Dropdown
-                overlay={menu}
+                menu={{items}}
                 trigger={['click', 'contextMenu']}>
-                <a href={"/#orgs/" + this.props.organization.id}>
                     <LinkOutlined />
-                </a>
-            </Dropdown>
+            </Dropdown> 
         );
     }
 
@@ -363,9 +362,9 @@ export default class BriefOrganization extends Component<BriefOrganizationProps,
         return (
             <Fragment>
                 <div className="BriefOrganizationHeader-logoRow">
-                    <Linker to={`/orgs/${org.id}`}>
+                    <UILink hashPath={{hash: `orgs/${org.id}`}}>
                         {this.renderLogo(org)}
-                    </Linker>
+                    </UILink>
                 </div>
                 <div className="BriefOrganizationHeader-statusRow">
                     <div className="BriefOrganizationHeader-relationCol">
@@ -417,9 +416,9 @@ export default class BriefOrganization extends Component<BriefOrganizationProps,
         return (
             <Fragment>
                 <div className="BriefOrganizationHeader-orgName BriefOrganizationHeader-infoTableRow">
-                    <Linker to={`/orgs/${org.id}`}>
+                    <UILink hashPath={{hash: `orgs/${org.id}`}}>
                         {org.name}
-                    </Linker>
+                    </UILink>
                 </div>
 
                 <div className="BriefOrganizationHeader-researchInterests BriefOrganizationHeader-infoTableRow">

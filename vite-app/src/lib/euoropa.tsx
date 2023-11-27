@@ -1,4 +1,3 @@
-import { AccessibleNarrative } from '../data/models/narrative';
 
 export interface EuropaLinkOptions {
     newWindow?: boolean;
@@ -8,55 +7,54 @@ export interface EuropaLinkOptions {
 export interface HashPath {
     hash?: string;
     pathname?: string;
+    params?: Record<string, string>;
 }
 
-/**
- * A cheap function to allow creation 
- * @param hash 
- */
-export function europaURL({hash, pathname}: HashPath) {
-    // Assume we are operating on a subdomain of Europa.
-   let hostname: string
+export function kbaseUIURL(hash: string, params?: Record<string, string>): URL {
+    const url = new URL(window.location.origin);
+    url.hash = `#${hash}`;
+    if (params && Object.keys(params).length > 0) {
+        const searchParams = new URLSearchParams(params);
+        // Use our special notation for params on the hash
+        url.hash += `$${searchParams}`;
+    }
+    return url;
+}
+
+export function otherUIURL({hash, pathname, params}: HashPath): URL {
+    let hostname: string
     if (!window.location.hostname.endsWith('kbase.us')) {
         hostname = 'ci.kbase.us';
     } else {
         hostname = window.location.hostname.split('.').slice(1).join('.');
     }
     const url = new URL(`https://${hostname}`);
-    if (hash) {
-        url.hash = hash[0] === '#' ? hash : `#${hash}`;
+
+    url.pathname = hash ? `legacy/${hash}` : pathname || '';
+
+    // So in this case we use a standard search fragment.
+    if (params && Object.keys(params).length > 0) {
+        for (const [key, value] of Object.entries(params)) {
+            url.searchParams.set(key, value);
+        }
     }
-    if (pathname) {
-        url.pathname = pathname;
-    }
+
     return url;
 }
 
-export function europaOpen(hashPath: HashPath, options: EuropaLinkOptions = {}) {
-    const url = europaURL(hashPath);
-    if (options.newWindow) {
-        window.open(url, '_blank');
-    } else {
-        window.open(url, '_top');
-     }
-}
-
-export function europaLink(hashPath: HashPath, label: string, options: EuropaLinkOptions = {}) {
-    const url = europaURL(hashPath);
-    if (options.newWindow) {
-        return <a href={url.toString()} 
-              className={options.className}
-              target='_blank'
-              rel="noopener noreferrer">
-            {label}
-        </a>;
+/**
+ * Create a URL for any KBase user interface.
+ * 
+ * Uses specific heuristics for determining how to construct it:
+ * 
+ * - 
+ * 
+ * @param hash 
+ */
+export function europaURL(hashPath: HashPath, newWindow: boolean) {
+    if (!newWindow && hashPath.hash) {
+        return kbaseUIURL(hashPath.hash, hashPath.params);
     }
-    return <a href={url.toString()} 
-              target='_top'>
-       {label}
-    </a>;
-}
 
-export function europaNarrativeLink(narrative: AccessibleNarrative,) {
-    return europaLink({pathname: `narrative/${narrative.workspaceId}`}, narrative.title, {newWindow: true})
+    return otherUIURL(hashPath);
 }

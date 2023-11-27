@@ -4,7 +4,7 @@ import './Owner.css';
 import { CrownOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import * as userModel from '../../data/models/user';
-import { europaLink } from '../../lib/euoropa';
+import UILink from '../UILink';
 import Avatar from './Avatar';
 
 enum View {
@@ -87,16 +87,13 @@ export default class Owner extends Component<OwnerProps, OwnerState> {
                         <Tooltip
                             placement="bottomRight"
                             title={tooltip}>
-                            {europaLink({hash: `people/${this.props.user.username}`}, this.props.user.realname, {newWindow: true})}
-                            {/* <a href={"/#people/" + this.props.user.username}
-                                target="_blank"
-                                rel="noopener noreferrer">{this.props.user.realname}</a> */}
+                                <UILink 
+                                    hashPath={{hash: `people/${this.props.user.username}`}}
+                                    newWindow={true}>
+                                    {this.props.user.realname}
+                                </UILink>
                         </Tooltip>
-
                     </div>
-                    {/* <div className="Owner-username">
-                        {this.props.user.username}
-                    </div> */}
                 </div>
             </div>
         );
@@ -119,7 +116,11 @@ export default class Owner extends Component<OwnerProps, OwnerState> {
                 </div>
                 <div className="Owner-infoCol">
                     <div className="Owner-name">
-                        <a href={"/#people/" + this.props.user.username} target="_blank" rel="noopener noreferrer">{this.props.user.realname}</a>
+                        <UILink 
+                            hashPath={{hash: `people/${this.props.user.username}`}}
+                            newWindow={true}>
+                            {this.props.user.realname}
+                        </UILink>
                     </div>
                     <div className="Owner-username">
                         {this.props.user.username}

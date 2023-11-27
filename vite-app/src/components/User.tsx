@@ -1,9 +1,9 @@
 import { Component } from 'react';
 import './User.css';
 
-import { europaLink } from '../lib/euoropa';
 import * as types from '../redux/store/types/common';
 import Avatar from './entities/Avatar';
+import UILink from './UILink';
 
 export interface UserProps {
     user: types.User;
@@ -22,11 +22,10 @@ class User extends Component<UserProps, UserState> {
             </div>
             <div className="infoCol">
                 <div className="name">
-                    {europaLink({hash: `people/${this.props.user.username}`}, `${this.props.user.realname} ❨${this.props.user.username}❩`, {newWindow: true} )}
-                    {/* <a href={"/#people/" + this.props.user.username} target="_blank" rel="noopener noreferrer">{this.props.user.realname}</a>
-                    {' '}
-                    ❨{this.props.user.username}❩
-                            </div> */}
+                    <UILink hashPath={{pathname: `people/${this.props.user.username}`}}
+                            newWindow={true}>
+                        {this.props.user.realname} ❨{this.props.user.username}❩
+                    </UILink>
                 </div>
                 <div className="organization">
                     {this.props.user.organization || <i>no organization in user profile</i>}

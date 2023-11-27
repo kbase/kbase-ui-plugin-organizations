@@ -8,15 +8,15 @@ import { Alert, Button, Checkbox, Radio, Select, Space } from "antd";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
 import Search from "antd/lib/input/Search";
 import { RadioChangeEvent } from "antd/lib/radio";
-import { Component, createRef, Fragment } from "react";
+import { Component, Fragment, createRef } from "react";
 import {
   BriefOrganization,
   Filter,
   OrganizationID,
   RequestStatus,
 } from "../../../data/models/organization/model";
+import { kbaseUIURL } from '../../../lib/euoropa';
 import { SortDirection } from "../../../redux/store/types/common";
-import Linker from "../../Linker";
 import "./component.css";
 import Organizations from "./organizations/component";
 
@@ -246,15 +246,14 @@ class OrganizationsBrowser extends Component<
           {this.renderSearchForm()}
         </div>
         <div className="OrganizationsBrowser-searchBarCol2">
-          <Linker to="/orgs/new">
             <Button
               type="primary"
               icon={<PlusCircleOutlined />}
               style={{ marginRight: "10px" }}
+              href={kbaseUIURL('orgs/new').toString()}
             >
               Create Organization
             </Button>
-          </Linker>
         </div>
       </div>
     );

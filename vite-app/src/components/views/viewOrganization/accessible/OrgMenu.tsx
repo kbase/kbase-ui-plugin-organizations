@@ -1,5 +1,5 @@
 import { AppstoreOutlined, CheckOutlined, DeleteOutlined, EditOutlined, FileOutlined, MailOutlined, SettingFilled, StopOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Menu, Tooltip } from 'antd';
+import { Button, Dropdown, Menu, MenuProps, Tooltip } from 'antd';
 import { Component } from 'react';
 import * as orgModel from '../../../../data/models/organization/model';
 import * as requestModel from '../../../../data/models/requests';
@@ -110,22 +110,28 @@ export default class OrgMenu extends Component<OrgMenuProps, OrgMenuState> {
                     </div>
                 );
             case (orgModel.UserRelationToOrganization.MEMBER):
-                const menu = (
-                    <Menu onClick={this.onMenuClick.bind(this)}>
-                        <Menu.Item key="addApp">
-                            <AppstoreOutlined />{' '}Associate Apps
-                        </Menu.Item>
-                        <Menu.Item key="addNarrative">
-                            <FileOutlined />{' '}Associate Narratives
-                        </Menu.Item>
-                        <Menu.Item key="manageMyMembership">
-                            <UserOutlined />{' '}Manage My Membership
-                        </Menu.Item>
-
-                    </Menu>
-                );
+                const items: MenuProps['items'] = [
+                    {
+                        key: 'addApp',
+                        label: (
+                            <span><AppstoreOutlined />{' '}Associate Apps</span>
+                        )
+                    },
+                    {
+                        key: 'addNarrative',
+                        label: (
+                            <span><FileOutlined />{' '}Associate Narratives</span>
+                        )
+                    },
+                    {
+                        key: 'manageMyMembership',
+                        label: (
+                            <span><UserOutlined />{' '}Manage My Membership</span>
+                        )
+                    }
+                ]
                 return (
-                    <Dropdown overlay={menu} trigger={['click']}>
+                    <Dropdown menu={{items}} trigger={['click']}>
                         <SettingFilled className="IconButton OrgMenu-menuButton" />
                     </Dropdown>
                 );

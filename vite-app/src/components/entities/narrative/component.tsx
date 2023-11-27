@@ -2,9 +2,9 @@ import { CrownOutlined, DownOutlined, EditOutlined, EyeOutlined, GlobalOutlined,
 import { Button, Tooltip } from 'antd';
 import { Component, Fragment } from 'react';
 import * as narrativeModel from '../../../data/models/narrative';
-import { europaNarrativeLink } from '../../../lib/euoropa';
 import { niceElapsed } from '../../../lib/time';
 import NiceElapsedTime from '../../NiceElapsedTime';
+import UILink from '../../UILink';
 import UserSimple from '../UserSimpleContainer';
 import './component.css';
 
@@ -189,10 +189,10 @@ export default class Narrative extends Component<NarrativeProps, NarrativeState>
                 <div className="mainCol">
                     <div>
                         <div className="Narrative-title">
-                            {europaNarrativeLink(narrative)}
-                            {/* <a href={"/narrative/" + narrative.workspaceId} target="_blank" rel="noopener noreferrer">
+                            <UILink hashPath={{pathname: `narrative/${narrative.workspaceId}`}}
+                                newWindow={true}>
                                 {narrative.title}
-                            </a> */}
+                            </UILink>
                         </div>
                         {', '}
                         <div className="Narrative-owner">
@@ -250,10 +250,11 @@ export default class Narrative extends Component<NarrativeProps, NarrativeState>
                 <div className="mainCol">
                     <div>
                         <div className="Narrative-title">
-                        {europaNarrativeLink(narrative)}
-                            {/* <a href={"/narrative/" + narrative.workspaceId} target="_blank" rel="noopener noreferrer">
+                            <UILink 
+                                hashPath={{pathname: `narrative/${narrative.workspaceId}`}}
+                                newWindow={true}>
                                 {narrative.title}
-                            </a> */}
+                            </UILink>
                         </div>
                         {', '}
                         <div className="Narrative-owner">
@@ -298,10 +299,11 @@ export default class Narrative extends Component<NarrativeProps, NarrativeState>
                 <div className="mainCol">
                     <div>
                         <div className="Narrative-title">
-                            {europaNarrativeLink(narrative)}
-                            {/* <a href={"/narrative/" + narrative.workspaceId} target="_blank" rel="noopener noreferrer">
+                            <UILink 
+                                hashPath={{pathname: `narrative/${narrative.workspaceId}`}}
+                                newWindow={true}>
                                 {narrative.title}
-                            </a> */}
+                            </UILink>
                         </div>
                         {', '}
                         <div className="Narrative-owner">
