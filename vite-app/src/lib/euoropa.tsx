@@ -11,7 +11,10 @@ export interface HashPath {
 }
 
 export function kbaseUIURL(hash: string, params?: Record<string, string>): URL {
+    const baseName = window.parent.location.pathname;
     const url = new URL(window.location.origin);
+
+    url.pathname = baseName;
     url.hash = `#${hash}`;
     if (params && Object.keys(params).length > 0) {
         const searchParams = new URLSearchParams(params);
@@ -21,15 +24,21 @@ export function kbaseUIURL(hash: string, params?: Record<string, string>): URL {
     return url;
 }
 
-export function otherUIURL({hash, pathname, params}: HashPath): URL {
-    let hostname: string
-    if (!window.location.hostname.endsWith('kbase.us')) {
-        hostname = 'ci.kbase.us';
-    } else {
-        hostname = window.location.hostname.split('.').slice(1).join('.');
-    }
-    const url = new URL(`https://${hostname}`);
+function europaBaseURL(): URL {
+    const europaHostname = window.parent.location.hostname.split('.')
+        .slice(-3)
+        .join('.');
+    const url = new URL(window.location.origin);
+    url.hostname = europaHostname;
+    return url;
+}
 
+export function otherUIURL({hash, pathname, params}: HashPath): URL {
+    const url = europaBaseURL();
+
+    // We assume that a hash refers back to kbase-ui, so we create a
+    // legacy path for europa.
+    // TODO: Only if pathname is empty.
     url.pathname = hash ? `legacy/${hash}` : pathname || '';
 
     // So in this case we use a standard search fragment.
