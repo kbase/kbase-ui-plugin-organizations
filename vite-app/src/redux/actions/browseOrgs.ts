@@ -1,17 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 
-import { ActionFlag } from "./index";
 import { StoreState } from "../store/types";
+import { ActionFlag } from "./index";
 
-import * as orgModel from "../../data/models/organization/model";
 import { AppError } from "@kbase/ui-components";
-import { BrowseOrgsModel } from "../store/types/views/Main/views/BrowseOrgs";
 import { SortDirection } from "../../data/apis/groups";
+import * as orgModel from "../../data/models/organization/model";
 import {
-  extractBrowseOrgsModel,
   extractAppInfo,
+  extractBrowseOrgsModel,
 } from "../../lib/stateExtraction";
+import { BrowseOrgsModel } from "../store/types/views/Main/views/BrowseOrgs";
 
 export interface Load extends Action<ActionFlag.BROWSE_ORGS_LOAD> {
   type: ActionFlag.BROWSE_ORGS_LOAD;
