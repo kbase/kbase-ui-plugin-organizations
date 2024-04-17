@@ -10,12 +10,13 @@ export interface HashPath {
     params?: Record<string, string>;
 }
 
-export function kbaseUIURL(hash: string, params?: Record<string, string>): URL {
-    const baseName = window.parent.location.pathname;
-    const url = new URL(window.location.origin);
+export function kbaseUIURL(path: string, params?: Record<string, string>): URL {
+    // We take the base url from kbase-ui
+    const url = new URL(window.parent.location.href);
 
-    url.pathname = baseName;
-    url.hash = `#${hash}`;
+    // Set the hash, or empty it.
+    url.hash = `#${path}`;
+
     if (params && Object.keys(params).length > 0) {
         const searchParams = new URLSearchParams(params);
         // Use our special notation for params on the hash
