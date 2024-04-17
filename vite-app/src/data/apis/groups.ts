@@ -242,6 +242,7 @@ export class GroupException extends AppException {
       code: "group-exception",
       message: error.apperror,
       detail: error.message,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       info: new Map<string, any>([
         ["httpcode", error.httpcode],
         ["httpstatus", error.httpstatus],
@@ -371,7 +372,7 @@ export class GroupsClient {
       });
   }
 
-  put<T>(path: Array<string>, body: any): Promise<T> {
+  put<T>(path: Array<string>, body: unknown): Promise<T> {
     const url = [this.url].concat(path).join("/");
     return fetch(url, {
       headers: {
@@ -416,7 +417,7 @@ export class GroupsClient {
     });
   }
 
-  async post<T>(path: Array<string>, body: any): Promise<T | null> {
+  async post<T>(path: Array<string>, body: unknown): Promise<T | null> {
     const url = [this.url].concat(path).join("/");
     const response = await fetch(url, {
       headers: {
@@ -431,12 +432,14 @@ export class GroupsClient {
 
     if (response.status === 500) {
       switch (response.headers.get("Content-Type")) {
-        case "application/json":
+        case "application/json": {
           const result = await response.json();
           throw new GroupException(result);
-        case "text/plain":
+        }
+        case "text/plain": {
           const errorText = await response.text();
           throw new ServerException(errorText);
+        }
         default:
           throw new Error(
             "Unexpected content type: " + response.headers.get("Content-Type")
@@ -467,12 +470,14 @@ export class GroupsClient {
 
     if (response.status === 500) {
       switch (response.headers.get("Content-Type")) {
-        case "application/json":
+        case "application/json": {
           const result = await response.json();
           throw new GroupException(result);
-        case "text/plain":
+        }
+        case "text/plain": {
           const errorText = await response.text();
           throw new ServerException(errorText);
+        }
         default:
           throw new Error(
             "Unexpected content type: " + response.headers.get("Content-Type")
@@ -497,6 +502,7 @@ export class GroupsClient {
     // api.
 
     // mandatory fields.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload: any = {
       name: newGroup.name,
       private: newGroup.isPrivate,
@@ -516,6 +522,7 @@ export class GroupsClient {
   }
 
   updateGroup(id: string, groupUpdate: GroupUpdate): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload: any = {
       name: groupUpdate.name,
       custom: {
@@ -1004,6 +1011,7 @@ export class GroupsClient {
   }: {
     groupId: string;
     memberUsername: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     update: any;
   }): Promise<void> {
     const path = ["group", groupId, "user", memberUsername, "update"];
@@ -1104,6 +1112,7 @@ export class GroupsClient {
     groupIds: Array<string>;
   }): Promise<Map<GroupID, RequestStatus>> {
     const path = ["request", "groups", groupIds.join(","), "new"];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await this.get<any>(path);
     const requestStatuses = new Map<GroupID, RequestStatus>();
     for (const [groupId, requestStatus] of Object.entries(result)) {
